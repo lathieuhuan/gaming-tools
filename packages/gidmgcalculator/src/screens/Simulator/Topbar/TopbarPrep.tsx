@@ -25,7 +25,8 @@ export function TopbarPrep({ className }: TopbarPrepProps) {
   );
 
   const { members } = simulation;
-  const { resonances, moonsignLv, witchRiteLv } = new TeamState(members);
+  const { elmtCount, moonsignLv, witchRiteLv } = new TeamState(members);
+  const resonanceEntries = elmtCount.entries;
 
   const teamBonuses: TeamBonus[] = [
     {
@@ -61,12 +62,13 @@ export function TopbarPrep({ className }: TopbarPrepProps) {
       </div>
 
       <div className="ml-6 flex divide-x divide-dark-line">
-        {resonances.length > 0 && (
+        {resonanceEntries.length > 0 && (
           <div className="px-3 flex items-center gap-1">
             <span className="text-light-4">Resonance</span>
-            {resonances.map((resonance) => (
-              <ElementIcon key={resonance} type={resonance} size="1.25em" />
-            ))}
+
+            {resonanceEntries.map(([elmt, count]) => {
+              return count >= 2 && <ElementIcon key={elmt} type={elmt} size="1.25em" />;
+            })}
           </div>
         )}
 

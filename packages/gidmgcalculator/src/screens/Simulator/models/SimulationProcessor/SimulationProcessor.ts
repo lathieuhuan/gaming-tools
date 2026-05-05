@@ -97,7 +97,7 @@ export class SimulationProcessor {
         break;
       }
       case EEventCategory.TEAM: {
-        // this.runTeamEvent(event);
+        // TODO process team event
         break;
       }
       case EEventCategory.ENVIRONMENT: {

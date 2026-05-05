@@ -25,12 +25,11 @@ describe("Team", () => {
   });
 
   describe("FlatGetters state delegation", () => {
-    test("exposes resonances, milestone levels, and element counts from state", () => {
+    test("exposes milestone levels, and element counts from state", () => {
       const a = __createMember({ characterCode: CharacterMock.PYRO_SWORD_HEXEREI });
       const b = __createMember({ characterCode: CharacterMock.PYRO_BOW_NODKRAI });
       const team = new Team([a, b], a.code);
 
-      expect(team.resonances).toEqual(team.state.resonances);
       expect(team.moonsignLv).toBe(team.state.moonsignLv);
       expect(team.witchRiteLv).toBe(team.state.witchRiteLv);
       expect(team.elmtCount).toBe(team.state.elmtCount);

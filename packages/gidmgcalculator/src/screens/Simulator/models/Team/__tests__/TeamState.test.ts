@@ -1,9 +1,6 @@
 import { describe, expect, test } from "vitest";
 
-import { createWeapon } from "@/logic/entity.logic";
-import { ArtifactGear } from "@/models/ArtifactGear";
 import { CharacterMock } from "@/__tests__/mocks/characters.mock";
-import { __appCharacterMock } from "@/__tests__/utils/appCharacterMock";
 import { __createMember } from "../../../__tests__/utils";
 import { Member } from "../../Member";
 import { TeamState } from "../TeamState";
@@ -18,11 +15,10 @@ function teamMap(...members: Member[]) {
 
 describe("TeamState", () => {
   describe("constructor", () => {
-    test("initializes empty element counts, no resonances, and zero milestone levels for an empty team", () => {
+    test("initializes empty element counts, and zero milestone levels for an empty team", () => {
       const state = new TeamState(new Map());
 
       expect([...state.elmtCount.keys]).toEqual([]);
-      expect(state.resonances).toEqual([]);
       expect(state.moonsignLv).toBe(0);
       expect(state.witchRiteLv).toBe(0);
     });
@@ -34,22 +30,6 @@ describe("TeamState", () => {
 
       expect(state.elmtCount.get("pyro")).toBe(1);
       expect(state.elmtCount.get("hydro")).toBe(1);
-    });
-
-    test("records auto resonances when at least two members share a qualifying element", () => {
-      const a = __createMember({ characterCode: CharacterMock.PYRO_SWORD_HEXEREI });
-      const b = __createMember({ characterCode: CharacterMock.PYRO_BOW_NODKRAI });
-      const state = new TeamState(teamMap(a, b));
-
-      expect(state.resonances).toEqual(["pyro"]);
-    });
-
-    test("does not add resonance for elements that are not auto-resonance types", () => {
-      const a = __createMember({ characterCode: CharacterMock.CRYO_POLEARM });
-      const b = __createMember({ characterCode: CharacterMock.SKIRK });
-      const state = new TeamState(teamMap(a, b));
-
-      expect(state.resonances).toEqual([]);
     });
 
     test("counts moonsign faction members and caps at 2", () => {

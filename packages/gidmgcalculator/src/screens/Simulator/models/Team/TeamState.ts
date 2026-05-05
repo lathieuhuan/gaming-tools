@@ -1,22 +1,19 @@
 import type { Member } from "@/screens/Simulator/models/Member";
 import type {
-  TeamBuffSpec,
-  AutoRsnElmtType,
   ElementCount,
+  TeamBuffSpec,
   TeamConditionSpecs,
   TeamElementConditionSpecs,
   TeamMilestoneConditionSpec,
 } from "@/types";
 
 import { PHEC_ELEMENT_TYPES } from "@/constants";
-import { isAutoRsnElmt } from "@/logic/element.logic";
 import { isPassedComparison } from "@/models/utils/isPassedComparison";
 import { $AppData } from "@/services";
 import TypeCounter from "@/utils/TypeCounter";
 
 export class TeamState {
   elmtCount: ElementCount = new TypeCounter();
-  resonances: AutoRsnElmtType[] = [];
   moonsignLv: number = 0;
   witchRiteLv: number = 0;
   teamBuffs: TeamBuffSpec[] = [];
@@ -47,18 +44,6 @@ export class TeamState {
     this.elmtCount = elmtCount;
     this.moonsignLv = Math.min(moonsignLv, 2);
     this.witchRiteLv = Math.min(witchRiteLv, 2);
-
-    // ===== Resonances =====
-
-    const resonances: AutoRsnElmtType[] = [];
-
-    elmtCount.forEach((elmt, count) => {
-      if (isAutoRsnElmt(elmt) && count >= 2) {
-        resonances.push(elmt);
-      }
-    });
-
-    this.resonances = resonances;
 
     // ===== Team Buffs =====
 

@@ -1,5 +1,5 @@
 import type { Clonable } from "@/models/interfaces";
-import type { AutoRsnElmtType, ElementCount, ElementType } from "@/types";
+import type { ElementCount, ElementType } from "@/types";
 import type { MemberOperations } from "./types";
 
 import { FlatGetters } from "@/decorators/FlatGetters.decorator";
@@ -14,14 +14,13 @@ import { applyInnateBonuses } from "./applyInnateBonuses";
 import { Member } from "../Member";
 import { TeamState } from "./TeamState";
 
-@FlatGetters("state", ["resonances", "moonsignLv", "witchRiteLv", "elmtCount"])
+@FlatGetters("state", ["moonsignLv", "witchRiteLv", "elmtCount"])
 export class Team implements Clonable<Team> {
   private members: Map<number, Member>;
   private onFieldMemberCode: number;
 
   state: TeamState;
 
-  declare resonances: AutoRsnElmtType[];
   declare moonsignLv: number;
   declare witchRiteLv: number;
   declare elmtCount: ElementCount;

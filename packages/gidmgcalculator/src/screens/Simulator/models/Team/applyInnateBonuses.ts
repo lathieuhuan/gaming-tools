@@ -1,20 +1,29 @@
 import { Array_ } from "ron-utils";
 
-import type { AttributeStat, BareBonus, BonusTargetSpec, ModAffectType } from "@/types";
+import type {
+  AttributeStat,
+  AutoRsnElmtType,
+  BareBonus,
+  BonusTargetSpec,
+  ModAffectType,
+} from "@/types";
 import type { Bonus, BonusGroup, BonusGroupMeta } from "../Member";
 import type { Team } from "./Team";
 import type { MemberOperations } from "./types";
 
+import { isAutoRsnElmt } from "@/logic/element.logic";
 import { categorizeBonusSpecs } from "../../logic/categorizeBonusSpecs";
 import { getBonusRecipients } from "../../logic/getBonusRecipients";
 
 export function applyInnateBonuses(team: Team) {
   const { memberList } = team;
-  const { resonances } = team.state;
+  const { elmtCount } = team.state;
 
   // ===== RESONANCE =====
 
-  if (resonances.length > 0) {
+  const autoRsnElmts = elmtCount.keys.filter(isAutoRsnElmt);
+
+  if (autoRsnElmts.length > 0) {
     // TODO extract this id to a constant in common space
     const groupId = "auto-rsn";
     const rsnGroup: BonusGroup = {
@@ -27,14 +36,14 @@ export function applyInnateBonuses(team: Team) {
       bonuses: [],
     };
 
-    for (const elmt of resonances) {
-      const bonus = AUTO_RESONANCE_STATS[elmt];
+    for (const elmt of autoRsnElmts) {
+      const bonus = AUTO_RESONANCE_BONUSES[elmt];
 
       rsnGroup.bonuses.push({
         type: "ATTR",
         groupId,
         value: bonus.value,
-        toStat: bonus.key,
+        toStat: bonus.stat,
       });
     }
 
@@ -166,13 +175,14 @@ function applyMemberInnateBonus(
 }
 
 // TODO move to backend as innate team buffs
-const AUTO_RESONANCE_STATS: Record<string, { key: AttributeStat; value: number }> = {
-  pyro: { key: "atk_", value: 25 },
-  geo: { key: "shieldS_", value: 15 },
-  hydro: { key: "hp_", value: 25 },
-  dendro: { key: "em", value: 50 },
+const AUTO_RESONANCE_BONUSES: Record<AutoRsnElmtType, { stat: AttributeStat; value: number }> = {
+  pyro: { stat: "atk_", value: 25 },
+  geo: { stat: "shieldS_", value: 15 },
+  hydro: { stat: "hp_", value: 25 },
+  dendro: { stat: "em", value: 50 },
 };
 
+// TODO move to backend
 // if (this.members.has(26)) {
 //   // "Tartaglia"
 //   tltSpecs.push({
