@@ -9,7 +9,7 @@ import { TeamAssembler } from "./TeamAssembler";
 import { TimelineView } from "./TimelineView";
 import { TopBar } from "./Topbar";
 
-const containerCls = "w-80 p-4 bg-dark-1 rounded-md shrink-0";
+const containerCls = "p-4 bg-dark-1 rounded-md shrink-0";
 
 export function Simulator() {
   const phase = useSimulatorStore((state) => state.phase);
@@ -25,10 +25,10 @@ export function Simulator() {
         !isEmpty && <TeamAssembler className="grow" />
       ) : (
         <div className="p-4 grow flex gap-4 hide-scrollbar">
-          <ActiveMemberView className={containerCls} />
-          <EventLauncher className={containerCls} />
-          <TimelineView className={containerCls} />
-          <AnalyticsView className={containerCls} />
+          <ActiveMemberView className={["w-78", containerCls]} />
+          <EventLauncher className={['w-88', containerCls]} />
+          <TimelineView className={['w-78', containerCls]} />
+          <AnalyticsView className={['w-72', containerCls]} />
         </div>
       )}
 

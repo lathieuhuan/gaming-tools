@@ -3,7 +3,7 @@ import type { MemberOperations } from "../../models/Team";
 import { triggerWeaponBuffEvent, updateAbilityInputs } from "../../actions/build";
 import { selectMemberInputs, useSimulatorStore } from "../../store";
 
-import { EventTrigger } from "./EventTrigger";
+import { EventTrigger } from "../components/EventTrigger";
 
 type WeaponBuffListProps = {
   memberOps: MemberOperations;

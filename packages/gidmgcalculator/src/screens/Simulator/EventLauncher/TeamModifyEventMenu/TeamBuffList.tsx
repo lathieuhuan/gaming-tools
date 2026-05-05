@@ -1,8 +1,8 @@
 import { parseDescription } from "@/utils/descriptionParsers";
 import { selectProcessor, selectSimulation, useSimulatorStore } from "../../store";
 
-import { EventTrigger } from "./EventTrigger";
 import { triggerTeamBuffEvent, updateTeamInputs } from "../../actions/build";
+import { EventTrigger } from "../components/EventTrigger";
 
 export function TeamBuffList() {
   const team = useSimulatorStore((state) => selectProcessor(state).team);

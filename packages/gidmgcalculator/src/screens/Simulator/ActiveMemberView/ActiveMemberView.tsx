@@ -1,5 +1,5 @@
 import { ComponentType, useState } from "react";
-import { clsx } from "rond";
+import { ClassValue, clsx } from "rond";
 
 import { selectActiveMember, useSimulatorStore } from "../store";
 
@@ -26,7 +26,7 @@ const TABS: ActiveMemberTabItem[] = [
 ];
 
 type ActiveMemberViewProps = {
-  className?: string;
+  className?: ClassValue;
 };
 
 export function ActiveMemberView({ className }: ActiveMemberViewProps) {

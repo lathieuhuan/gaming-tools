@@ -1,5 +1,5 @@
 import { formatNumber, round } from "ron-utils";
-import { clsx } from "rond";
+import { ClassValue, clsx } from "rond";
 
 import type { Member } from "@/screens/Simulator/models/Member";
 import { EHitLogType } from "../models/SimulationProcessor";
@@ -11,7 +11,7 @@ type MemberDamageCalc = {
 };
 
 type AnalyticsViewProps = {
-  className?: string;
+  className?: ClassValue;
 };
 
 export function AnalyticsView({ className }: AnalyticsViewProps) {

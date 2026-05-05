@@ -1,4 +1,4 @@
-import { clsx } from "rond";
+import { ClassValue, clsx } from "rond";
 
 import { EEventCategory } from "../configs";
 import { selectProcessor, useSimulatorStore } from "../store";
@@ -8,7 +8,7 @@ import { GenshinImage } from "@/components";
 import { MemberEventView } from "./MemberEventView";
 
 type TimelineViewProps = {
-  className?: string;
+  className?: ClassValue;
 };
 
 export function TimelineView({ className }: TimelineViewProps) {
@@ -18,7 +18,7 @@ export function TimelineView({ className }: TimelineViewProps) {
   const onFieldMember = team.onFieldMember;
 
   return (
-    <div className={className}>
+    <div className={clsx(className)}>
       <div className="flex flex-col-reverse gap-2 peer">
         {timeline.map((event) => {
           switch (event.cate) {
