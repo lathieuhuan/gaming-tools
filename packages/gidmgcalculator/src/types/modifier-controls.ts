@@ -1,6 +1,6 @@
 import type { AppArtifact, ArtifactBuff, ArtifactDebuff } from "./app-artifact";
 import type { CharacterBuff, CharacterDebuff } from "./app-character";
-import type { AppTeamBuff } from "./app-team-buff";
+import type { TeamBuffSpec } from "./app-team-buff";
 import type { WeaponBuff } from "./app-weapon";
 import type {
   AmplifyingReaction,
@@ -45,7 +45,7 @@ export type ArtifactBuffCtrl = ArtifactModCtrl<ArtifactBuff>;
 
 export type ArtifactDebuffCtrl = ArtifactModCtrl<ArtifactDebuff>;
 
-export type TeamBuffCtrl = ModifierCtrl<AppTeamBuff>;
+export type TeamBuffCtrl = ModifierCtrl<TeamBuffSpec>;
 
 export type ResonanceModCtrl = {
   element: ElementType;

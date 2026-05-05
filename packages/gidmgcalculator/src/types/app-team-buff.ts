@@ -1,7 +1,8 @@
-import type { BonusSpec, ModifierBaseSpec } from "./modifier-specs";
+import type { BonusSpec, ModifierBaseSpec, TeamConditionSpecs } from "./modifier-specs";
 
-export type AppTeamBuff = ModifierBaseSpec & {
-  src: string;
-  description: string;
-  effects?: BonusSpec | BonusSpec[];
-};
+export type TeamBuffSpec = ModifierBaseSpec &
+  TeamConditionSpecs & {
+    src: string;
+    description: string;
+    effects?: BonusSpec | BonusSpec[];
+  };
