@@ -96,6 +96,10 @@ export class SimulationProcessor {
         this.runMemberEvent(event);
         break;
       }
+      case EEventCategory.TEAM: {
+        // this.runTeamEvent(event);
+        break;
+      }
       case EEventCategory.ENVIRONMENT: {
         // TODO process environment event
         break;

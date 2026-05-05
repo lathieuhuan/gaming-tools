@@ -7,7 +7,7 @@ import { GenshinModifierView } from "@/components";
 type EventTriggerProps = {
   heading: string;
   description?: string;
-  inputs: number[];
+  inputs?: number[];
   inputConfigs?: ModInputSpec[];
   onInputChange: (inputIndex: number, value: number) => void;
   onTrigger: () => void;

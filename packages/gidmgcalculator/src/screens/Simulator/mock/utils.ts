@@ -4,9 +4,9 @@ import { Member } from "@/screens/Simulator/models/Member";
 import { $AppCharacter } from "@/services";
 import { CharacterStateData } from "@/types";
 import IdStore from "@/utils/IdStore";
-import { createMemberInputs } from "../actions/utils";
+import { createMemberInputs, createTeamInputs } from "../actions/utils";
 import { SimulationProcessor } from "../models/SimulationProcessor";
-import { Simulation, SimulationInputs } from "../types";
+import { Simulation, SimulationMemberInputs } from "../types";
 
 export type MemberConfig = Partial<CharacterStateData> & {
   code: number;
@@ -15,12 +15,12 @@ export type MemberConfig = Partial<CharacterStateData> & {
 
 const idStore = new IdStore();
 
-export function createSimulation1(memberConfigs: MemberConfig[]): Simulation {
+export function createSimulationMock(memberConfigs: MemberConfig[]): Simulation {
   const target = new TargetCalc(createTarget({ code: 0 }), Target.DEFAULT_MONSTER);
 
   const memberOrder: number[] = [];
   const members: Map<number, Member> = new Map();
-  const inputs: SimulationInputs = {};
+  const memberInputs: SimulationMemberInputs = {};
 
   for (const config of memberConfigs) {
     const data = $AppCharacter.get(config.code);
@@ -32,7 +32,7 @@ export function createSimulation1(memberConfigs: MemberConfig[]): Simulation {
 
     memberOrder.push(config.code);
     members.set(config.code, member);
-    inputs[config.code] = createMemberInputs(member);
+    memberInputs[config.code] = createMemberInputs(member);
   }
 
   const simulation: Simulation = {
@@ -41,7 +41,8 @@ export function createSimulation1(memberConfigs: MemberConfig[]): Simulation {
     memberOrder,
     timeline: [],
     members,
-    inputs,
+    memberInputs,
+    teamInputs: createTeamInputs(members),
     target,
     processor: new SimulationProcessor(members, target, memberOrder[0]),
   };

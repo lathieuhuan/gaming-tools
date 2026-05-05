@@ -68,10 +68,10 @@ export const selectProcessor = (state: SimulatorState, id?: number) => {
   return selectSimulation(state, id).processor;
 };
 
-export const selectModInputs = (category: ModCategory) => (state: SimulatorState) => {
+export const selectMemberInputs = (category: ModCategory) => (state: SimulatorState) => {
   const simulation = selectSimulation(state);
 
-  return simulation.inputs[simulation.activeMember][category];
+  return simulation.memberInputs[simulation.activeMember][category];
 };
 
 // export const useShallowSimulatorStore = <T>(selector: (state: SimulatorState) => T) => {

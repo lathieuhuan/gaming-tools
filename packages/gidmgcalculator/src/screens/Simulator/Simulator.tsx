@@ -9,7 +9,7 @@ import { TeamAssembler } from "./TeamAssembler";
 import { TimelineView } from "./TimelineView";
 import { TopBar } from "./Topbar";
 
-const containerCls = "w-78 p-4 bg-dark-1 rounded-md shrink-0";
+const containerCls = "w-80 p-4 bg-dark-1 rounded-md shrink-0";
 
 export function Simulator() {
   const phase = useSimulatorStore((state) => state.phase);

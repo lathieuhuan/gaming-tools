@@ -51,6 +51,9 @@ export function TimelineView({ className }: TimelineViewProps) {
                 </div>
               );
             }
+            case EEventCategory.TEAM: {
+              return <div key={event.id}>Team</div>;
+            }
             case EEventCategory.ENVIRONMENT: {
               return <div key={event.id}>Environment</div>;
             }

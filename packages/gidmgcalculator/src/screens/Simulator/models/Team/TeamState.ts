@@ -1,5 +1,6 @@
 import type { Member } from "@/screens/Simulator/models/Member";
 import type {
+  TeamBuffSpec,
   AutoRsnElmtType,
   ElementCount,
   TeamConditionSpecs,
@@ -10,13 +11,15 @@ import type {
 import { PHEC_ELEMENT_TYPES } from "@/constants";
 import { isAutoRsnElmt } from "@/logic/element.logic";
 import { isPassedComparison } from "@/models/utils/isPassedComparison";
+import { $AppData } from "@/services";
 import TypeCounter from "@/utils/TypeCounter";
 
 export class TeamState {
+  elmtCount: ElementCount = new TypeCounter();
   resonances: AutoRsnElmtType[] = [];
   moonsignLv: number = 0;
   witchRiteLv: number = 0;
-  elmtCount: ElementCount = new TypeCounter();
+  teamBuffs: TeamBuffSpec[] = [];
 
   constructor(members: Map<number, Member>) {
     const elmtCount: ElementCount = new TypeCounter();
@@ -56,6 +59,10 @@ export class TeamState {
     });
 
     this.resonances = resonances;
+
+    // ===== Team Buffs =====
+
+    this.teamBuffs = $AppData.teamBuffs.filter((buff) => this.isAvailableEffect(buff));
   }
 
   isTeamElmtValid(condition: TeamElementConditionSpecs) {

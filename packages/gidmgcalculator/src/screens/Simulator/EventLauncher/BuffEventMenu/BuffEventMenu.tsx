@@ -3,6 +3,7 @@ import { selectProcessor, selectSimulation, useSimulatorStore } from "../../stor
 import { EventListLayout } from "../EventListLayout";
 import { AbilityBuffList } from "./AbilityBuffList";
 import { ArtifactBuffList } from "./ArtifactBuffList";
+import { TeamBuffList } from "./TeamBuffList";
 import { WeaponBuffList } from "./WeaponBuffList";
 
 export function BuffEventMenu() {
@@ -12,6 +13,10 @@ export function BuffEventMenu() {
 
   return (
     <div className="space-y-4">
+      <EventListLayout title={"Team"}>
+        <TeamBuffList />
+      </EventListLayout>
+
       <EventListLayout title={"Character"}>
         <AbilityBuffList memberOps={memberOps} />
       </EventListLayout>

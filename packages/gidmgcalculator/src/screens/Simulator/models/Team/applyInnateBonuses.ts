@@ -15,6 +15,7 @@ export function applyInnateBonuses(team: Team) {
   // ===== RESONANCE =====
 
   if (resonances.length > 0) {
+    // TODO extract this id to a constant in common space
     const groupId = "auto-rsn";
     const rsnGroup: BonusGroup = {
       meta: {
@@ -164,6 +165,7 @@ function applyMemberInnateBonus(
   }
 }
 
+// TODO move to backend as innate team buffs
 const AUTO_RESONANCE_STATS: Record<string, { key: AttributeStat; value: number }> = {
   pyro: { key: "atk_", value: 25 },
   geo: { key: "shieldS_", value: 15 },

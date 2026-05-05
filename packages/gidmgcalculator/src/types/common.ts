@@ -50,7 +50,7 @@ export type EnhanceType = "MOONSIGN" | "HEXEREI";
 export type ElementType = (typeof ELEMENT_TYPES)[number];
 
 export type AutoRsnElmtType = "pyro" | "hydro" | "geo" | "dendro";
-export type ManualRsnElmType = "cryo" | "geo" | "dendro";
+export type ManualRsnElmtType = "cryo" | "geo" | "dendro";
 
 export type AttackElement = (typeof ATTACK_ELEMENTS)[number];
 

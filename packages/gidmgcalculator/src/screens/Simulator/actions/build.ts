@@ -5,6 +5,7 @@ import type {
   RawAbilityBuffEvent,
   RawAbilityHitEvent,
   RawArtifactBuffEvent,
+  RawTeamBuffEvent,
   RawWeaponBuffEvent,
 } from "../types";
 
@@ -48,12 +49,26 @@ export function updateAbilityInputs(
   inputsOrSetter: number[] | ((inputs: number[]) => number[])
 ) {
   updateActiveSimulation((simulation) => {
-    const cateInputs = simulation.inputs[simulation.activeMember][category];
+    const cateInputs = simulation.memberInputs[simulation.activeMember][category];
     const inputs = cateInputs[modId] || [];
     const newInputs =
       typeof inputsOrSetter === "function" ? inputsOrSetter(inputs) : inputsOrSetter;
 
     cateInputs[modId] = newInputs;
+  });
+}
+
+export function updateTeamInputs(
+  modId: number,
+  inputsOrSetter: number[] | ((inputs: number[]) => number[])
+) {
+  updateActiveSimulation((simulation) => {
+    const inputs =
+      typeof inputsOrSetter === "function"
+        ? inputsOrSetter(simulation.teamInputs[modId])
+        : inputsOrSetter;
+
+    simulation.teamInputs[modId] = inputs;
   });
 }
 
@@ -138,6 +153,21 @@ export function triggerArtifactBuffEvent(
       id,
       cate: EEventCategory.MEMBER,
       type: EModifyEventType.ARTIFACT_SET_BUFF,
+    });
+
+    return true;
+  });
+}
+
+export function triggerTeamBuffEvent(event: ExactOmit<RawTeamBuffEvent, "id" | "cate" | "type">) {
+  updateActiveSimulation((simulation) => {
+    const id = `${eventId++}`;
+
+    simulation.timeline.push({
+      ...event,
+      id,
+      cate: EEventCategory.TEAM,
+      type: EModifyEventType.TEAM_BUFF,
     });
 
     return true;

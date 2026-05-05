@@ -1,13 +1,20 @@
 import { WritableDraft } from "immer/src/internal.js";
 
 import type { Member } from "../models/Member";
-import type { InputsById, MemberInputs, Simulation, SimulationInputs } from "../types";
+import type {
+  InputsById,
+  MemberInputs,
+  Simulation,
+  SimulationMemberInputs,
+  SimulationTeamInputs,
+} from "../types";
 
 import { createTarget } from "@/logic/entity.logic";
 import { createModCtrlInputs } from "@/logic/modifier.logic";
 import { Target } from "@/models/Target";
 import { TargetCalc } from "@/models/TargetCalc";
 import { SimulationProcessor } from "../models/SimulationProcessor";
+import { TeamState } from "../models/Team";
 import { selectSimulation, SimulatorState, useSimulatorStore } from "../store";
 
 export function createSimulation(id: number = Date.now()) {
@@ -18,7 +25,8 @@ export function createSimulation(id: number = Date.now()) {
     memberOrder: [],
     members: new Map(),
     activeMember: 0,
-    inputs: {},
+    memberInputs: {},
+    teamInputs: {},
     target,
     timeline: [],
     processor: new SimulationProcessor(new Map(), target, 0),
@@ -55,22 +63,34 @@ export function createMemberInputs(member: WritableDraft<Member>): MemberInputs 
   };
 }
 
+export function createTeamInputs(members: Map<number, Member>): SimulationTeamInputs {
+  const teamInputs: SimulationTeamInputs = {};
+  const teamState = new TeamState(members);
+
+  for (const spec of teamState.teamBuffs) {
+    teamInputs[spec.id] = createModCtrlInputs(spec.inputConfigs, true);
+  }
+
+  return teamInputs;
+}
+
 export function resetSimulation(simulation: WritableDraft<Simulation>) {
   const { memberOrder } = simulation;
   const target = simulation.target.clone();
 
   const members = new Map<number, Member>();
-  const inputs: SimulationInputs = {};
+  const memberInputs: SimulationMemberInputs = {};
 
   for (const member of simulation.members.values()) {
     members.set(member.code, member.clone());
-    inputs[member.code] = createMemberInputs(member);
+    memberInputs[member.code] = createMemberInputs(member);
   }
 
   simulation.members = members;
   simulation.activeMember = memberOrder[0];
   simulation.target = target;
-  simulation.inputs = inputs;
+  simulation.memberInputs = memberInputs;
+  simulation.teamInputs = createTeamInputs(members);
   simulation.timeline = [];
   simulation.processor = new SimulationProcessor(members, target, memberOrder[0]);
 }

@@ -189,9 +189,9 @@ describe("Member", () => {
   });
 
   describe("getAttr", () => {
-    test("delegates to AttributeControl.get", () => {
+    test("delegates to AttributeControl.finals.get", () => {
       const member = __createMember();
-      const spy = vi.spyOn(member.attrsCtrl, "get").mockReturnValue(99);
+      const spy = vi.spyOn(member.attrsCtrl.finals, "get").mockReturnValue(99);
 
       expect(member.getAttr("em")).toBe(99);
       expect(spy).toHaveBeenCalledWith("em");

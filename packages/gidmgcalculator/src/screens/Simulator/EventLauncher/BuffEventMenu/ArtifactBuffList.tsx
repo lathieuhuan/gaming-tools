@@ -1,7 +1,7 @@
 import type { MemberOperations } from "../../models/Team";
 
 import { triggerArtifactBuffEvent, updateAbilityInputs } from "../../actions/build";
-import { selectModInputs, useSimulatorStore } from "../../store";
+import { selectMemberInputs, useSimulatorStore } from "../../store";
 
 import { EventTrigger } from "./EventTrigger";
 
@@ -10,7 +10,7 @@ type ArtifactBuffListProps = {
 };
 
 export function ArtifactBuffList({ memberOps }: ArtifactBuffListProps) {
-  const inputsById = useSimulatorStore(selectModInputs("ARTIFACT_BUFF"));
+  const inputsById = useSimulatorStore(selectMemberInputs("ARTIFACT_BUFF"));
 
   const { sets } = memberOps.member.atfGear;
 

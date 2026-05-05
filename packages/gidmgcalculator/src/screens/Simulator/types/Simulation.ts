@@ -7,8 +7,9 @@ import type { Member } from "../models/Member";
 import type { SimulationProcessor } from "../models/SimulationProcessor";
 import type { EnvironmentEvent, RawEnvironmentEvent } from "./EnvironmentEvent";
 import type { MemberEvent, RawMemberEvent } from "./MemberEvent";
+import type { RawTeamEvent, TeamEvent } from "./TeamEvent";
 
-export type DbSimulationEvent = RawMemberEvent | RawEnvironmentEvent;
+export type DbSimulationEvent = RawMemberEvent | RawTeamEvent | RawEnvironmentEvent;
 
 // ===== DB Simulation =====
 
@@ -26,7 +27,9 @@ export type ModCategory = "ABILITY_BUFF" | "WEAPON_BUFF" | "ARTIFACT_BUFF";
 
 export type MemberInputs = Record<ModCategory, InputsById>;
 
-export type SimulationInputs = Record<number, MemberInputs>;
+export type SimulationMemberInputs = Record<number, MemberInputs>;
+
+export type SimulationTeamInputs = Record<string, number[]>;
 
 export type ErrorEvent = {
   id: string;
@@ -34,13 +37,14 @@ export type ErrorEvent = {
   message: string;
 };
 
-export type SimulationEvent = MemberEvent | EnvironmentEvent | ErrorEvent;
+export type SimulationEvent = MemberEvent | TeamEvent | EnvironmentEvent | ErrorEvent;
 
 export type Simulation = ExactOmit<DbSimulation, "members"> & {
   memberOrder: number[];
   members: Map<number, Member>;
   activeMember: number;
-  inputs: SimulationInputs;
+  memberInputs: SimulationMemberInputs;
+  teamInputs: SimulationTeamInputs;
   target: TargetCalc;
   processor: SimulationProcessor;
 };

@@ -6,7 +6,7 @@ import { SimulationList } from "./SimulationList";
 import { startNewSimulation } from "../actions/prepare";
 
 import { CONFIG_1 } from "../mock/simulation1";
-import { createSimulation1 } from "../mock/utils";
+import { createSimulationMock } from "../mock/utils";
 import { Simulation } from "../types";
 import { IS_DEV_ENV } from "@/constants";
 
@@ -26,7 +26,7 @@ export function Sidebar() {
     const simulationsById: Record<string, Simulation> = {};
 
     for (const config of configs) {
-      const simulation = createSimulation1(config.members);
+      const simulation = createSimulationMock(config.members);
 
       managers.push({
         id: simulation.id,
