@@ -40,7 +40,7 @@ export function FinalResultCore() {
   }, [calcItems]);
 
   if (comparedIds.length > 1) {
-    return <FinalResultCompare comparedIds={comparedIds} />;
+    return <FinalResultCompare comparedIds={comparedIds} extraKeys={extraKeys} />;
   }
 
   return (
