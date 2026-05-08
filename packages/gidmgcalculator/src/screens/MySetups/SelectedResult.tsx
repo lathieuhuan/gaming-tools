@@ -18,7 +18,7 @@ type SelectedResultProps = {
 
 export function SelectedResult({ setup, dbSetup }: SelectedResultProps) {
   //
-  const { calcSetup, result } = useMemo(() => {
+  const { calcSetup, result, extraKeys } = useMemo(() => {
     const { teammates } = setup;
     const { data, weapon, atfGear } = setup.main;
 
@@ -73,6 +73,7 @@ export function SelectedResult({ setup, dbSetup }: SelectedResultProps) {
     return {
       calcSetup,
       result,
+      extraKeys: calcSetup.calcItems.map((item) => item.name),
     };
   }, [setup]);
 
@@ -82,7 +83,7 @@ export function SelectedResult({ setup, dbSetup }: SelectedResultProps) {
         <p className="text-sm text-center truncate">{setup.name}</p>
       </div>
       <div className="mt-2 grow hide-scrollbar">
-        <FinalResultView character={calcSetup.main} finalResult={result} />
+        <FinalResultView character={calcSetup.main} finalResult={result} extraKeys={extraKeys} />
       </div>
 
       <SetupModals setupName={setup.name} setup={calcSetup} />
