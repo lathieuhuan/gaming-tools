@@ -1,6 +1,6 @@
 import type { MemberOperations } from "../../models/Team";
 
-import { triggerArtifactBuffEvent, updateAbilityInputs } from "../../actions/build";
+import { triggerArtifactBuffEvent, updateMemberInputs } from "../../actions/build";
 import { selectMemberInputs, useSimulatorStore } from "../../store";
 
 import { EventTrigger } from "../components/EventTrigger";
@@ -15,7 +15,7 @@ export function ArtifactBuffList({ memberOps }: ArtifactBuffListProps) {
   const { sets } = memberOps.member.atfGear;
 
   const handleInputChange = (modId: number, inputIndex: number, value: number) => {
-    updateAbilityInputs("ARTIFACT_BUFF", modId, (inputs) => {
+    updateMemberInputs("ARTIFACT_BUFF", modId, (inputs) => {
       const newInputs = inputs.length ? [...inputs] : [];
       newInputs[inputIndex] = value;
 

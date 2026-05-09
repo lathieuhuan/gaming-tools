@@ -43,7 +43,7 @@ export function selectMember(code: number) {
   });
 }
 
-export function updateAbilityInputs(
+export function updateMemberInputs(
   category: ModCategory,
   modId: number,
   inputsOrSetter: number[] | ((inputs: number[]) => number[])

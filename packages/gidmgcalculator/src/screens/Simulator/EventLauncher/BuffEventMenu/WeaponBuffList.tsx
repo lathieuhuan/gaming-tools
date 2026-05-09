@@ -1,6 +1,6 @@
 import type { MemberOperations } from "../../models/Team";
 
-import { triggerWeaponBuffEvent, updateAbilityInputs } from "../../actions/build";
+import { triggerWeaponBuffEvent, updateMemberInputs } from "../../actions/build";
 import { selectMemberInputs, useSimulatorStore } from "../../store";
 
 import { EventTrigger } from "../components/EventTrigger";
@@ -15,7 +15,7 @@ export function WeaponBuffList({ memberOps }: WeaponBuffListProps) {
   const { data, refi } = memberOps.member.weapon;
 
   const handleInputChange = (modId: number, inputIndex: number, value: number) => {
-    updateAbilityInputs("WEAPON_BUFF", modId, (inputs) => {
+    updateMemberInputs("WEAPON_BUFF", modId, (inputs) => {
       const newInputs = inputs.length ? [...inputs] : [];
       newInputs[inputIndex] = value;
 

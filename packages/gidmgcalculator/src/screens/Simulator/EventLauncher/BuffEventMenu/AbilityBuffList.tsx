@@ -1,6 +1,6 @@
 import type { MemberOperations } from "../../models/Team";
 
-import { triggerAbilityBuffEvent, updateAbilityInputs } from "../../actions/build";
+import { triggerAbilityBuffEvent, updateMemberInputs } from "../../actions/build";
 import { selectMemberInputs, useSimulatorStore } from "../../store";
 
 import { EventTrigger } from "../components/EventTrigger";
@@ -15,7 +15,7 @@ export function AbilityBuffList({ memberOps }: AbilityBuffListProps) {
   const { data } = memberOps.member;
 
   const handleInputChange = (modId: number, inputIndex: number, value: number) => {
-    updateAbilityInputs("ABILITY_BUFF", modId, (inputs) => {
+    updateMemberInputs("ABILITY_BUFF", modId, (inputs) => {
       const newInputs = inputs.length ? [...inputs] : [];
       newInputs[inputIndex] = value;
 
