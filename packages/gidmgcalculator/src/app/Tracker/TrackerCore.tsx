@@ -40,10 +40,10 @@ export function TrackerCore({ trackerState }: TrackerCoreProps) {
   const charLv = activeSetup.main.bareLv;
   const totalDefReduct = target.getReduction("def").value;
 
-  const renderDefMultiplier = (talent: AttackPattern | "WP") => {
+  const renderDefMultiplier = (talent: AttackPattern | "WP" | "XTRA") => {
     const totalDefIgnore =
       attkBonusCtrl.get("defIgn_", ["all"]) +
-      (talent === "WP" ? 0 : attkBonusCtrl.get("defIgn_", [talent]));
+      (talent === "WP" || talent === "XTRA" ? 0 : attkBonusCtrl.get("defIgn_", [talent]));
 
     return (
       <div className="flex items-center">
@@ -120,11 +120,25 @@ export function TrackerCore({ trackerState }: TrackerCoreProps) {
         />
       ),
     },
-    {
-      heading: "Reactions",
-      body: <CalcItemTracker resultGroup={result.RXN} attkBonusCtrl={attkBonusCtrl} forReactions />,
-    },
   ];
+
+  if (Object.keys(result.XTRA).length) {
+    collapseItems.push({
+      heading: "Extra",
+      body: (
+        <CalcItemTracker
+          resultGroup={result.XTRA}
+          attkBonusCtrl={attkBonusCtrl}
+          defMultDisplay={renderDefMultiplier("XTRA")}
+        />
+      ),
+    });
+  }
+
+  collapseItems.push({
+    heading: "Reactions",
+    body: <CalcItemTracker resultGroup={result.RXN} attkBonusCtrl={attkBonusCtrl} forReactions />,
+  });
 
   if (Object.keys(result.WP).length) {
     collapseItems.push({

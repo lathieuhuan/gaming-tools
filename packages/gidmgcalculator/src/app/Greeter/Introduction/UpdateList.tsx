@@ -1,4 +1,5 @@
 import { Update } from "@/services";
+import domPurify from "dompurify";
 
 type UpdateListProps = {
   className?: string;
@@ -32,7 +33,7 @@ const typeToCls: Record<string, string> = {
 };
 
 function parseContent(content: string) {
-  return content.replace(/\{[a-zA-Z0-9ã _'"-]+\}#\[[euf]\]/g, (match) => {
+  return domPurify.sanitize(content).replace(/\{[a-zA-Z0-9ã _'"-]+\}#\[[euf]\]/g, (match) => {
     const [bodyPart, typePart = ""] = match.split("#");
     const body = bodyPart.slice(1, -1);
     const type = typePart?.slice(1, -1);
