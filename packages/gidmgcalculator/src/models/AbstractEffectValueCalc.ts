@@ -1,3 +1,4 @@
+import domPurify from "dompurify";
 import { Array_, round, toMult } from "ron-utils";
 
 import type {
@@ -289,7 +290,7 @@ export abstract class AbstractEffectValueCalc<TPerformer extends TeamMember = Te
   abstract getInitialValue(effect: EffectToGetInitialValue): number;
 
   parseAbilityDesc({ description, effects }: EffectToParseDesc) {
-    return description.replace(/\{.+?\}#\[\w*\]/g, (match) => {
+    return domPurify.sanitize(description).replace(/\{.+?\}#\[\w*\]/g, (match) => {
       let [body, type = ""] = match.split("#");
       body = body.slice(1, -1);
       type = type.slice(1, -1);

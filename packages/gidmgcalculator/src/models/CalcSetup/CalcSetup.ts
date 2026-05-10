@@ -163,17 +163,17 @@ export class CalcSetup extends CalcSetupBase {
     }
 
     if (nicole instanceof Character) {
-      return nicole.state.EB;
+      return nicole.getFinalTalentLv("EB");
     }
 
     return undefined;
   }
 
   private getNicoleEBFactor(level: number): number | undefined {
-    let factor = 125 + level * 12.5;
+    let factor = 90 + level * 9;
 
     if (level > 10) {
-      factor += (level - 10) * 2.5;
+      factor += (level - 10) * 1.8;
     }
 
     return factor;
