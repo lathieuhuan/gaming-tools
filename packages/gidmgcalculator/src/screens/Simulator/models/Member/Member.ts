@@ -13,7 +13,6 @@ import type {
   QuickenReaction,
   RawCharacter,
 } from "@/types";
-import type { TalentLevelBonus } from "./types";
 
 import { CORE_STAT_TYPES } from "@/constants";
 import { FlatGetters } from "@/decorators/FlatGetters.decorator";
@@ -24,14 +23,11 @@ import { AttributeControl } from "./AttributeControl";
 import { BonusControl } from "./BonusControl";
 import { MemberState } from "./MemberState";
 
-type LevelBonusControl = Map<string, TalentLevelBonus>;
-
 export type MemberConstructOptions = {
   state?: Partial<CharacterStateData>;
   atfGear?: ArtifactGear;
   attrsCtrl?: AttributeControl;
   bonusCtrl?: BonusControl;
-  lvBonusCtrl?: LevelBonusControl;
 };
 
 export type MemberCloneOptions = MemberConstructOptions & {
@@ -50,7 +46,6 @@ export class Member implements Clonable<Member>, Serializable<RawCharacter> {
 
   attrsCtrl: AttributeControl;
   bonusCtrl: BonusControl;
-  lvlBonusCtrl: LevelBonusControl;
 
   declare level: Level;
   declare NAs: number;
@@ -74,7 +69,6 @@ export class Member implements Clonable<Member>, Serializable<RawCharacter> {
     const {
       atfGear = new ArtifactGear(),
       attrsCtrl = new AttributeControl(),
-      lvBonusCtrl = new Map(),
       bonusCtrl = new BonusControl(),
     } = options;
 
@@ -87,7 +81,6 @@ export class Member implements Clonable<Member>, Serializable<RawCharacter> {
 
     this.attrsCtrl = attrsCtrl;
     this.bonusCtrl = bonusCtrl;
-    this.lvlBonusCtrl = lvBonusCtrl;
   }
 
   // ===== GETTERS =====
@@ -95,15 +88,8 @@ export class Member implements Clonable<Member>, Serializable<RawCharacter> {
   getTotalXtraTalentLv(talentType: LevelableTalentType): number {
     const requiredConsLv = this.data.talentLvBonus?.[talentType];
     const extraLvByCons = requiredConsLv !== undefined && this.cons >= requiredConsLv ? 3 : 0;
-    let totalLvBonus = 0;
 
-    this.lvlBonusCtrl.forEach((bonus) => {
-      if (bonus.toType === talentType) {
-        totalLvBonus += bonus.value;
-      }
-    });
-
-    return extraLvByCons + totalLvBonus;
+    return extraLvByCons + this.bonusCtrl.totalTllvBonus(talentType);
   }
 
   getFinalTalentLv(talent: LevelableTalentType) {
@@ -145,14 +131,12 @@ export class Member implements Clonable<Member>, Serializable<RawCharacter> {
   initCalculation() {
     this.attrsCtrl.init(this);
     this.bonusCtrl = new BonusControl();
-    this.lvlBonusCtrl.clear();
 
     return this;
   }
 
   resetCalculation() {
     this.bonusCtrl.reset();
-    this.lvlBonusCtrl.clear();
 
     return this;
   }
@@ -193,7 +177,6 @@ export class Member implements Clonable<Member>, Serializable<RawCharacter> {
       atfGear = this.atfGear,
       attrsCtrl = this.attrsCtrl,
       bonusCtrl = this.bonusCtrl,
-      lvBonusCtrl = this.lvlBonusCtrl,
     } = options;
 
     return new Member(this.code, this.data, weapon, {
@@ -201,7 +184,6 @@ export class Member implements Clonable<Member>, Serializable<RawCharacter> {
       atfGear,
       attrsCtrl,
       bonusCtrl,
-      lvBonusCtrl,
     });
   }
 

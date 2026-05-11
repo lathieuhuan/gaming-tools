@@ -4,6 +4,7 @@ import type {
   AttackBonusType,
   ExclusiveAttackBonus,
   ExclusiveAttackBonusGroup,
+  LevelableTalentType,
   TalentCalcItemBonusId,
 } from "@/types";
 import type {
@@ -13,6 +14,7 @@ import type {
   BonusGroup,
   BonusGroupId,
   BonusGroupMeta,
+  TalentLevelBonus,
 } from "./types";
 
 type InternalBonusGroup = BonusGroup & {
@@ -23,6 +25,8 @@ type BonusGroupsById = Map<BonusGroupId, InternalBonusGroup>;
 
 export type GetBonusPaths = Array<AttackBonusType | null | undefined | false>;
 
+type TalentLvBonusRecord = Partial<Record<LevelableTalentType, TalentLevelBonus[]>>;
+
 type AttributeBonusRecord = Partial<Record<AllAttributeStat, AttributeBonus[]>>;
 
 type AttackBonusRecord = Partial<Record<AttackBonusType, AttackBonus[]>>;
@@ -31,11 +35,14 @@ export class BonusControl {
   innateGroups: BonusGroupsById = new Map();
   groups: BonusGroupsById = new Map();
 
+  tllvRecord: TalentLvBonusRecord = {};
   attrRecord: AttributeBonusRecord = {};
   attkRecord: AttackBonusRecord = {};
 
   static bonusId(bonus: Bonus) {
     switch (bonus.type) {
+      case "TLLV":
+        return `${bonus.groupId}-TL-${bonus.toType}`;
       case "ATTR":
         return `${bonus.groupId}-${bonus.toStat}`;
       case "ATTK":
@@ -44,6 +51,27 @@ export class BonusControl {
         bonus satisfies never;
         return "";
     }
+  }
+
+  // ===== ARRANGE BONUSES =====
+
+  private updateTllvBonus(bonus: TalentLevelBonus) {
+    const current = this.tllvRecord[bonus.toType] || [];
+    let updated = false;
+
+    for (const item of current) {
+      if (item.groupId === bonus.groupId) {
+        item.value = bonus.value;
+        updated = true;
+        break;
+      }
+    }
+
+    if (!updated) {
+      current.push(bonus);
+    }
+
+    this.tllvRecord[bonus.toType] = current;
   }
 
   private updateAttrBonus(bonus: AttributeBonus) {
@@ -84,21 +112,11 @@ export class BonusControl {
     this.attkRecord[bonus.toType] = current;
   }
 
-  private _add(meta: BonusGroupMeta, bonus: Bonus) {
-    const id = BonusControl.bonusId(bonus);
-    const current = this.groups.get(meta.id) || { meta, ids: new Set(), bonuses: [] };
-
-    if (current.ids.has(id)) {
-      return;
-    }
-
-    current.ids.add(id);
-    current.bonuses.push(bonus);
-    this.groups.set(meta.id, current);
-  }
-
   private arrangeBonus(bonus: Bonus) {
     switch (bonus.type) {
+      case "TLLV":
+        this.updateTllvBonus(bonus);
+        break;
       case "ATTR":
         this.updateAttrBonus(bonus);
         break;
@@ -110,6 +128,8 @@ export class BonusControl {
         break;
     }
   }
+
+  // ===== INNATE BONUSES =====
 
   /** Does not add if bonus already exists by id (constructed from bonus object) */
   addInnateBonus(meta: BonusGroupMeta, bonus: Bonus) {
@@ -158,6 +178,21 @@ export class BonusControl {
     });
   }
 
+  // ===== BONUSES =====
+
+  private _add(meta: BonusGroupMeta, bonus: Bonus) {
+    const id = BonusControl.bonusId(bonus);
+    const current = this.groups.get(meta.id) || { meta, ids: new Set(), bonuses: [] };
+
+    if (current.ids.has(id)) {
+      return;
+    }
+
+    current.ids.add(id);
+    current.bonuses.push(bonus);
+    this.groups.set(meta.id, current);
+  }
+
   /** Update if already exists */
   addAttrBonus(meta: BonusGroupMeta, bonus: AttributeBonus) {
     bonus = { ...bonus };
@@ -172,6 +207,14 @@ export class BonusControl {
 
     this._add(meta, bonus);
     this.updateAttkBonus(bonus);
+  }
+
+  // ===== GETTERS =====
+
+  totalTllvBonus(type: LevelableTalentType) {
+    const bonuses = this.tllvRecord[type] || [];
+
+    return bonuses.reduce((total, bonus) => total + bonus.value, 0);
   }
 
   totalAttrBonus(key: AllAttributeStat, fixedOnly = true) {

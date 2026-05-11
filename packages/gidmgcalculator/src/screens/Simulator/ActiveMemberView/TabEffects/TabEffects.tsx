@@ -7,8 +7,13 @@ export function TabEffects() {
   const innateBonusGroups = Array.from(bonusCtrl.innateGroups.values());
   const bonusGroups = Array.from(bonusCtrl.groups.values());
 
+  const handleDoubleClick = () => {
+    console.info(innateBonusGroups);
+    console.info(bonusGroups);
+  };
+
   return (
-    <div className="space-y-2">
+    <div className="space-y-2" onDoubleClick={handleDoubleClick}>
       {innateBonusGroups.map(({ meta, bonuses }) => {
         return (
           <div key={meta.id} className="p-2 rounded-sm bg-dark-2">

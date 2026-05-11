@@ -16,7 +16,8 @@ export type BonusGroupMeta = {
 };
 
 export type TalentLevelBonus = {
-  id: string;
+  type: "TLLV";
+  groupId: BonusGroupId;
   value: number;
   toType: LevelableTalentType;
 };
@@ -37,7 +38,7 @@ export type AttackBonus = {
   toKey: AttackBonusKey;
 };
 
-export type Bonus = AttributeBonus | AttackBonus;
+export type Bonus = AttributeBonus | AttackBonus | TalentLevelBonus;
 
 export type BonusGroup = {
   meta: BonusGroupMeta;

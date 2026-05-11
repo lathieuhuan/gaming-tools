@@ -7,7 +7,13 @@ import type {
   BonusTargetSpec,
   ModAffectType,
 } from "@/types";
-import type { Bonus, BonusGroup, BonusGroupMeta } from "../Member";
+import type {
+  AttackBonus,
+  AttributeBonus,
+  BonusGroup,
+  BonusGroupMeta,
+  TalentLevelBonus,
+} from "../Member";
 import type { Team } from "./Team";
 import type { MemberOperations } from "./types";
 
@@ -19,38 +25,42 @@ export function applyInnateBonuses(team: Team) {
   const { memberList } = team;
   const { elmtCount } = team.state;
 
-  // ===== RESONANCE =====
-
-  const autoRsnElmts = elmtCount.keys.filter(isAutoRsnElmt);
-
-  if (autoRsnElmts.length > 0) {
-    // TODO extract this id to a constant in common space
+  {
+    // ===== RESONANCE =====
     const groupId = "auto-rsn";
-    const rsnGroup: BonusGroup = {
-      meta: {
-        id: groupId,
-        src: "Resonance",
-        innate: true,
-        affect: "PARTY",
-      },
-      bonuses: [],
-    };
+    const bonuses: AttributeBonus[] = [];
 
-    for (const elmt of autoRsnElmts) {
-      const bonus = AUTO_RESONANCE_BONUSES[elmt];
+    elmtCount.forEach((elmt, count) => {
+      if (isAutoRsnElmt(elmt) && count >= 2) {
+        const bonus = AUTO_RESONANCE_BONUSES[elmt];
 
-      rsnGroup.bonuses.push({
-        type: "ATTR",
-        groupId,
-        value: bonus.value,
-        toStat: bonus.stat,
-      });
-    }
+        bonuses.push({
+          type: "ATTR",
+          groupId,
+          value: bonus.value,
+          toStat: bonus.stat,
+        });
+      }
+    });
 
-    for (const member of memberList) {
-      member.bonusCtrl.addInnateBonusGroup(rsnGroup);
+    if (bonuses.length > 0) {
+      const rsnGroup: BonusGroup = {
+        meta: {
+          id: groupId,
+          src: "Resonance",
+          innate: true,
+          affect: "PARTY",
+        },
+        bonuses,
+      };
+
+      for (const member of memberList) {
+        member.bonusCtrl.addInnateBonusGroup(rsnGroup);
+      }
     }
   }
+
+  // ===== INNATE BUFFS =====
 
   for (const member of memberList) {
     const { weapon, atfGear } = member;
@@ -82,32 +92,32 @@ export function applyInnateBonuses(team: Team) {
 
         applyMemberInnateBonus(meta, memberOps, bareBonus, spec.target, affect);
       }
+
+      // TODO apply dynamic bonuses
     }
 
-    // ===== WEAPON BONUSES =====
-    {
+    weaponBonuses: {
       const { data } = weapon;
+      if (!data.bonuses) break weaponBonuses;
 
-      if (data.bonuses) {
-        const meta: BonusGroupMeta = {
-          id: `c${code}-w${data.code}-i`,
-          src: `${name} / ${data.name}`,
-          innate: true,
-        };
+      const meta: BonusGroupMeta = {
+        id: `c${code}-w${data.code}-i`,
+        src: `${name} / ${data.name}`,
+        innate: true,
+      };
 
-        for (const spec of data.bonuses) {
-          const bareBonus = memberOps.act.performBonus(spec, { refi: weapon.refi });
+      for (const spec of data.bonuses) {
+        const bareBonus = memberOps.act.performBonus(spec, { refi: weapon.refi });
 
-          applyMemberInnateBonus(meta, memberOps, bareBonus, spec.target, spec.affect);
-        }
+        applyMemberInnateBonus(meta, memberOps, bareBonus, spec.target, spec.affect);
       }
     }
 
     // ===== ARTIFACT BONUSES =====
-    atfGear.forEachSetBonus((specs, set) => {
+    atfGear.forEachSetBonus((specs, { data }) => {
       const meta: BonusGroupMeta = {
-        id: `c${code}-a${set.data.code}-i`,
-        src: `${name} / ${set.data.name}`,
+        id: `c${code}-a${data.code}-i`,
+        src: `${name} / ${data.name}`,
         innate: true,
       };
 
@@ -135,14 +145,25 @@ function applyMemberInnateBonus(
   const groupId = meta.id;
 
   switch (target.module) {
-    case "TLT":
+    case "TLT": {
+      const bonus: TalentLevelBonus = {
+        type: "TLLV",
+        groupId,
+        toType: target.path,
+        value: bareBonus.value,
+      };
+
+      for (const recipient of recipients) {
+        recipient.bonusCtrl.addInnateBonus(meta, bonus);
+      }
       break;
+    }
     case "ATTR": {
       for (const path of Array_.toArray(target.path)) {
         const toStat = memberOps.act.resolveBonusTargetPath(path);
         if (!toStat) continue;
 
-        const bonus: Bonus = {
+        const bonus: AttributeBonus = {
           type: "ATTR",
           groupId,
           toStat,
@@ -158,7 +179,7 @@ function applyMemberInnateBonus(
     }
     default: {
       for (const module of Array_.toArray(target.module)) {
-        const bonus: Bonus = {
+        const bonus: AttackBonus = {
           type: "ATTK",
           groupId,
           toType: module,
@@ -181,47 +202,3 @@ const AUTO_RESONANCE_BONUSES: Record<AutoRsnElmtType, { stat: AttributeStat; val
   hydro: { stat: "hp_", value: 25 },
   dendro: { stat: "em", value: 50 },
 };
-
-// TODO move to backend
-// if (this.members.has(26)) {
-//   // "Tartaglia"
-//   tltSpecs.push({
-//     meta: {
-//       id: "c26-i",
-//       src: "Tartaglia / Ultility Passive",
-//       innate: true,
-//       affect: "PARTY",
-//     },
-//     ownerCode: 26,
-//     spec: {
-//       id: "c26-i",
-//       value: 1,
-//       target: { module: "TLT", path: "NAs" },
-//     },
-//   });
-// }
-
-// if (this.members.has(105)) {
-//   // "Skirk"
-//   const isValid = this.state.isTeamElmtValid({
-//     teamOnlyElmts: ["hydro", "cryo"],
-//     teamEachElmtCount: { hydro: 1, cryo: 1 },
-//   });
-
-//   if (isValid) {
-//     tltSpecs.push({
-//       meta: {
-//         id: "c105-i",
-//         src: "Skirk / Ultility Passive",
-//         innate: true,
-//         affect: "PARTY",
-//       },
-//       ownerCode: 105,
-//       spec: {
-//         id: "c105-i",
-//         value: 1,
-//         target: { module: "TLT", path: "ES" },
-//       },
-//     });
-//   }
-// }

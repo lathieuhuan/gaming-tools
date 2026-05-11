@@ -15,30 +15,35 @@ export function BonusList({ bonuses }: BonusListProps) {
     <div className="space-y-1 text-sm">
       {bonuses.map((bonus, index) => {
         switch (bonus.type) {
-          case "ATTR": {
+          case "TLLV":
             return (
               <div key={index} className="flex gap-2">
-                <div>{t(bonus.toStat)}</div>
-                <div className="text-bonus">
-                  {round(bonus.value, 1)}
+                <span>{t(bonus.toType)}</span>
+                <span className="text-bonus">+{round(bonus.value, 1)}</span>
+              </div>
+            );
+          case "ATTR":
+            return (
+              <div key={index} className="flex gap-2">
+                <span>{t(bonus.toStat)}</span>
+                <span className="text-bonus">
+                  +{round(bonus.value, 1)}
                   {suffixOf(bonus.toStat)}
-                </div>
+                </span>
               </div>
             );
-          }
-          case "ATTK": {
+          case "ATTK":
             return (
               <div key={index} className="flex gap-2">
-                <div>
+                <span>
                   {t(bonus.toType)} {">"} {t(bonus.toKey)}
-                </div>
-                <div className="text-bonus">
-                  {round(bonus.value, 2)}
+                </span>
+                <span className="text-bonus">
+                  +{round(bonus.value, 2)}
                   {suffixOf(bonus.toKey)}
-                </div>
+                </span>
               </div>
             );
-          }
           default: {
             bonus satisfies never;
             return null;

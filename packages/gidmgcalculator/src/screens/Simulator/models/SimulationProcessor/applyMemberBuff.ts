@@ -20,7 +20,6 @@ export function applyMemberBuff(
   }
 
   const { member, team } = performerOps;
-
   const specCates = categorizeBonusSpecs(Array_.toArray(specs), performerOps.can, tools?.inputs);
 
   if (!specCates) {
