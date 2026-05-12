@@ -27,8 +27,6 @@ describe("Member", () => {
       expect(member.atfGear).toBeInstanceOf(ArtifactGear);
       expect(member.attrsCtrl).toBeInstanceOf(AttributeControl);
       expect(member.bonusCtrl).toBeInstanceOf(BonusControl);
-      expect(member.lvlBonusCtrl).toBeInstanceOf(Map);
-      expect(member.lvlBonusCtrl.size).toBe(0);
     });
 
     test("sets isTraveler when character name ends with Traveler", () => {
@@ -50,7 +48,7 @@ describe("Member", () => {
       expect(otherMember.isTraveler).toBe(false);
     });
 
-    test("uses injected AttributeControl, BonusControl, lvlBonusCtrl, and ArtifactGear when provided", () => {
+    test("uses injected AttributeControl, BonusControl, and ArtifactGear when provided", () => {
       const data = $AppCharacter.get(CharacterMock.PYRO_SWORD_HEXEREI);
       if (!data) {
         throw new Error("Test setup requires populated $AppCharacter");
@@ -59,19 +57,16 @@ describe("Member", () => {
       const atfGear = new ArtifactGear();
       const attrsCtrl = new AttributeControl();
       const bonusCtrl = new BonusControl();
-      const lvBonusCtrl = new Map([["b", { id: "b", value: 2, toType: "NAs" as const }]]);
 
       const member = new Member(data.code, data, weapon, {
         state: { level: "20/40", NAs: 4 },
         atfGear,
         attrsCtrl,
         bonusCtrl,
-        lvBonusCtrl,
       });
 
       expect(member.attrsCtrl).toBe(attrsCtrl);
       expect(member.bonusCtrl).toBe(bonusCtrl);
-      expect(member.lvlBonusCtrl).toBe(lvBonusCtrl);
       expect(member.atfGear).toBe(atfGear);
       expect(member.state.NAs).toBe(4);
     });
@@ -120,24 +115,20 @@ describe("Member", () => {
       expect(lowCons.getTotalXtraTalentLv("ES")).toBe(0);
       expect(highCons.getTotalXtraTalentLv("ES")).toBe(3);
     });
-
-    test("sums lvlBonusCtrl entries whose toType matches the requested talent", () => {
-      const member = __createMember();
-      member.lvlBonusCtrl.set("a", { id: "a", value: 2, toType: "EB" });
-      member.lvlBonusCtrl.set("b", { id: "b", value: 1, toType: "EB" });
-      member.lvlBonusCtrl.set("c", { id: "c", value: 5, toType: "NAs" });
-
-      expect(member.getTotalXtraTalentLv("EB")).toBe(3);
-    });
   });
 
   describe("getFinalTalentLv", () => {
-    test("returns displayed talent level plus extra levels from cons and lvlBonusCtrl", () => {
+    test("returns displayed talent level plus extra levels from cons and tllv bonuses", () => {
       const member = __createMember({
         dataPatch: { talentLvBonus: { NAs: 1 } },
       });
       member.state.update({ NAs: 10, cons: 1 });
-      member.lvlBonusCtrl.set("x", { id: "x", value: 2, toType: "NAs" });
+      member.bonusCtrl.addInnateBonus(bonusMeta("x"), {
+        type: "TLLV",
+        groupId: "x",
+        value: 2,
+        toType: "NAs",
+      });
 
       expect(member.getFinalTalentLv("NAs")).toBe(15);
     });
@@ -199,7 +190,7 @@ describe("Member", () => {
   });
 
   describe("initCalculation", () => {
-    test("reinitializes attrs, replaces BonusControl, clears lvlBonusCtrl, and returns this", () => {
+    test("reinitializes attrs, replaces BonusControl, and returns this", () => {
       const member = __createMember({ level: "80/90" });
       const prevBonus = member.bonusCtrl;
       member.bonusCtrl.addAttrBonus(bonusMeta("pre"), {
@@ -208,7 +199,6 @@ describe("Member", () => {
         value: 1,
         toStat: "em",
       });
-      member.lvlBonusCtrl.set("old", { id: "old", value: 9, toType: "NAs" });
 
       const initSpy = vi.spyOn(member.attrsCtrl, "init");
 
@@ -218,12 +208,11 @@ describe("Member", () => {
       expect(initSpy).toHaveBeenCalledWith(member);
       expect(member.bonusCtrl).not.toBe(prevBonus);
       expect(member.bonusCtrl.groups.size).toBe(0);
-      expect(member.lvlBonusCtrl.has("old")).toBe(false);
     });
   });
 
   describe("resetCalculation", () => {
-    test("resets BonusControl, clears lvlBonusCtrl, and returns this", () => {
+    test("calls BonusControl.reset and returns this", () => {
       const member = __createMember();
       member.bonusCtrl.addAttrBonus(bonusMeta("pre"), {
         type: "ATTR",
@@ -231,7 +220,6 @@ describe("Member", () => {
         value: 5,
         toStat: "em",
       });
-      member.lvlBonusCtrl.set("x", { id: "x", value: 2, toType: "NAs" });
 
       const resetSpy = vi.spyOn(member.bonusCtrl, "reset");
       const prevBonus = member.bonusCtrl;
@@ -241,8 +229,6 @@ describe("Member", () => {
       expect(ret).toBe(member);
       expect(member.bonusCtrl).toBe(prevBonus);
       expect(resetSpy).toHaveBeenCalled();
-      expect(member.bonusCtrl.groups.size).toBe(0);
-      expect(member.lvlBonusCtrl.size).toBe(0);
     });
   });
 

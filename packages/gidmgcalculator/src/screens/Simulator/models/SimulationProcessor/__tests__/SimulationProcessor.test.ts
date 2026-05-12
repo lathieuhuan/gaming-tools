@@ -94,6 +94,8 @@ describe("SimulationProcessor", () => {
         performer: CharacterMock.PYRO_SWORD_HEXEREI,
         talent: "NA",
         index: 0,
+        forcedElmt: null,
+        reaction: null,
       };
 
       processor.runAbilityHitEvent(event);
@@ -110,7 +112,7 @@ describe("SimulationProcessor", () => {
       expect(log.attElmt).toBeDefined();
     });
 
-    test("passes optional element and reaction through to the hit log", () => {
+    test("passes optional forced element and reaction through to the hit log", () => {
       const processor = createTwoMemberProcessor(CharacterMock.PYRO_SWORD_HEXEREI);
       const event: RawAbilityHitEvent = {
         id: "ah-2",
@@ -119,7 +121,7 @@ describe("SimulationProcessor", () => {
         performer: CharacterMock.PYRO_SWORD_HEXEREI,
         talent: "ES",
         index: 0,
-        attElmt: "pyro",
+        forcedElmt: "pyro",
         reaction: "melt",
       };
 
@@ -437,6 +439,8 @@ describe("SimulationProcessor", () => {
         performer: CharacterMock.HYDRO_CATALYST,
         talent: "NA",
         index: 0,
+        forcedElmt: null,
+        reaction: null,
       };
 
       processor.runMemberEvent(si);
@@ -458,6 +462,8 @@ describe("SimulationProcessor", () => {
         performer: CharacterMock.PYRO_SWORD_HEXEREI,
         talent: "NA",
         index: 0,
+        forcedElmt: null,
+        reaction: null,
       };
       const second: RawAbilityHitEvent = {
         id: "tl-ah-2",
@@ -466,6 +472,8 @@ describe("SimulationProcessor", () => {
         performer: CharacterMock.PYRO_SWORD_HEXEREI,
         talent: "NA",
         index: 0,
+        forcedElmt: null,
+        reaction: null,
       };
 
       processor.runTimeline([first]);
@@ -484,6 +492,8 @@ describe("SimulationProcessor", () => {
         performer: CharacterMock.PYRO_SWORD_HEXEREI,
         talent: "NA",
         index: 0,
+        forcedElmt: null,
+        reaction: null,
       };
       const timeline: DbSimulationEvent[] = [ah];
 
@@ -503,6 +513,8 @@ describe("SimulationProcessor", () => {
         performer: CharacterMock.PYRO_SWORD_HEXEREI,
         talent: "NA",
         index: 0,
+        forcedElmt: null,
+        reaction: null,
       };
       const replaced: RawAbilityHitEvent = {
         ...initial,

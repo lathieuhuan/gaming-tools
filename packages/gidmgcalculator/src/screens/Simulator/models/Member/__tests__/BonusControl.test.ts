@@ -291,6 +291,46 @@ describe("BonusControl", () => {
       expect(bc.totalAttkBonus("pct_", ["NA"])).toBe(6);
     });
 
+    test("updates tllvRecord and totalTllvBonus for innate TLLV bonuses", () => {
+      const bc = new BonusControl();
+      bc.addInnateBonus(meta("t1"), {
+        type: "TLLV",
+        groupId: "g1",
+        value: 2,
+        toType: "EB",
+      });
+      bc.addInnateBonus(meta("t2"), {
+        type: "TLLV",
+        groupId: "g2",
+        value: 3,
+        toType: "EB",
+      });
+
+      expect(bc.totalTllvBonus("EB")).toBe(5);
+      expect(bc.totalTllvBonus("NAs")).toBe(0);
+      expect(bc.tllvRecord.EB).toHaveLength(2);
+    });
+
+    test("stores TLLV in innateGroups with bonus id groupId-TL-toType", () => {
+      const bc = new BonusControl();
+      const m = meta("talent-innate");
+      bc.addInnateBonus(m, {
+        type: "TLLV",
+        groupId: "ib",
+        value: 3,
+        toType: "NAs",
+      });
+
+      const g = bc.innateGroups.get("talent-innate");
+      expect([...g!.ids]).toEqual(["ib-TL-NAs"]);
+      expect(g?.bonuses[0]).toMatchObject({
+        type: "TLLV",
+        groupId: "ib",
+        value: 3,
+        toType: "NAs",
+      });
+    });
+
     test("accumulates distinct bonus ids for the same meta", () => {
       const bc = new BonusControl();
       const m = meta("multi");
@@ -333,6 +373,34 @@ describe("BonusControl", () => {
       const g = bc.innateGroups.get("dedupe-innate");
       expect(g?.bonuses).toHaveLength(1);
     });
+
+    test("ignores a second innate TLLV call with the same bonus id", () => {
+      const bc = new BonusControl();
+      const m = meta("dedupe-tllv");
+      bc.addInnateBonus(m, {
+        type: "TLLV",
+        groupId: "g",
+        value: 10,
+        toType: "ES",
+      });
+      bc.addInnateBonus(m, {
+        type: "TLLV",
+        groupId: "g",
+        value: 99,
+        toType: "ES",
+      });
+
+      expect(bc.totalTllvBonus("ES")).toBe(10);
+      const g = bc.innateGroups.get("dedupe-tllv");
+      expect(g?.bonuses).toHaveLength(1);
+    });
+  });
+
+  describe("totalTllvBonus", () => {
+    test("returns 0 when no TLLV bonuses exist for the talent type", () => {
+      const bc = new BonusControl();
+      expect(bc.totalTllvBonus("EB")).toBe(0);
+    });
   });
 
   describe("addInnateBonusGroup", () => {
@@ -365,6 +433,20 @@ describe("BonusControl", () => {
 
       expect(bc.totalAttrBonus("em", false)).toBe(20);
       expect(bc.totalAttkBonus("pct_", ["all"])).toBe(15);
+    });
+
+    test("populates tllvRecord from TLLV entries in the group", () => {
+      const bc = new BonusControl();
+      bc.addInnateBonusGroup({
+        meta: meta("tlg"),
+        bonuses: [
+          { type: "TLLV", groupId: "ig", value: 1, toType: "ES" },
+          { type: "TLLV", groupId: "ig2", value: 2, toType: "ES" },
+        ],
+      });
+
+      expect(bc.totalTllvBonus("ES")).toBe(3);
+      expect(bc.innateGroups.get("tlg")?.bonuses).toHaveLength(2);
     });
 
     test("deduplicates bonuses with the same id within the group", () => {
@@ -420,6 +502,30 @@ describe("BonusControl", () => {
       expect(bc.groups.size).toBe(0);
       expect(bc.totalAttrBonus("em", false)).toBe(0);
       expect(bc.totalAttkBonus("pct_", ["all"])).toBe(0);
+      expect(bc.tllvRecord).toEqual({});
+    });
+
+    test("clears dynamic attr and attk but restores innate TLLV via totalTllvBonus after reset", () => {
+      const bc = new BonusControl();
+      bc.addInnateBonus(meta("nat"), {
+        type: "TLLV",
+        groupId: "k",
+        value: 7,
+        toType: "NAs",
+      });
+      bc.addAttrBonus(meta("dyn"), {
+        type: "ATTR",
+        groupId: "d",
+        value: 50,
+        toStat: "em",
+      });
+
+      expect(bc.totalTllvBonus("NAs")).toBe(7);
+
+      bc.reset();
+
+      expect(bc.totalAttrBonus("em", false)).toBe(0);
+      expect(bc.totalTllvBonus("NAs")).toBe(7);
     });
 
     test("re-applies innate bonuses from addInnateBonus and addInnateBonusGroup after clearing", () => {
