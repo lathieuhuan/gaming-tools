@@ -1,15 +1,17 @@
 import { useState } from "react";
-import { Button, clsx, CollapseSpace } from "rond";
+import { Button, clsx, CollapseSpace, SelectOption, VersatileSelect } from "rond";
 
-import type { AttackElement, AttackReaction, TalentCalcItem } from "@/types";
 import type { Member } from "@/screens/Simulator/models/Member";
+import type { AttackReaction, ElementType, TalentCalcItem } from "@/types";
+import type { ForceAttackElement } from "../../types";
 
+import { ELEMENT_TYPES } from "@/constants";
 import { triggerAbilityHitEvent } from "../../actions/build";
 import { TalentCalculator } from "../../logic/talentCalc";
 
 type AlterState = {
-  attElmt?: AttackElement;
-  reaction?: AttackReaction;
+  attElmt: ForceAttackElement;
+  reaction: AttackReaction;
 };
 
 type AbilityEventItemProps = {
@@ -34,19 +36,29 @@ export function AbilityEventItem({
 }: AbilityEventItemProps) {
   const { type = "attack" } = item;
 
-  const [alter, setAlter] = useState<AlterState>({});
+  const [alter, setAlter] = useState<AlterState>({
+    attElmt: null,
+    reaction: null,
+  });
 
-  const values = calculator
-    .calcAttackItem(item, alter)
-    .values.map((value) => Math.round(value.average));
+  const { defaultAttElmt, calculate } = calculator.attackCalc(item);
+  const result = calculate(alter);
+  const values = result.values.map((value) => Math.round(value));
 
   const handleTrigger = (item: TalentCalcItem) => {
     triggerAbilityHitEvent({
       performer: performer.data.code,
       talent: calculator.talent,
       index,
-      attElmt: alter.attElmt,
+      forcedElmt: alter.attElmt,
       reaction: alter.reaction,
+    });
+  };
+
+  const handleOverrideElementChange = (value: ElementType | "NONE") => {
+    setAlter({
+      ...alter,
+      attElmt: value === "NONE" ? null : value,
     });
   };
 
@@ -74,11 +86,22 @@ export function AbilityEventItem({
       </div>
 
       <CollapseSpace active={active}>
-        <div
-          className="px-2 py-1"
-          onDoubleClick={() => console.info(calculator.calcAttackItem(item, alter))}
-        >
-          <div>{type}</div>
+        <div className="px-2 py-1" onDoubleClick={() => console.info(calculate(alter))}>
+          <div>
+            {type} {defaultAttElmt} {result.attElmt} {result.attPatt} {result.reaction}
+          </div>
+
+          <div className="flex items-center gap-2">
+            <span>Override Element</span>
+            <VersatileSelect
+              title="Override Element"
+              className="w-22"
+              options={OVERRIDE_ELEMENT_OPTIONS}
+              value={alter.attElmt ?? "NONE"}
+              onChange={handleOverrideElementChange}
+            />
+          </div>
+
           <div className="flex justify-end">
             <Button
               size="small"
@@ -94,3 +117,16 @@ export function AbilityEventItem({
     </div>
   );
 }
+
+const OVERRIDE_ELEMENT_OPTIONS = ELEMENT_TYPES.reduce<SelectOption<ElementType | "NONE">[]>(
+  (acc, element) => {
+    acc.push({
+      label: element.charAt(0).toUpperCase() + element.slice(1),
+      value: element,
+      className: "capitalize",
+    });
+
+    return acc;
+  },
+  [{ label: "None", value: "NONE" }]
+);

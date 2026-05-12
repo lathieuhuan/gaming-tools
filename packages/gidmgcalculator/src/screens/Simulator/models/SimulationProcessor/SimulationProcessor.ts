@@ -7,10 +7,13 @@ import type {
   RawMemberEvent,
   RawModifyEvent,
   RawSwitchInEvent,
+  RawTeamBuffEvent,
+  RawTeamEvent,
   SimulationEvent,
 } from "../../types";
 import type { BonusGroupMeta, Member } from "../Member";
 
+import { $AppData } from "@/services";
 import { EEventCategory, EHitEventType, EModifyEventType } from "../../configs";
 import { talentCalc } from "../../logic/talentCalc";
 import { Team } from "../Team";
@@ -161,11 +164,11 @@ export class SimulationProcessor {
     const item = performer.data.calcList[event.talent][event.index];
 
     const calculator = talentCalc(performer, this.target, event.talent);
-    const result = calculator.calcAttackItem(item, {
-      attElmt: event.attElmt,
+    const result = calculator.attackCalc(item).calculate({
+      attElmt: event.forcedElmt,
       reaction: event.reaction,
     });
-    const value = result.values.reduce((acc, value) => acc + Math.round(value.average), 0);
+    const value = result.values.reduce((acc, value) => acc + Math.round(value), 0);
 
     this.hitLogs.push({
       type: EHitLogType.MEMBER,
@@ -314,5 +317,47 @@ export class SimulationProcessor {
       item,
       buff,
     });
+  }
+
+  // # Team Event
+  runTeamEvent(event: RawTeamEvent) {
+    switch (event.type) {
+      case EModifyEventType.TEAM_BUFF: {
+        this.runTeamBuffEvent(event);
+        break;
+      }
+      case EHitEventType.TEAM_HIT: {
+        // TODO process team hit event
+        break;
+      }
+      default:
+        event satisfies never;
+    }
+  }
+
+  // ## Team Buff Event
+  runTeamBuffEvent(event: RawTeamBuffEvent) {
+    const { team } = this;
+    const buff = $AppData.teamBuffs.find((buff) => buff.id === event.modId);
+
+    if (!buff) {
+      this.timeline.push({
+        id: event.id,
+        cate: EEventCategory.ERROR,
+        message: `Team buff not found: ${event.modId}`,
+      });
+      return;
+    }
+
+    if (!team.state.isAvailableEffect(buff)) {
+      this.timeline.push({
+        id: event.id,
+        cate: EEventCategory.ERROR,
+        message: `Team buff not valid: ${buff.src}`,
+      });
+      return;
+    }
+
+    // TODO apply team buff
   }
 }

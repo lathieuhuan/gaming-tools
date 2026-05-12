@@ -1,6 +1,5 @@
 import { Array_ } from "ron-utils";
 
-import type { CalcResultAttackItem } from "@/calculation/types";
 import type {
   AppCharacter,
   AttackElement,
@@ -11,14 +10,14 @@ import type {
 } from "@/types";
 
 import { ResultRecorder } from "@/calculation/core/ResultRecorder";
-import { Member } from "@/screens/Simulator/models/Member";
 import { TargetCalc } from "@/models/TargetCalc";
+import { Member } from "@/screens/Simulator/models/Member";
 import { makeAttackItemCalc } from "./makeAttackItemCalc";
 
 type AlterConfig = {
   attPatt?: AttackPattern;
-  attElmt?: AttackElement;
-  reaction?: AttackReaction;
+  attElmt: AttackElement | null;
+  reaction: AttackReaction;
 };
 
 export function talentCalc(performer: Member, target: TargetCalc, expectAttPatt: AttackPattern) {
@@ -61,53 +60,57 @@ export function talentCalc(performer: Member, target: TargetCalc, expectAttPatt:
     return item.jointFactors ? [bases.reduce((acc, base) => acc + base, 0)] : bases;
   }
 
-  function calcAttackItem(item: TalentCalcItem, alter: AlterConfig): CalcResultAttackItem {
-    const attPatt = alter.attPatt || item.attPatt || defaultValues.attPatt;
-    let attElmt: AttackElement;
-    const reaction = alter.reaction;
+  function attackCalc(item: TalentCalcItem) {
+    let defaultAttElmt: AttackElement;
 
     switch (item.attElmt) {
       case "absorb":
-        attElmt = alter.attElmt || "anemo";
+        defaultAttElmt = "anemo";
         break;
 
       case undefined:
-        if (isESorEB) {
-          attElmt = alter.attElmt || vision;
-        } else if (weaponType === "catalyst" || item.subAttPatt === "FCA") {
-          attElmt = vision;
-        } else {
-          attElmt = alter.attElmt || "phys";
-        }
+        defaultAttElmt =
+          isESorEB || weaponType === "catalyst" || item.subAttPatt === "FCA" ? vision : "phys";
         break;
 
       default:
-        attElmt = item.attElmt;
+        defaultAttElmt = item.attElmt;
         break;
     }
 
-    const recorder = new ResultRecorder(
-      {
-        exclusives: performer.bonusCtrl.collectExclusiveBonuses(item.id),
-      },
-      true
-    );
+    function calculate(alter?: AlterConfig) {
+      const attPatt = alter?.attPatt || item.attPatt || defaultValues.attPatt;
+      const attElmt: AttackElement = alter?.attElmt || defaultAttElmt;
+      const reaction = alter?.reaction;
 
-    const { getBonus, calculate } = makeAttackItemCalc(performer, target, {
-      attElmt,
-      attPatt,
-      reaction,
-      itemId: item.id,
-    });
+      const recorder = new ResultRecorder(
+        {
+          exclusives: performer.bonusCtrl.collectExclusiveBonuses(item.id),
+        },
+        true
+      );
 
-    const bases = getBases(item, getBonus("mult_"), recorder);
+      const { getBonus, calculate } = makeAttackItemCalc(performer, target, {
+        attElmt,
+        attPatt,
+        reaction,
+        itemId: item.id,
+      });
 
-    return calculate(bases, recorder);
+      const bases = getBases(item, getBonus("mult_"), recorder);
+
+      return calculate(bases, recorder);
+    }
+
+    return {
+      defaultAttElmt,
+      calculate,
+    };
   }
 
   return {
     talent: expectAttPatt,
-    calcAttackItem,
+    attackCalc,
   };
 }
 

@@ -1,7 +1,6 @@
 import { toMult } from "ron-utils";
 
 import type { ResultRecorder } from "@/calculation/core/ResultRecorder";
-import type { CalcResultAttackItem, CalcResultItemValue } from "@/calculation/types";
 import type { TargetCalc } from "@/models";
 import type {
   ActualAttackPattern,
@@ -10,6 +9,7 @@ import type {
   AttackReaction,
   TalentCalcItemBonusId,
 } from "@/types";
+import type { CalcResultAttackItem } from "../types";
 
 import { limitCRate } from "@/logic/stat.logic";
 import { Member } from "@/screens/Simulator/models/Member";
@@ -81,18 +81,19 @@ export function makeAttackItemCalc(
     // CRITS
     const cRate_ = limitCRate(performer.getAttr("cRate_") + getBonus("cRate_")) / 100;
     const cDmg_ = (performer.getAttr("cDmg_") + getBonus("cDmg_")) / 100;
-    const cDmgMult = 1 + cDmg_;
-    const averageMult = 1 + cRate_ * cDmg_;
+    // const cDmgMult = 1 + cDmg_;
+    // const averageMult = 1 + cRate_ * cDmg_;
 
-    const values = bases.map<CalcResultItemValue>((value) => {
+    const values = bases.map((value) => {
       const base =
         (value * baseMult + flat) * bonusMult * specMult * elvMult * rxnMult * defMult * resMult;
 
-      return {
-        base,
-        crit: base * cDmgMult,
-        average: base * averageMult,
-      };
+      return base;
+      // return {
+      //   base,
+      //   crit: base * cDmgMult,
+      //   average: base * averageMult,
+      // };
     });
 
     recorder.record({
@@ -109,9 +110,9 @@ export function makeAttackItemCalc(
     });
 
     return {
-      exclusiveBonusId: itemId,
-      type: "attack",
       values,
+      cRate: cRate_,
+      cDmg: cDmg_,
       attElmt,
       attPatt,
       reaction,

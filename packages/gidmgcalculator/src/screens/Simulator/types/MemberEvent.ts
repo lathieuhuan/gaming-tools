@@ -3,13 +3,13 @@ import type {
   AppCharacter,
   AppWeapon,
   ArtifactBuff,
-  AttackElement,
   AttackPattern,
   AttackReaction,
   CharacterBuff,
   WeaponBuff,
 } from "@/types";
 import type { EEventCategory, EHitEventType, EModifyEventType } from "../configs";
+import type { ForceAttackElement } from "./calculation";
 
 type MemberEventCore = {
   id: string;
@@ -106,8 +106,8 @@ type AbilityHitEventBase = {
   type: EHitEventType.ABILITY_HIT;
   talent: AttackPattern;
   index: number; // temporary works as id of the hit
-  attElmt?: AttackElement;
-  reaction?: AttackReaction;
+  forcedElmt: ForceAttackElement;
+  reaction: AttackReaction;
 };
 
 export type RawAbilityHitEvent = RawMemberEventBase & AbilityHitEventBase;
