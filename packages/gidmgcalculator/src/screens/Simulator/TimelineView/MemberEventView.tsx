@@ -7,17 +7,15 @@ type MemberEventViewProps = {
 };
 
 export function MemberEventView({ event }: MemberEventViewProps) {
-  const { performer } = event;
-
   switch (event.type) {
     case "SI": {
       return <div>Take the field</div>;
     }
 
     case EHitEventType.ABILITY_HIT: {
-      const config = performer.calcList[event.talent][event.index];
+      const { spec } = event;
 
-      return <div>{config.name}</div>;
+      return <div>{spec.name}</div>;
     }
 
     case EHitEventType.REACTION_HIT: {

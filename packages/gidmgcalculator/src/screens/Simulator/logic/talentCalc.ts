@@ -91,8 +91,8 @@ export function talentCalc(performer: Member, target: TargetCalc, expectAttPatt:
       );
 
       const { getBonus, calculate } = makeAttackItemCalc(performer, target, {
-        attElmt,
         attPatt,
+        attElmt,
         reaction,
         itemId: item.id,
       });

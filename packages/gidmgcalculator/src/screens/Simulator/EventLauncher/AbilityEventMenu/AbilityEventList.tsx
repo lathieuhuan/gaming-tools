@@ -3,7 +3,7 @@ import type { Member } from "@/screens/Simulator/models/Member";
 import type { AttackPattern } from "@/types";
 
 import { talentCalc } from "../../logic/talentCalc";
-import { AbilityEventItem } from "./AbilityEventItem";
+import { AttackEventItem } from "./AttackEventItem";
 
 type AbilityEventListProps = {
   className?: string;
@@ -28,20 +28,32 @@ export function AbilityEventList({
   return (
     <div className={className}>
       {calcList.map((item, index) => {
+        const { type = "attack" } = item;
         const active = activeNames.includes(item.name);
 
-        return (
-          <AbilityEventItem
-            key={item.name}
-            performer={member}
-            item={item}
-            active={active}
-            calculator={calculator}
-            onClickHeading={onClickHeading}
-            // Temporary
-            index={index}
-          />
-        );
+        switch (type) {
+          case "attack":
+            return (
+              <AttackEventItem
+                key={item.name}
+                performer={member}
+                item={item}
+                active={active}
+                calculator={calculator}
+                onClickHeading={onClickHeading}
+                // Temporary
+                index={index}
+              />
+            );
+          case "healing":
+            return "healing";
+          case "shield":
+            return "shield";
+          case "other":
+            return "other";
+          default:
+            return null;
+        }
       })}
     </div>
   );

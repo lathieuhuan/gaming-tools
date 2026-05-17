@@ -41,6 +41,11 @@ function atfGearWithTwoPieceSet(code: number) {
   return new ArtifactGear([flower, plume]);
 }
 
+function createProcessor(member: Member) {
+  const members = new Map<number, Member>([[member.code, member]]);
+  return new SimulationProcessor(members, createTargetCalc(), member.code);
+}
+
 function createTwoMemberProcessor(onFieldCode: number) {
   const a = __createMember({ characterCode: CharacterMock.PYRO_SWORD_HEXEREI });
   const b = __createMember({ characterCode: CharacterMock.HYDRO_CATALYST });
@@ -96,6 +101,7 @@ describe("SimulationProcessor", () => {
         index: 0,
         forcedElmt: null,
         reaction: null,
+        isCrit: false,
       };
 
       processor.runAbilityHitEvent(event);
@@ -123,6 +129,7 @@ describe("SimulationProcessor", () => {
         index: 0,
         forcedElmt: "pyro",
         reaction: "melt",
+        isCrit: false,
       };
 
       processor.runAbilityHitEvent(event);
@@ -130,6 +137,32 @@ describe("SimulationProcessor", () => {
       const log = processor.hitLogs[0];
 
       expect(log.reaction).toBe("melt");
+    });
+
+    test("logs higher damage when isCrit is true than when isCrit is false for the same hit", () => {
+      const processorNonCrit = createTwoMemberProcessor(CharacterMock.PYRO_SWORD_HEXEREI);
+      const processorCrit = createTwoMemberProcessor(CharacterMock.PYRO_SWORD_HEXEREI);
+      const nonCrit: RawAbilityHitEvent = {
+        id: "ah-nc",
+        cate: EEventCategory.MEMBER,
+        type: EHitEventType.ABILITY_HIT,
+        performer: CharacterMock.PYRO_SWORD_HEXEREI,
+        talent: "NA",
+        index: 0,
+        forcedElmt: null,
+        reaction: null,
+        isCrit: false,
+      };
+      const crit: RawAbilityHitEvent = {
+        ...nonCrit,
+        id: "ah-c",
+        isCrit: true,
+      };
+
+      processorNonCrit.runAbilityHitEvent(nonCrit);
+      processorCrit.runAbilityHitEvent(crit);
+
+      expect(processorCrit.hitLogs[0].value).toBeGreaterThan(processorNonCrit.hitLogs[0].value);
     });
   });
 
@@ -171,8 +204,7 @@ describe("SimulationProcessor", () => {
           ],
         },
       });
-      const members = new Map([[member.code, member]]);
-      const processor = new SimulationProcessor(members, createTargetCalc(), member.code);
+      const processor = createProcessor(member);
       const event: RawModifyEvent = {
         id: "ab-2",
         cate: EEventCategory.MEMBER,
@@ -211,8 +243,7 @@ describe("SimulationProcessor", () => {
           ],
         },
       });
-      const members = new Map([[member.code, member]]);
-      const processor = new SimulationProcessor(members, createTargetCalc(), member.code);
+      const processor = createProcessor(member);
       const event: RawModifyEvent = {
         id: "ab-3",
         cate: EEventCategory.MEMBER,
@@ -265,8 +296,7 @@ describe("SimulationProcessor", () => {
       });
 
       const member = new Member(character.code, character, weapon);
-      const members = new Map([[member.code, member]]);
-      const processor = new SimulationProcessor(members, createTargetCalc(), member.code);
+      const processor = createProcessor(member);
 
       const event: RawModifyEvent = {
         id: "wb-2",
@@ -303,8 +333,7 @@ describe("SimulationProcessor", () => {
       });
 
       const member = new Member(character.code, character, weapon);
-      const members = new Map([[member.code, member]]);
-      const processor = new SimulationProcessor(members, createTargetCalc(), member.code);
+      const processor = createProcessor(member);
       const finalize = vi.spyOn(processor.team, "finalizeMembers");
 
       processor.runWeaponBuffEvent({
@@ -322,8 +351,7 @@ describe("SimulationProcessor", () => {
   describe("runArtifactSetBuffEvent", () => {
     test("records an error when no equipped set matches itemId", () => {
       const member = __createMember({ characterCode: CharacterMock.PYRO_SWORD_HEXEREI });
-      const members = new Map([[member.code, member]]);
-      const processor = new SimulationProcessor(members, createTargetCalc(), member.code);
+      const processor = createProcessor(member);
       const event: RawArtifactBuffEvent = {
         id: "asb-1",
         cate: EEventCategory.MEMBER,
@@ -348,8 +376,7 @@ describe("SimulationProcessor", () => {
         characterCode: CharacterMock.PYRO_SWORD_HEXEREI,
         atfGear,
       });
-      const members = new Map([[member.code, member]]);
-      const processor = new SimulationProcessor(members, createTargetCalc(), member.code);
+      const processor = createProcessor(member);
       const event: RawArtifactBuffEvent = {
         id: "asb-2",
         cate: EEventCategory.MEMBER,
@@ -406,8 +433,7 @@ describe("SimulationProcessor", () => {
         characterCode: CharacterMock.PYRO_SWORD_HEXEREI,
         atfGear,
       });
-      const members = new Map([[member.code, member]]);
-      const processor = new SimulationProcessor(members, createTargetCalc(), member.code);
+      const processor = createProcessor(member);
       const finalize = vi.spyOn(processor.team, "finalizeMembers");
 
       processor.runArtifactSetBuffEvent({
@@ -441,6 +467,7 @@ describe("SimulationProcessor", () => {
         index: 0,
         forcedElmt: null,
         reaction: null,
+        isCrit: false,
       };
 
       processor.runMemberEvent(si);
@@ -464,6 +491,7 @@ describe("SimulationProcessor", () => {
         index: 0,
         forcedElmt: null,
         reaction: null,
+        isCrit: false,
       };
       const second: RawAbilityHitEvent = {
         id: "tl-ah-2",
@@ -474,6 +502,7 @@ describe("SimulationProcessor", () => {
         index: 0,
         forcedElmt: null,
         reaction: null,
+        isCrit: false,
       };
 
       processor.runTimeline([first]);
@@ -494,6 +523,7 @@ describe("SimulationProcessor", () => {
         index: 0,
         forcedElmt: null,
         reaction: null,
+        isCrit: false,
       };
       const timeline: DbSimulationEvent[] = [ah];
 
@@ -515,6 +545,7 @@ describe("SimulationProcessor", () => {
         index: 0,
         forcedElmt: null,
         reaction: null,
+        isCrit: false,
       };
       const replaced: RawAbilityHitEvent = {
         ...initial,

@@ -163,12 +163,23 @@ export class SimulationProcessor {
     const performer = this.team.getMember(event.performer);
     const item = performer.data.calcList[event.talent][event.index];
 
+    if (item.type && item.type !== "attack") {
+      this.timeline.push({
+        id: event.id,
+        cate: EEventCategory.ERROR,
+        message: `Event is not an attack event: ${event.talent} / ${event.index}`,
+      });
+      return;
+    }
+
     const calculator = talentCalc(performer, this.target, event.talent);
     const result = calculator.attackCalc(item).calculate({
       attElmt: event.forcedElmt,
       reaction: event.reaction,
     });
-    const value = result.values.reduce((acc, value) => acc + Math.round(value), 0);
+
+    let value = result.values.reduce((acc, value) => acc + value, 0);
+    value = Math.round(event.isCrit ? value * (1 + result.cDmg) : value);
 
     this.hitLogs.push({
       type: EHitLogType.MEMBER,
@@ -182,6 +193,7 @@ export class SimulationProcessor {
       ...event,
       type: EHitEventType.ABILITY_HIT,
       performer: performer.data,
+      spec: item,
     });
   }
 

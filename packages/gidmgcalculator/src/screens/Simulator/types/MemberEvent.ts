@@ -6,6 +6,7 @@ import type {
   AttackPattern,
   AttackReaction,
   CharacterBuff,
+  TalentCalcItem,
   WeaponBuff,
 } from "@/types";
 import type { EEventCategory, EHitEventType, EModifyEventType } from "../configs";
@@ -104,15 +105,21 @@ export type HitEvent = AbilityHitEvent | ReactionHitEvent;
 
 type AbilityHitEventBase = {
   type: EHitEventType.ABILITY_HIT;
-  talent: AttackPattern;
-  index: number; // temporary works as id of the hit
   forcedElmt: ForceAttackElement;
   reaction: AttackReaction;
+  isCrit: boolean;
 };
 
-export type RawAbilityHitEvent = RawMemberEventBase & AbilityHitEventBase;
+export type RawAbilityHitEvent = RawMemberEventBase &
+  AbilityHitEventBase & {
+    talent: AttackPattern;
+    index: number; // temporary works as id of the hit
+  };
 
-export type AbilityHitEvent = MemberEventBase & AbilityHitEventBase;
+export type AbilityHitEvent = MemberEventBase &
+  AbilityHitEventBase & {
+    spec: TalentCalcItem;
+  };
 
 // ## Reaction Hit Event
 
