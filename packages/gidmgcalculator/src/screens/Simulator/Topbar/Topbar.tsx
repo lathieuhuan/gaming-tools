@@ -1,10 +1,11 @@
 import { FaPlus } from "react-icons/fa";
+import { TbLayoutSidebar } from "react-icons/tb";
 import { Button } from "rond";
+
 import { startNewSimulation } from "../actions/prepare";
-import { SimulatorPhase } from "../store";
+import { SimulatorPhase, useSimulatorStore } from "../store";
 
 // Components
-import { SidebarButton } from "../components/SidebarButton";
 import { TopbarBuild } from "./TopbarBuild";
 import { TopbarPrep } from "./TopbarPrep";
 
@@ -35,7 +36,11 @@ export function TopBar({ phase, noActiveSimulation }: TopbarProps) {
   return (
     <div className="flex justify-center bg-dark-2">
       <div className="w-full h-16 px-4 flex items-center">
-        <SidebarButton />
+        <Button
+          boneOnly
+          icon={<TbLayoutSidebar className="text-2xl" />}
+          onClick={() => useSimulatorStore.setState({ sidebarOpen: true })}
+        />
         <div className="mx-2 w-px h-6 bg-dark-line" />
         {renderContent()}
       </div>

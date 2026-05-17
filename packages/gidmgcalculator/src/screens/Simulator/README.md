@@ -96,7 +96,7 @@ Simulator/
 │   ├── SimulationProcessor/
 │   └── EffectValueCalcs/
 │
-├── components/                 — small shared UI (e.g. SidebarButton)
+├── components/                 — small shared UI
 ├── Simulator.tsx               — root component, phase switch
 ├── TopBar/                     — general information of the active simulation and actions towards it
 ├── Sidebar/                    — simulation list, simulator actions and settings

@@ -11,4 +11,3 @@ export * from "./TimesSvg";
 export * from "./FancyBackSvg";
 export * from "./PouchSvg";
 export * from "./TrashCanSvg";
-// export * from "./SideBarSvg";
