@@ -180,12 +180,12 @@ describe("Team", () => {
       expect(spyO).toHaveBeenCalledWith();
     });
 
-    test("calls finalizeAttrs on every member after applying innate bonuses", () => {
+    test("calls finalize on every member after applying innate bonuses", () => {
       const tartaglia = __createMember({ characterCode: CharacterMock.TARTAGLIA });
       const other = __createMember({ characterCode: CharacterMock.PYRO_SWORD_HEXEREI });
       const team = new Team([tartaglia, other], tartaglia.code);
-      const spyT = vi.spyOn(tartaglia, "finalizeAttrs");
-      const spyO = vi.spyOn(other, "finalizeAttrs");
+      const spyT = vi.spyOn(tartaglia, "finalize");
+      const spyO = vi.spyOn(other, "finalize");
 
       team.init();
 
@@ -216,12 +216,12 @@ describe("Team", () => {
   });
 
   describe("finalizeMembers", () => {
-    test("calls finalizeAttrs on every member", () => {
+    test("calls finalize on every member", () => {
       const a = __createMember({ characterCode: CharacterMock.PYRO_SWORD_HEXEREI });
       const b = __createMember({ characterCode: CharacterMock.HYDRO_CATALYST });
       const team = new Team([a, b], a.code);
-      const spyA = vi.spyOn(a, "finalizeAttrs");
-      const spyB = vi.spyOn(b, "finalizeAttrs");
+      const spyA = vi.spyOn(a, "finalize");
+      const spyB = vi.spyOn(b, "finalize");
 
       team.finalizeMembers();
 

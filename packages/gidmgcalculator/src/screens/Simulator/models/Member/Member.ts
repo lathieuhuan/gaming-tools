@@ -14,7 +14,13 @@ import type {
   RawCharacter,
 } from "@/types";
 
-import { CORE_STAT_TYPES } from "@/constants";
+import {
+  AMPLIFYING_REACTIONS,
+  CORE_STAT_TYPES,
+  LUNAR_TYPES,
+  QUICKEN_REACTIONS,
+  TRANSFORMATIVE_REACTIONS,
+} from "@/constants";
 import { FlatGetters } from "@/decorators/FlatGetters.decorator";
 
 import { ArtifactGear } from "@/models/ArtifactGear";
@@ -22,6 +28,8 @@ import { Weapon } from "@/models/Weapon";
 import { AttributeControl } from "./AttributeControl";
 import { BonusControl } from "./BonusControl";
 import { MemberState } from "./MemberState";
+import { getRxnBonusesFromEM } from "@/calculation/core/getRxnBonusesFromEM";
+import type { BonusGroupMeta } from "./types";
 
 export type MemberConstructOptions = {
   state?: Partial<CharacterStateData>;
@@ -64,7 +72,7 @@ export class Member implements Clonable<Member>, Serializable<RawCharacter> {
     code: number,
     public data: AppCharacter,
     weapon: Weapon,
-    options: MemberConstructOptions = {}
+    options: MemberConstructOptions = {},
   ) {
     const {
       atfGear = new ArtifactGear(),
@@ -141,7 +149,7 @@ export class Member implements Clonable<Member>, Serializable<RawCharacter> {
     return this;
   }
 
-  finalizeAttrs() {
+  private finalizeAttrs() {
     const finals: AllAttributes = this.attrsCtrl.getCopy();
 
     for (const [stat, bonuses] of Object_.entries(this.bonusCtrl.attrRecord)) {
@@ -160,8 +168,68 @@ export class Member implements Clonable<Member>, Serializable<RawCharacter> {
     }
 
     this.attrsCtrl.finals = finals;
+  }
 
-    return finals;
+  private finalizeBonuses() {
+    const rxnBonuses = getRxnBonusesFromEM(this.getAttr("em"));
+
+    const meta: BonusGroupMeta = {
+      id: "em",
+      src: "Elemental Mastery",
+    };
+
+    if (rxnBonuses.transformative) {
+      for (const rxn of TRANSFORMATIVE_REACTIONS) {
+        this.bonusCtrl.addAttkBonus(meta, {
+          type: "ATTK",
+          groupId: meta.id,
+          toType: rxn,
+          toKey: "pct_",
+          value: rxnBonuses.transformative,
+        });
+      }
+    }
+
+    if (rxnBonuses.lunar) {
+      for (const rxn of LUNAR_TYPES) {
+        this.bonusCtrl.addAttkBonus(meta, {
+          type: "ATTK",
+          groupId: meta.id,
+          toType: rxn,
+          toKey: "pct_",
+          value: rxnBonuses.lunar,
+        });
+      }
+    }
+
+    if (rxnBonuses.amplifying) {
+      for (const rxn of AMPLIFYING_REACTIONS) {
+        this.bonusCtrl.addAttkBonus(meta, {
+          type: "ATTK",
+          groupId: meta.id,
+          toType: rxn,
+          toKey: "pct_",
+          value: rxnBonuses.amplifying,
+        });
+      }
+    }
+
+    if (rxnBonuses.quicken) {
+      for (const rxn of QUICKEN_REACTIONS) {
+        this.bonusCtrl.addAttkBonus(meta, {
+          type: "ATTK",
+          groupId: meta.id,
+          toType: rxn,
+          toKey: "pct_",
+          value: rxnBonuses.quicken,
+        });
+      }
+    }
+  }
+
+  finalize() {
+    this.finalizeAttrs();
+    this.finalizeBonuses();
   }
 
   //
@@ -190,7 +258,7 @@ export class Member implements Clonable<Member>, Serializable<RawCharacter> {
   // ===== STATIC =====
 
   static getTalentMult(scale: number, talentLv: number) {
-    return scale ? TALENT_LV_MULTIPLIERS[scale]?.[talentLv] ?? 0 : 1;
+    return scale ? (TALENT_LV_MULTIPLIERS[scale]?.[talentLv] ?? 0) : 1;
   }
 
   static serialize(character: RawCharacter): RawCharacter {

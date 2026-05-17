@@ -137,7 +137,6 @@ export function AttackEventItem({
             >
               Auto
             </Button>
-            <span className="text-right text-light-hint">???</span>
           </div>
         </div>
       </CollapseSpace>

@@ -232,7 +232,7 @@ describe("Member", () => {
     });
   });
 
-  describe("finalizeAttrs", () => {
+  describe("finalize", () => {
     test("merges attribute bonuses into finals and applies core stat formula", () => {
       const member = __createMember({ level: "80/90" });
       member.attrsCtrl.init(member);
@@ -244,7 +244,7 @@ describe("Member", () => {
         toStat: "em",
       });
 
-      const finals = member.finalizeAttrs();
+      const finals = member.finalize();
 
       expect(finals.get("em")).toBe(baseEm + 100);
       expect(member.attrsCtrl.finals).toBe(finals);
@@ -279,7 +279,7 @@ describe("Member", () => {
         expected.add(stat, base + (base * pct) / 100);
       }
 
-      const finals = member.finalizeAttrs();
+      const finals = member.finalize();
 
       for (const stat of CORE_STAT_TYPES) {
         expect(finals.get(stat)).toBe(expected.get(stat));

@@ -39,6 +39,6 @@ The character's equipped items. Contributes attribute stats to `AttributeControl
 
 2. External bonus sources (abilities, team buffs, etc.) populate `BonusControl` via `addAttrBonus` / `addAttkBonus`.
 
-3. `finalizeAttrs` merges accumulated attribute bonuses into a resolved `finals` snapshot, including core stat scaling (base × percent).
+3. `finalize` merges accumulated attribute bonuses into a resolved `finals` snapshot, including core stat scaling (base × percent).
 
 4. Damage calculations read from `finals` and query `BonusControl` for attack bonuses.

@@ -52,7 +52,7 @@ export class Team implements Clonable<Team> {
     applyInnateBonuses(this);
 
     this.members.forEach((member) => {
-      member.finalizeAttrs();
+      member.finalize();
     });
   }
 
@@ -118,7 +118,7 @@ export class Team implements Clonable<Team> {
 
   finalizeMembers() {
     this.members.forEach((member) => {
-      member.finalizeAttrs();
+      member.finalize();
     });
   }
 

@@ -17,15 +17,15 @@ export function BonusList({ bonuses }: BonusListProps) {
         switch (bonus.type) {
           case "TLLV":
             return (
-              <div key={index} className="flex gap-2">
-                <span>{t(bonus.toType)}</span>
+              <div key={index}>
+                <span>{t(bonus.toType)}</span>{" "}
                 <span className="text-bonus">+{round(bonus.value, 1)}</span>
               </div>
             );
           case "ATTR":
             return (
-              <div key={index} className="flex gap-2">
-                <span>{t(bonus.toStat)}</span>
+              <div key={index}>
+                <span>{t(bonus.toStat)}</span>{" "}
                 <span className="text-bonus">
                   +{round(bonus.value, 1)}
                   {suffixOf(bonus.toStat)}
@@ -34,9 +34,9 @@ export function BonusList({ bonuses }: BonusListProps) {
             );
           case "ATTK":
             return (
-              <div key={index} className="flex gap-2">
+              <div key={index}>
                 <span>
-                  {t(bonus.toType)} {">"} {t(bonus.toKey)}
+                  {t(bonus.toType)} {">"} {t(bonus.toKey)}{" "}
                 </span>
                 <span className="text-bonus">
                   +{round(bonus.value, 2)}

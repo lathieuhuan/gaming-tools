@@ -12,7 +12,7 @@ import type {
 import type { CalcResultAttackItem } from "../types";
 
 import { limitCRate } from "@/logic/stat.logic";
-import { Member } from "@/screens/Simulator/models/Member";
+import { Member } from "../models/Member";
 
 type MakeAttackCalcTools = {
   attElmt?: AttackElement;
@@ -25,7 +25,7 @@ type MakeAttackCalcTools = {
 export function makeAttackItemCalc(
   performer: Member,
   target: TargetCalc,
-  tools: MakeAttackCalcTools = {}
+  tools: MakeAttackCalcTools = {},
 ) {
   const { bonusCtrl, bareLv } = performer;
   const { attElmt = "phys", attPatt = "none", itemId, reaction = null, noU = false } = tools;
@@ -57,7 +57,15 @@ export function makeAttackItemCalc(
     let baseMult = getBonus("baseMult_");
     baseMult = baseMult >= 0 ? toMult(baseMult) : -baseMult / 100;
 
-    const flat = getBonus("flat");
+    let flat = getBonus("flat");
+
+    if (reaction === "aggravate" && attElmt === "electro") {
+      flat += performer.getQuickenDamageBonus("aggravate");
+    }
+    if (reaction === "spread" && attElmt === "dendro") {
+      flat += performer.getQuickenDamageBonus("spread");
+    }
+
     const bonusMult = toMult(getBonus("pct_") + performer.getAttr(attElmt));
     const specMult = toMult(getBonus("specMult_"));
     const elvMult = toMult(getBonus("elvMult_"));
