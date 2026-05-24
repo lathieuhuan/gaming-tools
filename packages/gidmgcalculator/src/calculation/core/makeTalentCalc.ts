@@ -9,6 +9,7 @@ import type {
   ElementType,
   LevelableTalentType,
   LunarType,
+  StellarType,
   TalentCalcItem,
 } from "@/types";
 import type {
@@ -31,7 +32,7 @@ export function makeTalentCalc(
   target: TargetCalc,
   talentType: LevelableTalentType | null,
   default_: CalcItemDefaultValues,
-  alterConfig: AttackAlter = {}
+  alterConfig: AttackAlter = {},
 ) {
   const { attkBonusCtrl } = performer;
   const { vision, weaponType } = performer.data;
@@ -79,7 +80,7 @@ export function makeTalentCalc(
     item: TalentCalcItem,
     itemElmtAlter: ElementType | undefined,
     elmtEvent: ElementalEvent,
-    recorder: ResultRecorder
+    recorder: ResultRecorder,
   ): CalcResultAttackItem {
     const { absorption, absorbReaction, infusion, infuseReaction } = elmtEvent;
 
@@ -151,7 +152,7 @@ export function makeTalentCalc(
   function calcLunarAttackItem(
     item: TalentCalcItem,
     lunar: LunarType,
-    recorder: ResultRecorder
+    recorder: ResultRecorder,
   ): CalcResultAttackItem {
     const attPatt = alterConfig.attPatt || item.attPatt || default_.attPatt;
     const attElmt = LUNAR_ATTACK_ELEMENT[lunar];
@@ -212,17 +213,94 @@ export function makeTalentCalc(
     return {
       type: "attack",
       values,
-      attElmt: lunar,
+      attElmt,
+      attPatt,
+      specPatt: lunar,
+      reaction: null,
+      recorder,
+    };
+  }
+
+  // ===== STELLAR ATTACK ITEM =====
+
+  function calcStellarAttackItem(
+    item: TalentCalcItem,
+    stellar: StellarType,
+    attElmt: AttackElement,
+    recorder: ResultRecorder,
+  ): CalcResultAttackItem {
+    const attPatt = alterConfig.attPatt || item.attPatt || default_.attPatt;
+
+    function getBonus(key: AttackBonusKey) {
+      return attkBonusCtrl.get(key, [
+        stellar,
+        attPatt !== "none" && `${attPatt}.${stellar}`,
+        item.id,
+        // Only get "cRate_" and "cDmg_" bonus from attElmt
+        key === "cRate_" || key === "cDmg_" ? attElmt : null,
+      ]);
+    }
+
+    const extraTalentMult = getBonus("mult_");
+    const bases = getBases(item, extraTalentMult, recorder);
+
+    const baseMult = toMult(getBonus("baseMult_"));
+    const coefficient = 1.9; // TODO
+    const bonusMult = toMult(getBonus("pct_"));
+    const veilMult = toMult(getBonus("veil_"));
+    const flat = getBonus("flat");
+    const specMult = toMult(getBonus("specMult_"));
+    const elvMult = toMult(getBonus("elvMult_"));
+    const resMult = target.resistMults[attElmt];
+
+    // CRITS
+    const cRate_ = limitCRate(performer.getAttr("cRate_") + getBonus("cRate_")) / 100;
+    const cDmg_ = (performer.getAttr("cDmg_") + getBonus("cDmg_")) / 100;
+    const cDmgMult = 1 + cDmg_;
+    const averageMult = 1 + cRate_ * cDmg_;
+
+    const values = bases.map<CalcResultItemValue>((value) => {
+      const core = value * baseMult * coefficient * bonusMult * veilMult + flat;
+      const base = core * specMult * elvMult * resMult;
+
+      return {
+        base,
+        crit: base * cDmgMult,
+        average: base * averageMult,
+      };
+    });
+
+    recorder.record({
+      coefficient,
+      baseMult,
+      bonusMult,
+      veilMult,
+      flat,
+      specMult,
+      elvMult,
+      resMult,
+      cRate_,
+      cDmg_,
+      specPatt: stellar,
+    });
+
+    return {
+      type: "attack",
+      values,
+      attElmt,
+      specPatt: stellar,
       attPatt,
       reaction: null,
       recorder,
     };
   }
 
+  // ===== OTHER ITEM =====
+
   function calcOtherItem(
     type: CalcResultOtherItem["type"],
     item: TalentCalcItem,
-    recorder: ResultRecorder
+    recorder: ResultRecorder,
   ): CalcResultOtherItem {
     const { flatFactor } = item;
 
@@ -244,6 +322,7 @@ export function makeTalentCalc(
   return {
     calcAttackItem,
     calcLunarAttackItem,
+    calcStellarAttackItem,
     calcOtherItem,
   };
 }

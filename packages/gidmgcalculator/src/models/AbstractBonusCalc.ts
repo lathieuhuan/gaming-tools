@@ -15,7 +15,7 @@ import { Team } from "./Team";
 import { AbstractEffectValueCalc, EffectToGetInitialValue } from "./AbstractEffectValueCalc";
 
 export abstract class AbstractBonusCalc<
-  TPerformer extends TeamMember = TeamMember
+  TPerformer extends TeamMember = TeamMember,
 > extends AbstractEffectValueCalc<TPerformer> {
   //
   protected basedOnFixed = false;
@@ -24,7 +24,7 @@ export abstract class AbstractBonusCalc<
   constructor(
     protected performer: TPerformer,
     protected team: Team,
-    { inputs = [], refi = 0, basedOnFixed = false }: Partial<BonusPerformTools>
+    { inputs = [], refi = 0, basedOnFixed = false }: Partial<BonusPerformTools>,
   ) {
     super(performer, team, inputs);
 

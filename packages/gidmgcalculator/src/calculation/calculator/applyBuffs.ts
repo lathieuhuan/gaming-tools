@@ -20,6 +20,7 @@ import {
   ELEMENT_TYPES,
   LUNAR_TYPES,
   QUICKEN_REACTIONS,
+  STELLAR_TYPES,
   TRANSFORMATIVE_REACTIONS,
 } from "@/constants/global";
 import { BonusCalc } from "@/models/Character";
@@ -101,7 +102,7 @@ export function applyBuffs(main: Character, teammates: Teammate[], setup: CalcSe
     performer: TeamMember,
     specs: BuffSpec["effects"] = [],
     support: Omit<Partial<BonusPerformTools>, "basedOnFixed">,
-    isFinalStage?: boolean
+    isFinalStage?: boolean,
   ) {
     for (const spec of Array_.toArray(specs)) {
       // console.log("===========");
@@ -341,9 +342,11 @@ export function applyBuffs(main: Character, teammates: Teammate[], setup: CalcSe
 
   allAttrsCtrl.finalize();
 
-  const rxnBonuses = getRxnBonusesFromEM(main.getAttr("em"));
+  const em = main.getAttr("em");
 
-  if (rxnBonuses.transformative) {
+  if (em) {
+    const rxnBonuses = getRxnBonusesFromEM(em);
+
     for (const rxn of TRANSFORMATIVE_REACTIONS) {
       attkBonusCtrl.add({
         value: rxnBonuses.transformative,
@@ -352,9 +355,7 @@ export function applyBuffs(main: Character, teammates: Teammate[], setup: CalcSe
         label: "From Elemental Mastery",
       });
     }
-  }
 
-  if (rxnBonuses.lunar) {
     for (const rxn of LUNAR_TYPES) {
       attkBonusCtrl.add({
         value: rxnBonuses.lunar,
@@ -363,9 +364,16 @@ export function applyBuffs(main: Character, teammates: Teammate[], setup: CalcSe
         label: "From Elemental Mastery",
       });
     }
-  }
 
-  if (rxnBonuses.amplifying) {
+    for (const rxn of STELLAR_TYPES) {
+      attkBonusCtrl.add({
+        value: rxnBonuses.stellar,
+        toType: rxn,
+        toKey: "pct_",
+        label: "From Elemental Mastery",
+      });
+    }
+
     for (const rxn of AMPLIFYING_REACTIONS) {
       attkBonusCtrl.add({
         value: rxnBonuses.amplifying,
@@ -374,9 +382,7 @@ export function applyBuffs(main: Character, teammates: Teammate[], setup: CalcSe
         label: "From Elemental Mastery",
       });
     }
-  }
 
-  if (rxnBonuses.quicken) {
     for (const rxn of QUICKEN_REACTIONS) {
       attkBonusCtrl.add({
         value: rxnBonuses.quicken,

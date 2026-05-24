@@ -49,6 +49,8 @@ export const LUNAR_REACTIONS = ["lunarCharged", "lunarCryst"] as const;
 
 export const LUNAR_TYPES = [...LUNAR_REACTIONS, "lunarBloom"] as const;
 
+export const STELLAR_TYPES = ["stellarConduct"] as const;
+
 export const AMPLIFYING_REACTIONS = ["melt", "vaporize"] as const;
 
 export const REACTIONS = [

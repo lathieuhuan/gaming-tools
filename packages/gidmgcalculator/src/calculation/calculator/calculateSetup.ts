@@ -46,6 +46,7 @@ export function calculateSetup(setup: CalcSetup, options: CalculateSetupOptions 
     values: [],
     attElmt: "phys",
     attPatt: "none",
+    specPatt: null,
     reaction: null,
     recorder: new ResultRecorder(),
   };
@@ -85,6 +86,16 @@ export function calculateSetup(setup: CalcSetup, options: CalculateSetupOptions 
           resultGroup[calcItem.name] = calculator.calcLunarAttackItem(
             calcItem,
             calcItem.lunar,
+            recorder
+          );
+          continue;
+        }
+
+        if (calcItem.stellar) {
+          resultGroup[calcItem.name] = calculator.calcStellarAttackItem(
+            calcItem,
+            calcItem.stellar,
+            main.data.vision,
             recorder
           );
           continue;

@@ -36,7 +36,7 @@ export function makeReactionCalc(performer: Character, target: TargetCalc) {
 
   function calcLunarReaction(
     reaction: LunarReaction,
-    recorder: ResultRecorder
+    recorder: ResultRecorder,
   ): CalcResultReactionItem {
     const getBonus = (key: AttackBonusKey, paths: GetBonusPaths = []) => {
       return attkBonusCtrl.get(key, [reaction, ...paths]);
@@ -54,8 +54,7 @@ export function makeReactionCalc(performer: Character, target: TargetCalc) {
     const resMult = target.resistMults[attElmt];
 
     const base = (baseValue * baseMult * bonusMult * elvMult + flat) * rxnMult * resMult;
-    const cRate_ =
-      limitCRate(getBonus("cRate_", [attElmt]) + performer.getAttr("cRate_")) / 100;
+    const cRate_ = limitCRate(getBonus("cRate_", [attElmt]) + performer.getAttr("cRate_")) / 100;
     const cDmg_ = (getBonus("cDmg_", [attElmt]) + performer.getAttr("cDmg_")) / 100;
 
     recorder.record({
@@ -87,16 +86,15 @@ export function makeReactionCalc(performer: Character, target: TargetCalc) {
   function calcReaction(
     reaction: TransformativeReaction,
     recorder: ResultRecorder,
-    elmtEvent?: ElementalEvent
+    elmtEvent?: ElementalEvent,
   ): CalcResultReactionItem {
+    const paths: GetBonusPaths = [reaction];
+
     function getBonus(key: AttackBonusKey) {
-      return attkBonusCtrl.get(key, [reaction]);
+      return attkBonusCtrl.get(key, paths);
     }
 
     const config = TRANSFORMATIVE_REACTION_CONFIG[reaction];
-    const baseValue = baseRxnDamage * config.mult;
-    const bonusMult = 1 + getBonus("pct_") / 100;
-    const flat = getBonus("flat");
     let attElmt: AttackElement;
     let rxnMult = 1;
     let resMult = 1;
@@ -107,6 +105,8 @@ export function makeReactionCalc(performer: Character, target: TargetCalc) {
 
         attElmt = elmtEvent.absorption;
         resMult = target.resistMults[attElmt];
+
+        paths.push(`swirl.${elmtEvent.absorption}`);
 
         if (absorbReaction === "melt" || absorbReaction === "vaporize") {
           rxnMult = performer.getAmplifyingMult(absorbReaction, attElmt);
@@ -119,6 +119,9 @@ export function makeReactionCalc(performer: Character, target: TargetCalc) {
       resMult = target.resistMults[config.attElmt];
     }
 
+    const baseValue = baseRxnDamage * config.mult;
+    const bonusMult = 1 + getBonus("pct_") / 100;
+    const flat = getBonus("flat");
     const base = (baseValue * bonusMult + flat) * rxnMult * resMult;
     const cRate_ = limitCRate(getBonus("cRate_")) / 100;
     const cDmg_ = getBonus("cDmg_") / 100;

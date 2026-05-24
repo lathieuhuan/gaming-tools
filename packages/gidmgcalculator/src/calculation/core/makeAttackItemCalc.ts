@@ -27,7 +27,7 @@ type MakeAttackCalcTools = {
 export function makeAttackItemCalc(
   performer: Character,
   target: TargetCalc,
-  tools: MakeAttackCalcTools = {}
+  tools: MakeAttackCalcTools = {},
 ) {
   const { attkBonusCtrl, bareLv } = performer;
   const { attElmt = "phys", attPatt = "none", itemId, reaction = null, noU = false } = tools;
@@ -111,6 +111,7 @@ export function makeAttackItemCalc(
       values,
       attElmt,
       attPatt,
+      specPatt: null,
       reaction,
       recorder,
     };
