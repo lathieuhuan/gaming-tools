@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { clsx } from "rond";
 
-import type { IDbSetup } from "@/types";
+import type { DbSetup } from "@/types";
 import { $AppCharacter } from "@/services";
 import { CharacterPortrait } from "@/components";
 
-export type SetupOptions = Array<Pick<IDbSetup, "ID" | "type" | "name" | "main" | "teammates">>;
+export type SetupOptions = Array<Pick<DbSetup, "ID" | "type" | "name" | "main" | "teammates">>;
 
 type UseCombineManagerArgs = {
   options: SetupOptions;

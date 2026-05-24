@@ -1,5 +1,5 @@
-import type { TeammateCalc, Weapon } from "@/models";
-import type { ITeammateWeapon, IWeaponBuffCtrl } from "@/types";
+import type { Teammate, Weapon } from "@/models";
+import type { TeammateWeapon, WeaponBuffCtrl } from "@/types";
 import type { ModifierHanlders } from "./types";
 
 import { getWeaponBuffDesc } from "@/utils/descriptionParsers";
@@ -10,15 +10,17 @@ type RenderWeaponModifiersArgs = {
   keyPrefix: string | number;
   headingSuffix?: string;
   mutable?: boolean;
-  weapon: Weapon | ITeammateWeapon;
-  ctrls: IWeaponBuffCtrl[];
-  getHanlders?: (ctrl: IWeaponBuffCtrl, ctrls: IWeaponBuffCtrl[]) => ModifierHanlders;
+  forSelf?: boolean;
+  weapon: Weapon | TeammateWeapon;
+  ctrls: WeaponBuffCtrl[];
+  getHanlders?: (ctrl: WeaponBuffCtrl, ctrls: WeaponBuffCtrl[]) => ModifierHanlders;
 };
 
 function renderWeaponModifiers({
   keyPrefix,
   headingSuffix,
   mutable,
+  forSelf,
   weapon,
   ctrls,
   getHanlders,
@@ -27,6 +29,9 @@ function renderWeaponModifiers({
 
   return ctrls.map((ctrl) => {
     const buff = ctrl.data;
+    const undesiredFor = forSelf ? "FOR_TEAM" : "FOR_SELF";
+
+    const inputConfigs = buff.inputConfigs?.filter((config) => config.for !== undesiredFor);
 
     return (
       <GenshinModifierView
@@ -36,7 +41,7 @@ function renderWeaponModifiers({
         heading={`${data.name} R${weapon.refi} / ${headingSuffix}`}
         description={getWeaponBuffDesc(data.descriptions, buff, weapon.refi)}
         inputs={ctrl.inputs}
-        inputConfigs={buff.inputConfigs}
+        inputConfigs={inputConfigs}
         {...getHanlders?.(ctrl, ctrls)}
       />
     );
@@ -46,10 +51,10 @@ function renderWeaponModifiers({
 type WeaponBuffsViewProps = {
   mutable?: boolean;
   weapon: Weapon;
-  wpBuffCtrls: IWeaponBuffCtrl[];
-  teammates: TeammateCalc[];
+  wpBuffCtrls: WeaponBuffCtrl[];
+  teammates: Teammate[];
   getSelfHandlers?: RenderWeaponModifiersArgs["getHanlders"];
-  getTeammateHandlers?: (teammate: TeammateCalc, ctrl: IWeaponBuffCtrl) => ModifierHanlders;
+  getTeammateHandlers?: (teammate: Teammate, ctrl: WeaponBuffCtrl) => ModifierHanlders;
 };
 
 export function WeaponBuffsView({
@@ -66,6 +71,7 @@ export function WeaponBuffsView({
         mutable,
         keyPrefix: "main",
         headingSuffix: "self",
+        forSelf: true,
         weapon,
         ctrls: wpBuffCtrls,
         getHanlders: getSelfHandlers,

@@ -1,4 +1,4 @@
-import type { ITeamBuffCtrl } from "@/types";
+import type { TeamBuffCtrl } from "@/types";
 import type { ControlGroup } from "../types";
 
 import { MS_ASCENDANT_BUFF_ID } from "@/logic/modifier.logic";
@@ -10,11 +10,11 @@ import { toggleModCtrl, updateModCtrlInputs } from "@Store/calculator/utils";
 
 import { GenshinModifierView } from "@/components";
 
-function reorderCtrls(teamBuffCtrls: ITeamBuffCtrl[] = []) {
-  let ascendantCtrl: ITeamBuffCtrl | undefined;
+function reorderCtrls(teamBuffCtrls: TeamBuffCtrl[] = []) {
+  let ascendantCtrl: TeamBuffCtrl | undefined;
 
   const otherCtrls = teamBuffCtrls.filter((ctrl) => {
-    if (ctrl.data.index === MS_ASCENDANT_BUFF_ID) {
+    if (ctrl.data.id === MS_ASCENDANT_BUFF_ID) {
       ascendantCtrl = ctrl;
       return false;
     }
@@ -29,13 +29,13 @@ export function useTeamBuffCtrlGroup(): ControlGroup {
   const reorderedCtrls = reorderCtrls(teamBuffCtrls);
 
   if (reorderedCtrls.length) {
-    const handleToggle = (ctrl: ITeamBuffCtrl) => () => {
+    const handleToggle = (ctrl: TeamBuffCtrl) => () => {
       updateActiveSetup((setup) => {
         setup.teamBuffCtrls = toggleModCtrl(teamBuffCtrls, ctrl.id);
       });
     };
 
-    const handleUpdateInput = (ctrl: ITeamBuffCtrl) => (value: number, inputIndex: number) => {
+    const handleUpdateInput = (ctrl: TeamBuffCtrl) => (value: number, inputIndex: number) => {
       updateActiveSetup((setup) => {
         setup.teamBuffCtrls = updateModCtrlInputs(teamBuffCtrls, ctrl.id, inputIndex, value);
       });
@@ -51,7 +51,7 @@ export function useTeamBuffCtrlGroup(): ControlGroup {
 
             return (
               <GenshinModifierView
-                key={data.index}
+                key={data.id}
                 mutable
                 heading={data.src}
                 description={parseDescription(data.description)}

@@ -3,8 +3,18 @@ import type { AppCharacter, AppWeapon, LunarReaction, TransformativeReaction } f
 
 import { LUNAR_REACTIONS, NORMAL_ATTACKS, TRANSFORMATIVE_REACTIONS } from "@/constants/global";
 
-type TableCalcItemKey = {
-  main: "NAs" | "ES" | "EB" | "WP";
+export type TableCalcItemKey = {
+  main: "NAs" | "ES" | "EB";
+  subs: string[];
+};
+
+type TableWeaponKey = {
+  main: "WP";
+  subs: string[];
+};
+
+type TableExtraItemKey = {
+  main: "XTRA";
   subs: string[];
 };
 
@@ -13,11 +23,12 @@ type TableReactionKey = {
   subs: (TransformativeReaction | LunarReaction)[];
 };
 
-export type TableKey = TableCalcItemKey | TableReactionKey;
+export type TableKey = TableCalcItemKey | TableWeaponKey | TableReactionKey | TableExtraItemKey;
 
 export function getTableKeys(
   calcList: AppCharacter["calcList"],
-  weaponCalcItems?: AppWeapon["calcItems"]
+  weaponCalcItems?: AppWeapon["calcItems"],
+  extraKeys?: string[]
 ): TableKey[] {
   const result: TableKey[] = [
     {
@@ -30,6 +41,13 @@ export function getTableKeys(
     result.push({
       main: attPatt,
       subs: calcList[attPatt].map(({ name }) => name),
+    });
+  }
+
+  if (extraKeys) {
+    result.push({
+      main: "XTRA",
+      subs: extraKeys,
     });
   }
 
@@ -49,7 +67,7 @@ export function getTableKeys(
 }
 
 export const displayValues = (values: CalcResultItemValue[], key: CalcAspect) => {
-  const firstValue = values.at(0)?.[key];
+  const firstValue = values?.at(0)?.[key];
 
   if (firstValue) {
     let result = `${Math.round(firstValue)}`;

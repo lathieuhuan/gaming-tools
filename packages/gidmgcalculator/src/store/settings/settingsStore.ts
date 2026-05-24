@@ -4,13 +4,32 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
 
-import type { Level } from "@/types";
+import type { Level, TravelerConfig } from "@/types";
 import type { AppSettingsState } from "./types";
 
 import { $AppCharacter } from "@/services";
 
 // KEEP THIS STORE CLEAN OF OTHER STORES AND LOGIC
 // IT SHOULD ONLY USE SERVICES AND PURE UTILS
+
+const initialState: AppSettingsState = {
+  traveler: $AppCharacter.DEFAULT_TRAVELER,
+  persistUserData: false,
+  isTabLayout: true,
+  separateCharInfo: false,
+  keepArtStatsOnSwitch: false,
+  askBeforeUnload: true,
+  charLevel: "1/20",
+  charCons: 0,
+  charNAs: 1,
+  charES: 1,
+  charEB: 1,
+  charEnhanced: false,
+  wpLevel: "1/20",
+  wpRefi: 1,
+  artLevel: 0,
+  targetLevel: 1,
+};
 
 // TODO: Remove from here after 1/4/2026
 
@@ -32,48 +51,36 @@ type LegacySettings = {
   targetLevel: number;
 };
 
-const getLegacyPersistState = (): DeepPartial<AppSettingsState> | undefined => {
+const getLegacyPersistState = (): DeepPartial<AppSettingsState> => {
   try {
     const oldPersistAccount = localStorage.getItem("persist:account");
-    const parsedAccount = oldPersistAccount && JSON.parse(oldPersistAccount);
-    const travelerString: string | undefined = parsedAccount?.traveler;
 
-    if (!travelerString) {
-      throw new Error();
+    const parsedAccount: { traveler?: TravelerConfig | string } = oldPersistAccount
+      ? JSON.parse(oldPersistAccount)
+      : {};
+
+    const persistTraveler = parsedAccount.traveler;
+
+    if (!persistTraveler) {
+      return initialState;
     }
 
-    const oldSettings = localStorage.getItem("settings");
-    const parsedSettings: LegacySettings | undefined = oldSettings && JSON.parse(oldSettings);
+    const traveler: TravelerConfig =
+      typeof persistTraveler === "string" ? JSON.parse(persistTraveler) : persistTraveler;
 
-    return {
-      traveler: JSON.parse(travelerString),
+    const oldSettings = localStorage.getItem("settings");
+    const parsedSettings: LegacySettings | null = oldSettings ? JSON.parse(oldSettings) : null;
+
+    return Object_.deepMerge(initialState, {
+      traveler,
       ...parsedSettings,
-    };
-  } catch (error) {
-    return undefined;
+    });
+  } catch {
+    return initialState;
   }
 };
 
 // till here
-
-const initialState: AppSettingsState = {
-  traveler: $AppCharacter.DEFAULT_TRAVELER,
-  persistUserData: false,
-  isTabLayout: true,
-  separateCharInfo: false,
-  keepArtStatsOnSwitch: false,
-  askBeforeUnload: true,
-  charLevel: "1/20",
-  charCons: 0,
-  charNAs: 1,
-  charES: 1,
-  charEB: 1,
-  charEnhanced: false,
-  wpLevel: "1/20",
-  wpRefi: 1,
-  artLevel: 0,
-  targetLevel: 1,
-};
 
 export const useSettingsStore = create<AppSettingsState>()(
   persist(
@@ -82,8 +89,7 @@ export const useSettingsStore = create<AppSettingsState>()(
       name: "storage:settings",
       // TODO: Remove after 1/4/2026
       merge: (persisted, current) => {
-        const persistState =
-          (persisted as AppSettingsState | undefined) || getLegacyPersistState() || initialState;
+        const persistState = (persisted as AppSettingsState | undefined) || getLegacyPersistState();
 
         return Object_.deepMerge(current, persistState);
       },

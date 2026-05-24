@@ -1,11 +1,11 @@
 import type { CalcSetup, Target } from "@/models";
-import type { ISetupManager } from "@/types";
+import type { SetupManager } from "@/types";
 
 export type CalculatorState = {
   activeId: number;
   standardId: number;
   comparedIds: number[];
-  setupManagers: ISetupManager[];
+  setupManagers: SetupManager[];
   setupsById: Record<string, CalcSetup>;
   target: Target;
 };

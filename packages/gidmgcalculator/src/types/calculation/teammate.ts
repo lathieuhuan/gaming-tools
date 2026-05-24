@@ -1,64 +1,50 @@
-import type TypeCounter from "@/utils/TypeCounter";
+import type { Team } from "@/models";
 import type { AppArtifact, ArtifactBuff } from "../app-artifact";
 import type { AppCharacter } from "../app-character";
-import type {
-  EffectPerformableCondition,
-  TeamConditions,
-  TeamElementConditions,
-  TeamMilestoneCondition,
-} from "../app-entity";
 import type { AppWeapon } from "../app-weapon";
-import type { AutoRsnElmtType, ElementCount, ElementType, TalentType } from "../common";
-import type { ITeammateArtifactBasic, ITeammateBasicCore, ITeammateWeaponBasic } from "../entity";
+import type { TeammateArtifactState, TeammateStateData, TeammateWeaponState } from "../entity";
 import type {
-  IAbilityBuffCtrl,
-  IAbilityDebuffCtrl,
-  IModifierCtrl,
-  IWeaponBuffCtrl,
-} from "../modifiers";
+  AbilityBuffCtrl,
+  AbilityDebuffCtrl,
+  ModifierCtrl,
+  WeaponBuffCtrl,
+} from "../modifier-controls";
+import type {
+  BonusCoreSpec,
+  EffectPerformableConditionSpecs,
+  PenaltyCoreSpec,
+} from "../modifier-specs";
+import type { BareBonus, BonusPerformTools } from "./bonus";
 
 // ========== TEAM ==========
 
-export type ITeamMember<TTeam extends ITeam = ITeam> = {
+export type TeamMember = {
   code: number;
   enhanced: boolean;
   data: AppCharacter;
-  joinTeam(team: TTeam): void;
-  canPerformEffect(condition?: EffectPerformableCondition, inputs?: number[]): boolean;
-};
-
-export type ITeam = {
-  members: ITeamMember[];
-  elmtCount: ElementCount;
-  resonances: AutoRsnElmtType[];
-  extraTalentLv: TypeCounter<TalentType>;
-  moonsignLv: number;
-  witchRiteLv: number;
-  checkTeamElmt(condition: TeamElementConditions): boolean;
-  checkTeamProps(condition: TeamMilestoneCondition): boolean;
-  isAvailableEffect(condition?: TeamConditions): boolean;
-  getMixedCount(performerElmt: ElementType): number;
+  joinTeam(team: Team): void;
+  canPerformEffect(condition?: EffectPerformableConditionSpecs, inputs?: number[]): boolean;
+  performBonus(config: BonusCoreSpec, tools: Partial<BonusPerformTools>): BareBonus;
+  performPenalty(config: PenaltyCoreSpec, inputs?: number[]): number;
 };
 
 // ========== TEAMMATE ==========
 
-export type ITeammateWeapon = ITeammateWeaponBasic & {
-  buffCtrls: IWeaponBuffCtrl[];
+export type TeammateWeapon = TeammateWeaponState & {
+  buffCtrls: WeaponBuffCtrl[];
   data: AppWeapon;
 };
 
-export type ITeammateArtifactBuffCtrl = IModifierCtrl<ArtifactBuff>;
+export type TeammateArtifactBuffCtrl = ModifierCtrl<ArtifactBuff>;
 
-export type ITeammateArtifact = ITeammateArtifactBasic & {
-  buffCtrls: ITeammateArtifactBuffCtrl[];
+export type TeammateArtifact = TeammateArtifactState & {
+  buffCtrls: TeammateArtifactBuffCtrl[];
   data: AppArtifact;
 };
 
-export type ITeammateInfo = ITeammateBasicCore & {
-  buffCtrls: IAbilityBuffCtrl[];
-  debuffCtrls: IAbilityDebuffCtrl[];
-  weapon: ITeammateWeapon;
-  artifact?: ITeammateArtifact;
+export type TeammateData = TeammateStateData & {
+  buffCtrls: AbilityBuffCtrl[];
+  debuffCtrls: AbilityDebuffCtrl[];
+  weapon: TeammateWeapon;
+  artifact?: TeammateArtifact;
 };
-
-export type ITeammate<TTeam extends ITeam = ITeam> = ITeammateInfo & ITeamMember<TTeam> & {};

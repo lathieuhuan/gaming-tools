@@ -1,6 +1,7 @@
 import { useState } from "react";
 
-import type { AppCharacter, ITeammate } from "@/types";
+import type { AppCharacter } from "@/types";
+import type { Teammate } from "@/models";
 
 import { ENHANCE_TOUR_SITE_ID } from "@/constants";
 import {
@@ -20,7 +21,7 @@ import {
 } from "@/components";
 
 type TeammateDetailProps = {
-  teammate: ITeammate;
+  teammate: Teammate;
   info: AppCharacter;
 };
 

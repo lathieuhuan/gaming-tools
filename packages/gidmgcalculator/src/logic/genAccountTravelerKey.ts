@@ -5,7 +5,7 @@ import type { TravelerConfig } from "@/types";
 export const genAccountTravelerKey = (config: TravelerConfig) => {
   const activePowerupKeys: string[] = [];
 
-  for (const [key, value] of Object.entries(config.powerups)) {
+  for (const [key, value] of Object.entries(config.powerups || {})) {
     if (value) {
       activePowerupKeys.push(key);
     }

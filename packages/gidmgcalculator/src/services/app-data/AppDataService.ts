@@ -1,6 +1,6 @@
 import { Array_ } from "ron-utils";
 
-import type { AppMonster, AppTeamBuff, ITarget } from "@/types";
+import type { AppMonster, TeamBuffSpec, TargetData } from "@/types";
 import type { AllData } from "./types";
 
 import { $AppArtifact } from "./AppArtifactService";
@@ -10,7 +10,7 @@ import { customFetch } from "./BaseService";
 import { API_URL } from "./url";
 
 class AppDataService {
-  teamBuffs: AppTeamBuff[] = [];
+  teamBuffs: TeamBuffSpec[] = [];
   monsters: AppMonster[] = [];
 
   async fetchAllData() {
@@ -45,7 +45,7 @@ class AppDataService {
     return Array_.findByCode(this.monsters, code);
   }
 
-  getTargetInfo(target: ITarget) {
+  getTargetInfo(target: TargetData) {
     const monster = this.getMonster(target);
     let variant: string | undefined;
     const statuses: string[] = [];

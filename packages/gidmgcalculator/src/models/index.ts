@@ -7,6 +7,5 @@ export * from "./Target";
 export * from "./TargetCalc";
 export * from "./Team";
 export * from "./Teammate";
-export * from "./TeammateCalc";
 export * from "./Weapon";
 

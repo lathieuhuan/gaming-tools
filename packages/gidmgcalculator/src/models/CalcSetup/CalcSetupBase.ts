@@ -3,37 +3,37 @@ import type {
   CustomBuffCtrl,
   CustomDebuffCtrl,
   ElementalEvent,
-  IAbilityBuffCtrl,
-  IAbilityDebuffCtrl,
-  IArtifactBuffCtrl,
-  IArtifactDebuffCtrl,
-  ITeamBuffCtrl,
-  IWeaponBuffCtrl,
+  AbilityBuffCtrl,
+  AbilityDebuffCtrl,
+  ArtifactBuffCtrl,
+  ArtifactDebuffCtrl,
+  TeamBuffCtrl,
+  WeaponBuffCtrl,
   ResonanceModCtrl,
 } from "@/types";
 import type { Character } from "../Character";
 import type { Target } from "../Target";
 import type { Team } from "../Team";
-import type { TeammateCalc } from "../TeammateCalc";
+import type { Teammate } from "../Teammate";
 
-export type CalcSetupBaseConstructInfo = {
+export type CalcSetupBaseConstructData = {
   ID: number;
   main: Character;
-  selfBuffCtrls: IAbilityBuffCtrl[];
-  selfDebuffCtrls: IAbilityDebuffCtrl[];
+  selfBuffCtrls: AbilityBuffCtrl[];
+  selfDebuffCtrls: AbilityDebuffCtrl[];
 
-  wpBuffCtrls: IWeaponBuffCtrl[];
-  artBuffCtrls: IArtifactBuffCtrl[];
-  artDebuffCtrls: IArtifactDebuffCtrl[];
+  wpBuffCtrls: WeaponBuffCtrl[];
+  artBuffCtrls: ArtifactBuffCtrl[];
+  artDebuffCtrls: ArtifactDebuffCtrl[];
 
-  teamBuffCtrls: ITeamBuffCtrl[];
+  teamBuffCtrls: TeamBuffCtrl[];
   rsnBuffCtrls: ResonanceModCtrl[];
   rsnDebuffCtrls: ResonanceModCtrl[];
   elmtEvent: ElementalEvent;
   customBuffCtrls: CustomBuffCtrl[];
   customDebuffCtrls: CustomDebuffCtrl[];
 
-  teammates: TeammateCalc[];
+  teammates: Teammate[];
   team: Team;
   target: Target;
 
@@ -43,27 +43,27 @@ export type CalcSetupBaseConstructInfo = {
 export class CalcSetupBase {
   ID: number;
   main: Character;
-  selfBuffCtrls: IAbilityBuffCtrl[];
-  selfDebuffCtrls: IAbilityDebuffCtrl[];
+  selfBuffCtrls: AbilityBuffCtrl[];
+  selfDebuffCtrls: AbilityDebuffCtrl[];
 
-  wpBuffCtrls: IWeaponBuffCtrl[];
-  artBuffCtrls: IArtifactBuffCtrl[];
-  artDebuffCtrls: IArtifactDebuffCtrl[];
+  wpBuffCtrls: WeaponBuffCtrl[];
+  artBuffCtrls: ArtifactBuffCtrl[];
+  artDebuffCtrls: ArtifactDebuffCtrl[];
 
-  teamBuffCtrls: ITeamBuffCtrl[];
+  teamBuffCtrls: TeamBuffCtrl[];
   rsnBuffCtrls: ResonanceModCtrl[];
   rsnDebuffCtrls: ResonanceModCtrl[];
   elmtEvent: ElementalEvent;
   customBuffCtrls: CustomBuffCtrl[];
   customDebuffCtrls: CustomDebuffCtrl[];
 
-  teammates: TeammateCalc[];
+  teammates: Teammate[];
   team: Team;
   target: Target;
 
   result: CalcResult;
 
-  constructor(info: CalcSetupBaseConstructInfo) {
+  constructor(info: CalcSetupBaseConstructData) {
     this.ID = info.ID;
     this.main = info.main;
     this.selfBuffCtrls = info.selfBuffCtrls;

@@ -1,6 +1,6 @@
 import { Array_, Object_ } from "ron-utils";
 
-import type { ArtifactType, ISetupManager } from "@/types";
+import type { ArtifactType, SetupManager } from "@/types";
 import type { WritableDraft } from "immer/src/internal.js";
 
 import { CalcSetup } from "@/models";
@@ -25,16 +25,19 @@ export const updateSetupAfterSave = (
       return;
     }
 
-    const { weapon, atfGear } = setup.main;
+    const { main } = setup;
+    const { pieces } = setup.main.atfGear;
 
-    weapon.ID = weaponId;
+    main.weapon = main.weapon.clone({ key: { ID: weaponId } });
 
     for (const [type, id] of Object_.entries(newPieceIds)) {
-      const piece = atfGear.pieces.get(type);
+      const piece = pieces.get(type);
 
-      if (piece && id) {
-        piece.ID = id;
+      if (!piece || !id) {
+        continue;
       }
+
+      pieces.set(type, piece?.clone({ key: { ID: id } }));
     }
   });
 };
@@ -88,7 +91,7 @@ export const removeSetup = (removeId: number) => {
   });
 };
 
-export type MultiSetupChange = ISetupManager & {
+export type MultiSetupChange = SetupManager & {
   status: "REMOVED" | "OLD" | "NEW" | "DUPLICATE";
   originId?: number;
   isCompared: boolean;
@@ -98,7 +101,7 @@ export const updateMultiSetups = (changes: MultiSetupChange[], newStandardId: nu
   useCalcStore.setState((state) => {
     const { setupManagers, setupsById, activeId, target } = state;
     const removedIds: number[] = [];
-    const tempManagers: ISetupManager[] = [];
+    const tempManagers: SetupManager[] = [];
 
     // Reset comparedIds before repopulate with changes
     state.comparedIds = [];

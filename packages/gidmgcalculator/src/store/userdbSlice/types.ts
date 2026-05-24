@@ -5,21 +5,21 @@ import type {
   AppCharacter,
   ArtifactSubStat,
   RawArtifact,
-  IDbCharacter,
-  IDbComplexSetup,
-  IDbSetup,
+  DbCharacter,
+  DbComplexSetup,
+  DbSetup,
   RawWeapon,
 } from "@/types";
 
 export type AddUserDatabaseAction = PayloadAction<{
-  characters?: IDbCharacter[];
+  characters?: DbCharacter[];
   weapons?: RawWeapon[];
   artifacts?: RawArtifact[];
-  setups?: (IDbSetup | IDbComplexSetup)[];
+  setups?: (DbSetup | DbComplexSetup)[];
 }>;
 
 export type UpdateDbCharacterAction = PayloadAction<
-  PartiallyRequired<Partial<IDbCharacter>, "code">
+  PartiallyRequired<Partial<DbCharacter>, "code">
 >;
 
 export type UpdateDbArtifactSubStatAction = PayloadAction<
@@ -51,7 +51,7 @@ export type SwitchWeaponAction = PayloadAction<SwitchPayload>;
 
 export type SwitchArtifactAction = PayloadAction<PartiallyOptional<SwitchPayload, "currentId">>;
 
-export type SaveSetupAction = PayloadAction<IDbSetup>;
+export type SaveSetupAction = PayloadAction<DbSetup>;
 
 export type CombineSetupsAction = PayloadAction<{
   name: string;
@@ -69,7 +69,7 @@ export type AddSetupToComplexAction = PayloadAction<{
 }>;
 
 export type AddDbCharacterAction = PayloadAction<
-  PartiallyRequiredOnly<IDbCharacter, "code"> & {
+  PartiallyRequiredOnly<DbCharacter, "code"> & {
     data?: AppCharacter;
   }
 >;

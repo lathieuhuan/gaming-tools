@@ -17,9 +17,12 @@ import { EquipmentRelation } from "../EquipmentRelation";
 import { ArtifactState } from "./ArtifactState";
 
 export type ArtifactConstructOptions = {
+  key?: Partial<ArtifactKey>;
   state?: Partial<ArtifactStateData>;
   relation?: Partial<EquipmentRelationData>;
 };
+
+export type ArtifactCloneOptions = ArtifactConstructOptions;
 
 @FlatGetters("key", ["ID", "code"])
 @FlatGetters("state", ["type", "rarity", "level", "mainStatType", "mainStatValue", "subStats"])
@@ -67,8 +70,10 @@ export class Artifact implements Clonable<Artifact> {
     return Artifact.serialize(this);
   }
 
-  clone(options: ArtifactConstructOptions = {}) {
-    return new Artifact(this.key, this.data, {
+  clone(options: ArtifactCloneOptions = {}) {
+    const key = Object_.patch(this.key, options.key || {});
+
+    return new Artifact(key, this.data, {
       state: {
         ...this.state,
         ...options.state,

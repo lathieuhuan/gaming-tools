@@ -1,13 +1,13 @@
 import { Array_ } from "ron-utils";
 
 import type { TavernSelectedCharacter } from "@/components";
-import type { BasicSetupType, ISetupManager } from "@/types";
+import type { BasicSetupType, SetupManager } from "@/types";
 import type { UserdbState } from "@Store/userdbSlice";
 import type { CalculatorState } from "../types";
 
 import { createCharacter, createWeapon } from "@/logic/entity.logic";
 import { parseDbArtifacts } from "@/logic/userdb.logic";
-import { CalcSetup, CalcSetupConstructInfo } from "@/models";
+import { CalcSetup, CalcSetupConstructData } from "@/models";
 import { $AppCharacter } from "@/services";
 import IdStore from "@/utils/IdStore";
 import { updateSettings } from "@Store/settings";
@@ -76,9 +76,9 @@ type ImportSetupOptions = {
 };
 
 export const importSetup = (
-  params: CalcSetupConstructInfo,
+  params: CalcSetupConstructData,
   /** ID in manageInfo is prioritized over params.ID */
-  manageInfo: Partial<ISetupManager> = {},
+  manageInfo: Partial<SetupManager> = {},
   options: ImportSetupOptions = {}
 ) => {
   const { overwriteChar = false, overwriteTarget = false } = options;

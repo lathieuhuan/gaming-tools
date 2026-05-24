@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 
-import type { IArtifactBuffCtrl, IArtifactDebuffCtrl, IDbSetup } from "@/types";
+import type { ArtifactBuffCtrl, ArtifactDebuffCtrl, DbSetup } from "@/types";
 import type { SetupOverviewInfo } from "./types";
 
 import { calculateSetup } from "@/calculation/calculator";
@@ -13,31 +13,31 @@ import { SetupModals } from "./SetupModals";
 
 type SelectedResultProps = {
   setup: SetupOverviewInfo["setup"];
-  dbSetup: IDbSetup;
+  dbSetup: DbSetup;
 };
 
 export function SelectedResult({ setup, dbSetup }: SelectedResultProps) {
   //
-  const { calcSetup, result } = useMemo(() => {
+  const { calcSetup, result, extraKeys } = useMemo(() => {
     const { teammates } = setup;
     const { data, weapon, atfGear } = setup.main;
 
-    const artBuffCtrls: IArtifactBuffCtrl[] = [];
+    const artBuffCtrls: ArtifactBuffCtrl[] = [];
 
     for (const ctrl of dbSetup.artBuffCtrls) {
       const setData = atfGear.sets.find((set) => set.data.code === ctrl.code)?.data;
-      const data = setData?.buffs?.find((buff) => buff.index === ctrl.id);
+      const data = setData?.buffs?.find((buff) => buff.id === ctrl.id);
 
       if (setData && data) {
         artBuffCtrls.push({ ...ctrl, data, setData });
       }
     }
 
-    const artDebuffCtrls: IArtifactDebuffCtrl[] = [];
+    const artDebuffCtrls: ArtifactDebuffCtrl[] = [];
 
     for (const ctrl of dbSetup.artDebuffCtrls) {
       const setData = $AppArtifact.getSet(ctrl.code)!;
-      const data = setData?.debuffs?.find((debuff) => debuff.index === ctrl.id);
+      const data = setData?.debuffs?.find((debuff) => debuff.id === ctrl.id);
 
       if (setData && data) {
         artDebuffCtrls.push({ ...ctrl, data, setData });
@@ -73,6 +73,7 @@ export function SelectedResult({ setup, dbSetup }: SelectedResultProps) {
     return {
       calcSetup,
       result,
+      extraKeys: calcSetup.calcItems.map((item) => item.name),
     };
   }, [setup]);
 
@@ -82,7 +83,7 @@ export function SelectedResult({ setup, dbSetup }: SelectedResultProps) {
         <p className="text-sm text-center truncate">{setup.name}</p>
       </div>
       <div className="mt-2 grow hide-scrollbar">
-        <FinalResultView character={calcSetup.main} finalResult={result} />
+        <FinalResultView character={calcSetup.main} finalResult={result} extraKeys={extraKeys} />
       </div>
 
       <SetupModals setupName={setup.name} setup={calcSetup} />

@@ -5,15 +5,15 @@ import type {
   BasicSetupType,
   Level,
   WeaponType,
-  IModifierCtrlBasic,
-  IArtifactModCtrlBasic,
+  ModifierCtrlState,
+  ArtifactModCtrlState,
   ResonanceModCtrl,
   ElementalEvent,
   CustomBuffCtrl,
   CustomDebuffCtrl,
-  ITargetBasic,
-  ITeammateArtifactBasic,
-  ITeammateWeaponBasic,
+  RawTarget,
+  TeammateArtifactState,
+  TeammateWeaponState,
 } from "@/types";
 
 type RawCharacter = {
@@ -35,13 +35,13 @@ export type ITeammateBasic = {
   name: string;
   enhanced: boolean;
 
-  buffCtrls: IModifierCtrlBasic[];
-  debuffCtrls: IModifierCtrlBasic[];
-  weapon: ITeammateWeaponBasic & {
-    buffCtrls: IModifierCtrlBasic[];
+  buffCtrls: ModifierCtrlState[];
+  debuffCtrls: ModifierCtrlState[];
+  weapon: TeammateWeaponState & {
+    buffCtrls: ModifierCtrlState[];
   };
-  artifact?: ITeammateArtifactBasic & {
-    buffCtrls: IModifierCtrlBasic[];
+  artifact?: TeammateArtifactState & {
+    buffCtrls: ModifierCtrlState[];
   };
 };
 
@@ -52,22 +52,22 @@ export type IDbSetup = {
 
   main: IDbCharacter;
 
-  selfBuffCtrls: IModifierCtrlBasic[];
-  selfDebuffCtrls: IModifierCtrlBasic[];
+  selfBuffCtrls: ModifierCtrlState[];
+  selfDebuffCtrls: ModifierCtrlState[];
 
-  wpBuffCtrls: IModifierCtrlBasic[];
-  artBuffCtrls: IArtifactModCtrlBasic[];
-  artDebuffCtrls: IArtifactModCtrlBasic[];
+  wpBuffCtrls: ModifierCtrlState[];
+  artBuffCtrls: ArtifactModCtrlState[];
+  artDebuffCtrls: ArtifactModCtrlState[];
 
   teammates: ITeammateBasic[];
-  teamBuffCtrls: IModifierCtrlBasic[];
+  teamBuffCtrls: ModifierCtrlState[];
   rsnBuffCtrls: ResonanceModCtrl[];
   rsnDebuffCtrls: ResonanceModCtrl[];
 
   elmtEvent: ElementalEvent;
   customBuffCtrls: CustomBuffCtrl[];
   customDebuffCtrls: CustomDebuffCtrl[];
-  target: ITargetBasic;
+  target: RawTarget;
 };
 
 type IDbComplexSetup = {

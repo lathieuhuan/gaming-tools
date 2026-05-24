@@ -1,11 +1,11 @@
-import type { EffectInputCondition, InputCheck, MultipleInputCheck } from "@/types";
+import type { EffectInputConditionSpec, InputCheckSpec, MultipleInputCheckSpec } from "@/types";
 import { isPassedComparison } from "./isPassedComparison";
 
-function isMultipleChecks(inputCheck: EffectInputCondition): inputCheck is MultipleInputCheck {
+function isMultipleChecks(inputCheck: EffectInputConditionSpec): inputCheck is MultipleInputCheckSpec {
   return typeof inputCheck === "object" && "relation" in inputCheck;
 }
 
-function isInvalidInput(inputs: number[], inputCheck: number | InputCheck) {
+function isInvalidInput(inputs: number[], inputCheck: number | InputCheckSpec) {
   const {
     value,
     inpIndex = 0,
@@ -16,7 +16,7 @@ function isInvalidInput(inputs: number[], inputCheck: number | InputCheck) {
   return input === undefined || !isPassedComparison(input, value, comparison);
 }
 
-export function isValidInput(condition: EffectInputCondition | undefined, inputs: number[]) {
+export function isValidInput(condition: EffectInputConditionSpec | undefined, inputs: number[]) {
   if (condition !== undefined) {
     if (isMultipleChecks(condition)) {
       switch (condition.relation) {

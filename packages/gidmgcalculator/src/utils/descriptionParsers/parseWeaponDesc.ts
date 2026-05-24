@@ -1,10 +1,12 @@
+import domPurify from "dompurify";
 import { round } from "ron-utils";
 import { wrapText } from "./utils";
 
-const scaleRefi = (base: number, refi: number, increment = base / 3) => round(base + increment * refi, 3);
+const scaleRefi = (base: number, refi: number, increment = base / 3) =>
+  round(base + increment * refi, 3);
 
 export const parseWeaponDesc = (description: string, refi: number) => {
-  return description.replace(/\{.+?\}(#\[[kvm]\])?/g, (match) => {
+  return domPurify.sanitize(description).replace(/\{.+?\}(#\[\w*\])?/g, (match) => {
     let [body, type = ""] = match.split("#");
     body = body.slice(1, -1);
     type = type?.slice(1, -1);

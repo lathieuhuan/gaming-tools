@@ -1,8 +1,8 @@
 import { Object_ } from "ron-utils";
 
-import type { AppMonster, AttackElement, ElementType, ITarget, ITargetBasic } from "@/types";
+import type { AppMonster, AttackElement, ElementType, TargetData, RawTarget } from "@/types";
 
-export class Target implements ITarget {
+export class Target implements TargetData {
   code: number;
   level: number;
   variantType?: ElementType;
@@ -17,7 +17,7 @@ export class Target implements ITarget {
     resistance: { base: 10 },
   };
 
-  constructor(info: ITargetBasic, data: AppMonster) {
+  constructor(info: RawTarget, data: AppMonster) {
     this.code = info.code;
     this.level = info.level;
     this.variantType = info.variantType;
@@ -26,8 +26,8 @@ export class Target implements ITarget {
     this.data = data;
   }
 
-  serialize(): ITargetBasic {
-    return Object_.patch<ITargetBasic>(
+  serialize(): RawTarget {
+    return Object_.patch<RawTarget>(
       {
         code: this.code,
         level: this.level,

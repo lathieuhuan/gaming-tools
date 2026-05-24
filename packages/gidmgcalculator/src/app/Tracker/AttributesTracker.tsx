@@ -45,7 +45,7 @@ export function AttributesTracker({ listClassName, allAttrsCtrl }: AttributesTra
                   <RecordItem
                     key={`_${index}`}
                     label={log.label}
-                    value={value}
+                    value={Math.round(base * mult)}
                     extraDesc={extraDesc}
                   />
                 );

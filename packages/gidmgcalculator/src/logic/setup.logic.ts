@@ -3,32 +3,25 @@ import { ExactOmit } from "rond";
 
 import type {
   BasicSetupType,
-  IArtifactBuffCtrl,
-  IDbComplexSetup,
-  IDbSetup,
-  IModifierCtrlBasic,
-  ISetupManager,
-  ITeammateArtifact,
-  ITeammateBasic,
-  ITeammateWeapon,
-  IWeaponBuffCtrl,
+  DbComplexSetup,
+  DbSetup,
+  ModifierCtrlState,
+  RawTeammate,
+  SetupManager,
 } from "@/types";
 
-import { ArtifactGear, CalcSetup, Team, TeammateCalc, Weapon } from "@/models";
-import { $AppArtifact, $AppCharacter, $AppWeapon } from "@/services";
-import { enhanceCtrls } from "../logic/modifier.logic";
-import { createCharacter, createTarget } from "./entity.logic";
-import { createArtifactBuffCtrls, createWeaponBuffCtrls } from "./modifier.logic";
+import { ArtifactGear, CalcSetup, Team, Weapon } from "@/models";
+import { createCharacter, createTarget, createTeammate } from "./entity.logic";
 
-export function isDbSetup(setup: IDbSetup | IDbComplexSetup): setup is IDbSetup {
+export function isDbSetup(setup: DbSetup | DbComplexSetup): setup is DbSetup {
   return ["original", "combined"].includes(setup.type);
 }
 
-function toDbCtrls<TCtrl extends IModifierCtrlBasic, TExtraKeys extends keyof TCtrl>(
+function toDbCtrls<TCtrl extends ModifierCtrlState, TExtraKeys extends keyof TCtrl>(
   ctrls: TCtrl[],
   extraKeys: TExtraKeys[] = []
 ) {
-  const result: Array<IModifierCtrlBasic & { [K in TExtraKeys]: TCtrl[K] }> = [];
+  const result: Array<ModifierCtrlState & { [K in TExtraKeys]: TCtrl[K] }> = [];
 
   for (const ctrl of ctrls) {
     if (ctrl.activated) {
@@ -41,8 +34,8 @@ function toDbCtrls<TCtrl extends IModifierCtrlBasic, TExtraKeys extends keyof TC
 
 export function toDbSetup(
   setup: CalcSetup,
-  manager: Partial<ExactOmit<ISetupManager, "type">> & { type?: BasicSetupType } = {}
-): IDbSetup {
+  manager: Partial<ExactOmit<SetupManager, "type">> & { type?: BasicSetupType } = {}
+): DbSetup {
   const { ID = setup.ID, type = "original", name = "New setup" } = manager;
   const { main, target } = setup;
 
@@ -117,7 +110,7 @@ function restoreModCtrls<T extends Restorable, K extends keyof T>(
       newCtrl.activated = true;
 
       if (refCtrl.inputs && newCtrl.inputs) {
-        newCtrl.inputs = refCtrl.inputs;
+        newCtrl.inputs = [...refCtrl.inputs];
       }
     }
   }
@@ -125,55 +118,30 @@ function restoreModCtrls<T extends Restorable, K extends keyof T>(
   return newCtrls;
 }
 
-function restoreTeammate(teammate: ITeammateBasic, team: Team) {
-  const weaponData = $AppWeapon.get(teammate.weapon.code)!;
-  const weaponBuffs = weaponData.buffs || [];
-  const weaponBuffCtrls: IWeaponBuffCtrl[] = enhanceCtrls(teammate.weapon.buffCtrls, weaponBuffs);
-
-  const weapon: ITeammateWeapon = {
-    code: teammate.weapon.code,
-    type: weaponData.type,
-    refi: teammate.weapon.refi,
-    buffCtrls: restoreModCtrls(createWeaponBuffCtrls(weaponData, false), weaponBuffCtrls),
-    data: weaponData,
-  };
-
-  let artifact: ITeammateArtifact | undefined;
-
-  if (teammate.artifact) {
-    const artifactData = $AppArtifact.getSet(teammate.artifact.code)!;
-    const artifactBuffs = artifactData.buffs || [];
-    const artifactBuffCtrls: IArtifactBuffCtrl[] = enhanceCtrls(
-      teammate.artifact.buffCtrls,
-      artifactBuffs
-    );
-
-    artifact = {
-      code: teammate.artifact.code,
-      buffCtrls: restoreModCtrls(createArtifactBuffCtrls(artifactData, false), artifactBuffCtrls),
-      data: artifactData,
-    };
-  }
-
-  const data = $AppCharacter.get(teammate.code);
-  const standard = new TeammateCalc(
+function restoreTeammate(teammate: RawTeammate, team: Team) {
+  const standard = createTeammate(
     {
       code: teammate.code,
       enhanced: teammate.enhanced,
-      weapon,
-      artifact,
+      weapon: teammate.weapon,
+      artifact: teammate.artifact,
     },
-    data,
-    team
+    null,
+    { team }
   );
 
   restoreModCtrls(standard.buffCtrls, teammate.buffCtrls);
   restoreModCtrls(standard.debuffCtrls, teammate.debuffCtrls);
+  restoreModCtrls(standard.weapon.buffCtrls, teammate.weapon.buffCtrls);
+
+  if (standard.artifact && teammate.artifact) {
+    restoreModCtrls(standard.artifact.buffCtrls, teammate.artifact.buffCtrls);
+  }
 
   return standard;
 }
 
-export function restoreCalcSetup(data: IDbSetup, weapon: Weapon, atfGear: ArtifactGear) {
+export function restoreCalcSetup(data: DbSetup, weapon: Weapon, atfGear: ArtifactGear) {
   const team = new Team();
   const main = createCharacter(data.main, null, {
     state: data.main,

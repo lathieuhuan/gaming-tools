@@ -1,18 +1,9 @@
-import type {
-  CharacterEffectLevelIncrement,
-  EntityBonusBasedOn,
-  InputStack,
-  TalentLevelScaleConfig,
-} from "@/types";
+import type { BonusAttributeScalingSpec, InputStackSpec, TalentLevelIncrementBaseSpec } from "@/types";
 
 import { AbstractBonusCalc } from "../AbstractBonusCalc";
 
 export class BonusCalc extends AbstractBonusCalc {
-  protected getLvIncre(incre?: CharacterEffectLevelIncrement) {
-    return incre ? this.getInput(incre.altIndex) * incre.value : 0;
-  }
-
-  protected getBasedOn(config: EntityBonusBasedOn) {
+  protected getBasedOn(config: BonusAttributeScalingSpec) {
     const { field, altIndex, baseline = 0, isDynamic = true } = this.parseBasedOn(config);
     const basedOnValue = this.getInput(altIndex);
 
@@ -23,11 +14,11 @@ export class BonusCalc extends AbstractBonusCalc {
     };
   }
 
-  protected getTalentLevel(config: TalentLevelScaleConfig) {
+  protected getTalentLevel(config: TalentLevelIncrementBaseSpec) {
     return this.getInput(config.altIndex);
   }
 
-  protected getInputIndex(stack: InputStack) {
+  protected getInputIndex(stack: InputStackSpec) {
     return stack.altIndex ?? stack.index ?? 0;
   }
 }

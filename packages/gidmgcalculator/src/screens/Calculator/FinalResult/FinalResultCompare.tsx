@@ -27,9 +27,10 @@ const CALC_ASPECT_OPTIONS: CalcAspectOption[] = [
 
 type FinalResultCompareProps = {
   comparedIds: number[];
+  extraKeys?: string[];
 };
 
-export function FinalResultCompare({ comparedIds }: FinalResultCompareProps) {
+export function FinalResultCompare({ comparedIds, extraKeys }: FinalResultCompareProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const isMobile = !useScreenWatcher().isFromSize("md");
   const [focusedAspect, setFocusedAspect] = useState<CalcAspect>("average");
@@ -100,6 +101,7 @@ export function FinalResultCompare({ comparedIds }: FinalResultCompareProps) {
           {...layoutProps}
           talentMutable
           showTalentLv={false}
+          extraKeys={extraKeys}
           onTalentLevelChange={(talentType, newLevel) => {
             updateMain(
               {

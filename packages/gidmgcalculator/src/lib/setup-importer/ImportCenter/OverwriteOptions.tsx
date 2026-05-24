@@ -1,7 +1,7 @@
 import { FormEvent, useState } from "react";
 import { clsx, Table } from "rond";
 
-import type { RawCharacter, ITargetBasic } from "@/types";
+import type { RawCharacter, RawTarget } from "@/types";
 
 import { useTranslation } from "@/hooks";
 import { $AppCharacter } from "@/services";
@@ -9,9 +9,9 @@ import { OverwriteOption } from "./OverwriteOption";
 
 export type OverwriteOptionsProps = {
   currentMain: RawCharacter;
-  currentTarget: ITargetBasic;
+  currentTarget: RawTarget;
   importedMain: RawCharacter;
-  importedTarget: ITargetBasic;
+  importedTarget: RawTarget;
   askForCharacter: boolean;
   askForTarget: boolean;
   onDone: (options: { overwriteChar: boolean; overwriteTarget: boolean }) => void;

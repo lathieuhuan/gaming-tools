@@ -1,6 +1,6 @@
 import { Array_ } from "ron-utils";
 
-import type { IDbCharacter, RawArtifact, RawWeapon, WeaponType } from "@/types";
+import type { DbCharacter, RawArtifact, RawWeapon, WeaponType } from "@/types";
 
 import { createArtifact, createCharacter, createWeapon } from "@/logic/entity.logic";
 import { Artifact, ArtifactGear, Team } from "@/models";
@@ -37,7 +37,7 @@ export function parseDbArtifacts(artifactIDs: number[] = [], dbArtifacts: RawArt
 }
 
 export function makeCharacterCalcFromDb(
-  character: IDbCharacter,
+  character: DbCharacter,
   dbWeapons: RawWeapon[],
   dbArtifacts: RawArtifact[],
   data = $AppCharacter.get(character.code),

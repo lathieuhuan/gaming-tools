@@ -1,5 +1,5 @@
-import type { Character, TeammateCalc } from "@/models";
-import type { BasicSetupType, IDbComplexSetup, IDbSetup } from "@/types";
+import type { Character, Teammate } from "@/models";
+import type { BasicSetupType, DbComplexSetup, DbSetup } from "@/types";
 
 export type SetupOverviewInfo = {
   setup: {
@@ -7,8 +7,8 @@ export type SetupOverviewInfo = {
     type: BasicSetupType;
     name: string;
     main: Character;
-    teammates: TeammateCalc[];
+    teammates: Teammate[];
   };
-  dbSetup: IDbSetup;
-  complexSetup?: IDbComplexSetup;
+  dbSetup: DbSetup;
+  complexSetup?: DbComplexSetup;
 };

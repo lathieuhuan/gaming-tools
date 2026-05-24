@@ -1,3 +1,5 @@
+import { useMemo } from "react";
+
 import { useShallowCalcStore } from "@Store/calculator";
 import { updateMain } from "@Store/calculator/actions";
 import { selectSetup } from "@Store/calculator/selectors";
@@ -19,19 +21,26 @@ export function FinalResult() {
 }
 
 export function FinalResultCore() {
-  const { activeSetupName, main, calcResult, comparedIds } = useShallowCalcStore((state) => {
-    const setup = selectSetup(state);
+  const { activeSetupName, main, calcItems, calcResult, comparedIds } = useShallowCalcStore(
+    (state) => {
+      const setup = selectSetup(state);
 
-    return {
-      activeSetupName: state.setupManagers.find((info) => info.ID === state.activeId)?.name || "",
-      main: setup.main,
-      calcResult: setup.result,
-      comparedIds: state.comparedIds,
-    };
-  });
+      return {
+        activeSetupName: state.setupManagers.find((info) => info.ID === state.activeId)?.name || "",
+        main: setup.main,
+        calcItems: setup.calcItems,
+        calcResult: setup.result,
+        comparedIds: state.comparedIds,
+      };
+    }
+  );
+
+  const extraKeys = useMemo(() => {
+    return calcItems.map((item) => item.name);
+  }, [calcItems]);
 
   if (comparedIds.length > 1) {
-    return <FinalResultCompare comparedIds={comparedIds} />;
+    return <FinalResultCompare comparedIds={comparedIds} extraKeys={extraKeys} />;
   }
 
   return (
@@ -43,6 +52,7 @@ export function FinalResultCore() {
         <FinalResultView
           talentMutable
           character={main}
+          extraKeys={extraKeys}
           finalResult={calcResult}
           onTalentLevelChange={(type, level) => updateMain({ [type]: level })}
         />

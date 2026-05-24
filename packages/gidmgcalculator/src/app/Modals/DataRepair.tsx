@@ -1,17 +1,25 @@
 import { Button, notification } from "rond";
 
 import { useDispatch } from "@Store/hooks";
-import { fixMultipleEquippedArtifacts, fixMultipleEquippedWeapons } from "@Store/userdbSlice";
+import {
+  fixDuplicatedArtifactIds,
+  fixMultipleEquippedArtifacts,
+  fixMultipleEquippedWeapons,
+} from "@Store/userdbSlice";
 
 type OptionProps = {
-  description: string;
+  descriptions: string[];
   onFix: () => void;
 };
 
-function Option({ description, onFix }: OptionProps) {
+function Option({ descriptions, onFix }: OptionProps) {
   return (
     <div className="pb-4 flex items-start gap-4">
-      <p className="text-light-hint">{description}</p>
+      <div className="text-sm text-light-hint">
+        {descriptions.map((description, index) => (
+          <p key={index}>{description}</p>
+        ))}
+      </div>
       <Button onClick={onFix}>Fix it</Button>
     </div>
   );
@@ -20,7 +28,7 @@ function Option({ description, onFix }: OptionProps) {
 export function DataRepair() {
   const dispatch = useDispatch();
 
-  const fixDuplicatedWeapons = () => {
+  const fix1 = () => {
     dispatch(fixMultipleEquippedWeapons());
 
     notification.success({
@@ -28,8 +36,16 @@ export function DataRepair() {
     });
   };
 
-  const fixDuplicatedArtifacts = () => {
+  const fix2 = () => {
     dispatch(fixMultipleEquippedArtifacts());
+
+    notification.success({
+      content: "Your artifact data has been fixed!",
+    });
+  };
+
+  const fix3 = () => {
+    dispatch(fixDuplicatedArtifactIds());
 
     notification.success({
       content: "Your artifact data has been fixed!",
@@ -38,13 +54,17 @@ export function DataRepair() {
 
   return (
     <div className="space-y-4 divide-y divide-dark-line">
+      <Option descriptions={["I have multiple weapons equipped on one character."]} onFix={fix1} />
       <Option
-        description="I have multiple weapons equipped on one character."
-        onFix={fixDuplicatedWeapons}
+        descriptions={["I have multiple artifacts equipped on the same slot of a character."]}
+        onFix={fix2}
       />
       <Option
-        description="I have multiple artifacts equipped on the same slot of a character."
-        onFix={fixDuplicatedArtifacts}
+        descriptions={[
+          "When I select some artifact in My Artifacts, it does not show the details.",
+          "When I equip a character with some artifact, it does not work.",
+        ]}
+        onFix={fix3}
       />
     </div>
   );

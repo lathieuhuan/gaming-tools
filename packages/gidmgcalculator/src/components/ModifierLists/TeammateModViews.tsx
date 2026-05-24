@@ -1,5 +1,5 @@
-import type { TeammateCalc } from "@/models";
-import type { IAbilityBuffCtrl, IAbilityDebuffCtrl, IModifierCtrlBasic, ITeam } from "@/types";
+import type { Teammate, Team } from "@/models";
+import type { AbilityBuffCtrl, AbilityDebuffCtrl, ModifierCtrlState } from "@/types";
 import type { ModifierHanlders } from "./types";
 
 import { GenshinModifierView } from "../GenshinModifierView";
@@ -7,14 +7,14 @@ import { ModifierContainer } from "./ModifierContainer";
 
 type TeamModsViewProps = {
   mutable?: boolean;
-  teammates: TeammateCalc[];
-  team: ITeam;
-  getHanlders?: (teammate: TeammateCalc, ctrl: IModifierCtrlBasic) => ModifierHanlders;
+  teammates: Teammate[];
+  team: Team;
+  getHanlders?: (teammate: Teammate, ctrl: ModifierCtrlState) => ModifierHanlders;
 };
 
-function getTeammateModifierElmts<TModCtrl extends IAbilityBuffCtrl | IAbilityDebuffCtrl>(
+function getTeammateModifierElmts<TModCtrl extends AbilityBuffCtrl | AbilityDebuffCtrl>(
   props: TeamModsViewProps,
-  teammate: TeammateCalc,
+  teammate: Teammate,
   modCtrls: TModCtrl[],
   renderDesc: (ctrl: TModCtrl) => string
 ) {
@@ -59,7 +59,7 @@ export function TeammateBuffsView(props: TeamModsViewProps) {
     <ModifierContainer type="buffs" mutable={props.mutable}>
       {props.teammates.map((teammate) => {
         return getTeammateModifierElmts(props, teammate, teammate.buffCtrls, (ctrl) =>
-          teammate.parseBuffDesc(ctrl)
+          teammate.parseBuffDesc(ctrl.data, ctrl.inputs)
         );
       })}
     </ModifierContainer>
@@ -71,7 +71,7 @@ export function TeammateDebuffsView(props: TeamModsViewProps) {
     <ModifierContainer type="debuffs" mutable={props.mutable}>
       {props.teammates.map((teammate) => {
         return getTeammateModifierElmts(props, teammate, teammate.debuffCtrls, (ctrl) =>
-          teammate.parseDebuffDesc(ctrl)
+          teammate.parseDebuffDesc(ctrl.data, ctrl.inputs)
         );
       })}
     </ModifierContainer>

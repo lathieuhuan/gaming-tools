@@ -1,6 +1,6 @@
 import { Object_ } from "ron-utils";
 
-import type { IAbilityBuffCtrl } from "@/types";
+import type { AbilityBuffCtrl } from "@/types";
 
 import { useShallowCalcStore } from "@Store/calculator";
 import { updateActiveSetup } from "@Store/calculator/actions";
@@ -14,7 +14,7 @@ export default function BuffSelf() {
     Object_.extract(selectSetup(state), ["main", "team", "selfBuffCtrls"])
   );
 
-  const handleUpdateCtrls = (newCtrls: IAbilityBuffCtrl[]) => {
+  const handleUpdateCtrls = (newCtrls: AbilityBuffCtrl[]) => {
     updateActiveSetup((setup) => {
       setup.selfBuffCtrls = newCtrls;
     });

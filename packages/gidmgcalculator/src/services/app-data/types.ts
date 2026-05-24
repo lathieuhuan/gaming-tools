@@ -2,15 +2,15 @@ import type {
   AppArtifact,
   AppCharacter,
   AppMonster,
-  AppTeamBuff,
+  TeamBuffSpec,
   AppWeapon,
   CharacterInnateBuff,
 } from "@/types";
 
 export type AppUpdate = {
+  patch: string;
   date: string;
   content: string[];
-  patch?: string;
 };
 
 export type AllData = {
@@ -18,7 +18,7 @@ export type AllData = {
   characters: AppCharacter[];
   weapons: AppWeapon[];
   artifacts: AppArtifact[];
-  teamBuffs: AppTeamBuff[];
+  teamBuffs: TeamBuffSpec[];
   monsters: AppMonster[];
   updates: AppUpdate[];
   supporters: string[];

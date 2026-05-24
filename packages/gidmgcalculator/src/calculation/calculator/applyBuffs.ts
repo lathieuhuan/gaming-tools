@@ -1,6 +1,6 @@
 import { Array_ } from "ron-utils";
 
-import type { CalcSetup, Character, TeammateCalc } from "@/models";
+import type { CalcSetup, Character, Teammate } from "@/models";
 import type {
   AttackElement,
   AttackPattern,
@@ -8,12 +8,12 @@ import type {
   AttributeTargetPath,
   BareBonus,
   BonusPerformTools,
-  EntityBonus,
-  EntityBonusEffect,
-  EntityBuff,
+  BonusSpec,
+  BonusCoreSpec,
+  BuffSpec,
   ReactionType,
+  TeamMember,
 } from "@/types";
-import type { IEffectPerformer } from "../types";
 
 import {
   AMPLIFYING_REACTIONS,
@@ -26,24 +26,21 @@ import { BonusCalc } from "@/models/Character";
 import { QUICKEN_BUFF_LABEL } from "../constants";
 import { getRxnBonusesFromEM } from "../core/getRxnBonusesFromEM";
 
-export function applyBuffs(main: Character, teammates: TeammateCalc[], setup: CalcSetup) {
+export function applyBuffs(main: Character, teammates: Teammate[], setup: CalcSetup) {
   const { team } = setup;
   const { weapon, allAttrsCtrl, attkBonusCtrl } = main;
 
   // ↓↓↓↓↓ HELPERS ↓↓↓↓↓
 
-  function processBonus(
-    bonus: BareBonus,
-    effect: EntityBonus<EntityBonusEffect>,
-    inputs: number[] = [],
-    label: string
-  ) {
+  function processBonus(bonus: BareBonus, spec: BonusSpec, inputs: number[] = [], label: string) {
     if (!bonus.value) return;
 
-    const { outsource } = bonus.config;
+    const { outsource, target } = spec;
 
     if (outsource) {
-      bonus.value *= new BonusCalc(main, team, { inputs }).getStackValue(outsource.stacks);
+      const stacks = new BonusCalc(main, team, { inputs }).getStacks(outsource.stacks);
+
+      bonus.value *= stacks?.value ?? 1;
     }
 
     const getToStat = (path: AttributeTargetPath, inpIndex: number) => {
@@ -60,62 +57,70 @@ export function applyBuffs(main: Character, teammates: TeammateCalc[], setup: Ca
       }
     };
 
-    for (const target of Array_.toArray(effect.targets)) {
-      switch (target.module) {
-        case "ATTR": {
-          for (const targetPath of Array_.toArray(target.path)) {
-            const toStat = getToStat(targetPath, target.inpIndex ?? 0);
-            if (!toStat) continue;
+    switch (target.module) {
+      case "ATTR": {
+        for (const targetPath of Array_.toArray(target.path)) {
+          const toStat = getToStat(targetPath, target.inpIndex ?? 0);
+          if (!toStat) continue;
 
-            main.receiveAttrBonus({
-              ...bonus,
-              toStat,
-              label,
-              effectSrc: effect,
-            });
-          }
-          break;
+          main.receiveAttrBonus({
+            ...bonus,
+            toStat,
+            label,
+            effectSrc: spec,
+          });
         }
-        default:
-          for (const module of Array_.toArray(target.module)) {
-            main.receiveAttkBonus({
-              // id: bonus.id,
-              toType: module,
-              toKey: target.path,
-              value: bonus.value,
-              label,
-              effectSrc: effect,
-            });
-          }
+        break;
       }
+      case "TLT": {
+        if (!spec.id) return;
+
+        main.levelBonuses.set(spec.id, {
+          id: spec.id,
+          talent: target.path,
+          value: bonus.value,
+        });
+        break;
+      }
+      default:
+        for (const module of Array_.toArray(target.module)) {
+          main.receiveAttkBonus({
+            // id: bonus.id,
+            toType: module,
+            toKey: target.path,
+            value: bonus.value,
+            label,
+            effectSrc: spec,
+          });
+        }
     }
   }
 
   function applyBonus(
     label: string,
-    performer: IEffectPerformer,
-    effects: EntityBuff["effects"] = [],
+    performer: TeamMember,
+    specs: BuffSpec["effects"] = [],
     support: Omit<Partial<BonusPerformTools>, "basedOnFixed">,
     isFinalStage?: boolean
   ) {
-    for (const config of Array_.toArray(effects)) {
+    for (const spec of Array_.toArray(specs)) {
       // console.log("===========");
-      // console.log("applyBonus", config);
+      // console.log("applyBonus", spec);
       // console.log(
       //   isFinalStage === undefined,
-      //   isFinalStage === isFinalEffect(config),
-      //   performer.isPerformableEffect(config, support.inputs)
+      //   isFinalStage === isFinalEffect(spec),
+      //   performer.isPerformableEffect(spec, support.inputs)
       // );
 
       if (
-        (isFinalStage === undefined || isFinalStage === isFinalEffect(config)) &&
-        team.isAvailableEffect(config) &&
-        performer.canPerformEffect(config, support.inputs)
+        (isFinalStage === undefined || isFinalStage === isFinalEffect(spec)) &&
+        team.isAvailableEffect(spec) &&
+        performer.canPerformEffect(spec, support.inputs)
       ) {
-        const { targets } = config;
-        const basedOnFixed = !Array.isArray(targets) && targets.module === "ATTR";
+        const { target } = spec;
+        const basedOnFixed = target.module === "ATTR";
 
-        const bonus = performer.performBonus(config, {
+        const bonus = performer.performBonus(spec, {
           ...support,
           basedOnFixed,
         });
@@ -123,7 +128,7 @@ export function applyBuffs(main: Character, teammates: TeammateCalc[], setup: Ca
         // console.log("===========");
         // console.log("bonus", bonus);
 
-        processBonus(bonus, config, support.inputs, label);
+        processBonus(bonus, spec, support.inputs, label);
       }
     }
   }
@@ -402,7 +407,7 @@ export function applyBuffs(main: Character, teammates: TeammateCalc[], setup: Ca
   }
 }
 
-function isFinal(effect: EntityBonusEffect) {
+function isFinal(effect: BonusCoreSpec) {
   const { basedOn } = effect;
 
   if (basedOn) {
@@ -412,10 +417,10 @@ function isFinal(effect: EntityBonusEffect) {
   return false;
 }
 
-function isFinalEffect(bonus: EntityBonusEffect) {
+function isFinalEffect(bonus: BonusCoreSpec) {
   return (
     isFinal(bonus) ||
     (typeof bonus.preExtra === "object" && isFinal(bonus.preExtra)) ||
-    (typeof bonus.sufExtra === "object" && isFinal(bonus.sufExtra))
+    (typeof bonus.extras === "object" && Array_.toArray(bonus.extras).some(isFinal))
   );
 }

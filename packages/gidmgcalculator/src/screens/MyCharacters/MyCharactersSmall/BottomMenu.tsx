@@ -8,7 +8,7 @@ import {
   useIntersectionObserver,
 } from "rond";
 
-import type { IDbCharacter } from "@/types";
+import type { DbCharacter } from "@/types";
 
 import { $AppCharacter } from "@/services";
 import { useSelector } from "@Store/hooks";
@@ -18,7 +18,7 @@ import { useMyCharactersModalCtrl } from "../ContextProvider";
 import { GenshinImage } from "@/components";
 
 type BottomMenuProps = {
-  onSelect: (character: IDbCharacter) => void;
+  onSelect: (character: DbCharacter) => void;
   onClose: () => void;
 };
 

@@ -29,13 +29,13 @@ import { makeOtherItemCalc } from "./makeOtherItemCalc";
 export function makeTalentCalc(
   performer: Character,
   target: TargetCalc,
-  talentType: LevelableTalentType,
+  talentType: LevelableTalentType | null,
   default_: CalcItemDefaultValues,
   alterConfig: AttackAlter = {}
 ) {
   const { attkBonusCtrl } = performer;
   const { vision, weaponType } = performer.data;
-  const level = performer.getFinalTalentLv(talentType);
+  const level = talentType ? performer.getFinalTalentLv(talentType) : 0;
 
   function parseFactor(factor: CalcItemFactor) {
     const {

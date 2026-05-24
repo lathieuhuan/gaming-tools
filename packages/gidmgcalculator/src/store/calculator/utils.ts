@@ -1,7 +1,7 @@
 import type { WritableDraft } from "immer/src/internal.js";
 
 import type { CalcSetup } from "@/models";
-import type { ElementType, IModifierCtrlBasic, ISetupManager, ResonanceModCtrl } from "@/types";
+import type { ElementType, ModifierCtrlState, SetupManager, ResonanceModCtrl } from "@/types";
 import type { CalculatorState } from "./types";
 
 export function onActiveSetup(callback: (setup: WritableDraft<CalcSetup>) => boolean | void) {
@@ -34,7 +34,7 @@ function destructName(name: string) {
   };
 }
 
-export function getCopyName(originalName: string, setupManagers: ISetupManager[]) {
+export function getCopyName(originalName: string, setupManagers: SetupManager[]) {
   const { nameRoot } = destructName(originalName);
   const versions = [];
 
@@ -54,7 +54,7 @@ export function getCopyName(originalName: string, setupManagers: ISetupManager[]
   return undefined;
 }
 
-export function toggleModCtrl<T extends IModifierCtrlBasic>(
+export function toggleModCtrl<T extends ModifierCtrlState>(
   ctrls: T[],
   ctrlId: number,
   extraCheck?: (ctrl: T) => boolean
@@ -71,7 +71,7 @@ export function toggleModCtrl<T extends IModifierCtrlBasic>(
   });
 }
 
-export function updateModCtrlInputs<T extends IModifierCtrlBasic>(
+export function updateModCtrlInputs<T extends ModifierCtrlState>(
   ctrls: T[],
   ctrlId: number,
   inputIndex: number,

@@ -1,8 +1,8 @@
-import type { SetupImportInfo } from "@/types";
+import type { SetupImportData } from "@/types";
 
 type DecodeSuccessResult = {
   isOk: true;
-  importInfo: SetupImportInfo;
+  importInfo: SetupImportData;
 };
 
 type DecodeFailResult = {

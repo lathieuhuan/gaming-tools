@@ -3,7 +3,7 @@ import { Array_ } from "ron-utils";
 import type { GOODCharacterConvertReturn } from "@/logic/converGOOD.logic";
 import type { Weapon } from "@/models";
 import type { GenshinUserBuild } from "@/services/enka";
-import type { ArtifactType, IDbCharacter, RawArtifact, RawWeapon } from "@/types";
+import type { ArtifactType, DbCharacter, RawArtifact, RawWeapon } from "@/types";
 import type { ArtifactSavingStep, CharacterSavingStep, WeaponSavingStep } from "./types";
 
 import { ARTIFACT_TYPES } from "@/constants";
@@ -12,7 +12,7 @@ import { isSameArtifact } from "../logic";
 
 export const getCharacterSavingStep = (
   character: GOODCharacterConvertReturn,
-  userChars: IDbCharacter[]
+  userChars: DbCharacter[]
 ): CharacterSavingStep => {
   const existedCharacter = userChars.find((userChar) => userChar.code === character.basic.code);
 
