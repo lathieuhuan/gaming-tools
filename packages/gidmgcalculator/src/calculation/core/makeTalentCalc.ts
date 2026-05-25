@@ -159,6 +159,7 @@ export function makeTalentCalc(
 
     function getBonus(key: AttackBonusKey) {
       return attkBonusCtrl.get(key, [
+        "all",
         lunar,
         attPatt !== "none" && `${attPatt}.${lunar}`,
         item.id,
@@ -233,6 +234,7 @@ export function makeTalentCalc(
 
     function getBonus(key: AttackBonusKey) {
       return attkBonusCtrl.get(key, [
+        "all",
         stellar,
         attPatt !== "none" && `${attPatt}.${stellar}`,
         item.id,
