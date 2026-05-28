@@ -31,6 +31,25 @@ export function applyBuffs(main: Character, teammates: Teammate[], setup: CalcSe
   const { team } = setup;
   const { weapon, allAttrsCtrl, attkBonusCtrl } = main;
 
+  // POLYSTAR FIELD BONUSES
+  const { polestarProc = false, polestarCount = 0 } = setup.elmtEvent;
+
+  if (polestarProc) {
+    const label = "Polestar Field";
+    const bonus = 20 + (polestarCount ? 8 : 0) + polestarCount * 1;
+
+    allAttrsCtrl.applyBonus({
+      value: bonus,
+      toStat: "cryo",
+      label,
+    });
+    allAttrsCtrl.applyBonus({
+      value: bonus,
+      toStat: "electro",
+      label,
+    });
+  }
+
   // ↓↓↓↓↓ HELPERS ↓↓↓↓↓
 
   function processBonus(bonus: BareBonus, spec: BonusSpec, inputs: number[] = [], label: string) {

@@ -267,7 +267,9 @@ export function createElementalEvent(): ElementalEvent {
     infuseReaction: null,
     reaction: null,
     absorbReaction: null,
-    absorption: null,
+    absorption: null, 
+    polestarProc: false,
+    polestarCount: 0,
   };
 }
 

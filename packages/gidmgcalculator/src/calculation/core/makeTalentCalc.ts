@@ -158,13 +158,14 @@ export function makeTalentCalc(
     const attElmt = LUNAR_ATTACK_ELEMENT[lunar];
 
     function getBonus(key: AttackBonusKey) {
+      const isCrit = key === "cRate_" || key === "cDmg_";
+
       return attkBonusCtrl.get(key, [
-        "all",
         lunar,
         attPatt !== "none" && `${attPatt}.${lunar}`,
         item.id,
-        // Only get "cRate_" and "cDmg_" bonus from attElmt
-        key === "cRate_" || key === "cDmg_" ? attElmt : null,
+        isCrit ? attElmt : null,
+        isCrit ? "all" : null,
       ]);
     }
 
@@ -228,18 +229,21 @@ export function makeTalentCalc(
     item: TalentCalcItem,
     stellar: StellarType,
     attElmt: AttackElement,
+    coefficient: number,
     recorder: ResultRecorder,
   ): CalcResultAttackItem {
     const attPatt = alterConfig.attPatt || item.attPatt || default_.attPatt;
 
     function getBonus(key: AttackBonusKey) {
+      const isCrit = key === "cRate_" || key === "cDmg_";
+
       return attkBonusCtrl.get(key, [
-        "all",
         stellar,
         attPatt !== "none" && `${attPatt}.${stellar}`,
         item.id,
         // Only get "cRate_" and "cDmg_" bonus from attElmt
-        key === "cRate_" || key === "cDmg_" ? attElmt : null,
+        isCrit ? attElmt : null,
+        isCrit ? "all" : null,
       ]);
     }
 
@@ -247,7 +251,6 @@ export function makeTalentCalc(
     const bases = getBases(item, extraTalentMult, recorder);
 
     const baseMult = toMult(getBonus("baseMult_"));
-    const coefficient = 1.9; // TODO
     const bonusMult = toMult(getBonus("pct_"));
     const veilMult = toMult(getBonus("veil_"));
     const flat = getBonus("flat");

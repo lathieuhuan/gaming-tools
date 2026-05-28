@@ -4,6 +4,7 @@ import type {
   AppArtifact,
   ArtifactBuff,
   ArtifactDebuff,
+  ArtifactModCtrl,
   ArtifactType,
   AttackReaction,
   CustomBuffCtrl,
@@ -11,12 +12,11 @@ import type {
   CustomDebuffCtrl,
   ElementalEvent,
   ElementType,
-  ArtifactModCtrl,
   ModifierCtrlState,
-  TeamBuffCtrl,
   RawTeammate,
   ResonanceModCtrl,
   SetupImportData,
+  TeamBuffCtrl,
 } from "@/types";
 import type { DecodeResult } from "./types";
 
@@ -48,28 +48,28 @@ export function decodeSetupPrevious(code: string): DecodeResult {
   const characters = $AppCharacter.getAll();
   const [
     version,
-    _charCode,
-    _selfBCsCode,
-    _selfDCsCode,
-    _wpCode,
-    _wpBCsCode,
-    _flowerCode,
-    _plumeCode,
-    _sandsCode,
-    _gobletCode,
-    _circletCode,
-    _artBCsCode,
-    _artDCsCode,
-    _tmCode1,
-    _tmCode2,
-    _tmCode3,
-    _elmtMCsCode,
-    _resonancesCode,
-    _teamBuffCodes,
-    _infuseElmtIndex,
-    _customBuffsCode,
-    _customDebuffCodes,
-    _targetCode,
+    mainStr,
+    weaponStr,
+    flowerStr,
+    plumeStr,
+    sandsStr,
+    gobletStr,
+    circletStr,
+    selfBcStrs,
+    selfDcStrs,
+    wpBcStrs,
+    atfBcStrs,
+    atfDcStrs,
+    teammateStr1,
+    teammateStr2,
+    teammateStr3,
+    elmtMcStr,
+    rsnBcStrs,
+    rsnDcStrs,
+    teamBuffStrs,
+    customBcStrs,
+    customDcStrs,
+    targetStr,
   ] = code.split(DIVIDER[0]);
 
   const parseNumber = (str: string = "", desc = "") => {
@@ -116,8 +116,8 @@ export function decodeSetupPrevious(code: string): DecodeResult {
 
   // ===== MAIN =====
 
-  const [charCode, levelIndex, cons, NAs, ES, EB] = split(_charCode, 1);
-  const mainData = Array_.findByCode(characters, +charCode);
+  const [mainCode, levelIndex, cons, enhancedCode, NAs, ES, EB] = split(mainStr, 1);
+  const mainData = Array_.findByCode(characters, +mainCode);
 
   if (!mainData) {
     return {
@@ -126,7 +126,7 @@ export function decodeSetupPrevious(code: string): DecodeResult {
     };
   }
 
-  const [wpCode, wpTypeIndex, wpLvIndex, wpRefi] = split(_wpCode, 1);
+  const [wpCode, wpTypeIndex, wpLvIndex, wpRefi] = split(weaponStr, 1);
 
   const weapon = createWeapon({
     ID: idStore.gen(),
@@ -170,18 +170,18 @@ export function decodeSetupPrevious(code: string): DecodeResult {
 
   const atfGear = new ArtifactGear(
     Array_.truthify([
-      decodeArtifact(_flowerCode, "flower"),
-      decodeArtifact(_plumeCode, "plume"),
-      decodeArtifact(_sandsCode, "sands"),
-      decodeArtifact(_gobletCode, "goblet"),
-      decodeArtifact(_circletCode, "circlet"),
-    ])
+      decodeArtifact(flowerStr, "flower"),
+      decodeArtifact(plumeStr, "plume"),
+      decodeArtifact(sandsStr, "sands"),
+      decodeArtifact(gobletStr, "goblet"),
+      decodeArtifact(circletStr, "circlet"),
+    ]),
   );
 
   const main = createCharacter(
     {
       code: mainData.code,
-      enhanced: false,
+      enhanced: enhancedCode === "1",
       level: LEVELS[parseNumber(levelIndex, "Main Level")],
       cons: parseNumber(cons, "Cons"),
       NAs: parseNumber(NAs, "NAs"),
@@ -193,7 +193,7 @@ export function decodeSetupPrevious(code: string): DecodeResult {
       weapon,
       atfGear,
       team,
-    }
+    },
   );
 
   // ===== ARTIFACT BUFFS =====
@@ -201,7 +201,7 @@ export function decodeSetupPrevious(code: string): DecodeResult {
   const decodeArtifactModCtrls = <T extends ArtifactBuff | ArtifactDebuff>(
     ctrlStrs: string | undefined,
     getMods: (data: AppArtifact | undefined) => T[] | undefined,
-    desc: string
+    desc: string,
   ) => {
     const artBuffCtrls: ArtifactModCtrl<T>[] = [];
 
@@ -228,15 +228,15 @@ export function decodeSetupPrevious(code: string): DecodeResult {
   };
 
   const artBuffCtrls = decodeArtifactModCtrls(
-    _artBCsCode,
+    atfBcStrs,
     (data) => data?.buffs,
-    "Artifact Buff Code"
+    "Artifact Buff Code",
   );
 
   const artDebuffCtrls = decodeArtifactModCtrls(
-    _artDCsCode,
+    atfDcStrs,
     (data) => data?.debuffs,
-    "Artifact Debuff Code"
+    "Artifact Debuff Code",
   );
 
   // ===== TEAMMATES =====
@@ -247,7 +247,7 @@ export function decodeSetupPrevious(code: string): DecodeResult {
     }
 
     try {
-      const [code, tmBcStrs, tmDcStrs, weaponStr, artifactStr] = split(tmStr, 1);
+      const [code, enhancedCode, tmBcStrs, tmDcStrs, weaponStr, artifactStr] = split(tmStr, 1);
       const tmCode = parseNumber(code, "Teammate Code");
 
       if (!tmCode) {
@@ -277,6 +277,7 @@ export function decodeSetupPrevious(code: string): DecodeResult {
       return createTeammate(
         {
           code: tmCode,
+          enhanced: enhancedCode === "1",
           buffCtrls: splitModCtrls(tmBcStrs, 2),
           debuffCtrls: splitModCtrls(tmDcStrs, 2),
           weapon: {
@@ -288,7 +289,7 @@ export function decodeSetupPrevious(code: string): DecodeResult {
           artifact,
         },
         null,
-        { team }
+        { team },
       );
     } catch (e) {
       console.error(e);
@@ -297,9 +298,9 @@ export function decodeSetupPrevious(code: string): DecodeResult {
   };
 
   const teammates = Array_.truthify([
-    decodeTeammate(_tmCode1),
-    decodeTeammate(_tmCode2),
-    decodeTeammate(_tmCode3),
+    decodeTeammate(teammateStr1),
+    decodeTeammate(teammateStr2),
+    decodeTeammate(teammateStr3),
   ]);
 
   team.updateMembers([main, ...teammates]);
@@ -310,38 +311,40 @@ export function decodeSetupPrevious(code: string): DecodeResult {
     return indexStr ? ELEMENT_TYPES[+indexStr] : undefined;
   };
 
-  const [reaction, infuseReaction, superconduct, absorption] = split(_elmtMCsCode, 1);
-
-  let oldInfusion = _infuseElmtIndex ? ATTACK_ELEMENTS[+_infuseElmtIndex] : null;
-
-  if (oldInfusion === "phys") {
-    oldInfusion = null;
-  }
+  const [
+    reaction,
+    infusion,
+    infuseReaction,
+    absorption,
+    absorbReaction,
+    superconduct,
+  ] = split(elmtMcStr, 1);
 
   const elmtEvent: ElementalEvent = {
     reaction: (reaction || null) as AttackReaction,
-    infusion: oldInfusion,
+    infusion: decodeElement(infusion) || null,
     infuseReaction: (infuseReaction || null) as AttackReaction,
     absorption: decodeElement(absorption) || null,
-    absorbReaction: null,
+    absorbReaction: (absorbReaction || null) as AttackReaction,
     superconduct: superconduct === "1",
+    polestarProc: false,
+    polestarCount: 0,
   };
 
   // ===== RESONANCES =====
 
-  let rsnBuffCtrls: ResonanceModCtrl[] = [];
-
-  if (_resonancesCode) {
-    rsnBuffCtrls = split(_resonancesCode, 1)
+  const decodeResonance = (str: string | undefined) => {
+    return split(str, 1)
       .map((rsn) => {
         const [elementType, activated, inputs] = split(rsn, 2);
+        const element = decodeElement(elementType);
 
-        if (!isManualRsnElmt(elementType as ElementType)) {
+        if (!element || !isManualRsnElmt(element)) {
           return null;
         }
 
         const rsnModCtrl: ResonanceModCtrl = {
-          element: elementType as ElementType,
+          element,
           activated: activated === "1",
         };
 
@@ -352,20 +355,14 @@ export function decodeSetupPrevious(code: string): DecodeResult {
         return rsnModCtrl;
       })
       .filter((ctrl) => ctrl !== null);
-  }
+  };
 
   // ===== TEAM BUFFS =====
 
-  const oldTeamBuffIdMap: Record<string, number> = {
-    moon_ascendant: 1,
-    gleaming_moon: 2,
-  };
-
-  const teamBuffCtrls: TeamBuffCtrl[] = split(_teamBuffCodes, 1)
+  const teamBuffCtrls: TeamBuffCtrl[] = split(teamBuffStrs, 1)
     .map((ctrl) => {
       const [id, activated, inputs] = split(ctrl, 2);
-      const newId = id in oldTeamBuffIdMap ? oldTeamBuffIdMap[id] : +id;
-      const data = $AppData.teamBuffs.find((buff) => buff.id === newId);
+      const data = $AppData.teamBuffs.find((buff) => buff.id === +id);
 
       if (!data) {
         return null;
@@ -382,7 +379,7 @@ export function decodeSetupPrevious(code: string): DecodeResult {
 
   // ===== CUSTOM MODIFIERS =====
 
-  const customBuffCtrls: CustomBuffCtrl[] = split(_customBuffsCode, 1).map((codes) => {
+  const customBuffCtrls: CustomBuffCtrl[] = split(customBcStrs, 1).map((codes) => {
     const [categoryIndex, typeIndex, subTypeIndex, value] = split(codes, 2);
     const category = CUSTOM_BUFF_CATEGORIES[+categoryIndex];
     let type = "";
@@ -410,7 +407,7 @@ export function decodeSetupPrevious(code: string): DecodeResult {
     };
   });
 
-  const customDebuffCtrls: CustomDebuffCtrl[] = split(_customDebuffCodes, 1).map((codes) => {
+  const customDebuffCtrls: CustomDebuffCtrl[] = split(customDcStrs, 1).map((codes) => {
     const [typeIndex, value] = split(codes, 2);
     return {
       type: ["def"].concat(ATTACK_ELEMENTS)[+typeIndex] as CustomDebuffCtrl["type"],
@@ -420,7 +417,7 @@ export function decodeSetupPrevious(code: string): DecodeResult {
 
   // ===== TARGET =====
 
-  const [tgCode, tgLevel, tgVariant, tgInputs, tgResistances] = split(_targetCode, 1);
+  const [tgCode, tgLevel, tgVariant, tgInputs, tgResistances] = split(targetStr, 1);
   const targetData = $AppData.getMonster({ code: +tgCode });
 
   let target: Target | undefined;
@@ -441,7 +438,7 @@ export function decodeSetupPrevious(code: string): DecodeResult {
           phys: 10,
         },
       },
-      targetData
+      targetData,
     );
 
     if (tgVariant) {
@@ -468,19 +465,20 @@ export function decodeSetupPrevious(code: string): DecodeResult {
     name: "Imported setup",
     params: new CalcSetup({
       main,
-      selfBuffCtrls: enhanceCtrls(splitModCtrls(_selfBCsCode, 1), mainData.buffs),
-      selfDebuffCtrls: enhanceCtrls(splitModCtrls(_selfDCsCode, 1), mainData.debuffs),
-      wpBuffCtrls: enhanceCtrls(splitModCtrls(_wpBCsCode, 1), weapon.data.buffs),
+      selfBuffCtrls: enhanceCtrls(splitModCtrls(selfBcStrs, 1), mainData.buffs),
+      selfDebuffCtrls: enhanceCtrls(splitModCtrls(selfDcStrs, 1), mainData.debuffs),
+      wpBuffCtrls: enhanceCtrls(splitModCtrls(wpBcStrs, 1), weapon.data.buffs),
       artBuffCtrls,
       artDebuffCtrls,
       teammates,
       team,
-      rsnBuffCtrls,
-      rsnDebuffCtrls: [],
+      rsnBuffCtrls: decodeResonance(rsnBcStrs),
+      rsnDebuffCtrls: decodeResonance(rsnDcStrs),
       teamBuffCtrls,
       elmtEvent,
       customBuffCtrls,
       customDebuffCtrls,
+      target,
     }),
   };
 

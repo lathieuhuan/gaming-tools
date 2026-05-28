@@ -3,7 +3,8 @@ import { useState } from "react";
 import { useSetupImporter } from "@/lib/setup-importer";
 import { decodeSetup } from "@/logic/setupCodec/decodeSetup";
 
-import { PorterLayout } from "@/components";
+import { PorterLayout } from "@/components/SetupExporter";
+import { EXPORTED_SETUP_VERSION, LEGACY_EXPORTED_SETUP_VERSION } from "@/constants";
 
 export function SetupImportGate(props: { onClose: () => void }) {
   const setupImporter = useSetupImporter();
@@ -47,6 +48,11 @@ export function SetupImportGate(props: { onClose: () => void }) {
               type: "error",
             }
           : undefined
+      }
+      warning={
+        <p className="text-right">
+          Supported versions: V{EXPORTED_SETUP_VERSION}, V{LEGACY_EXPORTED_SETUP_VERSION}
+        </p>
       }
       moreButtons={[
         {

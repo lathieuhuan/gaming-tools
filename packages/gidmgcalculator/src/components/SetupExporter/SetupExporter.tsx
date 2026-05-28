@@ -3,7 +3,6 @@ import { useMemo, useState } from "react";
 import type { CalcSetup } from "@/models";
 import { encodeSetup } from "@/logic/setupCodec";
 import { PorterLayout } from "./PorterLayout";
-import { EXPORTED_SETUP_VERSION, LEGACY_EXPORTED_SETUP_VERSION } from "@/constants/config";
 
 type SetupExporterProps = {
   setupName: string;
@@ -39,9 +38,6 @@ export const SetupExporter = ({ setupName, calcSetup, onClose }: SetupExporterPr
           <p className="text-danger-2">
             Please do NOT save this code/link for long-term use. It will be outdated when new format
             is released.
-          </p>
-          <p className="mt-2 text-right">
-            Supported versions: V{EXPORTED_SETUP_VERSION}, V{LEGACY_EXPORTED_SETUP_VERSION}
           </p>
         </>
       }

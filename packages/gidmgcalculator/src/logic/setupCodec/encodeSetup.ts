@@ -130,6 +130,8 @@ export function encodeSetup(calcSetup: CalcSetup) {
       encodeElement(elmtEvent.absorption),
       elmtEvent.absorbReaction,
       +elmtEvent.superconduct,
+      +elmtEvent.polestarProc,
+      elmtEvent.polestarCount,
     ].join(DIVIDER[1]);
 
     const teamBuffStr = teamBuffCtrls.map((ctrl) => {

@@ -175,7 +175,7 @@ export function decodeSetupCurrent(code: string): DecodeResult {
       decodeArtifact(sandsStr, "sands"),
       decodeArtifact(gobletStr, "goblet"),
       decodeArtifact(circletStr, "circlet"),
-    ])
+    ]),
   );
 
   const main = createCharacter(
@@ -193,7 +193,7 @@ export function decodeSetupCurrent(code: string): DecodeResult {
       weapon,
       atfGear,
       team,
-    }
+    },
   );
 
   // ===== ARTIFACT BUFFS =====
@@ -201,7 +201,7 @@ export function decodeSetupCurrent(code: string): DecodeResult {
   const decodeArtifactModCtrls = <T extends ArtifactBuff | ArtifactDebuff>(
     ctrlStrs: string | undefined,
     getMods: (data: AppArtifact | undefined) => T[] | undefined,
-    desc: string
+    desc: string,
   ) => {
     const artBuffCtrls: ArtifactModCtrl<T>[] = [];
 
@@ -230,13 +230,13 @@ export function decodeSetupCurrent(code: string): DecodeResult {
   const artBuffCtrls = decodeArtifactModCtrls(
     atfBcStrs,
     (data) => data?.buffs,
-    "Artifact Buff Code"
+    "Artifact Buff Code",
   );
 
   const artDebuffCtrls = decodeArtifactModCtrls(
     atfDcStrs,
     (data) => data?.debuffs,
-    "Artifact Debuff Code"
+    "Artifact Debuff Code",
   );
 
   // ===== TEAMMATES =====
@@ -289,7 +289,7 @@ export function decodeSetupCurrent(code: string): DecodeResult {
           artifact,
         },
         null,
-        { team }
+        { team },
       );
     } catch (e) {
       console.error(e);
@@ -311,10 +311,16 @@ export function decodeSetupCurrent(code: string): DecodeResult {
     return indexStr ? ELEMENT_TYPES[+indexStr] : undefined;
   };
 
-  const [reaction, infusion, infuseReaction, absorption, absorbReaction, superconduct] = split(
-    elmtMcStr,
-    1
-  );
+  const [
+    reaction,
+    infusion,
+    infuseReaction,
+    absorption,
+    absorbReaction,
+    superconduct,
+    polestarProc,
+    polestarCount,
+  ] = split(elmtMcStr, 1);
 
   const elmtEvent: ElementalEvent = {
     reaction: (reaction || null) as AttackReaction,
@@ -323,6 +329,8 @@ export function decodeSetupCurrent(code: string): DecodeResult {
     absorption: decodeElement(absorption) || null,
     absorbReaction: (absorbReaction || null) as AttackReaction,
     superconduct: superconduct === "1",
+    polestarProc: polestarProc === "1",
+    polestarCount: polestarCount ? parseNumber(polestarCount, "Polestar Field") : 0,
   };
 
   // ===== RESONANCES =====
@@ -432,7 +440,7 @@ export function decodeSetupCurrent(code: string): DecodeResult {
           phys: 10,
         },
       },
-      targetData
+      targetData,
     );
 
     if (tgVariant) {

@@ -62,6 +62,8 @@ export type ElementalEvent = {
   infusion: ElementType | null;
   infuseReaction: AttackReaction;
   superconduct: boolean;
+  polestarProc: boolean;
+  polestarCount: number;
 };
 
 export type CustomBuffCtrlCategory = "totalAttr" | "attPattBonus" | "attElmtBonus" | "rxnBonus";
