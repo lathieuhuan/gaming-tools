@@ -36,7 +36,7 @@ export function PolestarFieldCtrl({ polestarProc, polestarCount }: PolestarField
         {
           type: "TEXT",
           label: "Stacks",
-          max: 10,
+          max: 12,
         },
       ]}
       inputs={[polestarCount]}
