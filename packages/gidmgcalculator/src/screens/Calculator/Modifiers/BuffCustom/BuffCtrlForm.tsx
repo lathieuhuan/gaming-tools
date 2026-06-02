@@ -3,47 +3,9 @@ import { clsx, InputNumber, VersatileSelect } from "rond";
 
 import type { CustomBuffCtrl, CustomBuffCtrlCategory, CustomBuffCtrlType } from "@/types";
 
-import { ATTACK_ELEMENTS, ATTACK_PATTERNS, REACTIONS } from "@/constants/global";
+import { CUSTOM_BUFF_CTRL_SPECS } from "@/constants/global";
 import { useTranslation } from "@/hooks";
 import { suffixOf, toCustomBuffLabel } from "@/utils/pure.utils";
-
-const CATEGORIES: Record<
-  CustomBuffCtrlCategory,
-  { label: string; types: readonly CustomBuffCtrlType[]; subTypes?: readonly string[] }
-> = {
-  totalAttr: {
-    label: "Attributes",
-    types: [
-      "hp",
-      "hp_",
-      "atk",
-      "atk_",
-      "def",
-      "def_",
-      "em",
-      "er_",
-      "cRate_",
-      "cDmg_",
-      "shieldS_",
-      "healB_",
-    ],
-  },
-  attElmtBonus: {
-    label: "Elements",
-    types: ATTACK_ELEMENTS,
-    subTypes: ["pct_", "flat", "cRate_", "cDmg_"],
-  },
-  attPattBonus: {
-    label: "Talents",
-    types: ["all", ...ATTACK_PATTERNS],
-    subTypes: ["pct_", "flat", "cRate_", "cDmg_", "defIgn_"],
-  },
-  rxnBonus: {
-    label: "Reactions",
-    types: ["lunarBloom", ...REACTIONS],
-    subTypes: ["pct_", "cRate_", "cDmg_"],
-  },
-};
 
 type BuffCtrlFormProps = {
   id: string;
@@ -56,20 +18,29 @@ export function BuffCtrlForm({ id, onSubmit }: BuffCtrlFormProps) {
 
   const [config, setConfig] = useState<CustomBuffCtrl>({
     category: "totalAttr",
-    type: "atk_",
+    type: CUSTOM_BUFF_CTRL_SPECS.totalAttr.types[0],
     value: 0,
   });
 
-  const subTypes = CATEGORIES[config.category].subTypes;
+  const typesByCategory = (category: CustomBuffCtrlCategory) => {
+    const { types } = CUSTOM_BUFF_CTRL_SPECS[category];
+    // new reaction types must be added at the end but we want to show them at the beginning
+    return category === "rxnBonus" ? types.toReversed() : types;
+  };
+
+  const categorySpec = CUSTOM_BUFF_CTRL_SPECS[config.category];
   const sign = suffixOf(config.subType || config.type);
 
-  const handleCategoryChange = (category: CustomBuffCtrlCategory) => {
-    const subType = CATEGORIES[category].subTypes?.[0] as CustomBuffCtrl["subType"];
+  const subTypeOptions = categorySpec.subTypes?.map((subType) => ({
+    label: t(subType),
+    value: subType,
+  }));
 
+  const handleCategoryChange = (category: CustomBuffCtrlCategory) => {
     setConfig({
       category,
-      type: CATEGORIES[category].types[0],
-      ...(subType ? { subType } : undefined),
+      type: typesByCategory(category)[0],
+      subType: CUSTOM_BUFF_CTRL_SPECS[category].subTypes?.at(0),
       value: 0,
     });
   };
@@ -111,7 +82,13 @@ export function BuffCtrlForm({ id, onSubmit }: BuffCtrlFormProps) {
     rxnBonus: "9.5rem",
   };
 
-  const categorySelect = (
+  const typeOptions = typesByCategory(config.category).map((option) => ({
+    label: toCustomBuffLabel(config.category, option, t),
+    value: option,
+    className: "capitalize",
+  }));
+
+  const typeSelect = (
     <VersatileSelect
       title="Select"
       className="h-8 capitalize"
@@ -119,13 +96,7 @@ export function BuffCtrlForm({ id, onSubmit }: BuffCtrlFormProps) {
       arrowAt="start"
       transparent
       dropdownCls="z-50"
-      options={CATEGORIES[config.category].types.map((option) => {
-        return {
-          label: toCustomBuffLabel(config.category, option, t),
-          value: option,
-          className: "capitalize",
-        };
-      })}
+      options={typeOptions}
       value={config.type}
       onChange={(value) => handleTypeChange(value as string)}
     />
@@ -159,7 +130,7 @@ export function BuffCtrlForm({ id, onSubmit }: BuffCtrlFormProps) {
   return (
     <div className="flex flex-col">
       <div className="flex flex-col sm:flex-row">
-        {Object.entries(CATEGORIES).map(([category, { label }], index) => {
+        {Object.entries(CUSTOM_BUFF_CTRL_SPECS).map(([category, { label }], index) => {
           const selected = config.category === category;
 
           return (
@@ -169,7 +140,7 @@ export function BuffCtrlForm({ id, onSubmit }: BuffCtrlFormProps) {
                 "px-4 py-1",
                 !index && "rounded-t sm:rounded-tr-none sm:rounded-l",
                 index === 3 && "rounded-b sm:rounded-bl-none sm:rounded-r",
-                selected ? "bg-light-1" : "bg-dark-3"
+                selected ? "bg-light-1" : "bg-dark-3",
               )}
               // This will prevent the current input from being blurred
               onMouseDown={(e) => e.preventDefault()}
@@ -193,9 +164,9 @@ export function BuffCtrlForm({ id, onSubmit }: BuffCtrlFormProps) {
           handleSubmit();
         }}
       >
-        {subTypes ? (
+        {subTypeOptions ? (
           <div className="flex flex-col sm:flex-row sm:justify-end sm:items-center gap-2">
-            {categorySelect}
+            {typeSelect}
 
             <div className="flex items-center justify-between gap-2">
               {["melt", "vaporize"].includes(config.type) ? (
@@ -208,7 +179,7 @@ export function BuffCtrlForm({ id, onSubmit }: BuffCtrlFormProps) {
                   arrowAt="start"
                   transparent
                   dropdownCls="z-50"
-                  options={subTypes.map((subType) => ({ label: t(subType), value: subType }))}
+                  options={subTypeOptions}
                   value={config.subType}
                   onChange={(value) => handleSubTypeChange(value)}
                 />
@@ -219,7 +190,7 @@ export function BuffCtrlForm({ id, onSubmit }: BuffCtrlFormProps) {
           </div>
         ) : (
           <div className="flex items-center justify-center sm:justify-end gap-2">
-            {categorySelect}
+            {typeSelect}
             {valueInput}
           </div>
         )}

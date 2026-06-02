@@ -12,6 +12,7 @@ import type {
   QuickenReaction,
   ReactionType,
   ResistReductionKey,
+  StellarType,
 } from "./common";
 
 export type ModifierCtrlState = {
@@ -68,7 +69,13 @@ export type ElementalEvent = {
 
 export type CustomBuffCtrlCategory = "totalAttr" | "attPattBonus" | "attElmtBonus" | "rxnBonus";
 
-export type CustomBuffCtrlType = "all" | AttributeStat | AttackPattern | ReactionType | LunarType;
+export type CustomBuffCtrlType =
+  | "all"
+  | AttributeStat
+  | AttackPattern
+  | ReactionType
+  | LunarType
+  | StellarType;
 
 export type CustomBuffCtrl = {
   category: CustomBuffCtrlCategory;

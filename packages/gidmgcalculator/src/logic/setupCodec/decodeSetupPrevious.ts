@@ -8,7 +8,6 @@ import type {
   ArtifactType,
   AttackReaction,
   CustomBuffCtrl,
-  CustomBuffCtrlType,
   CustomDebuffCtrl,
   ElementalEvent,
   ElementType,
@@ -22,12 +21,11 @@ import type { DecodeResult } from "./types";
 
 import {
   ATTACK_ELEMENTS,
-  ATTACK_PATTERNS,
   ATTRIBUTE_STAT_TYPES,
   BONUS_KEYS,
+  CUSTOM_BUFF_CTRL_SPECS,
   ELEMENT_TYPES,
   LEVELS,
-  REACTIONS,
   WEAPON_TYPES,
 } from "@/constants/global";
 import { isManualRsnElmt } from "@/logic/element.logic";
@@ -311,14 +309,10 @@ export function decodeSetupPrevious(code: string): DecodeResult {
     return indexStr ? ELEMENT_TYPES[+indexStr] : undefined;
   };
 
-  const [
-    reaction,
-    infusion,
-    infuseReaction,
-    absorption,
-    absorbReaction,
-    superconduct,
-  ] = split(elmtMcStr, 1);
+  const [reaction, infusion, infuseReaction, absorption, absorbReaction, superconduct] = split(
+    elmtMcStr,
+    1,
+  );
 
   const elmtEvent: ElementalEvent = {
     reaction: (reaction || null) as AttackReaction,
@@ -382,27 +376,27 @@ export function decodeSetupPrevious(code: string): DecodeResult {
   const customBuffCtrls: CustomBuffCtrl[] = split(customBcStrs, 1).map((codes) => {
     const [categoryIndex, typeIndex, subTypeIndex, value] = split(codes, 2);
     const category = CUSTOM_BUFF_CATEGORIES[+categoryIndex];
-    let type = "";
+    let type: CustomBuffCtrl["type"] = "all";
 
     switch (category) {
       case "totalAttr":
-        type = ATTRIBUTE_STAT_TYPES[+typeIndex];
+        type = CUSTOM_BUFF_CTRL_SPECS.totalAttr.types[+typeIndex];
         break;
       case "attElmtBonus":
-        type = ATTACK_ELEMENTS[+typeIndex];
+        type = CUSTOM_BUFF_CTRL_SPECS.attElmtBonus.types[+typeIndex];
         break;
       case "attPattBonus":
-        type = ["all"].concat(ATTACK_PATTERNS)[+typeIndex];
+        type = CUSTOM_BUFF_CTRL_SPECS.attPattBonus.types[+typeIndex];
         break;
       case "rxnBonus":
-        type = REACTIONS[+typeIndex];
+        type = CUSTOM_BUFF_CTRL_SPECS.rxnBonus.types[+typeIndex];
         break;
     }
 
     return {
       category,
-      type: type as CustomBuffCtrlType,
-      ...(category === "totalAttr" ? undefined : { subType: BONUS_KEYS[+subTypeIndex] }),
+      type,
+      subType: category === "totalAttr" ? undefined : BONUS_KEYS[+subTypeIndex],
       value: +value,
     };
   });

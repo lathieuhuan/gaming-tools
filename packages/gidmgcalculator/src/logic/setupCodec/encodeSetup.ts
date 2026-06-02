@@ -1,21 +1,14 @@
 import type { CalcSetup } from "@/models";
-import type {
-  AttackElement,
-  AttributeStat,
-  ElementType,
-  ModifierCtrlState,
-  ReactionType,
-} from "@/types";
+import type { AttackElement, ElementType, ModifierCtrlState } from "@/types";
 
 import { EXPORTED_SETUP_VERSION } from "@/constants/config";
 import {
   ATTACK_ELEMENTS,
-  ATTACK_PATTERNS,
   ATTRIBUTE_STAT_TYPES,
   BONUS_KEYS,
+  CUSTOM_BUFF_CTRL_SPECS,
   ELEMENT_TYPES,
   LEVELS,
-  REACTIONS,
   WEAPON_TYPES,
 } from "@/constants/global";
 import { CUSTOM_BUFF_CATEGORIES, DIVIDER } from "./config";
@@ -83,7 +76,7 @@ export function encodeSetup(calcSetup: CalcSetup) {
         ATTRIBUTE_STAT_TYPES.indexOf(piece.mainStatType),
         piece.subStats
           .map((subStat) =>
-            [ATTRIBUTE_STAT_TYPES.indexOf(subStat.type), subStat.value].join(DIVIDER[3])
+            [ATTRIBUTE_STAT_TYPES.indexOf(subStat.type), subStat.value].join(DIVIDER[3]),
           )
           .join(DIVIDER[2]),
       ].join(DIVIDER[1]);
@@ -159,22 +152,8 @@ export function encodeSetup(calcSetup: CalcSetup) {
     });
 
     const customBcStr = customBuffCtrls.map((ctrl) => {
-      let typeCode = 0;
+      const typeCode = CUSTOM_BUFF_CTRL_SPECS[ctrl.category].types.indexOf(ctrl.type);
 
-      switch (ctrl.category) {
-        case "totalAttr":
-          typeCode = ATTRIBUTE_STAT_TYPES.indexOf(ctrl.type as AttributeStat);
-          break;
-        case "attElmtBonus":
-          typeCode = ATTACK_ELEMENTS.indexOf(ctrl.type as AttackElement);
-          break;
-        case "attPattBonus":
-          typeCode = ["all"].concat(ATTACK_PATTERNS).indexOf(ctrl.type);
-          break;
-        case "rxnBonus":
-          typeCode = REACTIONS.indexOf(ctrl.type as ReactionType);
-          break;
-      }
       return [
         CUSTOM_BUFF_CATEGORIES.indexOf(ctrl.category),
         typeCode,
@@ -195,7 +174,7 @@ export function encodeSetup(calcSetup: CalcSetup) {
       target.inputs?.length ? target.inputs.join(DIVIDER[2]) : "",
       Object.entries(target.resistances)
         .map(([key, value]) =>
-          [ATTACK_ELEMENTS.indexOf(key as AttackElement), value].join(DIVIDER[3])
+          [ATTACK_ELEMENTS.indexOf(key as AttackElement), value].join(DIVIDER[3]),
         )
         .join(DIVIDER[2]),
     ].join(DIVIDER[1]);
