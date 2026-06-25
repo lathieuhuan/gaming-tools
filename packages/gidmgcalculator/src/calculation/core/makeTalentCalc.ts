@@ -177,7 +177,6 @@ export function makeTalentCalc(
     const bonusMult = toMult(getBonus("pct_"));
     const veilMult = toMult(getBonus("veil_"));
     const flat = getBonus("flat");
-    const specMult = toMult(getBonus("specMult_"));
     const elvMult = toMult(getBonus("elvMult_"));
     const resMult = target.resistMults[attElmt];
 
@@ -189,7 +188,7 @@ export function makeTalentCalc(
 
     const values = bases.map<CalcResultItemValue>((value) => {
       const core = value * baseMult * coefficient * bonusMult * veilMult + flat;
-      const base = core * specMult * elvMult * resMult;
+      const base = core * elvMult * resMult;
 
       return {
         base,
@@ -204,7 +203,6 @@ export function makeTalentCalc(
       bonusMult,
       veilMult,
       flat,
-      specMult,
       elvMult,
       resMult,
       cRate_,
@@ -254,7 +252,6 @@ export function makeTalentCalc(
     const bonusMult = toMult(getBonus("pct_"));
     const veilMult = toMult(getBonus("veil_"));
     const flat = getBonus("flat");
-    const specMult = toMult(getBonus("specMult_"));
     const elvMult = toMult(getBonus("elvMult_"));
     const resMult = target.resistMults[attElmt];
 
@@ -266,7 +263,7 @@ export function makeTalentCalc(
 
     const values = bases.map<CalcResultItemValue>((value) => {
       const core = value * baseMult * coefficient * bonusMult * veilMult + flat;
-      const base = core * specMult * elvMult * resMult;
+      const base = core * elvMult * resMult;
 
       return {
         base,
@@ -281,7 +278,6 @@ export function makeTalentCalc(
       bonusMult,
       veilMult,
       flat,
-      specMult,
       elvMult,
       resMult,
       cRate_,

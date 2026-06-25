@@ -41,8 +41,8 @@ export type ResultItemRecord = {
   veilMult?: number;
   flat?: number;
   elvMult?: number;
-  specMult?: number;
   bonusMult: number;
+  inhealMult?: number;
   rxnMult?: number;
   defMult?: number;
   resMult?: number;

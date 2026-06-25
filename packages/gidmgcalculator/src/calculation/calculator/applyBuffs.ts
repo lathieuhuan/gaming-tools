@@ -286,9 +286,10 @@ export function applyBuffs(main: Character, teammates: Teammate[], setup: CalcSe
         });
         break;
       case "cryo":
-        allAttrsCtrl.applyBonus({
+        attkBonusCtrl.add({
           value: 15,
-          toStat: "cRate_",
+          toType: "all",
+          toKey: "cRate_",
           label: "Cryo resonance",
         });
         break;

@@ -100,9 +100,9 @@ export function CalcItemTracker({
       ];
     }
 
-    const specMult: PartConfig = {
-      label: "Special Mult.",
-      value: data.specMult,
+    const inhealMult: PartConfig = {
+      label: "Incoming Heal Mult.",
+      value: data.inhealMult,
       nullValue: 1,
     };
 
@@ -132,7 +132,7 @@ export function CalcItemTracker({
             flat,
           ],
         },
-        specMult,
+        inhealMult,
         elvMult,
       ];
     }
@@ -143,7 +143,7 @@ export function CalcItemTracker({
         parts: [...factorParts, baseMult, flat],
       },
       bonusMult,
-      specMult,
+      inhealMult,
       elvMult,
     ];
   };
