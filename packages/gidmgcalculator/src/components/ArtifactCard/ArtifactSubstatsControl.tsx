@@ -47,7 +47,7 @@ export function ArtifactSubstatsControl({
   return (
     <div ref={wrapper} className={"space-y-2 " + className}>
       {subStats.map(({ type, value }, i) => {
-        const isValid = value === 0 || VALID_SUBSTAT_VALUES[type][rarity].includes(value);
+        const isValid = isValidSubstatValue(value, VALID_SUBSTAT_VALUES[type][rarity]);
 
         return mutable ? (
           <div key={i} className="h-9 flex-center bg-dark-2 relative">
@@ -66,8 +66,8 @@ export function ArtifactSubstatsControl({
             <span>+</span>
             <InputNumber
               transparent
-              className={`w-14 h-full pt-1.5 ${isValid ? "text-light-1" : "text-danger-2"}`}
-              maxDecimalDigits={1}
+              className={`w-18 h-full pt-1.5 ${isValid ? "text-light-1" : "text-danger-2"}`}
+              maxDecimalDigits={2}
               value={value}
               onChange={(value) => onChangeSubStat?.(i, { value })}
               onKeyDown={onKeyDownValue(i)}
@@ -93,4 +93,18 @@ export function ArtifactSubstatsControl({
       })}
     </div>
   );
+}
+
+function isValidSubstatValue(value: number, validValues: number[]) {
+  if (value === 0) {
+    return true;
+  }
+
+  const lastDigit = value.toString().split(/[.,]/).at(-1);
+
+  if (lastDigit && lastDigit.length > 1) {
+    return true;
+  }
+
+  return validValues.includes(value);
 }
