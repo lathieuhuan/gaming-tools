@@ -207,14 +207,13 @@ export function makeTalentCalc(
       resMult,
       cRate_,
       cDmg_,
-      specPatt: lunar,
     });
 
     return {
       type: "attack",
       values,
       attElmt,
-      attPatt,
+      attPatt: null,
       specPatt: lunar,
       reaction: null,
       recorder,
@@ -282,15 +281,14 @@ export function makeTalentCalc(
       resMult,
       cRate_,
       cDmg_,
-      specPatt: stellar,
     });
 
     return {
       type: "attack",
       values,
       attElmt,
+      attPatt: null,
       specPatt: stellar,
-      attPatt,
       reaction: null,
       recorder,
     };

@@ -1,4 +1,4 @@
-import type { CalcAspect, CalcResultItemValue } from "@/calculation/types";
+import type { CalcAspect, CalcResultAttackItem, CalcResultItemValue } from "@/calculation/types";
 import type { AppCharacter, AppWeapon, LunarReaction, TransformativeReaction } from "@/types";
 
 import { LUNAR_REACTIONS, NORMAL_ATTACKS, TRANSFORMATIVE_REACTIONS } from "@/constants/global";
@@ -28,7 +28,7 @@ export type TableKey = TableCalcItemKey | TableWeaponKey | TableReactionKey | Ta
 export function getTableKeys(
   calcList: AppCharacter["calcList"],
   weaponCalcItems?: AppWeapon["calcItems"],
-  extraKeys?: string[]
+  extraKeys?: string[],
 ): TableKey[] {
   const result: TableKey[] = [
     {
@@ -81,3 +81,11 @@ export const displayValues = (values: CalcResultItemValue[], key: CalcAspect) =>
 
   return undefined;
 };
+
+export function attackCalcItemSubtitleParts(item: CalcResultAttackItem) {
+  return [
+    `${item.attElmt}_attElmt`,
+    item.attPatt && item.attPatt !== "none" && item.attPatt,
+    item.specPatt && item.specPatt,
+  ].filter((part) => typeof part === "string");
+}

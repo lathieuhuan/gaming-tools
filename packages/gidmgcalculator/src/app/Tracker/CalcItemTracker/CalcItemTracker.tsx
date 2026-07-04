@@ -13,7 +13,7 @@ import { useTranslation } from "@/hooks";
 import { AttackBonusControl } from "@/models/Character";
 import { suffixOf } from "@/utils/pure.utils";
 
-import { markGreen } from "@/components";
+import { attackCalcItemSubtitleParts, markGreen } from "@/components";
 import { PartConfig, Parts, PartsConfig } from "./Parts";
 
 type CalcResultItem = CalcResultAttackItem | CalcResultOtherItem | CalcResultReactionItem;
@@ -110,7 +110,7 @@ export function CalcItemTracker({
       .map((factor, index) => makeFactorParts(factor, index ? "+" : null))
       .flat();
 
-    if (data.specPatt) {
+    if (data.coefficient) {
       return [
         {
           containers: ["(", ")"],
@@ -189,11 +189,7 @@ export function CalcItemTracker({
     let text = "";
 
     if (item.type === "attack") {
-      const parts = [
-        t(`${item.attElmt}_attElmt`),
-        item.attPatt !== "none" && t(item.attPatt),
-        item.specPatt && t(item.specPatt),
-      ].filter(Boolean);
+      const parts = attackCalcItemSubtitleParts(item).map((part) => t(part));
 
       text = parts.join(" / ");
     }

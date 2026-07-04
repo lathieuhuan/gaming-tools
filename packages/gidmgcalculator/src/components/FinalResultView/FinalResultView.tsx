@@ -1,7 +1,7 @@
 import type { CalcResult } from "@/calculation/calculator";
 
 import { useTranslation } from "@/hooks";
-import { displayValues } from "./utils";
+import { attackCalcItemSubtitleParts, displayValues } from "./utils";
 
 import { FinalResultLayout, type FinalResultLayoutProps } from "./FinalResultLayout";
 
@@ -37,11 +37,7 @@ export function FinalResultView({ finalResult, ...props }: FinalResultViewProps)
 
         switch (result?.type) {
           case "attack": {
-            const parts = [
-              t(`${result.attElmt}_attElmt`),
-              result.attPatt !== "none" && t(result.attPatt),
-              result.specPatt && t(result.specPatt),
-            ].filter(Boolean);
+            const parts = attackCalcItemSubtitleParts(result).map((part) => t(part));
 
             title = parts.join(" / ");
             break;
