@@ -4,6 +4,7 @@ import { DOWNLOAD_DATA_VERSION } from "@/constants/config";
 import { convertToV3_1 } from "@/migration/convertToV3_1";
 import { convertToV4 } from "@/migration/convertToV4";
 import { convertToV5 } from "@/migration/convertToV5";
+import { convertToV6 } from "@/migration/convertToV6";
 
 type MigrationFn = (data: any) => any;
 
@@ -16,6 +17,7 @@ const MIGRATIONS: Migration[] = [
   { version: 3, fn: convertToV3_1 },
   { version: 3.1, fn: convertToV4 },
   { version: 4, fn: convertToV5 },
+  { version: 5, fn: convertToV6 },
 ];
 
 type OldData = {

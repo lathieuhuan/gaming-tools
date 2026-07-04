@@ -53,6 +53,13 @@ export function calculateSetup(setup: CalcSetup, options: CalculateSetupOptions 
 
   // ===== TALENT CALCULATION =====
 
+  const { polestarProc, polestarCount } = elmtEvent;
+  let stellarCoefficient = 1;
+
+  if (polestarProc && polestarCount) {
+    stellarCoefficient += 0.4 + polestarCount * 0.05;
+  }
+
   for (const ATT_PATT of ATTACK_PATTERNS) {
     const talentType = ATT_PATT === "ES" || ATT_PATT === "EB" ? ATT_PATT : "NAs";
     const resultGroup = result[talentType];
@@ -60,7 +67,7 @@ export function calculateSetup(setup: CalcSetup, options: CalculateSetupOptions 
     const defaultValues = getTalentDefaultValues(
       main.data,
       ATT_PATT,
-      ATT_PATT === "ES" || ATT_PATT === "EB"
+      ATT_PATT === "ES" || ATT_PATT === "EB",
     );
 
     const calculator = makeTalentCalc(main, target, talentType, defaultValues, alterConfig);
@@ -71,7 +78,7 @@ export function calculateSetup(setup: CalcSetup, options: CalculateSetupOptions 
         {
           exclusives: main.attkBonusCtrl.collectExclusiveBonuses(calcItem.id),
         },
-        options?.shouldLog
+        options?.shouldLog,
       );
 
       if (type === "attack") {
@@ -86,7 +93,7 @@ export function calculateSetup(setup: CalcSetup, options: CalculateSetupOptions 
           resultGroup[calcItem.name] = calculator.calcLunarAttackItem(
             calcItem,
             calcItem.lunar,
-            recorder
+            recorder,
           );
           continue;
         }
@@ -96,7 +103,8 @@ export function calculateSetup(setup: CalcSetup, options: CalculateSetupOptions 
             calcItem,
             calcItem.stellar,
             main.data.vision,
-            recorder
+            stellarCoefficient,
+            recorder,
           );
           continue;
         }
@@ -105,7 +113,7 @@ export function calculateSetup(setup: CalcSetup, options: CalculateSetupOptions 
           calcItem,
           itemElmtAlter,
           elmtEvent,
-          recorder
+          recorder,
         );
         continue;
       }
@@ -160,7 +168,7 @@ export function calculateSetup(setup: CalcSetup, options: CalculateSetupOptions 
       {
         factors: [{ label: basedOn, value: attribute, mult }],
       },
-      options?.shouldLog
+      options?.shouldLog,
     );
 
     if (type === "attack") {
