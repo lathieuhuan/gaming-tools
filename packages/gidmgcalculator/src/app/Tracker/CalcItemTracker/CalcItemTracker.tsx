@@ -115,20 +115,20 @@ export function CalcItemTracker({
         {
           containers: ["(", ")"],
           parts: [
-            ...factorParts,
-            baseMult,
             {
               label: "Coefficient",
               value: data.coefficient,
               nullValue: 1,
             },
-            bonusMult,
+            ...factorParts,
+            baseMult,
             {
-              label: "Veil Mult.",
-              value: data.veilMult,
+              label: "Reaction Base Mult.",
+              value: data.rxnBaseMult,
               nullValue: 1,
               process: (value) => `${round(value * 100, 2)}%`,
             },
+            bonusMult,
             flat,
           ],
         },

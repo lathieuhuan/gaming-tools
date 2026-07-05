@@ -37,7 +37,7 @@ export type ResultItemRecord = {
   }>;
   coefficient?: number;
   baseMult?: number;
-  veilMult?: number;
+  rxnBaseMult?: number;
   flat?: number;
   elvMult?: number;
   bonusMult: number;

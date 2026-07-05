@@ -172,10 +172,10 @@ export function makeTalentCalc(
     const extraTalentMult = getBonus("mult_");
     const bases = getBases(item, extraTalentMult, recorder);
 
-    const baseMult = toMult(getBonus("baseMult_"));
     const coefficient = LUNAR_ATTACK_COEFFICIENT[lunar];
+    const baseMult = toMult(getBonus("baseMult_"));
+    const rxnBaseMult = toMult(getBonus("rxnBaseMult_"));
     const bonusMult = toMult(getBonus("pct_"));
-    const veilMult = toMult(getBonus("veil_"));
     const flat = getBonus("flat");
     const elvMult = toMult(getBonus("elvMult_"));
     const resMult = target.resistMults[attElmt];
@@ -187,7 +187,7 @@ export function makeTalentCalc(
     const averageMult = 1 + cRate_ * cDmg_;
 
     const values = bases.map<CalcResultItemValue>((value) => {
-      const core = value * baseMult * coefficient * bonusMult * veilMult + flat;
+      const core = coefficient * value * baseMult * rxnBaseMult * bonusMult + flat;
       const base = core * elvMult * resMult;
 
       return {
@@ -200,8 +200,8 @@ export function makeTalentCalc(
     recorder.record({
       coefficient,
       baseMult,
+      rxnBaseMult,
       bonusMult,
-      veilMult,
       flat,
       elvMult,
       resMult,
@@ -248,8 +248,8 @@ export function makeTalentCalc(
     const bases = getBases(item, extraTalentMult, recorder);
 
     const baseMult = toMult(getBonus("baseMult_"));
+    const rxnBaseMult = toMult(getBonus("rxnBaseMult_"));
     const bonusMult = toMult(getBonus("pct_"));
-    const veilMult = toMult(getBonus("veil_"));
     const flat = getBonus("flat");
     const elvMult = toMult(getBonus("elvMult_"));
     const resMult = target.resistMults[attElmt];
@@ -261,7 +261,7 @@ export function makeTalentCalc(
     const averageMult = 1 + cRate_ * cDmg_;
 
     const values = bases.map<CalcResultItemValue>((value) => {
-      const core = value * baseMult * coefficient * bonusMult * veilMult + flat;
+      const core = coefficient * value * baseMult * rxnBaseMult * bonusMult + flat;
       const base = core * elvMult * resMult;
 
       return {
@@ -274,8 +274,8 @@ export function makeTalentCalc(
     recorder.record({
       coefficient,
       baseMult,
+      rxnBaseMult,
       bonusMult,
-      veilMult,
       flat,
       elvMult,
       resMult,

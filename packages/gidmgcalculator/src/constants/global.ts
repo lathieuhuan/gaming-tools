@@ -18,8 +18,8 @@ export const BONUS_KEYS = [
   "mult_",
   "defIgn_",
   "baseMult_",
+  "rxnBaseMult_",
   "elvMult_",
-  "veil_",
 ] as const;
 
 // ========== ATTACKS ==========

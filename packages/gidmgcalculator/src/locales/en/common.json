@@ -59,6 +59,7 @@
   "multPlus_": "Base DMG Multiplier",
   "elvMult_": "Elevate Multiplier",
   "baseMult_": "Base DMG Multiplier",
+  "rxnBaseMult_": "Reaction Base DMG Multiplier",
   "pyro_attElmt": "Pyro",
   "hydro_attElmt": "Hydro",
   "geo_attElmt": "Geo",

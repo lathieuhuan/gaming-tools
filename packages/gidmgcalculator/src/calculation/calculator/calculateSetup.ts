@@ -54,10 +54,10 @@ export function calculateSetup(setup: CalcSetup, options: CalculateSetupOptions 
   // ===== TALENT CALCULATION =====
 
   const { polestarProc, polestarCount } = elmtEvent;
-  let stellarCoefficient = 1;
+  let stellarConductCoefficient = 1;
 
   if (polestarProc && polestarCount) {
-    stellarCoefficient += 0.4 + polestarCount * 0.05;
+    stellarConductCoefficient += 0.4 + polestarCount * 0.05;
   }
 
   for (const ATT_PATT of ATTACK_PATTERNS) {
@@ -73,7 +73,7 @@ export function calculateSetup(setup: CalcSetup, options: CalculateSetupOptions 
     const calculator = makeTalentCalc(main, target, talentType, defaultValues, alterConfig);
 
     for (const calcItem of calcList[ATT_PATT]) {
-      const { type = "attack" } = calcItem;
+      const { type = "attack", stellar } = calcItem;
       const recorder = new ResultRecorder(
         {
           exclusives: main.attkBonusCtrl.collectExclusiveBonuses(calcItem.id),
@@ -98,12 +98,12 @@ export function calculateSetup(setup: CalcSetup, options: CalculateSetupOptions 
           continue;
         }
 
-        if (calcItem.stellar) {
+        if (stellar) {
           resultGroup[calcItem.name] = calculator.calcStellarAttackItem(
             calcItem,
-            calcItem.stellar,
+            stellar,
             main.data.vision,
-            stellarCoefficient,
+            stellar === "stellarConduct" ? stellarConductCoefficient : 1,
             recorder,
           );
           continue;
