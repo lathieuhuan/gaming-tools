@@ -33,7 +33,7 @@ export type MemberStackSpec = {
 /** On characterss & weapons  */
 export type NationStackSpec = {
   type: "NATION";
-  nation: "SAME_EXCLUDED" | "DIFFERENT" | "LIYUE";
+  nation: "SAME_INCLUDED" | "SAME_EXCLUDED" | "DIFFERENT" | "LIYUE";
 };
 
 export type EnergyCostStackSpec = {

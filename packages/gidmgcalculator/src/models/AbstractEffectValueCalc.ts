@@ -47,7 +47,7 @@ export abstract class AbstractEffectValueCalc<TPerformer extends TeamMember = Te
   constructor(
     protected performer: TPerformer,
     protected team: Team,
-    protected inputs: number[] = []
+    protected inputs: number[] = [],
   ) {
     this.teammateElmtCount = team.elmtCount.clone();
     this.teammateElmtCount.remove(performer.data.vision);
@@ -119,7 +119,7 @@ export abstract class AbstractEffectValueCalc<TPerformer extends TeamMember = Te
         } else {
           stacks = inpIndex.reduce(
             (total, { value, ratio = 1 }) => total + (inputs[value] ?? 0) * ratio,
-            0
+            0,
           );
         }
         break;
@@ -130,7 +130,7 @@ export abstract class AbstractEffectValueCalc<TPerformer extends TeamMember = Te
         stacks = elements
           ? elmtCount.keys.reduce(
               (total, elementType) => total + (elements.includes(elementType) ? 1 : 0),
-              0
+              0,
             )
           : elmtCount.keys.length;
         break;
@@ -176,19 +176,24 @@ export abstract class AbstractEffectValueCalc<TPerformer extends TeamMember = Te
           case "LIYUE":
             stacks = members.reduce(
               (total, { data }) => total + (data.nation === "liyue" ? 1 : 0),
-              0
+              0,
             );
             break;
+          case "SAME_INCLUDED":
           case "SAME_EXCLUDED":
             stacks = members.reduce(
               (total, { data }) => total + (data.nation === performerNation ? 1 : 0),
-              -1
+              0,
             );
+
+            if (spec.nation === "SAME_EXCLUDED") {
+              stacks -= 1;
+            }
             break;
           case "DIFFERENT":
             stacks = members.reduce(
               (total, { data }) => total + (data.nation !== performerNation ? 1 : 0),
-              0
+              0,
             );
             break;
         }
