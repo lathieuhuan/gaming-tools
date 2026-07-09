@@ -1,6 +1,6 @@
 import { Array_ } from "ron-utils";
 
-import type { CalcSetup, Character, Teammate } from "@/models";
+import { Weapon, type CalcSetup, type Character, type Teammate } from "@/models";
 import type {
   AttackElement,
   AttackPattern,
@@ -27,9 +27,19 @@ import { BonusCalc } from "@/models/Character";
 import { QUICKEN_BUFF_LABEL } from "../constants";
 import { getRxnBonusesFromEM } from "../core/getRxnBonusesFromEM";
 
-export function applyBuffs(main: Character, teammates: Teammate[], setup: CalcSetup) {
+type ApplyBuffsOptions = {
+  resonatedElmts?: AttackElement[];
+};
+
+export function applyBuffs(
+  main: Character,
+  teammates: Teammate[],
+  setup: CalcSetup,
+  options: ApplyBuffsOptions = {},
+) {
   const { team } = setup;
   const { weapon, allAttrsCtrl, attkBonusCtrl } = main;
+  const { resonatedElmts = [] } = options;
 
   // POLYSTAR FIELD BONUSES
   const { polestarProc = false, polestarCount = 0 } = setup.elmtEvent;
@@ -216,6 +226,21 @@ export function applyBuffs(main: Character, teammates: Teammate[], setup: CalcSe
 
   applyAbilityBuffs(false);
   applyWeaponBonuses(false);
+
+  if (main.isTraveler && weapon.code === Weapon.TRAVELER_SWORD_CODE) {
+    applyBonus(
+      `${weapon.data.name} bonus`,
+      main,
+      {
+        value: 6 * resonatedElmts.length,
+        incre: 0,
+        target: { module: "ATTR", path: "cDmg_" },
+      },
+      { refi: weapon.refi },
+      false,
+    );
+  }
+
   applyArtifactBonuses(false);
 
   // APPLY CUSTOM BUFFS

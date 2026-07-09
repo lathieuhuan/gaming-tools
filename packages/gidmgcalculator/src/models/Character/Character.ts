@@ -268,7 +268,7 @@ export class Character implements TeamMember, Clonable<Character> {
     if (condition.forElmts && !condition.forElmts.includes(data.vision)) {
       return false;
     }
-    if (condition.forName && !data.name.includes(condition.forName)) {
+    if (condition.forCharacters && !condition.forCharacters.includes(data.code)) {
       return false;
     }
     if (condition.forEnergyCap) {

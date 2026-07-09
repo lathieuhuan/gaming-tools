@@ -35,7 +35,7 @@ export type BonusCoreSpec = {
    * Default 1/3 of [value]. Fixed buff type has increment = 0.
    * Added before preExtra
    */
-  incre?: number;
+  incre?: number | number[];
   /** Added before basedOn > stacks */
   preExtra?: number | ExtraBonusSpec;
   /** Added right before stacks */

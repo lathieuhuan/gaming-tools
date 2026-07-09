@@ -1,4 +1,5 @@
 import type { CalcSetup } from "@/models";
+import type { AttackElement } from "@/types";
 import type { CalcResultAttackItem } from "../types";
 import type { CalcResult } from "./types";
 
@@ -16,6 +17,7 @@ import { getTalentDefaultValues } from "./getTalentDefaultValues";
 
 type CalculateSetupOptions = {
   shouldLog?: boolean;
+  resonatedElmts?: AttackElement[];
 };
 
 export function calculateSetup(setup: CalcSetup, options: CalculateSetupOptions = {}) {
@@ -27,7 +29,7 @@ export function calculateSetup(setup: CalcSetup, options: CalculateSetupOptions 
 
   main.initCalculation();
 
-  applyBuffs(main, teammates, setup);
+  applyBuffs(main, teammates, setup, options);
   applyDebuffs(main, teammates, setup, target);
 
   const attackAlters = getAttackAlters(main, setup);

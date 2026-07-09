@@ -14,6 +14,7 @@ import { AttributesTracker } from "./AttributesTracker";
 import { BonusesTracker } from "./BonusesTracker";
 import { CalcItemTracker } from "./CalcItemTracker";
 import { DebuffsTracker } from "./DebuffsTracker";
+import { useSettingsStore } from "@Store/settings";
 
 type TrackerCoreProps = {
   trackerState: TrackerState;
@@ -22,14 +23,18 @@ type TrackerCoreProps = {
 export function TrackerCore({ trackerState }: TrackerCoreProps) {
   const activeSetup = useShallowCalcStore(selectSetup);
   const [state, setState] = useState<ReturnType<typeof calculateSetup>>();
+  const resonatedElmts = useSettingsStore((state) => state.traveler.resonatedElmts);
 
   useLayoutEffect(() => {
     if (trackerState === "open") {
-      const state = calculateSetup(activeSetup, { shouldLog: true });
+      const state = calculateSetup(activeSetup, {
+        shouldLog: true,
+        resonatedElmts,
+      });
 
       setState(state);
     }
-  }, [trackerState]);
+  }, [trackerState, resonatedElmts]);
 
   if (!state) {
     return null;

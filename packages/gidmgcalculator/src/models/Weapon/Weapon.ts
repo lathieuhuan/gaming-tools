@@ -44,6 +44,8 @@ export class Weapon implements Clonable<Weapon> {
   declare owner?: number;
   declare setupIDs?: number[];
 
+  static TRAVELER_SWORD_CODE = 246;
+
   static DEFAULT_CODE: Record<WeaponType, number> = {
     bow: 11,
     catalyst: 36,
