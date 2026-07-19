@@ -1,4 +1,4 @@
-import { markGreen } from "@/components";
+import { PositiveText } from "@/components/Text";
 import { Fragment } from "react";
 
 type ProcessFn = (value: number) => string | number;
@@ -20,10 +20,10 @@ export function Part(props: PartProps) {
 
   if (value !== undefined && value !== nullValue) {
     return (
-      <Fragment>
-        {sign ? <> {markGreen(sign)} </> : null}
-        {props.label} {markGreen(props.process ? props.process(value) : value)}
-      </Fragment>
+      <>
+        {sign ? <PositiveText> {sign} </PositiveText> : null}
+        {props.label} <PositiveText>{props.process ? props.process(value) : value}</PositiveText>
+      </>
     );
   }
 
@@ -43,10 +43,10 @@ export type PartsProps = {
 
 export function Parts({ configs }: PartsProps) {
   return (
-    <Fragment>
+    <>
       {configs.map((config, index) => {
         if ("parts" in config) {
-          const { containers = ["(", ")"], parts } = config;
+          const { containers, parts } = config;
 
           return (
             <Fragment key={index}>
@@ -59,6 +59,6 @@ export function Parts({ configs }: PartsProps) {
 
         return <Part key={index} {...config} />;
       })}
-    </Fragment>
+    </>
   );
 }

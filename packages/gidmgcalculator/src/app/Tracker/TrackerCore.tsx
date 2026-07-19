@@ -15,6 +15,8 @@ import { BonusesTracker } from "./BonusesTracker";
 import { CalcItemTracker } from "./CalcItemTracker";
 import { DebuffsTracker } from "./DebuffsTracker";
 import { useSettingsStore } from "@Store/settings";
+import { Object_ } from "ron-utils";
+import { ReactionTracker } from "./CalcItemTracker/ReactionTracker";
 
 type TrackerCoreProps = {
   trackerState: TrackerState;
@@ -142,7 +144,13 @@ export function TrackerCore({ trackerState }: TrackerCoreProps) {
 
   collapseItems.push({
     heading: "Reactions",
-    body: <CalcItemTracker resultGroup={result.RXN} attkBonusCtrl={attkBonusCtrl} forReactions />,
+    body: (
+      <div className="space-y-1">
+        {Object_.entries(result.RXN).map(([title, item]) => (
+          <ReactionTracker key={title} title={title} item={item} />
+        ))}
+      </div>
+    ),
   });
 
   if (Object.keys(result.WP).length) {

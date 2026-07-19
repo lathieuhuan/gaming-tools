@@ -48,7 +48,9 @@ export const QUICKEN_REACTIONS = ["spread", "aggravate"] as const;
 
 export const LUNAR_REACTIONS = ["lunarCharged", "lunarCryst"] as const;
 
-export const LUNAR_TYPES = [...LUNAR_REACTIONS, "lunarBloom"] as const;
+export const LUNAR_TYPES = ["lunarCharged", "lunarCryst", "lunarBloom"] as const;
+
+export const STELLAR_REACTIONS = ["stellarSwirl"] as const;
 
 export const STELLAR_TYPES = ["stellarConduct", "stellarSwirl"] as const;
 

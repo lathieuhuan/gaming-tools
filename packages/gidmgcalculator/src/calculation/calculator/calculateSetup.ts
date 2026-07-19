@@ -3,7 +3,7 @@ import type { AttackElement } from "@/types";
 import type { CalcResultAttackItem } from "../types";
 import type { CalcResult } from "./types";
 
-import { ATTACK_PATTERNS, LUNAR_REACTIONS, TRANSFORMATIVE_REACTIONS } from "@/constants/global";
+import { ATTACK_PATTERNS, LUNAR_REACTIONS, STELLAR_REACTIONS, TRANSFORMATIVE_REACTIONS } from "@/constants/global";
 import { TargetCalc } from "@/models";
 import { makeAttackItemCalc } from "../core/makeAttackItemCalc";
 import { makeOtherItemCalc } from "../core/makeOtherItemCalc";
@@ -101,11 +101,24 @@ export function calculateSetup(setup: CalcSetup, options: CalculateSetupOptions 
         }
 
         if (stellar) {
+          let coefficient = 1;
+
+          switch (stellar) {
+            case "stellarConduct":
+              coefficient = stellarConductCoefficient;
+              break;
+            case "stellarSwirl":
+              coefficient = 1;
+              break;
+            default:
+              stellar satisfies never;
+          }
+
           resultGroup[calcItem.name] = calculator.calcStellarAttackItem(
             calcItem,
             stellar,
             main.data.vision,
-            stellar === "stellarConduct" ? stellarConductCoefficient : 1,
+            coefficient,
             recorder,
           );
           continue;
@@ -145,6 +158,11 @@ export function calculateSetup(setup: CalcSetup, options: CalculateSetupOptions 
   // ===== REACTION CALCULATION =====
 
   const rxnCalculator = makeReactionCalc(main, target);
+
+  for (const reaction of STELLAR_REACTIONS) {
+    const recorder = new ResultRecorder({}, options?.shouldLog);
+    result.RXN[reaction] = rxnCalculator.calcStellarReaction(reaction, recorder);
+  }
 
   for (const reaction of LUNAR_REACTIONS) {
     const recorder = new ResultRecorder({}, options?.shouldLog);

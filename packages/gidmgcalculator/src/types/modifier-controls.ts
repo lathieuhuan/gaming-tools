@@ -65,6 +65,7 @@ export type ElementalEvent = {
   superconduct: boolean;
   polestarProc: boolean;
   polestarCount: number;
+  
 };
 
 export type CustomBuffCtrlCategory = "totalAttr" | "attPattBonus" | "attElmtBonus" | "rxnBonus";

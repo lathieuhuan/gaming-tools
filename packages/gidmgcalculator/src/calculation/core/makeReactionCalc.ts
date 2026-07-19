@@ -7,6 +7,7 @@ import type {
   AttackElement,
   ElementalEvent,
   LunarReaction,
+  StellarReaction,
   TransformativeReaction,
 } from "@/types";
 import type { CalcResultReactionItem } from "../types";
@@ -44,24 +45,73 @@ export function makeReactionCalc(performer: Character, target: TargetCalc) {
 
     const mult = LUNAR_REACTION_COEFFICIENT[reaction];
     const baseValue = baseRxnDamage * mult;
-    const baseMult = toMult(getBonus("baseMult_"));
+    const rxnBaseMult = toMult(getBonus("rxnBaseMult_"));
     const bonusMult = 1 + getBonus("pct_") / 100;
     const elvMult = toMult(getBonus("elvMult_"));
     const flat = getBonus("flat");
-    const rxnMult = 1;
 
     const attElmt = LUNAR_ATTACK_ELEMENT[reaction];
     const resMult = target.resistMults[attElmt];
 
-    const base = (baseValue * baseMult * bonusMult * elvMult + flat) * rxnMult * resMult;
+    const base = (baseValue * rxnBaseMult * bonusMult + flat) * elvMult * resMult;
     const cRate_ = limitCRate(getBonus("cRate_", [attElmt]) + performer.getAttr("cRate_")) / 100;
     const cDmg_ = (getBonus("cDmg_", [attElmt]) + performer.getAttr("cDmg_")) / 100;
 
     recorder.record({
       factors: [{ value: Math.round(baseValue), label: "Base DMG" }],
-      flat,
-      baseMult,
+      rxnBaseMult,
       bonusMult,
+      flat,
+      elvMult,
+      resMult,
+      cDmg_,
+      cRate_,
+    });
+
+    return {
+      type: "reaction",
+      values: [
+        {
+          base,
+          crit: cDmg_ ? base * (1 + cDmg_) : 0,
+          average: cRate_ ? base * (1 + cDmg_ * cRate_) : base,
+        },
+      ],
+      attElmt,
+      reaction: null,
+      recorder,
+    };
+  }
+
+  function calcStellarReaction(
+    reaction: StellarReaction,
+    recorder: ResultRecorder,
+  ): CalcResultReactionItem {
+    const getBonus = (key: AttackBonusKey, paths: GetBonusPaths = []) => {
+      return attkBonusCtrl.get(key, [reaction, ...paths]);
+    };
+
+    const mult = 0.75 // LUNAR_REACTION_COEFFICIENT[reaction];
+    const baseValue = baseRxnDamage * mult;
+    const rxnBaseMult = toMult(getBonus("rxnBaseMult_"));
+    const bonusMult = toMult(getBonus("pct_"));
+    const elvMult = toMult(getBonus("elvMult_"));
+    const flat = getBonus("flat");
+    const rxnMult = 1;
+
+    const attElmt: AttackElement = "anemo"; // LUNAR_ATTACK_ELEMENT[reaction];
+    const resMult = target.resistMults[attElmt];
+
+    const base = (baseValue * rxnBaseMult * bonusMult + flat) * elvMult * rxnMult * resMult;
+    const cRate_ = limitCRate(getBonus("cRate_", [attElmt]) + performer.getAttr("cRate_")) / 100;
+    const cDmg_ = (getBonus("cDmg_", [attElmt]) + performer.getAttr("cDmg_")) / 100;
+
+    recorder.record({
+      factors: [{ value: Math.round(baseValue), label: "Base DMG" }],
+      rxnBaseMult,
+      bonusMult,
+      flat,
+      elvMult,
       rxnMult,
       resMult,
       cDmg_,
@@ -152,7 +202,8 @@ export function makeReactionCalc(performer: Character, target: TargetCalc) {
   }
 
   return {
-    calcLunarReaction,
     calcReaction,
+    calcLunarReaction,
+    calcStellarReaction,
   };
 }

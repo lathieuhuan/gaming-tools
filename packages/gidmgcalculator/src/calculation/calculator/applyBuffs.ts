@@ -227,7 +227,7 @@ export function applyBuffs(
   applyAbilityBuffs(false);
   applyWeaponBonuses(false);
 
-  if (main.isTraveler && weapon.code === Weapon.TRAVELER_SWORD_CODE) {
+  if (main.isTraveler && weapon.code === Weapon.TRAVELER_SWORD_CODE && weapon.refi > 1) {
     applyBonus(
       `${weapon.data.name} bonus`,
       main,
