@@ -3,17 +3,16 @@ import { Fragment } from "react";
 
 type ProcessFn = (value: number) => string | number;
 
-export type PartConfig = {
+export type PartSpec = {
   label: React.ReactNode;
   value?: number;
-  /** Default '*' */
-  sign?: string | null;
+  sign: string | null;
   /** Default 0 */
   nullValue?: number | null;
   process?: ProcessFn;
 };
 
-type PartProps = PartConfig;
+type PartProps = PartSpec;
 
 export function Part(props: PartProps) {
   const { value, sign = "*", nullValue = 0 } = props;
@@ -30,34 +29,34 @@ export function Part(props: PartProps) {
   return null;
 }
 
-type GroupPartConfig = {
+type PartGroupSpec = {
   containers: [string, string];
-  parts: PartConfig[];
+  specs: PartSpec[];
 };
 
-export type PartsConfig = PartConfig | GroupPartConfig;
+export type PartSpecType = PartSpec | PartGroupSpec;
 
 export type PartsProps = {
-  configs: PartsConfig[];
+  specs: PartSpecType[];
 };
 
-export function Parts({ configs }: PartsProps) {
+export function Parts({ specs }: PartsProps) {
   return (
     <>
-      {configs.map((config, index) => {
-        if ("parts" in config) {
-          const { containers, parts } = config;
+      {specs.map((spec, index) => {
+        if ("specs" in spec) {
+          const { containers, specs } = spec;
 
           return (
             <Fragment key={index}>
               {containers[0]}
-              <Parts configs={parts} />
+              <Parts specs={specs} />
               {containers[1]}
             </Fragment>
           );
         }
 
-        return <Part key={index} {...config} />;
+        return <Part key={index} {...spec} />;
       })}
     </>
   );

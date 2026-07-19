@@ -7,7 +7,9 @@ export type CalcResultWeaponItem = CalcResultAttackItem | CalcResultOtherItem;
 
 export type CalcResultTalentGroup = Record<string, CalcResultTalentItem>;
 
-export type CalcResult = Record<LevelableTalentType, CalcResultTalentGroup> & {
+export type CalcResult = {
+  [key in LevelableTalentType]: CalcResultTalentGroup;
+} & {
   XTRA: Record<string, CalcResultTalentItem>;
   RXN: Record<string, CalcResultReactionItem>;
   WP: Record<string, CalcResultWeaponItem>;
