@@ -9,14 +9,14 @@ import { suffixOf } from "@/utils/pure.utils";
 import { useCalcStore } from "@Store/calculator";
 import { selectSetup } from "@Store/calculator/selectors";
 
-import { Heading, RecordContainer, RecordItem, RecordList } from "./_components";
+import { Heading, Container, Item, List } from "./components/ResourceLayout";
 
-type AttributesTrackerProps = {
+type AttributeTrackerProps = {
   listClassName?: string;
   allAttrsCtrl: AllAttributesControl;
 };
 
-export function AttributesTracker({ listClassName, allAttrsCtrl }: AttributesTrackerProps) {
+export function AttributeTracker({ listClassName, allAttrsCtrl }: AttributeTrackerProps) {
   const { t } = useTranslation();
   const allAttrs = useCalcStore((state) => selectSetup(state).main.allAttrsCtrl.finals);
 
@@ -29,28 +29,21 @@ export function AttributesTracker({ listClassName, allAttrsCtrl }: AttributesTra
 
         return (
           <div key={statType} className="break-inside-avoid">
-            <Heading extra={Math.round(allAttrs.get(statType))}>{t(statType)}</Heading>
+            <Heading label={t(statType)} value={Math.round(allAttrs.get(statType))} />
 
-            <RecordContainer>
+            <Container>
               {logs.map((log, index) => (
-                <RecordItem key={index} label={log.label} value={round(log.value, 1)} />
+                <Item key={index} label={log.label} value={round(log.value, 1)} />
               ))}
 
               {logs_.map((log, index) => {
                 const value = round(log.value, 2);
                 const mult = round(value / 100, 4);
-                const extraDesc = `${value}% = ${round(base, 1)} * ${mult} =`;
+                const label = `${log.label} ${value}% = ${round(base, 1)} * ${mult} =`;
 
-                return (
-                  <RecordItem
-                    key={`_${index}`}
-                    label={log.label}
-                    value={Math.round(base * mult)}
-                    extraDesc={extraDesc}
-                  />
-                );
+                return <Item key={`${index}_`} label={label} value={Math.round(base * mult)} />;
               })}
-            </RecordContainer>
+            </Container>
           </div>
         );
       })}
@@ -61,11 +54,11 @@ export function AttributesTracker({ listClassName, allAttrsCtrl }: AttributesTra
 
         return (
           <div key={statType} className="break-inside-avoid">
-            <Heading extra={round(allAttrsCtrl.getTotal(statType), 2) + percent}>
-              {t(statType)}
-            </Heading>
-
-            <RecordList records={logs} calcFn={(value) => round(value, 1) + percent} />
+            <Heading
+              label={t(statType)}
+              value={round(allAttrsCtrl.getTotal(statType), 2) + percent}
+            />
+            <List records={logs} calcFn={(value) => round(value, 1) + percent} />
           </div>
         );
       })}

@@ -1,4 +1,5 @@
 import { useLayoutEffect, useState } from "react";
+import { Object_ } from "ron-utils";
 import { CollapseList, CollapseListProps } from "rond";
 
 import type { AttackPattern } from "@/types";
@@ -7,16 +8,15 @@ import type { TrackerState } from "@Store/ui";
 import { calculateSetup } from "@/calculation/calculator";
 import { useShallowCalcStore } from "@Store/calculator";
 import { selectSetup } from "@Store/calculator/selectors";
+import { useSettingsStore } from "@Store/settings";
 
 // Component
 import { markDim, markGreen } from "@/components";
-import { AttributesTracker } from "./AttributesTracker";
-import { BonusesTracker } from "./BonusesTracker";
+import { AttributeTracker } from "./AttributeTracker";
+import { BonusTracker } from "./BonusTracker";
 import { CalcItemTracker } from "./CalcItemTracker";
-import { DebuffsTracker } from "./DebuffsTracker";
-import { useSettingsStore } from "@Store/settings";
-import { Object_ } from "ron-utils";
 import { ReactionTracker } from "./CalcItemTracker/ReactionTracker";
+import { DebuffTracker } from "./DebuffTracker";
 
 type TrackerCoreProps = {
   trackerState: TrackerState;
@@ -87,15 +87,15 @@ export function TrackerCore({ trackerState }: TrackerCoreProps) {
   const collapseItems: CollapseListProps["items"] = [
     {
       heading: "Attributes",
-      body: <AttributesTracker listClassName={listClassName} allAttrsCtrl={allAttrsCtrl} />,
+      body: <AttributeTracker listClassName={listClassName} allAttrsCtrl={allAttrsCtrl} />,
     },
     {
       heading: "Bonuses",
-      body: <BonusesTracker listClassName={listClassName} attkBonusCtrl={attkBonusCtrl} />,
+      body: <BonusTracker listClassName={listClassName} attkBonusCtrl={attkBonusCtrl} />,
     },
     {
       heading: "Debuffs on Target",
-      body: <DebuffsTracker listClassName={listClassName} target={target} />,
+      body: <DebuffTracker listClassName={listClassName} target={target} />,
     },
     {
       heading: "Normal Attacks",
