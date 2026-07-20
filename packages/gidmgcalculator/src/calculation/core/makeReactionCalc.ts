@@ -85,13 +85,14 @@ export function makeReactionCalc(performer: Character, target: TargetCalc) {
 
   function calcStellarReaction(
     reaction: StellarReaction,
+    vortexLv: number,
     recorder: ResultRecorder,
   ): CalcResultReactionItem {
     const getBonus = (key: AttackBonusKey, paths: GetBonusPaths = []) => {
       return attkBonusCtrl.get(key, [reaction, ...paths]);
     };
 
-    const mult = 0.75 // LUNAR_REACTION_COEFFICIENT[reaction];
+    const mult = reaction === "stellarSwirl" ? 0.75 : vortexLv === 3 ? 3 : 2;
     const baseValue = baseRxnDamage * mult;
     const rxnBaseMult = toMult(getBonus("rxnBaseMult_"));
     const bonusMult = toMult(getBonus("pct_"));
@@ -99,7 +100,7 @@ export function makeReactionCalc(performer: Character, target: TargetCalc) {
     const flat = getBonus("flat");
     const rxnMult = 1;
 
-    const attElmt: AttackElement = "anemo"; // LUNAR_ATTACK_ELEMENT[reaction];
+    const attElmt: AttackElement = reaction === "stellarSwirl" ? "anemo" : "cryo";
     const resMult = target.resistMults[attElmt];
 
     const base = (baseValue * rxnBaseMult * bonusMult + flat) * elvMult * rxnMult * resMult;

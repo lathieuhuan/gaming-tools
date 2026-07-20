@@ -1,14 +1,16 @@
 import { Array_ } from "ron-utils";
 
 import type {
-  ElementalEvent,
   ArtifactModCtrlState,
   DbComplexSetup,
+  ElementalEvent,
   ModifierCtrlState,
   ResonanceModCtrl,
 } from "@/types";
 import type { DatabaseDataV3_1 } from "./types/v3_1";
 import type { DatabaseDataV4, IDbSetup, ITeammateBasic } from "./types/v4";
+
+import { DEFAULT_STELLAR_VORTEX_LV } from "@/constants";
 
 type V3_1Setup = Exclude<DatabaseDataV3_1["setups"][number], DbComplexSetup>;
 type V3_1ModifierCtrl = V3_1Setup["selfBuffCtrls"][number];
@@ -68,6 +70,7 @@ function convertSetup(setup: V3_1Setup): IDbSetup {
     superconduct: setup.elmtModCtrls.superconduct,
     polestarProc: false,
     polestarCount: 0,
+    vortexLv: DEFAULT_STELLAR_VORTEX_LV,
   };
 
   const rsnBuffCtrls: ResonanceModCtrl[] = setup.elmtModCtrls.resonances.map((resonance) => ({

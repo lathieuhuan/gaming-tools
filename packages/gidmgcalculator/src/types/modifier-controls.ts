@@ -65,7 +65,7 @@ export type ElementalEvent = {
   superconduct: boolean;
   polestarProc: boolean;
   polestarCount: number;
-  
+  vortexLv: number;
 };
 
 export type CustomBuffCtrlCategory = "totalAttr" | "attPattBonus" | "attElmtBonus" | "rxnBonus";

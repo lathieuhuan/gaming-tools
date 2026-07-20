@@ -417,7 +417,7 @@ const BASE_REACTION_DAMAGE: Record<number, number> = {
   80: 1077.44,
   90: 1446.85,
   95: 1561.468,
-  100: 1674.8092,
+  100: 1674.809,
 };
 
 const TALENT_LV_MULTIPLIERS: Record<number, number[]> = {

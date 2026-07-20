@@ -3,7 +3,12 @@ import type { AttackElement } from "@/types";
 import type { CalcResultAttackItem } from "../types";
 import type { CalcResult } from "./types";
 
-import { ATTACK_PATTERNS, LUNAR_REACTIONS, STELLAR_REACTIONS, TRANSFORMATIVE_REACTIONS } from "@/constants/global";
+import {
+  ATTACK_PATTERNS,
+  LUNAR_REACTIONS,
+  STELLAR_REACTIONS,
+  TRANSFORMATIVE_REACTIONS,
+} from "@/constants/global";
 import { TargetCalc } from "@/models";
 import { makeAttackItemCalc } from "../core/makeAttackItemCalc";
 import { makeOtherItemCalc } from "../core/makeOtherItemCalc";
@@ -161,7 +166,11 @@ export function calculateSetup(setup: CalcSetup, options: CalculateSetupOptions 
 
   for (const reaction of STELLAR_REACTIONS) {
     const recorder = new ResultRecorder({}, options?.shouldLog);
-    result.RXN[reaction] = rxnCalculator.calcStellarReaction(reaction, recorder);
+    result.RXN[reaction] = rxnCalculator.calcStellarReaction(
+      reaction,
+      elmtEvent.vortexLv,
+      recorder,
+    );
   }
 
   for (const reaction of LUNAR_REACTIONS) {

@@ -8,7 +8,6 @@ import type {
   ArtifactType,
   AttackReaction,
   CustomBuffCtrl,
-  CustomBuffCtrlType,
   CustomDebuffCtrl,
   ElementalEvent,
   ElementType,
@@ -16,7 +15,7 @@ import type {
   RawTeammate,
   ResonanceModCtrl,
   SetupImportData,
-  TeamBuffCtrl,
+  TeamBuffCtrl
 } from "@/types";
 import type { DecodeResult } from "./types";
 
@@ -25,6 +24,7 @@ import {
   ATTRIBUTE_STAT_TYPES,
   BONUS_KEYS,
   CUSTOM_BUFF_CTRL_SPECS,
+  DEFAULT_STELLAR_VORTEX_LV,
   ELEMENT_TYPES,
   LEVELS,
   WEAPON_TYPES,
@@ -319,6 +319,7 @@ export function decodeSetupCurrent(code: string): DecodeResult {
     superconduct,
     polestarProc,
     polestarCount,
+    vortexLv,
   ] = split(elmtMcStr, 1);
 
   const elmtEvent: ElementalEvent = {
@@ -330,6 +331,7 @@ export function decodeSetupCurrent(code: string): DecodeResult {
     superconduct: superconduct === "1",
     polestarProc: polestarProc === "1",
     polestarCount: polestarCount ? parseNumber(polestarCount, "Polestar Field") : 0,
+    vortexLv: vortexLv ? parseNumber(vortexLv, "Stellar Vortex") : DEFAULT_STELLAR_VORTEX_LV,
   };
 
   // ===== RESONANCES =====
