@@ -36,12 +36,12 @@ describe("Member", () => {
       const travelerMember = new Member(
         travelerData.code,
         travelerData,
-        createWeapon({ type: travelerData.weaponType })
+        createWeapon({ type: travelerData.weaponType }),
       );
       const otherMember = new Member(
         otherData.code,
         otherData,
-        createWeapon({ type: otherData.weaponType })
+        createWeapon({ type: otherData.weaponType }),
       );
 
       expect(travelerMember.isTraveler).toBe(true);
@@ -244,10 +244,9 @@ describe("Member", () => {
         toStat: "em",
       });
 
-      const finals = member.finalize();
+      member.finalize();
 
-      expect(finals.get("em")).toBe(baseEm + 100);
-      expect(member.attrsCtrl.finals).toBe(finals);
+      expect(member.attrsCtrl.finals.get("em")).toBe(baseEm + 100);
     });
 
     test("for hp, atk, and def adds base*(1+pct/100) using bases and percents after merging attr bonuses", () => {
@@ -279,10 +278,10 @@ describe("Member", () => {
         expected.add(stat, base + (base * pct) / 100);
       }
 
-      const finals = member.finalize();
+      member.finalize();
 
       for (const stat of CORE_STAT_TYPES) {
-        expect(finals.get(stat)).toBe(expected.get(stat));
+        expect(member.attrsCtrl.finals.get(stat)).toBe(expected.get(stat));
       }
     });
   });
