@@ -67,7 +67,6 @@ export function makeAttackItemCalc(
     }
 
     const bonusMult = toMult(getBonus("pct_") + performer.getAttr(attElmt));
-    const specMult = toMult(getBonus("specMult_"));
     const elvMult = toMult(getBonus("elvMult_"));
 
     // REACTION MULTIPLIER
@@ -94,7 +93,7 @@ export function makeAttackItemCalc(
 
     const values = bases.map((value) => {
       const base =
-        (value * baseMult + flat) * bonusMult * specMult * elvMult * rxnMult * defMult * resMult;
+        (value * baseMult + flat) * bonusMult * elvMult * rxnMult * defMult * resMult;
 
       return base;
       // return {
@@ -108,7 +107,6 @@ export function makeAttackItemCalc(
       baseMult: Math.abs(baseMult),
       flat,
       bonusMult,
-      specMult,
       elvMult,
       rxnMult,
       defMult,

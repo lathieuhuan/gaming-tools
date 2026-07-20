@@ -66,6 +66,8 @@ function convertSetup(setup: V3_1Setup): IDbSetup {
     infusion: infusion === "phys" ? null : infusion,
     infuseReaction: setup.elmtModCtrls.infuse_reaction,
     superconduct: setup.elmtModCtrls.superconduct,
+    polestarProc: false,
+    polestarCount: 0,
   };
 
   const rsnBuffCtrls: ResonanceModCtrl[] = setup.elmtModCtrls.resonances.map((resonance) => ({

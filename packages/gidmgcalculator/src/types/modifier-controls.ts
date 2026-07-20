@@ -12,6 +12,7 @@ import type {
   QuickenReaction,
   ReactionType,
   ResistReductionKey,
+  StellarType,
 } from "./common";
 
 export type ModifierCtrlState = {
@@ -62,11 +63,19 @@ export type ElementalEvent = {
   infusion: ElementType | null;
   infuseReaction: AttackReaction;
   superconduct: boolean;
+  polestarProc: boolean;
+  polestarCount: number;
 };
 
 export type CustomBuffCtrlCategory = "totalAttr" | "attPattBonus" | "attElmtBonus" | "rxnBonus";
 
-export type CustomBuffCtrlType = "all" | AttributeStat | AttackPattern | ReactionType | LunarType;
+export type CustomBuffCtrlType =
+  | "all"
+  | AttributeStat
+  | AttackPattern
+  | ReactionType
+  | LunarType
+  | StellarType;
 
 export type CustomBuffCtrl = {
   category: CustomBuffCtrlCategory;

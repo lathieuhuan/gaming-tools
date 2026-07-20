@@ -118,12 +118,15 @@ type CreditsProps = {
 
 export const Credits = ({ loading, supporters }: CreditsProps) => {
   const DONATORS = [
-    "Daniel V.",
-    "Marc (marcdau)",
-    "Akenouille",
-    "Brandon Pride",
-    "apiromz",
-    "aimie",
+    "Aleksandar D.", // Djordjevic $5
+    "Someone (guerrero**)", // guerrero940409 $5
+    "Daniel V.", // Valentine $5
+    "Ortiz C.", // Carlos $15
+    "Marc (marcdau)", // marcdau $5
+    "Akenouille", // $25
+    "Brandon Pride", // $5
+    "apiromz", // $5
+    "aimie", // $5
   ];
 
   return (

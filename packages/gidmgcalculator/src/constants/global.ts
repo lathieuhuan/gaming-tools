@@ -1,3 +1,5 @@
+import type { AttackBonusKey, CustomBuffCtrlCategory, CustomBuffCtrlType } from "@/types";
+
 export const PHEC_ELEMENT_TYPES = ["pyro", "hydro", "electro", "cryo"] as const;
 
 export const ELEMENT_TYPES = [...PHEC_ELEMENT_TYPES, "geo", "anemo", "dendro"] as const;
@@ -19,7 +21,6 @@ export const BONUS_KEYS = [
   "defIgn_",
   "baseMult_",
   "elvMult_",
-  "specMult_",
   "veil_",
 ] as const;
 
@@ -51,14 +52,9 @@ export const LUNAR_REACTIONS = ["lunarCharged", "lunarCryst"] as const;
 
 export const LUNAR_TYPES = [...LUNAR_REACTIONS, "lunarBloom"] as const;
 
-export const AMPLIFYING_REACTIONS = ["melt", "vaporize"] as const;
+export const STELLAR_TYPES = ["stellarConduct"] as const;
 
-export const REACTIONS = [
-  ...LUNAR_REACTIONS,
-  ...TRANSFORMATIVE_REACTIONS,
-  ...QUICKEN_REACTIONS,
-  ...AMPLIFYING_REACTIONS,
-] as const;
+export const AMPLIFYING_REACTIONS = ["melt", "vaporize"] as const;
 
 // ========== STATS ==========
 
@@ -116,3 +112,51 @@ export const LEVELS = [
   "95/95",
   "100/100",
 ] as const;
+
+type CategorySpec = {
+  label: string;
+  types: readonly CustomBuffCtrlType[];
+  subTypes?: readonly AttackBonusKey[];
+};
+
+export const CUSTOM_BUFF_CTRL_SPECS: Record<CustomBuffCtrlCategory, CategorySpec> = {
+  totalAttr: {
+    label: "Attributes",
+    types: [
+      "hp",
+      "hp_",
+      "atk",
+      "atk_",
+      "def",
+      "def_",
+      "em",
+      "er_",
+      "cRate_",
+      "cDmg_",
+      "shieldS_",
+      "healB_",
+    ],
+  },
+  attElmtBonus: {
+    label: "Elements",
+    types: ATTACK_ELEMENTS,
+    subTypes: ["pct_", "flat", "cRate_", "cDmg_"],
+  },
+  attPattBonus: {
+    label: "Talents",
+    types: ["all", ...ATTACK_PATTERNS],
+    subTypes: ["pct_", "flat", "cRate_", "cDmg_", "defIgn_"],
+  },
+  rxnBonus: {
+    label: "Reactions",
+    types: [
+      ...TRANSFORMATIVE_REACTIONS,
+      ...QUICKEN_REACTIONS,
+      ...AMPLIFYING_REACTIONS,
+      ...LUNAR_REACTIONS,
+      "lunarBloom",
+      ...STELLAR_TYPES,
+    ],
+    subTypes: ["pct_", "cRate_", "cDmg_"],
+  },
+};

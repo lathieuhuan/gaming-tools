@@ -7,7 +7,7 @@ import type {
   CalcItemType,
   ElementType,
   ExclusiveAttackBonusGroup,
-  LunarType,
+  SpecialAttackPattern,
   TalentCalcItemBonusId
 } from "@/types";
 import type { ResultRecorder } from "./core/ResultRecorder";
@@ -30,7 +30,7 @@ export type AttackAlter = {
 // RESULT CALCULATION - OUTPUT
 
 export type ResultItemRecord = {
-  specPatt?: LunarType;
+  specPatt?: SpecialAttackPattern;
   factors: Array<{
     label: string;
     value: number;
@@ -41,8 +41,8 @@ export type ResultItemRecord = {
   veilMult?: number;
   flat?: number;
   elvMult?: number;
-  specMult?: number;
   bonusMult: number;
+  inhealMult?: number;
   rxnMult?: number;
   defMult?: number;
   resMult?: number;
@@ -63,8 +63,9 @@ export type CalcResultItem = {
 
 export type CalcResultAttackItem = CalcResultItem & {
   type: "attack";
-  attElmt: AttackElement | LunarType;
+  attElmt: AttackElement;
   attPatt: ActualAttackPattern;
+  specPatt: SpecialAttackPattern | null;
   reaction: AttackReaction;
   recorder: ResultRecorder;
 };

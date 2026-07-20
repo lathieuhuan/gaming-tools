@@ -1,9 +1,6 @@
 import type { CalcResult } from "@/calculation/calculator";
-import type { CalcResultAttackItem } from "@/calculation/types";
 
-import { LUNAR_TYPES } from "@/constants/global";
 import { useTranslation } from "@/hooks";
-import { LunarType } from "@/types";
 import { displayValues } from "./utils";
 
 import { FinalResultLayout, type FinalResultLayoutProps } from "./FinalResultLayout";
@@ -17,10 +14,6 @@ type FinalResultViewProps = Pick<
 
 export function FinalResultView({ finalResult, ...props }: FinalResultViewProps) {
   const { t } = useTranslation();
-
-  const tAttElmt = (attElmt: CalcResultAttackItem["attElmt"]) => {
-    return LUNAR_TYPES.includes(attElmt as LunarType) ? t(attElmt) : t(`${attElmt}_attElmt`);
-  };
 
   return (
     <FinalResultLayout
@@ -44,15 +37,17 @@ export function FinalResultView({ finalResult, ...props }: FinalResultViewProps)
 
         switch (result?.type) {
           case "attack": {
-            const elmt = tAttElmt(result.attElmt);
-            const patt = result.attPatt !== "none" ? ` / ${t(result.attPatt).toLowerCase()}` : "";
-            title = `${elmt}${patt}`;
+            const parts = [
+              t(`${result.attElmt}_attElmt`),
+              result.attPatt !== "none" && t(result.attPatt),
+              result.specPatt && t(result.specPatt),
+            ].filter(Boolean);
+
+            title = parts.join(" / ");
             break;
           }
           case "reaction": {
-            const elmt = tAttElmt(result.attElmt);
-            const reaction = result.reaction ? ` / ${result.reaction}` : "";
-            title = `${elmt}${reaction}`;
+            title = t(`${result.attElmt}_attElmt`);
             break;
           }
           default: {

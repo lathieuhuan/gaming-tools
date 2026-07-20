@@ -14,7 +14,7 @@ import type {
   LUNAR_TYPES,
   NORMAL_ATTACKS,
   QUICKEN_REACTIONS,
-  REACTIONS,
+  STELLAR_TYPES,
   TALENT_TYPES,
   TRANSFORMATIVE_REACTIONS,
   WEAPON_TYPES,
@@ -43,7 +43,7 @@ export type AttackBonusKey = (typeof BONUS_KEYS)[number];
 
 export type Level = (typeof LEVELS)[number];
 
-export type EnhanceType = "MOONSIGN" | "HEXEREI";
+export type EnhanceType = "MOONSIGN" | "HEXEREI" | "REVELATION";
 
 // ========== ELEMENTS ==========
 
@@ -56,10 +56,6 @@ export type AttackElement = (typeof ATTACK_ELEMENTS)[number];
 
 export type ActualAttackElement = AttackElement | "absorb";
 
-export type LunarReactionType = (typeof LUNAR_REACTIONS)[number];
-
-export type LunarType = (typeof LUNAR_TYPES)[number];
-
 // ========== PATTERN ==========
 
 export type NormalAttack = (typeof NORMAL_ATTACKS)[number];
@@ -68,6 +64,12 @@ export type AttackPattern = (typeof ATTACK_PATTERNS)[number];
 
 export type ActualAttackPattern = AttackPattern | "none";
 
+export type LunarType = (typeof LUNAR_TYPES)[number];
+
+export type StellarType = (typeof STELLAR_TYPES)[number];
+
+export type SpecialAttackPattern = LunarType | StellarType;
+
 //
 
 export type TalentCalcItemBonusId = `id.${number}`;
@@ -75,10 +77,13 @@ export type TalentCalcItemBonusId = `id.${number}`;
 export type AttackBonusType =
   | "all"
   | LunarType
+  | StellarType
+  | SwirlVariant
   | AttackPattern
   | AttackElement
   | `${AttackPattern}.${AttackElement}`
   | `${AttackPattern}.${LunarType}`
+  | `${AttackPattern}.${StellarType}`
   | ReactionType
   | TalentCalcItemBonusId;
 
@@ -102,13 +107,19 @@ export type CalcItemFactor =
 
 export type AmplifyingReaction = (typeof AMPLIFYING_REACTIONS)[number];
 
+export type SwirlVariant = `swirl.${ElementType}`;
+
 export type TransformativeReaction = (typeof TRANSFORMATIVE_REACTIONS)[number];
 
 export type QuickenReaction = (typeof QUICKEN_REACTIONS)[number];
 
 export type LunarReaction = (typeof LUNAR_REACTIONS)[number];
 
-export type ReactionType = (typeof REACTIONS)[number];
+export type ReactionType =
+  | TransformativeReaction
+  | LunarReaction
+  | QuickenReaction
+  | AmplifyingReaction;
 
 // ========== RESISTANCE REDUCTION ==========
 

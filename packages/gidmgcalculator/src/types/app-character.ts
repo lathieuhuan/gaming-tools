@@ -12,6 +12,7 @@ import type {
   LunarType,
   Nation,
   NormalAttack,
+  StellarType,
   TalentCalcItemBonusId,
   WeaponType,
 } from "./common";
@@ -131,6 +132,7 @@ export type TalentCalcItem = {
   attElmt?: ActualAttackElement;
   subAttPatt?: "FCA";
   lunar?: LunarType;
+  stellar?: StellarType;
 };
 
 // ========== BUFF / BONUS ==========
@@ -149,7 +151,8 @@ export type CharacterBuff = CharacterModifierBase &
     alterConfigs?: AttackAlterSpec | AttackAlterSpec[];
   };
 
-export type CharacterInnateBuff = CharacterModifierBase & Partial<Pick<BuffSpec, "effects" | "affect">>;
+export type CharacterInnateBuff = CharacterModifierBase &
+  Partial<Pick<BuffSpec, "effects" | "affect">>;
 
 // ============ DEBUFF / PENALTY ============
 

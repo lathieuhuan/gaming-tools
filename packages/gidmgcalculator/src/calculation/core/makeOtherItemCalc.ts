@@ -13,15 +13,17 @@ export function makeOtherItemCalc(performer: Character) {
     base: number,
     recorder: ResultRecorder,
     flat = 0,
-    itemId?: TalentCalcItemBonusId
+    itemId?: TalentCalcItemBonusId,
   ): CalcResultOtherItem {
     const baseMult = toMult(attkBonusCtrl.get("baseMult_", [itemId]));
     let bonusMult = attkBonusCtrl.get("pct_", [itemId]);
+    let inhealMult = 1;
 
     switch (type) {
       case "healing":
         flat += attkBonusCtrl.get("flat", [itemId]);
         bonusMult += performer.getAttr("healB_");
+        inhealMult = toMult(performer.getAttr("inHealB_"));
         break;
       case "shield":
         bonusMult += performer.getAttr("shieldS_");
@@ -29,15 +31,14 @@ export function makeOtherItemCalc(performer: Character) {
     }
 
     bonusMult = toMult(bonusMult);
-    const specMult = toMult(attkBonusCtrl.get("specMult_", [itemId]));
 
-    base = (base * baseMult + flat) * bonusMult * specMult;
+    base = (base * baseMult + flat) * bonusMult * inhealMult;
 
     recorder.record({
       flat,
       baseMult,
       bonusMult,
-      specMult,
+      inhealMult,
     });
 
     return {

@@ -8,9 +8,7 @@ import type {
   CalcResultReactionItem,
   ResultItemRecord,
 } from "@/calculation/types";
-import type { LunarType } from "@/types";
 
-import { LUNAR_TYPES } from "@/constants/global";
 import { useTranslation } from "@/hooks";
 import { AttackBonusControl } from "@/models/Character";
 import { suffixOf } from "@/utils/pure.utils";
@@ -46,7 +44,7 @@ export function CalcItemTracker({
 
   const makeFactorParts = (
     factor: ResultItemRecord["factors"][number],
-    sign?: string | null
+    sign?: string | null,
   ): PartConfig[] => {
     return [
       {
@@ -102,9 +100,9 @@ export function CalcItemTracker({
       ];
     }
 
-    const specMult: PartConfig = {
-      label: "Special Mult.",
-      value: data.specMult,
+    const inhealMult: PartConfig = {
+      label: "Incoming Heal Mult.",
+      value: data.inhealMult,
       nullValue: 1,
     };
 
@@ -134,7 +132,7 @@ export function CalcItemTracker({
             flat,
           ],
         },
-        specMult,
+        inhealMult,
         elvMult,
       ];
     }
@@ -145,14 +143,14 @@ export function CalcItemTracker({
         parts: [...factorParts, baseMult, flat],
       },
       bonusMult,
-      specMult,
+      inhealMult,
       elvMult,
     ];
   };
 
   const getLastPartConfigs = (
     data: ResultItemRecord,
-    type?: CalcResultItem["type"]
+    type?: CalcResultItem["type"],
   ): PartsConfig[] => {
     return [
       {
@@ -192,13 +190,12 @@ export function CalcItemTracker({
 
     if (item.type === "attack") {
       const parts = [
-        LUNAR_TYPES.includes(item.attElmt as LunarType)
-          ? t(item.attElmt)
-          : t(`${item.attElmt}_attElmt`),
+        t(`${item.attElmt}_attElmt`),
         item.attPatt !== "none" && t(item.attPatt),
+        item.specPatt && t(item.specPatt),
       ].filter(Boolean);
 
-      text = parts.length ? `${parts.join(" / ")} DMG` : "";
+      text = parts.join(" / ");
     }
 
     return (
