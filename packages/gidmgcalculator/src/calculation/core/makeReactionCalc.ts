@@ -89,7 +89,7 @@ export function makeReactionCalc(performer: Character, target: TargetCalc) {
     recorder: ResultRecorder,
   ): CalcResultReactionItem {
     const getBonus = (key: AttackBonusKey, paths: GetBonusPaths = []) => {
-      return attkBonusCtrl.get(key, [reaction, ...paths]);
+      return attkBonusCtrl.get(key, ["stellarSwirl", ...paths]);
     };
 
     const mult = reaction === "stellarSwirl" ? 0.75 : vortexLv === 3 ? 3 : 2;
