@@ -1,8 +1,14 @@
 import type { CalcSetup } from "@/models";
+import type { AttackElement } from "@/types";
 import type { CalcResultAttackItem } from "../types";
 import type { CalcResult } from "./types";
 
-import { ATTACK_PATTERNS, LUNAR_REACTIONS, TRANSFORMATIVE_REACTIONS } from "@/constants/global";
+import {
+  ATTACK_PATTERNS,
+  LUNAR_REACTIONS,
+  STELLAR_REACTIONS,
+  TRANSFORMATIVE_REACTIONS,
+} from "@/constants/global";
 import { TargetCalc } from "@/models";
 import { makeAttackItemCalc } from "../core/makeAttackItemCalc";
 import { makeOtherItemCalc } from "../core/makeOtherItemCalc";
@@ -16,6 +22,7 @@ import { getTalentDefaultValues } from "./getTalentDefaultValues";
 
 type CalculateSetupOptions = {
   shouldLog?: boolean;
+  resonatedElmts?: AttackElement[];
 };
 
 export function calculateSetup(setup: CalcSetup, options: CalculateSetupOptions = {}) {
@@ -27,7 +34,7 @@ export function calculateSetup(setup: CalcSetup, options: CalculateSetupOptions 
 
   main.initCalculation();
 
-  applyBuffs(main, teammates, setup);
+  applyBuffs(main, teammates, setup, options);
   applyDebuffs(main, teammates, setup, target);
 
   const attackAlters = getAttackAlters(main, setup);
@@ -54,10 +61,10 @@ export function calculateSetup(setup: CalcSetup, options: CalculateSetupOptions 
   // ===== TALENT CALCULATION =====
 
   const { polestarProc, polestarCount } = elmtEvent;
-  let stellarCoefficient = 1;
+  let stellarConductCoefficient = 1;
 
   if (polestarProc && polestarCount) {
-    stellarCoefficient += 0.4 + polestarCount * 0.05;
+    stellarConductCoefficient += 0.4 + polestarCount * 0.05;
   }
 
   for (const ATT_PATT of ATTACK_PATTERNS) {
@@ -73,7 +80,7 @@ export function calculateSetup(setup: CalcSetup, options: CalculateSetupOptions 
     const calculator = makeTalentCalc(main, target, talentType, defaultValues, alterConfig);
 
     for (const calcItem of calcList[ATT_PATT]) {
-      const { type = "attack" } = calcItem;
+      const { type = "attack", stellar } = calcItem;
       const recorder = new ResultRecorder(
         {
           exclusives: main.attkBonusCtrl.collectExclusiveBonuses(calcItem.id),
@@ -98,12 +105,25 @@ export function calculateSetup(setup: CalcSetup, options: CalculateSetupOptions 
           continue;
         }
 
-        if (calcItem.stellar) {
+        if (stellar) {
+          let coefficient = 1;
+
+          switch (stellar) {
+            case "stellarConduct":
+              coefficient = stellarConductCoefficient;
+              break;
+            case "stellarSwirl":
+              coefficient = 1;
+              break;
+            default:
+              stellar satisfies never;
+          }
+
           resultGroup[calcItem.name] = calculator.calcStellarAttackItem(
             calcItem,
-            calcItem.stellar,
+            stellar,
             main.data.vision,
-            stellarCoefficient,
+            coefficient,
             recorder,
           );
           continue;
@@ -143,6 +163,15 @@ export function calculateSetup(setup: CalcSetup, options: CalculateSetupOptions 
   // ===== REACTION CALCULATION =====
 
   const rxnCalculator = makeReactionCalc(main, target);
+
+  for (const reaction of STELLAR_REACTIONS) {
+    const recorder = new ResultRecorder({}, options?.shouldLog);
+    result.RXN[reaction] = rxnCalculator.calcStellarReaction(
+      reaction,
+      elmtEvent.vortexLv,
+      recorder,
+    );
+  }
 
   for (const reaction of LUNAR_REACTIONS) {
     const recorder = new ResultRecorder({}, options?.shouldLog);

@@ -30,7 +30,6 @@ export type AttackAlter = {
 // RESULT CALCULATION - OUTPUT
 
 export type ResultItemRecord = {
-  specPatt?: SpecialAttackPattern;
   factors: Array<{
     label: string;
     value: number;
@@ -38,7 +37,7 @@ export type ResultItemRecord = {
   }>;
   coefficient?: number;
   baseMult?: number;
-  veilMult?: number;
+  rxnBaseMult?: number;
   flat?: number;
   elvMult?: number;
   bonusMult: number;
@@ -64,7 +63,7 @@ export type CalcResultItem = {
 export type CalcResultAttackItem = CalcResultItem & {
   type: "attack";
   attElmt: AttackElement;
-  attPatt: ActualAttackPattern;
+  attPatt: ActualAttackPattern | null;
   specPatt: SpecialAttackPattern | null;
   reaction: AttackReaction;
   recorder: ResultRecorder;

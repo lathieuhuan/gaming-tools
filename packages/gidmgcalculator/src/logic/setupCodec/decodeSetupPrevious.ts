@@ -24,6 +24,7 @@ import {
   ATTRIBUTE_STAT_TYPES,
   BONUS_KEYS,
   CUSTOM_BUFF_CTRL_SPECS,
+  DEFAULT_STELLAR_VORTEX_LV,
   ELEMENT_TYPES,
   LEVELS,
   WEAPON_TYPES,
@@ -323,6 +324,7 @@ export function decodeSetupPrevious(code: string): DecodeResult {
     superconduct: superconduct === "1",
     polestarProc: false,
     polestarCount: 0,
+    vortexLv: DEFAULT_STELLAR_VORTEX_LV,
   };
 
   // ===== RESONANCES =====

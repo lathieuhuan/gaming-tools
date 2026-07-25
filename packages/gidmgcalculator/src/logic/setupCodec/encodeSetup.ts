@@ -125,6 +125,7 @@ export function encodeSetup(calcSetup: CalcSetup) {
       +elmtEvent.superconduct,
       +elmtEvent.polestarProc,
       elmtEvent.polestarCount,
+      elmtEvent.vortexLv,
     ].join(DIVIDER[1]);
 
     const teamBuffStr = teamBuffCtrls.map((ctrl) => {

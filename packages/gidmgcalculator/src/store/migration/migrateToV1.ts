@@ -5,7 +5,6 @@ export const migrateToV1 = (state?: UserDatabaseV0): UserdbState => {
   if (state) {
     return {
       ...state,
-      // TODO announce about this
       userSetups: [],
     };
   }

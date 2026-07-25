@@ -32,8 +32,11 @@ export abstract class AbstractBonusCalc<
     this.basedOnFixed = basedOnFixed;
   }
 
-  protected scaleRefi(base: number, increment = base / 3) {
-    return base + increment * this.refi;
+  protected scaleRefi(base: number, increment: number | number[] = base / 3) {
+    const bonus =
+      typeof increment === "number" ? increment * this.refi : this.itemAt(this.refi - 1, increment);
+
+    return base + bonus;
   }
 
   protected parseBasedOn(config: BonusAttributeScalingSpec) {

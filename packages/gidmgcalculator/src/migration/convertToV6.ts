@@ -1,6 +1,8 @@
 import type { DatabaseDataV5 } from "./types/v5";
 import type { DatabaseDataV6 } from "./types/v6";
 
+import { DEFAULT_STELLAR_VORTEX_LV } from "@/constants";
+
 export function convertToV6(data: DatabaseDataV5): DatabaseDataV6 {
   return {
     ...data,
@@ -16,6 +18,7 @@ export function convertToV6(data: DatabaseDataV5): DatabaseDataV6 {
           ...setup.elmtEvent,
           polestarProc: false,
           polestarCount: 0,
+          vortexLv: DEFAULT_STELLAR_VORTEX_LV,
         },
       };
     }),

@@ -104,8 +104,7 @@ export type EffectReceiverConditionSpecs = {
   forWeapons?: WeaponType[];
   /** On Chevreuse, Xilonen */
   forElmts?: ElementType[];
-  /** On outlander weapon series */
-  forName?: string;
+  forCharacters?: number[];
   /** On Moonweaver's Dawn */
   forEnergyCap?: {
     value: number;

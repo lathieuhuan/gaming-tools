@@ -18,8 +18,8 @@ export const BONUS_KEYS = [
   "mult_",
   "defIgn_",
   "baseMult_",
+  "rxnBaseMult_",
   "elvMult_",
-  "veil_",
 ] as const;
 
 // ========== ATTACKS ==========
@@ -48,9 +48,11 @@ export const QUICKEN_REACTIONS = ["spread", "aggravate"] as const;
 
 export const LUNAR_REACTIONS = ["lunarCharged", "lunarCryst"] as const;
 
-export const LUNAR_TYPES = [...LUNAR_REACTIONS, "lunarBloom"] as const;
+export const LUNAR_TYPES = ["lunarCharged", "lunarCryst", "lunarBloom"] as const;
 
-export const STELLAR_TYPES = ["stellarConduct"] as const;
+export const STELLAR_REACTIONS = ["stellarVortex", "stellarSwirl"] as const;
+
+export const STELLAR_TYPES = ["stellarConduct", "stellarSwirl"] as const;
 
 export const AMPLIFYING_REACTIONS = ["melt", "vaporize"] as const;
 
@@ -151,10 +153,11 @@ export const CUSTOM_BUFF_CTRL_SPECS: Record<CustomBuffCtrlCategory, CategorySpec
       ...TRANSFORMATIVE_REACTIONS,
       ...QUICKEN_REACTIONS,
       ...AMPLIFYING_REACTIONS,
-      ...LUNAR_REACTIONS,
-      "lunarBloom",
+      ...LUNAR_TYPES,
       ...STELLAR_TYPES,
     ],
     subTypes: ["pct_", "cRate_", "cDmg_"],
   },
 };
+
+export const DEFAULT_STELLAR_VORTEX_LV = 1;

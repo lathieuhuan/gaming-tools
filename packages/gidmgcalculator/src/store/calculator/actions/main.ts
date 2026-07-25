@@ -56,7 +56,7 @@ export const switchMainWeapon = (weapon: Weapon) => {
     onActiveSetup((setup) => {
       setup.main.weapon = weapon.clone();
       setup.wpBuffCtrls = createWeaponBuffCtrls(weapon.data, true);
-    })
+    }),
   );
 };
 
@@ -73,7 +73,7 @@ export const updateMainWeapon = (data: Partial<WeaponStateData>) => {
       //   main.weapon.data = $AppWeapon.get(newWeaponCode)!;
       //   setup.wpBuffCtrls = createWeaponBuffCtrls(main.weapon.data, true);
       // }
-    })
+    }),
   );
 };
 
@@ -84,20 +84,20 @@ export const setArtifactPiece = (artifact: Artifact, shouldKeepStats = false) =>
 
   useCalcStore.setState(
     onActiveSetup(() => {
-      const atfPieces = setup.main.atfGear.pieces.clone();
-      const oldPiece = atfPieces.get(artifact.type);
-      const newState: Partial<ArtifactStateData> =
+      const pieces = setup.main.atfGear.pieces.clone();
+      const oldPiece = pieces.get(artifact.type);
+      const newState =
         shouldKeepStats && oldPiece
           ? {
               ...oldPiece?.state,
               rarity: artifact.rarity,
             }
-          : {};
+          : undefined;
 
-      atfPieces.set(artifact.type, artifact.clone({ state: newState }));
+      pieces.set(artifact.type, artifact.clone({ state: newState }));
 
-      setup.setArtifactGear(new ArtifactGear(atfPieces));
-    })
+      setup.setArtifactGear(new ArtifactGear(pieces));
+    }),
   );
 };
 
@@ -110,7 +110,7 @@ export const removeArtifactPiece = (type: ArtifactType) => {
 
       pieces.delete(type);
       setup.setArtifactGear(new ArtifactGear(pieces));
-    })
+    }),
   );
 };
 
@@ -127,14 +127,14 @@ export const updateArtifactPiece = (type: ArtifactType, newState: Partial<Artifa
       }
 
       setup.main.atfGear = new ArtifactGear(pieces.set(type, piece));
-    })
+    }),
   );
 };
 
 export const updateArtifactPieceSubStat = (
   type: ArtifactType,
   index: number,
-  data: Partial<ArtifactSubStat>
+  data: Partial<ArtifactSubStat>,
 ) => {
   const setup = selectSetup(useCalcStore.getState());
 
@@ -147,23 +147,22 @@ export const updateArtifactPieceSubStat = (
         return false;
       }
 
-      piece.state.updateSubStatByIndex(index, data);
+      piece.state.updateSubStat(index, data);
       setup.main.atfGear = new ArtifactGear(pieces.set(type, piece));
-    })
+    }),
   );
 };
 
 export const copyArtifacts = (sourceId: number) => {
   const sourceSetup = useCalcStore.getState().setupsById[sourceId];
-  const sourcePieces = sourceSetup.main.atfGear.pieces.deepClone();
 
   useCalcStore.setState(
     onActiveSetup((setup) => {
-      setup.main.atfGear = new ArtifactGear(sourcePieces);
+      setup.main.atfGear = sourceSetup.main.atfGear.deepClone();
       setup.artBuffCtrls = Object_.clone(sourceSetup.artBuffCtrls);
       setup.artDebuffCtrls = Object_.clone(sourceSetup.artDebuffCtrls);
       setup.updateTeamBuffCtrls();
-    })
+    }),
   );
 };
 
@@ -176,7 +175,7 @@ export const updateElementalEvent = (data: Partial<ElementalEvent>) => {
         ...setup.elmtEvent,
         ...data,
       };
-    })
+    }),
   );
 };
 

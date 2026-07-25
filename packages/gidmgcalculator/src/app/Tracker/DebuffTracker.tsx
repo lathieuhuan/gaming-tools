@@ -5,14 +5,14 @@ import type { TargetCalc } from "@/models";
 import { ATTACK_ELEMENTS } from "@/constants/global";
 import { useTranslation } from "@/hooks";
 
-import { Heading, RecordContainer, RecordItem, RecordList } from "./_components";
+import { Heading, Container, Item, List } from "./components/ResourceLayout";
 
-type DebuffsTrackerProps = {
+type DebuffTrackerProps = {
   listClassName?: string;
   target: TargetCalc;
 };
 
-export function DebuffsTracker({ listClassName, target }: DebuffsTrackerProps) {
+export function DebuffTracker({ listClassName, target }: DebuffTrackerProps) {
   const { t } = useTranslation();
 
   return (
@@ -24,11 +24,12 @@ export function DebuffsTracker({ listClassName, target }: DebuffsTrackerProps) {
           return (
             records.length !== 0 && (
               <div key={attElmt} className="break-inside-avoid">
-                <Heading extra={reduction + "%"}>
-                  {t(attElmt, { ns: "resistance" }) + " reduction"}
-                </Heading>
+                <Heading
+                  label={`${t(attElmt, { ns: "resistance" })} reduction`}
+                  value={reduction + "%"}
+                />
 
-                <RecordList records={records} calcFn={(value) => value + "%"} />
+                <List records={records} calcFn={(value) => value + "%"} />
               </div>
             )
           );
@@ -46,14 +47,17 @@ export function DebuffsTracker({ listClassName, target }: DebuffsTrackerProps) {
 
             return (
               <div key={attElmt} className="pl-2 break-inside-avoid">
-                <Heading extra={target.resistMults[attElmt]}>
-                  <span className="capitalize">{attElmt}</span>
-                </Heading>
+                <Heading
+                  label={
+                    <span className="capitalize">{attElmt === "phys" ? "physical" : attElmt}</span>
+                  }
+                  value={target.resistMults[attElmt]}
+                />
 
-                <RecordContainer>
-                  <RecordItem label={label} value={reducedResistance / 100} />
-                  <RecordItem label="Equation" value={target.getResistMultEquation(attElmt)} />
-                </RecordContainer>
+                <Container>
+                  <Item label={label} value={reducedResistance / 100} />
+                  <Item label="Equation" value={target.getResistMultEquation(attElmt)} />
+                </Container>
               </div>
             );
           })}

@@ -14,6 +14,7 @@ import type {
   LUNAR_TYPES,
   NORMAL_ATTACKS,
   QUICKEN_REACTIONS,
+  STELLAR_REACTIONS,
   STELLAR_TYPES,
   TALENT_TYPES,
   TRANSFORMATIVE_REACTIONS,
@@ -115,9 +116,12 @@ export type QuickenReaction = (typeof QUICKEN_REACTIONS)[number];
 
 export type LunarReaction = (typeof LUNAR_REACTIONS)[number];
 
+export type StellarReaction = (typeof STELLAR_REACTIONS)[number];
+
 export type ReactionType =
   | TransformativeReaction
   | LunarReaction
+  | StellarReaction
   | QuickenReaction
   | AmplifyingReaction;
 

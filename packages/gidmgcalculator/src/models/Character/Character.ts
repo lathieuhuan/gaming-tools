@@ -72,10 +72,10 @@ export type CharacterCloneOptions = CharacterConstructOptions & {
 
 @FlatGetters("state", ["level", "NAs", "ES", "EB", "cons", "enhanced", "bareLv", "ascension"])
 export class Character implements TeamMember, Clonable<Character> {
-  code: number;
-  state: CharacterState;
+  readonly code: number;
+  readonly state: CharacterState;
 
-  isTraveler: boolean;
+  readonly isTraveler: boolean;
 
   weapon: Weapon;
   atfGear: ArtifactGear;
@@ -86,14 +86,14 @@ export class Character implements TeamMember, Clonable<Character> {
 
   team: Team;
 
-  declare level: Level;
-  declare NAs: number;
-  declare ES: number;
-  declare EB: number;
-  declare cons: number;
-  declare enhanced: boolean;
-  declare bareLv: number;
-  declare ascension: number;
+  declare readonly level: Level;
+  declare readonly NAs: number;
+  declare readonly ES: number;
+  declare readonly EB: number;
+  declare readonly cons: number;
+  declare readonly enhanced: boolean;
+  declare readonly bareLv: number;
+  declare readonly ascension: number;
 
   get baseRxnDamage() {
     return BASE_REACTION_DAMAGE[this.state.bareLv] ?? 0;
@@ -268,7 +268,7 @@ export class Character implements TeamMember, Clonable<Character> {
     if (condition.forElmts && !condition.forElmts.includes(data.vision)) {
       return false;
     }
-    if (condition.forName && !data.name.includes(condition.forName)) {
+    if (condition.forCharacters && !condition.forCharacters.includes(data.code)) {
       return false;
     }
     if (condition.forEnergyCap) {
@@ -417,7 +417,7 @@ const BASE_REACTION_DAMAGE: Record<number, number> = {
   80: 1077.44,
   90: 1446.85,
   95: 1561.468,
-  100: 1674.8092,
+  100: 1674.809,
 };
 
 const TALENT_LV_MULTIPLIERS: Record<number, number[]> = {

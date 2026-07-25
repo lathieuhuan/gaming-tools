@@ -2,26 +2,27 @@ import { Array_ } from "ron-utils";
 
 import type { CalcSetup, Team, Teammate } from "@/models";
 import type {
+  AbilityBuffCtrl,
+  AbilityDebuffCtrl,
   AppArtifact,
   AppCharacter,
   AppWeapon,
-  ArtifactGearSet,
-  ElementalEvent,
-  ModifierBaseSpec,
-  AbilityBuffCtrl,
-  AbilityDebuffCtrl,
   ArtifactBuffCtrl,
   ArtifactDebuffCtrl,
+  ArtifactGearSet,
+  ElementalEvent,
+  ModAffectType,
+  ModifierBaseSpec,
   ModifierCtrl,
   ModifierCtrlState,
-  TeamBuffCtrl,
-  WeaponBuffCtrl,
-  ModAffectType,
   ModInputSpec,
   ModInputType,
   ResonanceModCtrl,
+  TeamBuffCtrl,
+  WeaponBuffCtrl,
 } from "@/types";
 
+import { DEFAULT_STELLAR_VORTEX_LV } from "@/constants";
 import { $AppArtifact, $AppData } from "@/services";
 import { isManualRsnElmt } from "./element.logic";
 
@@ -270,6 +271,7 @@ export function createElementalEvent(): ElementalEvent {
     absorption: null, 
     polestarProc: false,
     polestarCount: 0,
+    vortexLv: DEFAULT_STELLAR_VORTEX_LV,
   };
 }
 

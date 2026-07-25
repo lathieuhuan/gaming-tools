@@ -11,8 +11,16 @@ import { genSequentialOptions, suffixOf } from "@/utils/pure.utils";
 // Component
 import { GenshinImage } from "../GenshinImage";
 import { WeaponLevelControl } from "../LevelControl";
+import { wrapText } from "@/utils/descriptionParsers/utils";
 
-const groupStyles = "bg-dark-2 px-3";
+const groupCls = "bg-dark-2 px-3";
+
+const travelerSword = {
+  code: 246,
+  extraDescription:
+    `When the Traveler equips this, increases ${wrapText("CRIT DMG", "k")} by ` +
+    `${wrapText("6%", "v")} for every Element they have resonated with.<br>`,
+};
 
 export type WeaponViewProps<T extends Weapon> = {
   className?: ClassValue;
@@ -31,13 +39,20 @@ export function WeaponView<T extends Weapon>({
 }: WeaponViewProps<T>) {
   const { t } = useTranslation();
 
-  const passiveDescription = useMemo(() => {
-    const { descriptions } = weapon?.data || {};
+  const description = useMemo(() => {
+    const { code, descriptions } = weapon?.data || {};
 
     if (!descriptions || !weapon?.refi) {
       return "";
     }
-    return descriptions.map((content) => parseWeaponDesc(content, weapon.refi)).join(" ");
+
+    const parsedDescription = descriptions
+      .map((content) => parseWeaponDesc(content, weapon.refi))
+      .join(" ");
+
+    return code === travelerSword.code && weapon.refi > 1
+      ? `${travelerSword.extraDescription}${parsedDescription}`
+      : parsedDescription;
   }, [weapon?.code, weapon?.refi]);
 
   if (!weapon) return null;
@@ -52,7 +67,7 @@ export function WeaponView<T extends Weapon>({
       <div className="mt-2 flex">
         {/* left */}
         <div className="flex flex-col grow justify-between space-y-1">
-          <div className={"pt-1 grow flex items-center " + groupStyles}>
+          <div className={"pt-1 grow flex items-center " + groupCls}>
             <p className="mr-2 text-lg font-semibold">Level</p>
             {mutable ? (
               <WeaponLevelControl
@@ -67,7 +82,7 @@ export function WeaponView<T extends Weapon>({
           </div>
 
           {subStat ? (
-            <div className={"grow pt-1 flex flex-col justify-center " + groupStyles}>
+            <div className={"grow pt-1 flex flex-col justify-center " + groupCls}>
               <p
                 className={
                   "font-semibold leading-6 " +
@@ -83,7 +98,7 @@ export function WeaponView<T extends Weapon>({
             </div>
           ) : null}
 
-          <div className={"grow pt-1 flex flex-col justify-center " + groupStyles}>
+          <div className={"grow pt-1 flex flex-col justify-center " + groupCls}>
             <p className="font-semibold">Base ATK</p>
             <p className={`text-rarity-${rarity} text-[1.75rem] leading-[1.2] font-bold`}>
               {weapon.mainStatValue}
@@ -101,7 +116,7 @@ export function WeaponView<T extends Weapon>({
           </div>
 
           {rarity >= 3 && (
-            <div className={"mt-2 py-1 flex flex-col items-center " + groupStyles}>
+            <div className={"mt-2 py-1 flex flex-col items-center " + groupCls}>
               <p className="text-center font-semibold">Refinement</p>
               {mutable ? (
                 <VersatileSelect
@@ -122,10 +137,7 @@ export function WeaponView<T extends Weapon>({
       </div>
       <div className="mt-3">
         <p className="text-sm font-semibold text-heading">{data.passiveName}</p>
-        <p
-          className="indent-4 text-base"
-          dangerouslySetInnerHTML={{ __html: passiveDescription }}
-        />
+        <p className="indent-4 text-base" dangerouslySetInnerHTML={{ __html: description }} />
       </div>
     </div>
   );

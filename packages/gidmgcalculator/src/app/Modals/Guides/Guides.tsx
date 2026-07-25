@@ -27,6 +27,9 @@ export function Guides() {
                       Constellation 1
                     </li>
                     <li>{markYellow("PHEC")}: Pyro, Hydro, Electro, Cryo</li>
+                    <li>{markYellow("SC")} / {markYellow("R:SC")}: Stellar-Conduct / Radiance:Stellar-Conduct</li>
+                    <li>{markYellow("SS")} / {markYellow("R:SS")}: Stellar-Swirl / Radiance:Stellar-Swirl</li>
+                    <li>{markYellow("SG")} / {markYellow("R:SG")}: Stellar-Glimmer / Radiance:Stellar-Glimmer</li>
                   </ul>
                 </div>
                 <p>

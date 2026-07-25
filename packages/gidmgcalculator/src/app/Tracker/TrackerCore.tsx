@@ -1,19 +1,19 @@
 import { useLayoutEffect, useState } from "react";
 import { CollapseList, CollapseListProps } from "rond";
 
-import type { AttackPattern } from "@/types";
 import type { TrackerState } from "@Store/ui";
 
 import { calculateSetup } from "@/calculation/calculator";
 import { useShallowCalcStore } from "@Store/calculator";
 import { selectSetup } from "@Store/calculator/selectors";
+import { useSettingsStore } from "@Store/settings";
 
 // Component
-import { markDim, markGreen } from "@/components";
-import { AttributesTracker } from "./AttributesTracker";
-import { BonusesTracker } from "./BonusesTracker";
-import { CalcItemTracker } from "./CalcItemTracker";
-import { DebuffsTracker } from "./DebuffsTracker";
+import { AttributeTracker } from "./AttributeTracker";
+import { BonusTracker } from "./BonusTracker";
+import { CalcListTracker } from "./CalcListTracker";
+import { DebuffTracker } from "./DebuffTracker";
+import { DefMultFormula } from "./DefMultFormula";
 
 type TrackerCoreProps = {
   trackerState: TrackerState;
@@ -22,14 +22,18 @@ type TrackerCoreProps = {
 export function TrackerCore({ trackerState }: TrackerCoreProps) {
   const activeSetup = useShallowCalcStore(selectSetup);
   const [state, setState] = useState<ReturnType<typeof calculateSetup>>();
+  const resonatedElmts = useSettingsStore((state) => state.traveler.resonatedElmts);
 
   useLayoutEffect(() => {
     if (trackerState === "open") {
-      const state = calculateSetup(activeSetup, { shouldLog: true });
+      const state = calculateSetup(activeSetup, {
+        shouldLog: true,
+        resonatedElmts,
+      });
 
       setState(state);
     }
-  }, [trackerState]);
+  }, [trackerState, resonatedElmts]);
 
   if (!state) {
     return null;
@@ -38,86 +42,76 @@ export function TrackerCore({ trackerState }: TrackerCoreProps) {
   const { result, target } = state;
   const { attkBonusCtrl, allAttrsCtrl } = state.main;
   const charLv = activeSetup.main.bareLv;
+  const defIgnoreAll = attkBonusCtrl.get("defIgn_", ["all"]);
   const totalDefReduct = target.getReduction("def").value;
-
-  const renderDefMultiplier = (talent: AttackPattern | "WP" | "XTRA") => {
-    const totalDefIgnore =
-      attkBonusCtrl.get("defIgn_", ["all"]) +
-      (talent === "WP" || talent === "XTRA" ? 0 : attkBonusCtrl.get("defIgn_", [talent]));
-
-    return (
-      <div className="flex items-center">
-        <p className="mr-4 text-primary-1">DEF Mult.</p>
-
-        <div className="text-sm flex flex-col items-center">
-          <p>
-            {markDim("char. Lv.")} {markGreen(charLv)} + 100
-          </p>
-
-          <div className="my-1 w-full h-px bg-rarity-1" />
-
-          <p className="px-2 text-center">
-            {totalDefReduct ? (
-              <>
-                (1 - {markDim("DEF reduction")} {markGreen(totalDefReduct)} / 100) *
-              </>
-            ) : null}{" "}
-            {totalDefIgnore ? (
-              <>
-                (1 - {markDim("DEF ignore")} {markGreen(totalDefIgnore)} / 100) *
-              </>
-            ) : null}{" "}
-            ({markDim("target Lv.")} {markGreen(target.level)} + 100) + {markDim("char. Lv.")}{" "}
-            {markGreen(charLv)} + 100
-          </p>
-        </div>
-      </div>
-    );
-  };
 
   const listClassName = "columns-1 md:columns-2 space-y-1";
 
   const collapseItems: CollapseListProps["items"] = [
     {
       heading: "Attributes",
-      body: <AttributesTracker listClassName={listClassName} allAttrsCtrl={allAttrsCtrl} />,
+      body: <AttributeTracker listClassName={listClassName} allAttrsCtrl={allAttrsCtrl} />,
     },
     {
       heading: "Bonuses",
-      body: <BonusesTracker listClassName={listClassName} attkBonusCtrl={attkBonusCtrl} />,
+      body: <BonusTracker listClassName={listClassName} attkBonusCtrl={attkBonusCtrl} />,
     },
     {
       heading: "Debuffs on Target",
-      body: <DebuffsTracker listClassName={listClassName} target={target} />,
+      body: <DebuffTracker listClassName={listClassName} target={target} />,
     },
     {
       heading: "Normal Attacks",
       body: (
-        <CalcItemTracker
-          resultGroup={result.NAs}
-          attkBonusCtrl={attkBonusCtrl}
-          defMultDisplay={renderDefMultiplier("NA")}
-        />
+        <div>
+          <DefMultFormula
+            defIgnore={attkBonusCtrl.get("defIgn_", ["all", "NA"])}
+            charLv={charLv}
+            targetLv={target.level}
+            totalDefReduct={totalDefReduct}
+          />
+          <CalcListTracker
+            className="mt-1 space-y-1"
+            data={result.NAs}
+            attkBonusCtrl={attkBonusCtrl}
+          />
+        </div>
       ),
     },
     {
       heading: "Elemental Skill",
       body: (
-        <CalcItemTracker
-          resultGroup={result.ES}
-          attkBonusCtrl={attkBonusCtrl}
-          defMultDisplay={renderDefMultiplier("ES")}
-        />
+        <div>
+          <DefMultFormula
+            defIgnore={attkBonusCtrl.get("defIgn_", ["all", "ES"])}
+            charLv={charLv}
+            targetLv={target.level}
+            totalDefReduct={totalDefReduct}
+          />
+          <CalcListTracker
+            className="mt-1 space-y-1"
+            data={result.ES}
+            attkBonusCtrl={attkBonusCtrl}
+          />
+        </div>
       ),
     },
     {
       heading: "Elemental Burst",
       body: (
-        <CalcItemTracker
-          resultGroup={result.EB}
-          attkBonusCtrl={attkBonusCtrl}
-          defMultDisplay={renderDefMultiplier("EB")}
-        />
+        <div>
+          <DefMultFormula
+            defIgnore={attkBonusCtrl.get("defIgn_", ["all", "EB"])}
+            charLv={charLv}
+            targetLv={target.level}
+            totalDefReduct={totalDefReduct}
+          />
+          <CalcListTracker
+            className="mt-1 space-y-1"
+            data={result.EB}
+            attkBonusCtrl={attkBonusCtrl}
+          />
+        </div>
       ),
     },
   ];
@@ -126,29 +120,45 @@ export function TrackerCore({ trackerState }: TrackerCoreProps) {
     collapseItems.push({
       heading: "Extra",
       body: (
-        <CalcItemTracker
-          resultGroup={result.XTRA}
-          attkBonusCtrl={attkBonusCtrl}
-          defMultDisplay={renderDefMultiplier("XTRA")}
-        />
+        <div>
+          <DefMultFormula
+            defIgnore={defIgnoreAll}
+            charLv={charLv}
+            targetLv={target.level}
+            totalDefReduct={totalDefReduct}
+          />
+          <CalcListTracker
+            className="mt-1 space-y-1"
+            data={result.XTRA}
+            attkBonusCtrl={attkBonusCtrl}
+          />
+        </div>
       ),
     });
   }
 
   collapseItems.push({
     heading: "Reactions",
-    body: <CalcItemTracker resultGroup={result.RXN} attkBonusCtrl={attkBonusCtrl} forReactions />,
+    body: <CalcListTracker className="space-y-1" data={result.RXN} attkBonusCtrl={attkBonusCtrl} />,
   });
 
   if (Object.keys(result.WP).length) {
     collapseItems.push({
       heading: "Weapon",
       body: (
-        <CalcItemTracker
-          resultGroup={result.WP}
-          attkBonusCtrl={attkBonusCtrl}
-          defMultDisplay={renderDefMultiplier("WP")}
-        />
+        <div>
+          <DefMultFormula
+            defIgnore={defIgnoreAll}
+            charLv={charLv}
+            targetLv={target.level}
+            totalDefReduct={totalDefReduct}
+          />
+          <CalcListTracker
+            className="mt-1 space-y-1"
+            data={result.WP}
+            attkBonusCtrl={attkBonusCtrl}
+          />
+        </div>
       ),
     });
   }

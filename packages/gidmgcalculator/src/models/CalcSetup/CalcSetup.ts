@@ -3,6 +3,8 @@ import { Array_ } from "ron-utils";
 import type { AppCharacter, TeammateData, TalentCalcItem, TeamMember } from "@/types";
 import type { PartiallyRequiredOnly } from "rond";
 
+import { useSettingsStore } from "@Store/settings";
+
 import { calculateSetup } from "@/calculation/calculator";
 import { createTarget, createTeammate } from "@/logic/entity.logic";
 import {
@@ -109,7 +111,10 @@ export class CalcSetup extends CalcSetupBase {
   calculate(shouldLog?: boolean) {
     this.updateCalcItems();
 
-    const { main, result } = calculateSetup(this, { shouldLog });
+    const { main, result } = calculateSetup(this, {
+      shouldLog,
+      resonatedElmts: useSettingsStore.getState().traveler.resonatedElmts,
+    });
 
     const newMain = main.clone({
       allAttrsCtrl: main.allAttrsCtrl.clone(),
@@ -215,7 +220,7 @@ export class CalcSetup extends CalcSetupBase {
   setTeammate(
     info: TeammateConstructOptions & { code: number },
     index: number,
-    data?: AppCharacter
+    data?: AppCharacter,
   ) {
     const newTeam = new Team();
     const newTeammates = [...this.teammates];
@@ -242,7 +247,7 @@ export class CalcSetup extends CalcSetupBase {
 
   updateTeammate(
     tmCode: number,
-    data: TeammateUpdateData | ((teammate: Teammate) => TeammateUpdateData)
+    data: TeammateUpdateData | ((teammate: Teammate) => TeammateUpdateData),
   ) {
     this.teammates = this.teammates.map((teammate) => {
       if (teammate.data.code === tmCode) {

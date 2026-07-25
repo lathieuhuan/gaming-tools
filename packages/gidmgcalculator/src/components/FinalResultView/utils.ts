@@ -1,7 +1,18 @@
-import type { CalcAspect, CalcResultItemValue } from "@/calculation/types";
-import type { AppCharacter, AppWeapon, LunarReaction, TransformativeReaction } from "@/types";
+import type { CalcAspect, CalcResultAttackItem, CalcResultItemValue } from "@/calculation/types";
+import type {
+  AppCharacter,
+  AppWeapon,
+  LunarReaction,
+  StellarReaction,
+  TransformativeReaction,
+} from "@/types";
 
-import { LUNAR_REACTIONS, NORMAL_ATTACKS, TRANSFORMATIVE_REACTIONS } from "@/constants/global";
+import {
+  LUNAR_REACTIONS,
+  NORMAL_ATTACKS,
+  STELLAR_REACTIONS,
+  TRANSFORMATIVE_REACTIONS,
+} from "@/constants/global";
 
 export type TableCalcItemKey = {
   main: "NAs" | "ES" | "EB";
@@ -20,7 +31,7 @@ type TableExtraItemKey = {
 
 type TableReactionKey = {
   main: "RXN";
-  subs: (TransformativeReaction | LunarReaction)[];
+  subs: (TransformativeReaction | LunarReaction | StellarReaction)[];
 };
 
 export type TableKey = TableCalcItemKey | TableWeaponKey | TableReactionKey | TableExtraItemKey;
@@ -28,7 +39,7 @@ export type TableKey = TableCalcItemKey | TableWeaponKey | TableReactionKey | Ta
 export function getTableKeys(
   calcList: AppCharacter["calcList"],
   weaponCalcItems?: AppWeapon["calcItems"],
-  extraKeys?: string[]
+  extraKeys?: string[],
 ): TableKey[] {
   const result: TableKey[] = [
     {
@@ -53,7 +64,7 @@ export function getTableKeys(
 
   result.push({
     main: "RXN" as const,
-    subs: [...LUNAR_REACTIONS, ...TRANSFORMATIVE_REACTIONS],
+    subs: [...STELLAR_REACTIONS, ...LUNAR_REACTIONS, ...TRANSFORMATIVE_REACTIONS],
   });
 
   if (weaponCalcItems) {
@@ -81,3 +92,11 @@ export const displayValues = (values: CalcResultItemValue[], key: CalcAspect) =>
 
   return undefined;
 };
+
+export function attackCalcItemSubtitleParts(item: CalcResultAttackItem) {
+  return [
+    `${item.attElmt}_attElmt`,
+    item.attPatt && item.attPatt !== "none" && item.attPatt,
+    item.specPatt && item.specPatt,
+  ].filter((part) => typeof part === "string");
+}

@@ -1,22 +1,21 @@
 import { Object_, round } from "ron-utils";
 import { clsx } from "rond";
 
-import type { AttackBonus, AttackBonusKey } from "@/types";
+import type { AttackBonus, AttackBonusKey, AttackElement } from "@/types";
 
 import { ATTACK_ELEMENTS } from "@/constants/global";
 import { useTranslation } from "@/hooks";
 import { AttackBonusControl } from "@/models/Character";
 import { suffixOf } from "@/utils/pure.utils";
-import { getTotalRecordValue } from "./_utils";
 
-import { Heading, RecordList } from "./_components";
+import { Heading, List } from "./components/ResourceLayout";
 
-type BonusesTrackerProps = {
+type BonusTrackerProps = {
   listClassName?: string;
   attkBonusCtrl: AttackBonusControl;
 };
 
-export function BonusesTracker({ listClassName, attkBonusCtrl }: BonusesTrackerProps) {
+export function BonusTracker({ listClassName, attkBonusCtrl }: BonusTrackerProps) {
   const { t } = useTranslation();
 
   const records = attkBonusCtrl.records;
@@ -52,7 +51,7 @@ export function BonusesTracker({ listClassName, attkBonusCtrl }: BonusesTrackerP
             if (type === "all") {
               return "all";
             }
-            if (ATTACK_ELEMENTS.includes(type as (typeof ATTACK_ELEMENTS)[number])) {
+            if (ATTACK_ELEMENTS.includes(type as AttackElement)) {
               return type === "phys" ? "physical" : type;
             }
             return t(type);
@@ -66,16 +65,19 @@ export function BonusesTracker({ listClassName, attkBonusCtrl }: BonusesTrackerP
                 {list.map((item) => {
                   const suffix = suffixOf(item.key);
                   const decimalDigits = suffix ? 2 : 0;
+                  const totalValue = item.records.reduce(
+                    (accumulator, record) => accumulator + record.value,
+                    0,
+                  );
 
                   return (
                     <div key={item.key} className="pl-2">
                       <Heading
-                        extra={round(getTotalRecordValue(item.records), decimalDigits) + suffix}
-                      >
-                        {t(item.key)}
-                      </Heading>
+                        label={t(item.key)}
+                        value={round(totalValue, decimalDigits) + suffix}
+                      />
 
-                      <RecordList
+                      <List
                         records={item.records}
                         calcFn={(value) => round(value, decimalDigits) + suffix}
                       />

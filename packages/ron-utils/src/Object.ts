@@ -11,8 +11,8 @@ export class Object_ {
   //
   static set<TObj, const TPath extends NestedPath<TObj>>(
     object: TObj,
-    path: TPath,
-    value: NestedValue<TObj, TPath>
+    path: NoInfer<TPath>,
+    value: NoInfer<NestedValue<TObj, TPath>>
   ) {
     if (!path.length || !Object_.isObject(object) || Object_.isEmpty(object)) {
       return object;
@@ -112,27 +112,17 @@ export class Object_ {
     return object;
   }
 
-  static assign<TObj extends object>(obj: TObj, ...props: Partial<TObj>[]): TObj {
-    return Object.assign(obj, ...props) as TObj;
-  }
-
-  static safeAssign<TObj extends object>(
-    obj: TObj,
-    props: Partial<TObj>,
-    keys: (keyof TObj)[]
-  ): TObj {
-    for (const key of keys) {
-      if (props[key] !== undefined) {
-        obj[key] = props[key];
-      }
-    }
-
-    return obj;
+   /**
+   * @caution This utility leads to redundant properties in the `obj`
+   * when the actual properties in `sources` is more than its type definition.
+   */
+  static assign<TObj extends object>(obj: TObj, ...sources: Partial<TObj>[]): TObj {
+    return Object.assign(obj, ...sources) as TObj;
   }
 
   /**
-   * Use with caution!
-   * This utility leads to redundant properties in the `obj`,
+   * Assign properties that are not `undefined` to the `obj`.
+   * @caution This utility leads to redundant properties in the `obj`
    * when the actual properties in `props` is more than its type definition.
    */
   static patch<TObj extends object>(obj: TObj, props: Partial<TObj>): TObj {

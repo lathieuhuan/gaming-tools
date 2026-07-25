@@ -1,12 +1,12 @@
 import isEqual from "react-fast-compare";
-import { Array_ } from "ron-utils";
+import { Array_, Object_ } from "ron-utils";
 
 import type { CalcSetup } from "@/models";
 import type { AppThunk } from "./store";
 
 import { isDbSetup, toDbSetup } from "@/logic/setup.logic";
-import { Artifact, Weapon } from "@/models";
-import { ArtifactType } from "@/types";
+import { Weapon } from "@/models";
+import { ArtifactKey, ArtifactStateData, ArtifactType } from "@/types";
 import { updateSetupAfterSave } from "./calculator/actions";
 import { updateUI } from "./ui";
 import {
@@ -40,7 +40,7 @@ export function saveSetupThunk(setup: CalcSetup, name: string): AppThunk {
             updateDbWeapon({
               ID: existedWeapon.ID,
               setupIDs: newSetupIDs.concat(setup.ID),
-            })
+            }),
           );
         }
       } else {
@@ -53,7 +53,7 @@ export function saveSetupThunk(setup: CalcSetup, name: string): AppThunk {
             ID: weaponID,
             owner: undefined,
             setupIDs: [setup.ID],
-          })
+          }),
         );
 
         // Remove setupID from existed weapon
@@ -61,7 +61,7 @@ export function saveSetupThunk(setup: CalcSetup, name: string): AppThunk {
           updateDbWeapon({
             ID: existedWeapon.ID,
             setupIDs: existedWeapon.setupIDs?.filter((ID) => ID !== setup.ID),
-          })
+          }),
         );
       }
     } else {
@@ -70,7 +70,7 @@ export function saveSetupThunk(setup: CalcSetup, name: string): AppThunk {
         addDbWeapon({
           ...weaponCore,
           setupIDs: [setup.ID],
-        })
+        }),
       );
 
       if (isOldSetup) {
@@ -82,7 +82,7 @@ export function saveSetupThunk(setup: CalcSetup, name: string): AppThunk {
             updateDbWeapon({
               ID: oldWeapon.ID,
               setupIDs: oldWeapon.setupIDs?.filter((ID) => ID !== setup.ID),
-            })
+            }),
           );
         }
       }
@@ -91,13 +91,22 @@ export function saveSetupThunk(setup: CalcSetup, name: string): AppThunk {
     const pieces = atfGear.pieces.list();
     const artifactIDs = pieces.map((piece) => piece.ID);
     const newPieceIds: Partial<Record<ArtifactType, number>> = {};
+    const atfPieceCoreKeys: (keyof ArtifactKey | keyof ArtifactStateData)[] = [
+      "ID",
+      "code",
+      "type",
+      "rarity",
+      "level",
+      "mainStatType",
+      "subStats",
+    ];
 
     pieces.forEach((piece, pieceIndex) => {
       const existedPiece = Array_.findById(userArts, piece.ID);
-      const pieceCore = piece.extractCore();
+      const pieceCore = Object_.extract(piece, atfPieceCoreKeys);
 
       if (existedPiece) {
-        if (isEqual(pieceCore, Artifact.extractCore(existedPiece))) {
+        if (isEqual(pieceCore, Object_.extract(existedPiece, atfPieceCoreKeys))) {
           // Core not changed => add setupID to existedArtifact
           const newSetupIDs = existedPiece.setupIDs || [];
 
@@ -106,7 +115,7 @@ export function saveSetupThunk(setup: CalcSetup, name: string): AppThunk {
               updateDbArtifact({
                 ID: existedPiece.ID,
                 setupIDs: newSetupIDs.concat(setup.ID),
-              })
+              }),
             );
           }
         } else {
@@ -121,7 +130,7 @@ export function saveSetupThunk(setup: CalcSetup, name: string): AppThunk {
               ...pieceCore,
               ID: artifactID,
               setupIDs: [setup.ID],
-            })
+            }),
           );
 
           // Remove setupID from existed artifact
@@ -129,7 +138,7 @@ export function saveSetupThunk(setup: CalcSetup, name: string): AppThunk {
             updateDbArtifact({
               ID: existedPiece.ID,
               setupIDs: existedPiece.setupIDs?.filter((ID) => ID !== setup.ID),
-            })
+            }),
           );
         }
       } else {
@@ -138,7 +147,7 @@ export function saveSetupThunk(setup: CalcSetup, name: string): AppThunk {
           addDbArtifact({
             ...pieceCore,
             setupIDs: [setup.ID],
-          })
+          }),
         );
 
         if (isOldSetup) {
@@ -152,7 +161,7 @@ export function saveSetupThunk(setup: CalcSetup, name: string): AppThunk {
               updateDbArtifact({
                 ID: oldArtifact.ID,
                 setupIDs: oldArtifact.setupIDs?.filter((ID) => ID !== setup.ID),
-              })
+              }),
             );
           }
         }

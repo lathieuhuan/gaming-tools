@@ -8,6 +8,7 @@ import { AnemoAbsorptionCtrl } from "./AnemoAbsorptionCtrl";
 import { AttackReactionCtrl } from "./AttackReactionCtrl";
 import { CustomInfusionCtrl } from "./CustomInfusionCtrl";
 import { PolestarFieldCtrl } from "./PolestarFieldCtrl";
+import { StellarVortexCtrl } from "./VortexSwirlCtrl";
 
 export function BuffElement() {
   const { main, elmtEvent } = useShallowCalcStore((state) =>
@@ -19,6 +20,9 @@ export function BuffElement() {
     <PolestarFieldCtrl
       polestarProc={elmtEvent.polestarProc}
       polestarCount={elmtEvent.polestarCount}
+    />,
+    <StellarVortexCtrl
+      vortexLv={elmtEvent.vortexLv}
     />,
   ];
 

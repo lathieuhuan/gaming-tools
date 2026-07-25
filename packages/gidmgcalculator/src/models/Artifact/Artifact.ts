@@ -28,22 +28,22 @@ export type ArtifactCloneOptions = ArtifactConstructOptions;
 @FlatGetters("state", ["type", "rarity", "level", "mainStatType", "mainStatValue", "subStats"])
 @FlatGetters("relation", ["owner", "setupIDs"])
 export class Artifact implements Clonable<Artifact> {
-  key: ArtifactKey;
-  state: ArtifactState;
-  relation: EquipmentRelation;
+  readonly key: ArtifactKey;
+  readonly state: ArtifactState;
+  readonly relation: EquipmentRelation;
 
   readonly data: AppArtifact;
 
-  declare ID: number;
-  declare code: number;
-  declare type: ArtifactType;
-  declare rarity: number;
-  declare level: number;
-  declare mainStatType: AttributeStat;
-  declare mainStatValue: number;
-  declare subStats: ArtifactSubStat[];
-  declare owner?: number;
-  declare setupIDs?: number[];
+  declare readonly ID: number;
+  declare readonly code: number;
+  declare readonly type: ArtifactType;
+  declare readonly rarity: number;
+  declare readonly level: number;
+  declare readonly mainStatType: AttributeStat;
+  declare readonly mainStatValue: number;
+  declare readonly subStats: ArtifactSubStat[];
+  declare readonly owner?: number;
+  declare readonly setupIDs?: number[];
 
   get icon() {
     return this.data[this.type].icon;
@@ -59,17 +59,11 @@ export class Artifact implements Clonable<Artifact> {
     this.data = data;
   }
 
-  extractCore() {
-    return Artifact.extractCore({
-      ...this.key,
-      ...this.state,
-    });
-  }
-
   serialize(): RawArtifact {
     return Artifact.serialize(this);
   }
 
+  /** deep clone */
   clone(options: ArtifactCloneOptions = {}) {
     const key = Object_.patch(this.key, options.key || {});
 
@@ -103,18 +97,6 @@ export class Artifact implements Clonable<Artifact> {
         setupIDs: artifact.setupIDs,
       }
     );
-  }
-
-  static extractCore(artifact: RawArtifact): ArtifactKey & ArtifactStateData {
-    return Object_.extract(artifact, [
-      "ID",
-      "code",
-      "type",
-      "rarity",
-      "level",
-      "mainStatType",
-      "subStats",
-    ]);
   }
 
   static iconOf(artifactType: ArtifactType) {

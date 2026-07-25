@@ -21,6 +21,12 @@ export const parseWeaponDesc = (description: string, refi: number) => {
       const [base, increment] = body.split("^");
       return wrapText(scaleRefi(+base, refi, increment ? +increment : undefined) + suffix, type);
     }
+
+    if (body.includes("|")) {
+      const value = body.split("|").at(refi - 1);
+      return value !== undefined ? wrapText(value + suffix, type) : "";
+    }
+
     if (body.includes("$")) {
       const values = body.split("$");
       return wrapText(values[refi - 1] + suffix, type);
