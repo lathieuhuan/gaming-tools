@@ -1,12 +1,12 @@
 import { applyPercent } from "ron-utils";
 
-import type { AllAttributes, ArtifactType, ArtifactGearSet } from "@/types";
+import type { AllAttributes, ArtifactGearSet, ArtifactType } from "@/types";
 import type { Clonable } from "./interfaces";
 
 import { ARTIFACT_TYPES, CORE_STAT_TYPES } from "@/constants/global";
 import TypeCounter from "@/utils/TypeCounter";
 import { Artifact } from "./Artifact";
-import { ArtifactGearPieces } from "./ArtifactGearPieces";
+import { ArtifactPieces } from "./ArtifactPieces";
 
 export type ArtifactGearSlot =
   | {
@@ -20,12 +20,12 @@ export type ArtifactGearSlot =
     };
 
 export class ArtifactGear implements Clonable<ArtifactGear> {
-  pieces: ArtifactGearPieces;
+  pieces: ArtifactPieces;
   sets: ArtifactGearSet[] = [];
   attributes: AllAttributes = new TypeCounter();
   finalAttrs: AllAttributes = new TypeCounter();
 
-  constructor(pieces?: ArtifactGearPieces | Artifact[]) {
+  constructor(pieces?: ArtifactPieces | Artifact[]) {
     const gearPieces: Partial<Record<ArtifactType, Artifact>> = {};
 
     const getPiece = Array.isArray(pieces)
@@ -38,7 +38,7 @@ export class ArtifactGear implements Clonable<ArtifactGear> {
       gearPieces[type] = piece;
     }
 
-    this.pieces = new ArtifactGearPieces(gearPieces);
+    this.pieces = new ArtifactPieces(gearPieces);
 
     this.processPieces();
   }
@@ -116,6 +116,12 @@ export class ArtifactGear implements Clonable<ArtifactGear> {
   }
 
   deepClone() {
-    return new ArtifactGear(this.pieces.deepClone());
+    const pieces: Partial<Record<ArtifactType, Artifact>> = {};
+
+    for (const type of ARTIFACT_TYPES) {
+      pieces[type] = this.pieces.get(type)?.clone();
+    }
+
+    return new ArtifactGear(new ArtifactPieces(pieces));
   }
 }

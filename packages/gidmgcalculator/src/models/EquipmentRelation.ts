@@ -20,13 +20,7 @@ export class EquipmentRelation implements EquipmentRelationData {
   }
 
   set<TKey extends keyof EquipmentRelationData>(key: TKey, value: EquipmentRelationData[TKey]) {
-    const clonedValue = Object_.isObject(value) ? Object_.clone(value) : value;
-
-    Object_.assign<EquipmentRelation>(this, {
-      [key]: clonedValue,
-    });
-
-    return this;
+    return this.update({ [key]: value });
   }
 
   clear() {

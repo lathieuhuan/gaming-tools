@@ -4,9 +4,9 @@ import type { Clonable } from "./interfaces";
 
 import { ARTIFACT_TYPES } from "@/constants/global";
 
-export class ArtifactGearPieces
+export class ArtifactPieces
   extends Map<ArtifactType, Artifact>
-  implements Clonable<ArtifactGearPieces>
+  implements Clonable<ArtifactPieces>
 {
   constructor(pieces: Partial<Record<ArtifactType, Artifact>> | Map<ArtifactType, Artifact> = {}) {
     super();
@@ -29,17 +29,7 @@ export class ArtifactGearPieces
     return Array.from(this.values());
   }
 
-  clone(): ArtifactGearPieces {
-    return new ArtifactGearPieces(this);
-  }
-
-  deepClone(): ArtifactGearPieces {
-    const pieces: Partial<Record<ArtifactType, Artifact>> = {};
-
-    for (const type of ARTIFACT_TYPES) {
-      pieces[type] = this.get(type)?.clone();
-    }
-
-    return new ArtifactGearPieces(pieces);
+  clone(): ArtifactPieces {
+    return new ArtifactPieces(this);
   }
 }

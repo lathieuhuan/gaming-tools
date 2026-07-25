@@ -68,14 +68,19 @@ export class ArtifactState implements ArtifactStateData {
     return this;
   }
 
-  updateSubStatByIndex(index: number, data: Partial<ArtifactSubStat>) {
+  updateSubStat(index: number, data: Partial<ArtifactSubStat>) {
     const subStats = this.subStats;
 
     if (subStats[index]) {
-      subStats[index] = Object_.safeAssign(subStats[index], data, ["type", "value"]);
+       Object_.patch(subStats[index], {
+        type: data.type,
+        value: data.value,
+      });
+
+      return subStats[index];
     }
 
-    return this;
+    return null;
   }
 
   // Ensure the main stat type is valid for the artifact type

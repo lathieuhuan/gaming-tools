@@ -69,8 +69,10 @@ export class CharacterState extends Ascendable implements CharacterStateData {
     if (changes.level) {
       const { bareLv, ascension } = Ascendable.splitLevel(changes.level);
 
-      this.bareLv = bareLv;
-      this.ascension = ascension;
+      Object_.patch<CharacterState>(this, {
+        bareLv,
+        ascension,
+      });
     }
 
     return this;

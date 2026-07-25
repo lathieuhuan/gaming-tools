@@ -72,10 +72,10 @@ export type CharacterCloneOptions = CharacterConstructOptions & {
 
 @FlatGetters("state", ["level", "NAs", "ES", "EB", "cons", "enhanced", "bareLv", "ascension"])
 export class Character implements TeamMember, Clonable<Character> {
-  code: number;
-  state: CharacterState;
+  readonly code: number;
+  readonly state: CharacterState;
 
-  isTraveler: boolean;
+  readonly isTraveler: boolean;
 
   weapon: Weapon;
   atfGear: ArtifactGear;
@@ -86,14 +86,14 @@ export class Character implements TeamMember, Clonable<Character> {
 
   team: Team;
 
-  declare level: Level;
-  declare NAs: number;
-  declare ES: number;
-  declare EB: number;
-  declare cons: number;
-  declare enhanced: boolean;
-  declare bareLv: number;
-  declare ascension: number;
+  declare readonly level: Level;
+  declare readonly NAs: number;
+  declare readonly ES: number;
+  declare readonly EB: number;
+  declare readonly cons: number;
+  declare readonly enhanced: boolean;
+  declare readonly bareLv: number;
+  declare readonly ascension: number;
 
   get baseRxnDamage() {
     return BASE_REACTION_DAMAGE[this.state.bareLv] ?? 0;

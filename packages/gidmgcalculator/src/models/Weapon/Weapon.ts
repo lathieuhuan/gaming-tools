@@ -26,23 +26,23 @@ type WeaponConstructOptions = {
 @FlatGetters("state", ["level", "refi", "bareLv", "ascension", "mainStatValue", "subStatValue"])
 @FlatGetters("relation", ["owner", "setupIDs"])
 export class Weapon implements Clonable<Weapon> {
-  key: WeaponKey;
-  state: WeaponState;
-  relation: EquipmentRelation;
+  readonly key: WeaponKey;
+  readonly state: WeaponState;
+  readonly relation: EquipmentRelation;
 
   readonly data: AppWeapon;
 
-  declare ID: number;
-  declare code: number;
-  declare type: WeaponType;
-  declare level: Level;
-  declare refi: number;
-  declare bareLv: number;
-  declare ascension: number;
-  declare mainStatValue: number;
-  declare subStatValue: number;
-  declare owner?: number;
-  declare setupIDs?: number[];
+  declare readonly ID: number;
+  declare readonly code: number;
+  declare readonly type: WeaponType;
+  declare readonly level: Level;
+  declare readonly refi: number;
+  declare readonly bareLv: number;
+  declare readonly ascension: number;
+  declare readonly mainStatValue: number;
+  declare readonly subStatValue: number;
+  declare readonly owner?: number;
+  declare readonly setupIDs?: number[];
 
   static TRAVELER_SWORD_CODE = 246;
 
@@ -57,7 +57,7 @@ export class Weapon implements Clonable<Weapon> {
   constructor(
     key: PartiallyOptional<WeaponKey, "code">,
     data: AppWeapon,
-    options: WeaponConstructOptions = {}
+    options: WeaponConstructOptions = {},
   ) {
     const { code = Weapon.DEFAULT_CODE[key.type] } = key;
 
@@ -104,11 +104,7 @@ export class Weapon implements Clonable<Weapon> {
       {
         owner: weapon.owner,
         setupIDs: weapon.setupIDs,
-      }
+      },
     );
-  }
-
-  static extractCore(weapon: RawWeapon): WeaponKey & WeaponStateData {
-    return Object_.extract(weapon, ["ID", "code", "type", "level", "refi"]);
   }
 }

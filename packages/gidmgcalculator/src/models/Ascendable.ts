@@ -1,8 +1,8 @@
 import type { Level } from "@/types";
 
 export class Ascendable {
-  bareLv: number;
-  ascension: number;
+  readonly bareLv: number;
+  readonly ascension: number;
 
   constructor(level: Level) {
     const { bareLv, ascension } = Ascendable.splitLevel(level);

@@ -57,8 +57,10 @@ export class WeaponState extends Ascendable implements WeaponStateData {
     if (changes.level) {
       const { bareLv, ascension } = Ascendable.splitLevel(changes.level);
 
-      this.bareLv = bareLv;
-      this.ascension = ascension;
+      Object_.patch<WeaponState>(this, {
+        bareLv,
+        ascension,
+      });
     }
 
     this.correctData();
