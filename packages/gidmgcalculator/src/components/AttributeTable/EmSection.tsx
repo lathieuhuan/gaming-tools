@@ -4,7 +4,7 @@ import { round } from "ron-utils";
 import { clsx, CollapseSpace, StatsTable } from "rond";
 
 import { getRxnBonusesFromEM } from "@/calculation/core/getRxnBonusesFromEM";
-import { markGreen } from "@/components/Span";
+import { PositiveText } from "@/components/Text";
 
 const { Row, Cell } = StatsTable;
 
@@ -21,15 +21,15 @@ export function EmSection({ value = 0 }: EmSectionProps) {
       <Row className="!hidden" />
       <Row
         className="cursor-pointer"
-        onClick={() => setDropped(!dropped)}
         aria-label="Elemental Mastery"
+        onClick={() => setDropped(!dropped)}
       >
         <Cell className="flex items-center">
           <p className="mr-1">Elemental Mastery</p>
           <FaCaretDown
             className={clsx(
               "duration-150 ease-linear",
-              dropped ? "text-active" : "text-light-1 rotate-90"
+              dropped ? "text-active" : "text-light-1 rotate-90",
             )}
           />
         </Cell>
@@ -38,20 +38,22 @@ export function EmSection({ value = 0 }: EmSectionProps) {
       <CollapseSpace active={dropped}>
         <ul className="px-2 py-1 text-sm flex flex-col space-y-1">
           <li>
-            Increases damage dealt by Vaporize and Melt by {markGreen(rxnBonusesFromEM.amplifying)}
+            Increases damage dealt by Vaporize and Melt by{" "}
+            <PositiveText>{rxnBonusesFromEM.amplifying}</PositiveText>
             %.
           </li>
           <li>
             Increases damage dealt by Overloaded, Superconduct, Electro-Charged, Burning, Shattered,
-            Swirl, Bloom, Hyperbloom, and Burgeon by {markGreen(rxnBonusesFromEM.transformative)}%.
+            Swirl, Bloom, Hyperbloom, and Burgeon by{" "}
+            <PositiveText>{rxnBonusesFromEM.transformative}</PositiveText>%.
           </li>
           <li>
             Increases the DMG Bonus provided by Aggravate and Spread by{" "}
-            {markGreen(rxnBonusesFromEM.quicken)}%.
+            <PositiveText>{rxnBonusesFromEM.quicken}</PositiveText>%.
           </li>
           <li>
             Increases the damage absorption power of shields created through Crystallize by{" "}
-            {markGreen(rxnBonusesFromEM.shield)}%.
+            <PositiveText>{rxnBonusesFromEM.shield}</PositiveText>%.
           </li>
         </ul>
       </CollapseSpace>

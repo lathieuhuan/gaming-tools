@@ -1,17 +1,18 @@
-import { StatsTable, useScreenWatcher } from "rond";
+import { clsx, StatsTable, useScreenWatcher } from "rond";
 
-import { ATTACK_ELEMENTS } from "@/constants/global";
+import { ATTACK_ELEMENTS, CORE_STAT_TYPES } from "@/constants/global";
 import { useTranslation } from "@/hooks";
+import type { AllAttributes } from "@/types";
 
 // Component
-import { CoreStatRows, CoreStatRowsMobile, type CoreStatRowsProps } from "./CoreStatRows";
+import { PositiveText } from "@/components/Text";
 import { EmSection } from "./EmSection";
 
 const { Row, Cell } = StatsTable;
 
 interface AttributeTableProps {
   className?: string;
-  attributes: CoreStatRowsProps["attributes"];
+  attributes: AllAttributes;
 }
 
 export function AttributeTable({ className, attributes }: AttributeTableProps) {
@@ -23,12 +24,39 @@ export function AttributeTable({ className, attributes }: AttributeTableProps) {
   }
 
   return (
-    <StatsTable className={className} aria-label="attribute-table">
-      {isMobile ? (
-        <CoreStatRowsMobile attributes={attributes} />
-      ) : (
-        <CoreStatRows attributes={attributes} />
-      )}
+    <StatsTable className={className} aria-label="Attribute Table">
+      {CORE_STAT_TYPES.map((type) => {
+        const label = t(type);
+        const base = attributes.get(`base_${type}`);
+        const total = Math.round(attributes.get(type));
+        const bonus = base === undefined ? undefined : total - Math.round(base);
+
+        return (
+          <Row key={type} aria-label={label} className="group" tabIndex={isMobile ? 0 : undefined}>
+            <Cell>{label}</Cell>
+            <Cell className="relative mr-2">
+              <p
+                className={clsx(
+                  bonus !== undefined && "group-hover:hidden group-focus-within:hidden",
+                )}
+              >
+                {total}
+              </p>
+
+              {bonus !== undefined && (
+                <p
+                  className={
+                    "hidden whitespace-nowrap absolute top-0 right-0 " +
+                    "group-hover:block group-focus-within:block"
+                  }
+                >
+                  {total - bonus} + <PositiveText>{bonus}</PositiveText>
+                </p>
+              )}
+            </Cell>
+          </Row>
+        );
+      })}
 
       <EmSection value={attributes.get("em")} />
 
