@@ -49,8 +49,8 @@ export const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
       type="text"
       className={cn(
         !unstyled &&
-          `rounded-sm bg-light-2 text-black font-medium focus:bg-light-1 disabled:is-disabled ${classBySize[size]}`,
-        className
+          `rounded-sm bg-light-2 text-black font-medium focus:bg-light-1 disabled:opacity-disabled ${classBySize[size]}`,
+        className,
       )}
       value={isControlled ? value : localValue}
       onChange={handleChange}

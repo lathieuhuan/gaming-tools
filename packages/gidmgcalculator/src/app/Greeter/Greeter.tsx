@@ -79,7 +79,7 @@ export const Greeter = () => {
       screen === "small"
         ? {
             title: "GI DMG Calculator",
-            cls: "text-1.5xl md:hidden",
+            cls: "text-xlp md:hidden",
             patchCls: "text-sm",
             skeletonCls: "h-3.5",
           }

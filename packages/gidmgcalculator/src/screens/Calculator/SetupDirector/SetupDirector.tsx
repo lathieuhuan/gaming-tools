@@ -23,7 +23,7 @@ function SetupDirectorCore() {
         onClick={() => updateUI({ setupDirectorActive: false })}
       />
 
-      <p className="my-2 text-1.5xl text-center text-heading font-bold">Setups Management</p>
+      <p className="my-2 text-xlp text-center text-heading font-bold">Setups Management</p>
 
       <div className="flex-grow hide-scrollbar">
         <div className="space-y-4">

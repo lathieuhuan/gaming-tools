@@ -60,13 +60,13 @@ export function SetupManagerSmall({ onClose }: SetupManagerSmallProps) {
       onClick: control.copySetup(i),
     },
     {
-      children: <SiTarget className="text-1.5xl" />,
+      children: <SiTarget className="text-xlp" />,
       className: setup.ID === tempStandardId ? "text-bonus" : "text-light-1",
       disabled: !setup.isCompared || comparedSetups.length <= 1,
       onClick: control.selectStandardSetup(i),
     },
     {
-      children: <FaBalanceScaleLeft className="text-1.5xl" />,
+      children: <FaBalanceScaleLeft className="text-xlp" />,
       className: comparedSetups.some((comparedSetup) => comparedSetup.ID === setup.ID)
         ? "text-bonus"
         : "text-light-1",

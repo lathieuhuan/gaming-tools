@@ -28,7 +28,7 @@ export const Checkbox = ({
     <label
       data-slot="checkbox"
       className={cn(
-        "flex items-start gap-2 group/checkbox has-[:enabled]:cursor-pointer has-[:disabled]:is-disabled",
+        "flex items-start gap-2 group/checkbox has-[:enabled]:cursor-pointer has-[:disabled]:opacity-disabled",
         isSmall ? "[--height:1.5rem]" : "[--height:1.75rem]",
         className
       )}

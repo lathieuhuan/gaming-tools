@@ -100,7 +100,7 @@ export function TalentDetail({
     return (
       <button
         className={
-          "w-7 h-7 flex-center rounded border-2 border-dark-line text-dark-line text-1.5xl " +
+          "w-7 h-7 flex-center rounded border-2 border-dark-line text-dark-line text-xlp " +
           (disabled ? "opacity-50" : "hover:border-secondary-1 hover:text-secondary-1")
         }
         disabled={disabled}

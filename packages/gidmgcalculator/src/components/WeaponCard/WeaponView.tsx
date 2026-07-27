@@ -62,7 +62,7 @@ export function WeaponView<T extends Weapon>({
 
   return (
     <div className={clsx("w-full", className)} onDoubleClick={() => console.info(weapon)}>
-      <p className={`text-1.5xl text-rarity-${rarity} font-semibold`}>{data.name}</p>
+      <p className={`text-xlp text-rarity-${rarity} font-semibold`}>{data.name}</p>
 
       <div className="mt-2 flex">
         {/* left */}
@@ -91,7 +91,7 @@ export function WeaponView<T extends Weapon>({
               >
                 {t(subStat.type)}
               </p>
-              <p className={`text-rarity-${rarity} text-1.5xl leading-7 font-bold`}>
+              <p className={`text-rarity-${rarity} text-xlp leading-7 font-bold`}>
                 {weapon.subStatValue}
                 {suffixOf(subStat.type)}
               </p>
