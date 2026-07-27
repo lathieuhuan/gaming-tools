@@ -5,7 +5,7 @@ import type { AppCharacter } from "@/types";
 import { fetchConsDescriptions } from "@/services/app-data";
 
 // Conponent
-import { markDim, markGreen } from "../../Span";
+import { PositiveText, HintText } from "@/components/Text";
 import { AbilityCarousel } from "../components/AbilityCarousel";
 
 type ConstellationDetailProps = {
@@ -45,11 +45,13 @@ export function ConstellationDetail({
         onClickNext={() => onChangeConsLv?.(consLv + 1)}
       />
       <p className={`text-xl text-${vision} font-bold`}>{consInfo.name}</p>
-      <p className="text-sm">Constellation Lv. {markGreen(consLv, "bold")}</p>
+      <p className="text-sm">
+        Constellation Lv. <PositiveText bold>{consLv}</PositiveText>
+      </p>
       <div className="mt-3 hide-scrollbar">
         <p className={isLoading ? "py-4 flex justify-center" : "whitespace-pre-wrap"}>
           <LoadingSpin active={isLoading} />
-          {isError && markDim("Error. Rebooting...")}
+          {isError && <HintText>Error. Rebooting...</HintText>}
           {descriptions?.[consLv - 1]}
         </p>
       </div>

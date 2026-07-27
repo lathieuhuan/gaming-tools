@@ -1,6 +1,7 @@
 import type { AppCharacter } from "@/types";
 import type { GenshinDevErrorResponse } from "./types";
 
+import { LEVELABLE_TALENT_TYPES } from "@/constants";
 import { $AppCharacter } from "./AppCharacterService";
 import { customFetch } from "./BaseService";
 import { NO_DESCRIPTION_MSG } from "./config";
@@ -12,7 +13,7 @@ const cache = {
     const { activeTalents, passiveTalents } = character;
 
     if (activeTalents.NAs.description) {
-      const descriptions = (<const>["NAs", "ES", "EB"]).map((type) => {
+      const descriptions = LEVELABLE_TALENT_TYPES.map((type) => {
         return activeTalents[type]?.description || NO_DESCRIPTION_MSG;
       });
 
@@ -21,7 +22,7 @@ const cache = {
       }
 
       descriptions.push(
-        ...passiveTalents.map((talent) => talent.description || NO_DESCRIPTION_MSG)
+        ...passiveTalents.map((talent) => talent.description || NO_DESCRIPTION_MSG),
       );
 
       return descriptions;
@@ -45,7 +46,7 @@ const cache = {
   },
   set: (
     { skillDescriptions, passiveDescriptions, constellationDescriptions }: GenshinDevData,
-    character: AppCharacter
+    character: AppCharacter,
   ) => {
     const { NAs, ES, EB, altSprint } = character.activeTalents;
 

@@ -1,12 +1,8 @@
 import type { AppCharacter, AttackPattern } from "@/types";
 
-export function getTalentDefaultValues(
-  data: AppCharacter,
-  attPatt_: AttackPattern,
-  isElemental: boolean
-) {
+export function getTalentDefaultValues(data: AppCharacter, attPatt_: AttackPattern) {
   const {
-    scale = isElemental || data.weaponType === "catalyst" ? 2 : 7,
+    scale = attPatt_ === "ES" || attPatt_ === "EB" || data.weaponType === "catalyst" ? 2 : 7,
     basedOn = "atk",
     attPatt = attPatt_,
   } = data.calcListConfig?.[attPatt_] || {};

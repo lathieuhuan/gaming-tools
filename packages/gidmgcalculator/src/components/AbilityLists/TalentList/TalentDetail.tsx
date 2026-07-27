@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useLayoutEffect, useMemo, useRef, useState } from "react";
 import { FaCaretDown } from "react-icons/fa";
 import { Array_, round } from "ron-utils";
 import { CloseButton, LoadingSpin, StatsTable, VersatileSelect } from "rond";
@@ -15,7 +15,7 @@ import { genSequentialOptions } from "@/utils/pure.utils";
 import { NORMAL_ATTACK_ICONS } from "./config";
 
 // Component
-import { markDim } from "../../Span";
+import { HintText } from "@/components/Text";
 import { AbilityCarousel } from "../components/AbilityCarousel";
 
 type TalentDetailProps = {
@@ -60,7 +60,7 @@ export function TalentDetail({
     images.push(talent.image);
   }
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     // Passive talents have no Skill Attributes
     if (isPassiveTalent && activeIndex === 1) {
       setActiveIndex(0);
@@ -118,7 +118,7 @@ export function TalentDetail({
       <div className="hide-scrollbar">
         <AbilityCarousel
           className="pt-1 pb-2"
-          label={t(talent.type)}
+          label={talent.label}
           currentIndex={detailIndex}
           images={images}
           vision={vision}
@@ -182,7 +182,7 @@ export function TalentDetail({
         ) : (
           <p className={isLoading ? "py-4 flex justify-center" : "mt-4 whitespace-pre-wrap"}>
             <LoadingSpin active={isLoading} />
-            {isError && markDim("Error. Rebooting...")}
+            {isError && <HintText>Error. Rebooting...</HintText>}
             {descriptions?.[detailIndex]}
           </p>
         )}
@@ -204,7 +204,7 @@ type ProcessedTalentType = TalentType | "A1" | "A4" | "utility";
 
 type ProcessedTalent = {
   name: string;
-  label: string;
+  label?: string;
   type: ProcessedTalentType;
   stats: ProcessedStat[];
 };
@@ -212,7 +212,7 @@ type ProcessedTalent = {
 function processTalents(
   character: AppCharacter,
   level: number,
-  translate: (word: string) => string
+  translate: (word: string) => string,
 ): ProcessedTalent[] {
   const { NAs, ES, EB, altSprint } = character.activeTalents;
 
@@ -223,11 +223,7 @@ function processTalents(
   ];
 
   for (const attPatt of ATTACK_PATTERNS) {
-    const default_ = getTalentDefaultValues(
-      character,
-      attPatt,
-      attPatt === "ES" || attPatt === "EB"
-    );
+    const default_ = getTalentDefaultValues(character, attPatt);
     const resultKey = attPatt === "ES" || attPatt === "EB" ? attPatt : "NAs";
     const talent = result.find((item) => item.type === resultKey);
     if (!talent) continue;
@@ -298,7 +294,7 @@ function processTalents(
         label: passiveLabels[i],
         stats: [],
       };
-    })
+    }),
   );
 
   return result;
