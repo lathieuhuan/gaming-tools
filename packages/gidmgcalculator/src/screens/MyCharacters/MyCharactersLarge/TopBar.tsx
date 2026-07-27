@@ -2,11 +2,12 @@ import { useEffect } from "react";
 import { FaPlus, FaSortAmountUpAlt } from "react-icons/fa";
 import { Button, clsx, useChildListObserver, useIntersectionObserver } from "rond";
 
-import { GenshinImage } from "@/components";
 import { $AppCharacter } from "@/services";
 import { useDispatch, useSelector } from "@Store/hooks";
 import { selectActiveCharacter, selectDbCharacters, viewDbCharacter } from "@Store/userdbSlice";
 import { useMyCharactersModalCtrl } from "../ContextProvider";
+
+import { GenshinImage } from "@/components/GenshinImage";
 
 export function TopBar() {
   const dispatch = useDispatch();

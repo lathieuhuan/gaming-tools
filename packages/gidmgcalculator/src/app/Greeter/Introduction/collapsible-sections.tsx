@@ -1,7 +1,7 @@
 import { FaBars, FaDiscord, FaPuzzlePiece } from "react-icons/fa";
 import { Skeleton } from "rond";
 
-import { markYellow } from "@/components";
+import { markYellow } from "@/components/Span";
 
 export const VersionRecap = (
   <div className="space-y-2 contains-inline-svg">

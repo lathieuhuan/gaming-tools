@@ -8,7 +8,7 @@ import { updateActiveSetup } from "@Store/calculator/actions";
 import { selectSetup } from "@Store/calculator/selectors";
 import { toggleModCtrl, updateModCtrlInputs } from "@Store/calculator/utils";
 
-import { GenshinModifierView } from "@/components";
+import { GenshinModifierView } from "@/components/GenshinModifierView";
 
 function reorderCtrls(teamBuffCtrls: TeamBuffCtrl[] = []) {
   let ascendantCtrl: TeamBuffCtrl | undefined;

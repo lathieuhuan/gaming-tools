@@ -5,13 +5,10 @@ import { useCalcStore } from "@Store/calculator";
 import { updateMain, updateMainWeapon } from "@Store/calculator/actions";
 import { selectActiveMain, selectSetup } from "@Store/calculator/selectors";
 
-import {
-  AttributeTable,
-  ConstellationList,
-  SetBonusesView,
-  TalentList,
-  WeaponView,
-} from "@/components";
+import { ConstellationList, TalentList } from "@/components/AbilityLists";
+import { AttributeTable } from "@/components/AttributeTable";
+import { SetBonusesView } from "@/components/SetBonusesView";
+import { WeaponView } from "@/components/WeaponCard";
 
 export function AttributesTab() {
   const allAttrs = useCalcStore((state) => selectActiveMain(state).allAttrsCtrl.finals);

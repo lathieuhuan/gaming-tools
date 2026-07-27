@@ -3,7 +3,8 @@ import { clsx } from "rond";
 
 import type { DbSetup } from "@/types";
 import { $AppCharacter } from "@/services";
-import { CharacterPortrait } from "@/components";
+
+import { CharacterPortrait } from "@/components/CharacterPortrait";
 
 export type SetupOptions = Array<Pick<DbSetup, "ID" | "type" | "name" | "main" | "teammates">>;
 

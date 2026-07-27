@@ -7,12 +7,9 @@ import { useCalcStore } from "@Store/calculator";
 import { switchMainWeapon, updateMainWeapon } from "@Store/calculator/actions";
 import { selectActiveMain } from "@Store/calculator/selectors";
 
-import {
-  GenshinImage,
-  WeaponForge,
-  WeaponForgeProps,
-  WeaponLevelControl,
-} from "@/components";
+import { GenshinImage } from "@/components/GenshinImage";
+import { WeaponLevelControl } from "@/components/LevelControl";
+import { WeaponForge, type WeaponForgeProps } from "@/components/WeaponForge";
 import { WeaponInventory } from "@/components/WeaponInventory";
 import { Section } from "./components/Section";
 

@@ -5,7 +5,7 @@ import { IoDocumentText } from "react-icons/io5";
 import { BiImport } from "react-icons/bi";
 import { TrashCanSvg } from "rond";
 
-import { markGreen, markYellow } from "@/components";
+import { markGreen, markYellow } from "@/components/Span";
 
 const LIST_DECIMAL_CLS = "mt-1 pl-4 list-decimal space-y-1";
 const LIST_ALPHABET_CLS = "mt-1 pl-4 list-[upper-alpha] space-y-1";

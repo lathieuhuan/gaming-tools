@@ -6,12 +6,12 @@ import type { Level } from "@/types";
 
 import { useTranslation } from "@/hooks";
 import { parseWeaponDesc } from "@/utils/descriptionParsers";
+import { wrapText } from "@/utils/descriptionParsers/utils";
 import { genSequentialOptions, suffixOf } from "@/utils/pure.utils";
 
 // Component
 import { GenshinImage } from "../GenshinImage";
 import { WeaponLevelControl } from "../LevelControl";
-import { wrapText } from "@/utils/descriptionParsers/utils";
 
 const groupCls = "bg-dark-2 px-3";
 

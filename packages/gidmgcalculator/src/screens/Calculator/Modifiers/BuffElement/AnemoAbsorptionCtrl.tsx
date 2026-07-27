@@ -6,7 +6,7 @@ import type { ElementType, ElementalEvent } from "@/types";
 
 import { updateElementalEvent } from "@Store/calculator/actions";
 
-import { GenshinModifierView } from "@/components";
+import { GenshinModifierView } from "@/components/GenshinModifierView";
 import { AttackReactionCtrl } from "./AttackReactionCtrl";
 
 type AnemoAbsorptionCtrlProps = {

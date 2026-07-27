@@ -8,7 +8,7 @@ import { updateTeammate } from "@Store/calculator/actions";
 import { selectSetup } from "@Store/calculator/selectors";
 import { toggleModCtrl, updateModCtrlInputs } from "@Store/calculator/utils";
 
-import { TeammateBuffsView } from "@/components";
+import { TeammateBuffsView } from "@/components/ModifierLists";
 
 export default function BuffTeammates() {
   const { teammates, team } = useShallowCalcStore((state) =>

@@ -1,6 +1,6 @@
 import { Array_, Object_ } from "ron-utils";
 
-import type { FinalResultLayoutProps } from "@/components";
+import type { FinalResultLayoutProps } from "@/components/FinalResultView";
 import type { LevelableTalentType } from "@/types";
 import type { CalculatorState } from "@Store/calculator/types";
 

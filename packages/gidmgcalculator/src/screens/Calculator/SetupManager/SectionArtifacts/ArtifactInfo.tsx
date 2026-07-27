@@ -12,7 +12,7 @@ import {
 } from "@Store/calculator/actions";
 
 // Component
-import { ArtifactLevelSelect, ArtifactSubstatsControl } from "@/components";
+import { ArtifactLevelSelect, ArtifactSubstatsControl } from "@/components/ArtifactCard";
 import { SaveConfirmModal } from "./SaveConfirmModal";
 
 export type ArtifactSourceType = "LOADOUT" | "INVENTORY" | "FORGE";

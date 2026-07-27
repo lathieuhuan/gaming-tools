@@ -3,7 +3,11 @@ import { Modal } from "rond";
 
 import type { RawArtifact } from "@/types";
 
-import { ArtifactFilter, ArtifactFilterCondition, DEFAULT_ARTIFACT_FILTER } from "@/components";
+import {
+  ArtifactFilter,
+  type ArtifactFilterCondition,
+  DEFAULT_ARTIFACT_FILTER,
+} from "@/components/ArtifactFilter";
 import { CompoundFilterButton } from "../components/CompoundFilterButton";
 
 type FilterButtonProps = {
@@ -17,9 +21,9 @@ export function FilterButton({ artifacts, filter, onChange }: FilterButtonProps)
 
   const isFiltered = Boolean(
     filter.types.length ||
-      filter.codes.length ||
-      filter.stats.main !== "All" ||
-      filter.stats.subs.some((s) => s !== "All")
+    filter.codes.length ||
+    filter.stats.main !== "All" ||
+    filter.stats.subs.some((s) => s !== "All"),
   );
 
   const closeModal = () => setOpen(false);

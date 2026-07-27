@@ -8,7 +8,7 @@ import { enhanceCtrls } from "@/logic/modifier.logic";
 import { CalcSetup, Target, Team } from "@/models";
 import { $AppArtifact, $AppData } from "@/services";
 
-import { FinalResultView } from "@/components";
+import { FinalResultView } from "@/components/FinalResultView";
 import { SetupModals } from "./SetupModals";
 
 type SelectedResultProps = {

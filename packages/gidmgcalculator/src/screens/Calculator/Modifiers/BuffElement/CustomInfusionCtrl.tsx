@@ -7,7 +7,7 @@ import type { ElementalEvent, ElementType } from "@/types";
 import { ELEMENT_TYPES } from "@/constants/global";
 import { updateElementalEvent } from "@Store/calculator/actions";
 
-import { GenshinModifierView } from "@/components";
+import { GenshinModifierView } from "@/components/GenshinModifierView";
 import { AttackReactionCtrl } from "./AttackReactionCtrl";
 
 type CustomInfusionCtrlProps = {

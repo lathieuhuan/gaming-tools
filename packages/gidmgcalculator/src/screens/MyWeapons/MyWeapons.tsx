@@ -10,7 +10,8 @@ import { useDispatch, useSelector } from "@Store/hooks";
 import { selectDbWeapons, sortDbWeapons } from "@Store/userdbSlice";
 
 // Component
-import { InventoryRack, WeaponTypeSelect } from "@/components";
+import { InventoryRack } from "@/components/InventoryRack";
+import { WeaponTypeSelect } from "@/components/WeaponTypeSelect";
 import { CompoundFilterButton } from "../components/CompoundFilterButton";
 import { UserItemSortButton } from "../components/UserItemSortButton";
 import { WarehouseWrapper } from "../components/WarehouseWrapper";

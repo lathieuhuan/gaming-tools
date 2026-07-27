@@ -3,7 +3,9 @@ import { Button } from "rond";
 
 import type { Teammate } from "@/models";
 
-import { CharacterPortrait, EnhanceTag, TeammateItems } from "@/components";
+import { CharacterPortrait } from "@/components/CharacterPortrait";
+import { EnhanceTag } from "@/components/EnhanceTag";
+import { TeammateItems } from "@/components/TeammateItems";
 
 type TeammateDetailProps = {
   teammate: Teammate;

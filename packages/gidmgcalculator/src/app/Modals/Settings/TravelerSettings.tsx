@@ -7,7 +7,7 @@ import { Checkbox, clsx, CollapseSpace } from "rond";
 import { $AppCharacter, RESONATED_ELEMENTS } from "@/services";
 import { ElementType, PowerupKey, TravelerConfig, TravelerKey } from "@/types";
 
-import { CharacterPortrait } from "@/components";
+import { CharacterPortrait } from "@/components/CharacterPortrait";
 import {
   SettingsGroupCard,
   SettingsGroupItem,

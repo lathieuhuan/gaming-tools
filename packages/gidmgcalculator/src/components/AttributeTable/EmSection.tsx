@@ -4,7 +4,7 @@ import { round } from "ron-utils";
 import { clsx, CollapseSpace, StatsTable } from "rond";
 
 import { getRxnBonusesFromEM } from "@/calculation/core/getRxnBonusesFromEM";
-import { markGreen } from "@/components";
+import { markGreen } from "@/components/Span";
 
 const { Row, Cell } = StatsTable;
 

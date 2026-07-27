@@ -8,15 +8,10 @@ import { parseDescription } from "@/utils/descriptionParsers";
 import { suffixOf, toCustomBuffLabel } from "@/utils/pure.utils";
 
 // Component
-import {
-  AutoResonanceBuffs,
-  GenshinModifierView,
-  ModifierContainer,
-  QuickenBuffItem,
-  ResonanceBuffItem,
-  VapMeltBuffItem,
-  WithEmptyMessage,
-} from "@/components";
+import { GenshinModifierView } from "@/components/GenshinModifierView";
+import { QuickenBuffItem, ResonanceBuffItem, VapMeltBuffItem } from "@/components/ModifierItems";
+import { AutoResonanceBuffs, ModifierContainer } from "@/components/ModifierLists";
+import { WithEmptyMessage } from "@/components/WithEmptyMessage";
 
 type TeamBuffsProps = {
   setup: CalcSetup;
@@ -41,7 +36,7 @@ export function TeamBuffs({ setup }: TeamBuffsProps) {
             />
           );
         })}
-      </div>
+      </div>,
     );
   }
 
@@ -63,7 +58,7 @@ export function TeamBuffs({ setup }: TeamBuffsProps) {
             />
           );
         })}
-      </div>
+      </div>,
     );
   }
 
@@ -147,7 +142,7 @@ export function ElementBuffs({ character, elmtEvent }: ElementBuffsProps) {
         heading="Anemo Swirl / Element Absorption"
         reaction={absorbReaction}
         character={character}
-      />
+      />,
     );
   }
 
@@ -159,7 +154,7 @@ export function ElementBuffs({ character, elmtEvent }: ElementBuffsProps) {
         reaction={reaction}
         character={character}
         showElement={false}
-      />
+      />,
     );
   }
 
@@ -170,7 +165,7 @@ export function ElementBuffs({ character, elmtEvent }: ElementBuffsProps) {
         heading="Infusion"
         reaction={infuseReaction}
         character={character}
-      />
+      />,
     );
   }
 

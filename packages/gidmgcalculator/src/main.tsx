@@ -5,7 +5,7 @@ import { PersistGate } from "redux-persist/integration/react";
 import { ConfigProvider, ScreenSizeWatcher } from "rond";
 
 import { route } from "./app/route";
-import { GenshinImage } from "./components";
+import { GenshinImage } from "./components/GenshinImage";
 import { DynamicStoreProvider } from "./lib/dynamic-store";
 import { QueryClientProvider } from "./lib/react-query";
 import { RouterProvider } from "./lib/router";

@@ -1,7 +1,7 @@
 import { useState } from "react";
 
-import type { AppCharacter } from "@/types";
 import type { Teammate } from "@/models";
+import type { AppCharacter } from "@/types";
 
 import { ENHANCE_TOUR_SITE_ID } from "@/constants";
 import {
@@ -11,14 +11,10 @@ import {
   updateTeammateWeapon,
 } from "@Store/calculator/actions";
 
-import {
-  ArtifactForge,
-  ArtifactForgeProps,
-  EnhanceTag,
-  TeammateItems,
-  WeaponForge,
-  WeaponForgeProps,
-} from "@/components";
+import { ArtifactForge, type ArtifactForgeProps } from "@/components/ArtifactForge";
+import { EnhanceTag } from "@/components/EnhanceTag";
+import { TeammateItems } from "@/components/TeammateItems";
+import { WeaponForge, type WeaponForgeProps } from "@/components/WeaponForge";
 
 type TeammateDetailProps = {
   teammate: Teammate;

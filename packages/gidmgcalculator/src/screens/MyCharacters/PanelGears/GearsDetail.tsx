@@ -4,7 +4,6 @@ import { Button, FancyBackSvg } from "rond";
 import type { ArtifactType } from "@/types";
 import type { GearsDetailType } from "./types";
 
-import { ArtifactCard, AttributeTable, SetBonusesView, WeaponCard } from "@/components";
 import { ARTIFACT_TYPES } from "@/constants/global";
 import { useDispatch } from "@Store/hooks";
 import {
@@ -14,6 +13,11 @@ import {
   updateDbWeapon,
 } from "@Store/userdbSlice";
 import { useActiveChar, useActiveCharActions } from "../ActiveCharProvider";
+
+import { ArtifactCard } from "@/components/ArtifactCard";
+import { AttributeTable } from "@/components/AttributeTable";
+import { SetBonusesView } from "@/components/SetBonusesView";
+import { WeaponCard } from "@/components/WeaponCard";
 
 export type GearsDetailProps = {
   detailType: GearsDetailType;

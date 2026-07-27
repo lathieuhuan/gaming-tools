@@ -1,6 +1,7 @@
 import { clsx } from "rond";
 
-import { AttributeTable, CharacterIntro } from "@/components";
+import { AttributeTable } from "@/components/AttributeTable";
+import { CharacterIntro } from "@/components/CharacterIntro";
 import { useDispatch } from "@Store/hooks";
 import { updateDbCharacter } from "@Store/userdbSlice";
 import { useActiveChar, useActiveCharActions } from "./ActiveCharProvider";

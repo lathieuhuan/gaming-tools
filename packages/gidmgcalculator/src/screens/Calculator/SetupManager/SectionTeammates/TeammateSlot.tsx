@@ -4,7 +4,7 @@ import { clsx } from "rond";
 import type { Teammate } from "@/models";
 
 import { TOUR_STEP_ID } from "@/constants";
-import { CharacterPortrait } from "@/components";
+import { CharacterPortrait } from "@/components/CharacterPortrait";
 
 type TeammateSlotProps = {
   active: boolean;

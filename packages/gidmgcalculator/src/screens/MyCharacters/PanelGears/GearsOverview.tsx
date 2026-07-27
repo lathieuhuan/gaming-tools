@@ -1,12 +1,14 @@
 import { FaInfo } from "react-icons/fa";
 import { Button, CloseButton, clsx } from "rond";
 
-import type { ArtifactType, ArtifactGearSet } from "@/types";
+import type { EquipmentDisplayProps, EquipmentType } from "@/components/EquipmentDisplay";
+import type { ArtifactGearSet, ArtifactType } from "@/types";
 import type { GearsDetailType } from "./types";
 
-import { EquipmentDisplay, EquipmentDisplayProps, EquipmentType } from "@/components";
 import { ARTIFACT_TYPES } from "@/constants/global";
 import { useActiveChar } from "../ActiveCharProvider";
+
+import { EquipmentDisplay } from "@/components/EquipmentDisplay";
 
 const bonusStyles = (active: boolean) => {
   return ["p-2 flex justify-between items-center rounded-lg group", active && "bg-dark-2"];

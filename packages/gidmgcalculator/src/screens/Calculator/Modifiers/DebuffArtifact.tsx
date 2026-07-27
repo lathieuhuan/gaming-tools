@@ -7,7 +7,7 @@ import { updateActiveSetup } from "@Store/calculator/actions";
 import { selectSetup } from "@Store/calculator/selectors";
 import { toggleModCtrl, updateModCtrlInputs } from "@Store/calculator/utils";
 
-import { ArtifactDebuffsView } from "@/components";
+import { ArtifactDebuffsView } from "@/components/ModifierLists";
 
 export default function DebuffArtifact() {
   const { artDebuffCtrls } = useShallowCalcStore((state) =>

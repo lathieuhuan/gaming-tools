@@ -2,12 +2,12 @@ import { useState } from "react";
 import { FaPlus } from "react-icons/fa";
 import { Button, message } from "rond";
 
-import { ArtifactForge } from "@/components";
 import { MAX_USER_ARTIFACTS } from "@/constants";
 import { Artifact } from "@/models";
-import { RawArtifact } from "@/types";
 import { useDispatch } from "@Store/hooks";
 import { addDbArtifact } from "@Store/userdbSlice";
+
+import { ArtifactForge } from "@/components/ArtifactForge";
 
 type AddButtonProps = {
   currentArtifactsCount: number;

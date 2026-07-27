@@ -4,7 +4,8 @@ import { ConfirmModal, message } from "rond";
 import type { Weapon } from "@/models";
 import type { RawWeapon } from "@/types";
 
-import { Tavern, WeaponCard } from "@/components";
+import { Tavern } from "@/components/Tavern";
+import { WeaponCard } from "@/components/WeaponCard";
 import { useDispatch } from "@Store/hooks";
 import { removeDbWeapon, swapWeaponOwner, updateDbWeapon } from "@Store/userdbSlice";
 

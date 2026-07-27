@@ -7,7 +7,7 @@ import { updateActiveSetup } from "@Store/calculator/actions";
 import { selectSetup } from "@Store/calculator/selectors";
 import { toggleModCtrl, updateModCtrlInputs } from "@Store/calculator/utils";
 
-import { SelfDebuffsView } from "@/components";
+import { SelfDebuffsView } from "@/components/ModifierLists";
 
 export default function DebuffSelf() {
   const { main, team, selfDebuffCtrls } = useShallowCalcStore((state) => {

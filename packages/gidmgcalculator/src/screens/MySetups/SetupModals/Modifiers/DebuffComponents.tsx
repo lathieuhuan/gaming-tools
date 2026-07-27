@@ -1,8 +1,10 @@
-import type { CustomDebuffCtrl, ResonanceModCtrl } from "@/types";
 import { useTranslation } from "@/hooks";
+import type { CustomDebuffCtrl, ResonanceModCtrl } from "@/types";
 
-import { ModifierContainer, ResonanceDebuffItem, GenshinModifierView } from "@/components";
+import { GenshinModifierView } from "@/components/GenshinModifierView";
+import { ResonanceDebuffItem } from "@/components/ModifierItems";
 import { SUPERCONDUCT_DEBUFF_CONFIG } from "@/components/ModifierItems/config";
+import { ModifierContainer } from "@/components/ModifierLists";
 
 type ElementDebuffsProps = {
   superconduct: boolean;

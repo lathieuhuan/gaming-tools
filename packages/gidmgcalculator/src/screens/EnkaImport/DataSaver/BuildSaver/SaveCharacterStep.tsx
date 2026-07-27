@@ -8,7 +8,7 @@ import type { CharacterSavingStep, SaveOutput } from "./types";
 import { genNewEntityText, getDifferentEntityMessage } from "../config";
 import { isExactCharacter } from "../logic";
 
-import { CharacterPortrait } from "@/components";
+import { CharacterPortrait } from "@/components/CharacterPortrait";
 import { EntityComparer } from "../components/EntityComparer";
 import { SavingStepLayout } from "../components/SavingStepLayout";
 

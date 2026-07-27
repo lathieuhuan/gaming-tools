@@ -5,7 +5,7 @@ import { updateMain } from "@Store/calculator/actions";
 import { selectSetup } from "@Store/calculator/selectors";
 
 // Components
-import { FinalResultView } from "@/components";
+import { FinalResultView } from "@/components/FinalResultView";
 import { FinalResultCompare } from "./FinalResultCompare";
 import { Menu } from "./Menu";
 

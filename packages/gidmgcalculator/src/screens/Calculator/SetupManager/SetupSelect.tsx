@@ -10,7 +10,7 @@ import { duplicateSetup, removeSetup, updateCalculator } from "@Store/calculator
 import { useCalcModalCtrl } from "../ContextProvider";
 
 // Component
-import { ComplexSelect } from "@/components";
+import { ComplexSelect } from "@/components/ComplexSelect";
 
 type ModalState = {
   type: "REMOVE_SETUP" | "";

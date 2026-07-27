@@ -10,7 +10,7 @@ import { useRouter } from "@/lib/router";
 import { updateUI, type UIState } from "@Store/ui";
 
 import { EnkaLogo } from "@/assets/icons";
-import { PopoverAction } from "@/components";
+import { PopoverAction } from "@/components/PopoverAction";
 import { MenuOption, ModalOptions } from "./ModalOptions";
 // import { updateCache } from "@/services/enka";
 

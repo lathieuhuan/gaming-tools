@@ -15,7 +15,7 @@ import { useSelector } from "@Store/hooks";
 import { selectActiveCharacter, selectDbCharacters } from "@Store/userdbSlice";
 import { useMyCharactersModalCtrl } from "../ContextProvider";
 
-import { GenshinImage } from "@/components";
+import { GenshinImage } from "@/components/GenshinImage";
 
 type BottomMenuProps = {
   onSelect: (character: DbCharacter) => void;

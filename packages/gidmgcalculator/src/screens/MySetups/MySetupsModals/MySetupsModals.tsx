@@ -4,7 +4,7 @@ import { Modal } from "rond";
 import { useUIStore, updateUI } from "@Store/ui";
 
 // Component
-import { markYellow } from "@/components";
+import { markYellow } from "@/components/Span";
 import FirstCombine from "./FirstCombine";
 import CombineMore from "./CombineMore";
 

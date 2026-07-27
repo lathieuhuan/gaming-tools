@@ -1,7 +1,6 @@
 import { Array_ } from "ron-utils";
 
-import type { TavernSelectedCharacter } from "@/components";
-import type { BasicSetupType, SetupManager } from "@/types";
+import type { AppCharacter, BasicSetupType, DbCharacter, SetupManager } from "@/types";
 import type { UserdbState } from "@Store/userdbSlice";
 import type { CalculatorState } from "../types";
 
@@ -121,12 +120,16 @@ export const importSetup = (
   });
 };
 
-export function initSessionWithCharacter(
-  selectedCharacter: TavernSelectedCharacter,
+export function initSessionWithCharacter({
+  character,
+  data,
+  userDb,
+}: {
+  character?: DbCharacter,
+  data: AppCharacter,
   userDb: UserdbState
-) {
-  const { userData, data } = selectedCharacter;
-  const { weaponID, artifactIDs } = userData ?? {};
+}) {
+  const { weaponID, artifactIDs } = character ?? {};
   const { userWps, userArts } = userDb;
 
   const idStore = new IdStore();
@@ -139,7 +142,7 @@ export function initSessionWithCharacter(
   const atfGear = parseDbArtifacts(artifactIDs, userArts);
 
   const main = createCharacter({ code: data.code }, data, {
-    state: userData,
+    state: character,
     weapon,
     atfGear,
   });

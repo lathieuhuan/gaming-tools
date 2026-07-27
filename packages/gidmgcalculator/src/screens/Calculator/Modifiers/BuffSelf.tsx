@@ -7,7 +7,7 @@ import { updateActiveSetup } from "@Store/calculator/actions";
 import { selectSetup } from "@Store/calculator/selectors";
 import { toggleModCtrl, updateModCtrlInputs } from "@Store/calculator/utils";
 
-import { SelfBuffsView } from "@/components";
+import { SelfBuffsView } from "@/components/ModifierLists";
 
 export default function BuffSelf() {
   const { main, team, selfBuffCtrls } = useShallowCalcStore((state) =>

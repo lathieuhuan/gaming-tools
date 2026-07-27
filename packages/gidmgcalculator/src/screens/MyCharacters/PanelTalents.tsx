@@ -2,7 +2,7 @@ import { useDispatch } from "@Store/hooks";
 import { updateDbCharacter } from "@Store/userdbSlice";
 import { useActiveChar } from "./ActiveCharProvider";
 
-import { TalentList } from "@/components";
+import { TalentList } from "@/components/AbilityLists";
 
 interface PanelTalentsProps {
   className?: string;

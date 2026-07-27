@@ -2,7 +2,8 @@ import { useState } from "react";
 import { FaPlus, FaTimes } from "react-icons/fa";
 import { Button } from "rond";
 
-import { ArtifactForge, GenshinImage } from "@/components";
+import { ArtifactForge } from "@/components/ArtifactForge";
+import { GenshinImage } from "@/components/GenshinImage";
 import { Artifact } from "@/models";
 
 export function SetBonusConfiger() {

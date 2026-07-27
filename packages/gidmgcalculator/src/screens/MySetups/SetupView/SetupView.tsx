@@ -9,10 +9,12 @@ import type { SetupOverviewInfo } from "../types";
 import { Artifact } from "@/models";
 import { useDispatch } from "@Store/hooks";
 import { MySetupsModalType, updateUI } from "@Store/ui";
-import { viewDbSetup, switchShownSetupInComplex, uncombineSetups } from "@Store/userdbSlice";
+import { switchShownSetupInComplex, uncombineSetups, viewDbSetup } from "@Store/userdbSlice";
 
 // Component
-import { CharacterPortrait, EnhanceTag, GenshinImage } from "@/components";
+import { CharacterPortrait } from "@/components/CharacterPortrait";
+import { EnhanceTag } from "@/components/EnhanceTag";
+import { GenshinImage } from "@/components/GenshinImage";
 import { GearIcon } from "./GearIcon";
 import { TeammateDetail } from "./TeammateDetail";
 

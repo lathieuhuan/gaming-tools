@@ -1,8 +1,9 @@
 import { FaSortAmountUpAlt } from "react-icons/fa";
 import { Button } from "rond";
 
-import { PopoverAction } from "@/components";
 import type { DbItemSortPayload } from "@Store/userdbSlice/types";
+
+import { PopoverAction } from "@/components/PopoverAction";
 
 type SortOption = DbItemSortPayload["option"];
 type SortDirection = DbItemSortPayload["direction"];

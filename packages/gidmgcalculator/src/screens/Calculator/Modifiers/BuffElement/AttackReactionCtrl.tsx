@@ -1,7 +1,7 @@
 import type { Character } from "@/models";
 import type { AttackElement, AttackReaction, ElementalEvent } from "@/types";
 
-import { QuickenBuffItem, VapMeltBuffItem } from "@/components";
+import { QuickenBuffItem, VapMeltBuffItem } from "@/components/ModifierItems";
 import { updateElementalEvent } from "@Store/calculator/actions";
 
 type ReactionConfigType = "reaction" | "infuseReaction" | "absorbReaction";
