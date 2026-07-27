@@ -1,6 +1,7 @@
 import { useSettingsStore } from "@Store/settings";
 import { useLayoutEffect, useState } from "react";
 
+// TODO check for removal
 export const SettingsHydrationGuard = ({ children }: { children: React.ReactNode }) => {
   const [hydrated, setHydrated] = useState(false);
 

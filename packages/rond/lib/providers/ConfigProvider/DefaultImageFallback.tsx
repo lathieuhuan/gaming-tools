@@ -1,4 +1,5 @@
 import type { ClassValue } from "clsx";
+
 import { cn } from "@lib/utils";
 
 type DefaultImageFallbackProps = {
@@ -7,7 +8,7 @@ type DefaultImageFallbackProps = {
   /** Default '70%' */
   iconWidth?: string | number;
   iconHeight?: string | number;
-}
+};
 
 export function DefaultImageFallback(props: DefaultImageFallbackProps) {
   return (

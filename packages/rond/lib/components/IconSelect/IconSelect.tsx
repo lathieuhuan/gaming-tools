@@ -1,11 +1,10 @@
 import type { ClassValue } from "clsx";
 import { cn } from "@lib/utils";
-import { Image, type ImageProps } from "../Image";
 
-type IconOption<T> = {
+export type IconSelectOption<T> = {
   title?: string;
   value: T;
-  icon: string | JSX.Element;
+  icon: JSX.Element;
 };
 
 type IconSelectSize = "medium" | "large";
@@ -17,23 +16,24 @@ const OPTION_CN_BY_SIZE: Record<IconSelectSize, string> = {
 
 export type IconSelectProps<T> = {
   className?: ClassValue;
-  iconCls?: ClassValue;
-  selectedCls?: ClassValue;
-  imageProps?: Omit<ImageProps, "src">;
+  classNames?: {
+    item?: ClassValue;
+    selected?: ClassValue;
+  };
   /** Default 'medium' */
   size?: IconSelectSize;
-  options: IconOption<T>[];
+  options: IconSelectOption<T>[];
   values: T[];
   onSelect?: (value: T, selected: boolean) => void;
 };
 
 export function IconSelect<T>(props: IconSelectProps<T>) {
-  const { size = "medium" } = props;
+  const { size = "medium", classNames } = props;
 
   return (
     <div className={cn("flex items-center gap-4", props.className)}>
       {props.options.map((option, i) => {
-        const selected = props.values.indexOf(option.value) !== -1;
+        const selected = props.values.includes(option.value);
 
         return (
           <button
@@ -42,16 +42,12 @@ export function IconSelect<T>(props: IconSelectProps<T>) {
             title={option.title}
             className={cn(
               `rounded-circle transition-all ${OPTION_CN_BY_SIZE[size]} flex-center glow-on-hover`,
-              props?.iconCls,
-              selected && props?.selectedCls
+              classNames?.item,
+              selected && classNames?.selected,
             )}
             onClick={() => props.onSelect?.(option.value, selected)}
           >
-            {typeof option.icon === "string" ? (
-              <Image src={option.icon} {...props.imageProps} />
-            ) : (
-              option.icon
-            )}
+            {option.icon}
           </button>
         );
       })}

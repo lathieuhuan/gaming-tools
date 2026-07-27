@@ -107,4 +107,24 @@ export class Weapon implements Clonable<Weapon> {
       },
     );
   }
+
+  static iconOf(weaponType: WeaponType) {
+    return WEAPON_TYPE_ICONS.find((item) => item.type === weaponType)?.src;
+  }
+
+  static allIcons(): WeaponTypeIcon[];
+  static allIcons<T>(transform: (icons: WeaponTypeIcon) => T): T[];
+  static allIcons<T>(transform?: (icons: WeaponTypeIcon) => T): WeaponTypeIcon[] | T[] {
+    return transform ? WEAPON_TYPE_ICONS.map(transform) : WEAPON_TYPE_ICONS;
+  }
 }
+
+type WeaponTypeIcon = { type: WeaponType; src: string };
+
+const WEAPON_TYPE_ICONS: WeaponTypeIcon[] = [
+  { type: "bow", src: "9/97/Weapon-class-bow-icon" },
+  { type: "catalyst", src: "0/02/Weapon-class-catalyst-icon" },
+  { type: "claymore", src: "5/51/Weapon-class-claymore-icon" },
+  { type: "polearm", src: "9/91/Weapon-class-polearm-icon" },
+  { type: "sword", src: "9/95/Weapon-class-sword-icon" },
+];

@@ -13,7 +13,7 @@ const OPTIONS = ELEMENT_TYPES.map((value) => {
 
 type ElementSelectProps = Omit<
   IconSelectProps<ElementType>,
-  "className" | "iconCls" | "selectedCls" | "options"
+  "className" | "classNames" | "options"
 >;
 
 export function ElementSelect(props: ElementSelectProps) {
@@ -21,8 +21,10 @@ export function ElementSelect(props: ElementSelectProps) {
     <IconSelect
       {...props}
       className="p-1"
-      iconCls="text-2xl"
-      selectedCls="shadow-hightlight-2 shadow-active"
+      classNames={{
+        item: "text-2xl",
+        selected: "shadow-hightlight-2 shadow-active",
+      }}
       options={OPTIONS}
     />
   );

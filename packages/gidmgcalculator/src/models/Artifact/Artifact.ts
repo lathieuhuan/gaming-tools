@@ -95,12 +95,12 @@ export class Artifact implements Clonable<Artifact> {
       {
         owner: artifact.owner,
         setupIDs: artifact.setupIDs,
-      }
+      },
     );
   }
 
   static iconOf(artifactType: ArtifactType) {
-    return ARTIFACT_TYPE_ICONS.find((item) => item.value === artifactType)?.icon;
+    return ARTIFACT_TYPE_ICONS.find((item) => item.type === artifactType)?.src;
   }
 
   static allIcons(): ArtifactTypeIcon[];
@@ -110,12 +110,12 @@ export class Artifact implements Clonable<Artifact> {
   }
 }
 
-type ArtifactTypeIcon = { value: ArtifactType; icon: string };
+type ArtifactTypeIcon = { type: ArtifactType; src: string };
 
 const ARTIFACT_TYPE_ICONS: ArtifactTypeIcon[] = [
-  { value: "flower", icon: "2/2d/Icon_Flower_of_Life" },
-  { value: "plume", icon: "8/8b/Icon_Plume_of_Death" },
-  { value: "sands", icon: "9/9f/Icon_Sands_of_Eon" },
-  { value: "goblet", icon: "3/37/Icon_Goblet_of_Eonothem" },
-  { value: "circlet", icon: "6/64/Icon_Circlet_of_Logos" },
+  { type: "flower", src: "2/2d/Icon_Flower_of_Life" },
+  { type: "plume", src: "8/8b/Icon_Plume_of_Death" },
+  { type: "sands", src: "9/9f/Icon_Sands_of_Eon" },
+  { type: "goblet", src: "3/37/Icon_Goblet_of_Eonothem" },
+  { type: "circlet", src: "6/64/Icon_Circlet_of_Logos" },
 ];
