@@ -163,8 +163,7 @@ const ArtifactInventoryCore = ({
                 </div>
               ) : null}
 
-              {/* TODO find a solution when we don't need to serialize the artifact */}
-              <OwnerLabel className="mt-3" item={selectedArtifact?.serialize()} />
+              <OwnerLabel className="mt-3" item={selectedArtifact} />
             </div>
           </div>
         );
