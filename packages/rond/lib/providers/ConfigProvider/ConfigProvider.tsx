@@ -1,8 +1,9 @@
 import { createContext, useContext } from "react";
 import { DefaultImageFallback } from "./DefaultImageFallback";
+import type { DefaultImageFallbackProps } from "./types";
 
 type RondConfig = {
-  ImageFallback: (props: any) => React.JSX.Element | null;
+  ImageFallback: React.ComponentType<DefaultImageFallbackProps>;
 };
 
 const defaultConfig = {

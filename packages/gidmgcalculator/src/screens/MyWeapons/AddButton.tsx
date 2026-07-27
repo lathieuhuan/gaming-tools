@@ -2,7 +2,7 @@ import { useState } from "react";
 import { FaPlus } from "react-icons/fa";
 import { Button, message } from "rond";
 
-import { WeaponForge } from "@/components";
+import { WeaponForge } from "@/components/WeaponForge";
 import { MAX_USER_WEAPONS } from "@/constants/config";
 import { Weapon } from "@/models";
 import { useDispatch } from "@Store/hooks";

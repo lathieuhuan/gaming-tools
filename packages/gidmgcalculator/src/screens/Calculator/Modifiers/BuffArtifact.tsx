@@ -8,7 +8,7 @@ import { updateActiveSetup, updateTeammateArtifact } from "@Store/calculator/act
 import { selectSetup } from "@Store/calculator/selectors";
 import { toggleModCtrl, updateModCtrlInputs } from "@Store/calculator/utils";
 
-import { ArtifactBuffsView } from "@/components";
+import { ArtifactBuffsView } from "@/components/ModifierLists";
 
 export default function BuffArtifact() {
   const { artBuffCtrls, teammates } = useShallowCalcStore((state) => {

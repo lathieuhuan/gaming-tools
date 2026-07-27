@@ -1,7 +1,7 @@
 import { FaBars, FaCog } from "react-icons/fa";
 import { CollapseList } from "rond";
 
-import { markYellow } from "@/components";
+import { markYellow } from "@/components/Span";
 import { CalculatorGuide } from "./CalculatorGuide";
 
 export function Guides() {

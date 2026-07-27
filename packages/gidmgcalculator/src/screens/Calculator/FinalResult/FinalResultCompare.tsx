@@ -5,12 +5,14 @@ import { Select, clsx, useScreenWatcher } from "rond";
 import type { CalcResult } from "@/calculation/calculator";
 import type { CalcAspect, CalcResultItemValue } from "@/calculation/types";
 
-import { displayValues } from "@/components/FinalResultView";
+import {
+  FinalResultLayout,
+  displayValues,
+  type FinalResultLayoutProps,
+} from "@/components/FinalResultView";
 import { SLOT_NAME } from "@/constants";
 import { updateMain } from "@Store/calculator/actions";
 import { useLayoutProps } from "./hooks/useLayoutProps";
-
-import { FinalResultLayout, type FinalResultLayoutProps } from "@/components";
 
 type CellConfig = ReturnType<FinalResultLayoutProps["getRowConfig"]>["cells"][number];
 
@@ -107,7 +109,7 @@ export function FinalResultCompare({ comparedIds, extraKeys }: FinalResultCompar
               {
                 [talentType]: newLevel,
               },
-              comparedIds
+              comparedIds,
             );
           }}
           getRowConfig={(mainKey, subKey) => {
@@ -153,14 +155,14 @@ export function FinalResultCompare({ comparedIds, extraKeys }: FinalResultCompar
                     <FaLongArrowAltUp
                       className={clsx(
                         "absolute top-1/2 right-1.5 -translate-y-1/2",
-                        diff > 0 ? "text-bonus" : "text-danger-2 rotate-180"
+                        diff > 0 ? "text-bonus" : "text-danger-2 rotate-180",
                       )}
                     />
                     <span
                       className={clsx(
                         "absolute bottom-1/2 right-5 z-10 mb-2.5 pt-1 px-2 pb-0.5 rounded font-semibold bg-black shadow-popup",
                         diffCls,
-                        diff > 0 ? "text-bonus" : "text-danger-2"
+                        diff > 0 ? "text-bonus" : "text-danger-2",
                       )}
                     >
                       {diff > 0 ? "+" : "-"}

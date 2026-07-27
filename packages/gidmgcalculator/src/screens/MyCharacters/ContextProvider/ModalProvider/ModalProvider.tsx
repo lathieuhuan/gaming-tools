@@ -6,7 +6,7 @@ import { addDbCharacter, selectDbCharacters, viewDbCharacter } from "@Store/user
 import { ModalContext, type ModalControl } from "./context";
 
 // Component
-import { Tavern } from "@/components";
+import { Tavern } from "@/components/Tavern";
 import { CharacterSortForm } from "../../CharacterSortForm";
 
 type ModalType = "ADD_CHARACTER" | "SORT_CHARACTERS" | "";

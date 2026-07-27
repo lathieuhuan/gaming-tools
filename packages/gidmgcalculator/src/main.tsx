@@ -2,12 +2,12 @@ import { enableMapSet } from "immer";
 import ReactDOM from "react-dom/client";
 import { Provider as StoreProvider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
-import { ConfigProvider, ScreenSizeWatcher } from "rond";
+import { ScreenSizeWatcher } from "rond";
 
 import { route } from "./app/route";
-import { GenshinImage } from "./components";
 import { DynamicStoreProvider } from "./lib/dynamic-store";
 import { QueryClientProvider } from "./lib/react-query";
+import { ConfigProvider } from "./lib/rond/ConfigProvider";
 import { RouterProvider } from "./lib/router";
 
 import "@rc-component/dropdown/assets/index.css";
@@ -17,7 +17,7 @@ enableMapSet();
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <ScreenSizeWatcher>
-    <ConfigProvider config={{ ImageFallback: GenshinImage.Fallback }}>
+    <ConfigProvider>
       <QueryClientProvider>
         <DynamicStoreProvider>
           {({ store, persistor }) => (

@@ -12,7 +12,7 @@ import {
 } from "@Store/calculator/actions";
 
 // Component
-import { ArtifactLevelSelect, ArtifactSubstatsControl } from "@/components";
+import { ArtifactLevelSelect, ArtifactSubstatsControl } from "@/components/ArtifactCard";
 import { SaveConfirmModal } from "./SaveConfirmModal";
 
 export type ArtifactSourceType = "LOADOUT" | "INVENTORY" | "FORGE";
@@ -70,7 +70,7 @@ export function ArtifactInfo({ artifact, onRemove, onRequestChange }: ArtifactIn
               }
             />
           )}
-          <p className={`pl-6 text-1.5xl leading-7 text-rarity-${rarity} font-bold`}>
+          <p className={`pl-6 text-xlp leading-7 text-rarity-${rarity} font-bold`}>
             {artifact.mainStatValue}
             {suffixOf(mainStatType)}
           </p>

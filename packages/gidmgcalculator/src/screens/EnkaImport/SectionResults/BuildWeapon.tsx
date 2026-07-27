@@ -1,8 +1,9 @@
 import { ItemCase } from "rond";
 
-import { ItemThumbnail } from "@/components";
 import { GenshinUserBuild } from "@/services/enka";
 import { useSelectedBuildState } from "../DataImporter";
+
+import { ItemThumbnail } from "@/components/ItemThumbnail";
 
 type BuildWeaponProps = {
   className?: string;

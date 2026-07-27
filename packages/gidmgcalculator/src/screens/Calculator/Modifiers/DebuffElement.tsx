@@ -5,7 +5,8 @@ import { updateActiveSetup, updateElementalEvent } from "@Store/calculator/actio
 import { selectSetup } from "@Store/calculator/selectors";
 import { toggleRsnModCtrl } from "@Store/calculator/utils";
 
-import { GenshinModifierView, ResonanceDebuffItem } from "@/components";
+import { GenshinModifierView } from "@/components/GenshinModifierView";
+import { ResonanceDebuffItem } from "@/components/ModifierItems";
 import { SUPERCONDUCT_DEBUFF_CONFIG } from "@/components/ModifierItems/config";
 
 export default function DebuffElement() {

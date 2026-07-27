@@ -6,7 +6,7 @@ import { updateActiveSetup, updateTeammateWeapon } from "@Store/calculator/actio
 import { selectSetup } from "@Store/calculator/selectors";
 import { toggleModCtrl, updateModCtrlInputs } from "@Store/calculator/utils";
 
-import { WeaponBuffsView } from "@/components";
+import { WeaponBuffsView } from "@/components/ModifierLists";
 
 export default function BuffWeapon() {
   const { weapon, wpBuffCtrls, teammates } = useShallowCalcStore((state) => {

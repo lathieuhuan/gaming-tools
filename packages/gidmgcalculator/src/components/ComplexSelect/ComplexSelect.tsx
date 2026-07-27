@@ -49,12 +49,12 @@ export function ComplexSelect<TValue extends string | number>({
     const setupSelect = document.getElementById(id);
 
     if (newIsDropped) {
-      setupSelect?.classList.remove("rounded-t-2.5xl", "rounded-b-2.5xl");
+      setupSelect?.classList.remove("rounded-t-4xl", "rounded-b-4xl");
       setupSelect?.classList.add("rounded-t-lg");
     } else {
       setTimeout(() => {
         setupSelect?.classList.remove("rounded-t-lg");
-        setupSelect?.classList.add("rounded-t-2.5xl", "rounded-b-2.5xl");
+        setupSelect?.classList.add("rounded-t-4xl", "rounded-b-4xl");
       }, 100);
     }
   };
@@ -74,7 +74,7 @@ export function ComplexSelect<TValue extends string | number>({
   const nonActionOptionHeight = 33.6;
   const dropHeight = options.reduce(
     (accumulator, option) => accumulator + (option.renderActions ? 69.6 : nonActionOptionHeight),
-    0
+    0,
   );
 
   const renderKit = {
@@ -85,7 +85,7 @@ export function ComplexSelect<TValue extends string | number>({
     <div ref={ref} className={clsx("flex shrink-0 relative", className)}>
       <button
         id={id}
-        className="w-full px-8 py-0.5 bg-heading text-black rounded-t-2.5xl rounded-b-2.5xl relative cursor-default"
+        className="w-full px-8 py-0.5 bg-heading text-black rounded-t-4xl rounded-b-4xl relative cursor-default"
         onClick={() => toggleDropdown(!isDropped)}
       >
         <div
@@ -101,7 +101,7 @@ export function ComplexSelect<TValue extends string | number>({
       <div
         className={clsx(
           "absolute top-full z-20 w-full rounded-b-md bg-light-1 text-black overflow-hidden transition-size duration-100 ease-linear",
-          isDropped && "border border-white shadow-common"
+          isDropped && "border border-white shadow-common",
         )}
         style={{
           height: isDropped ? dropHeight : 0,
@@ -114,7 +114,7 @@ export function ComplexSelect<TValue extends string | number>({
                 <button
                   className={clsx(
                     "px-2 py-0.5 w-full border-t border-b border-white text-left font-semibold truncate cursor-default hover:bg-dark-1",
-                    classes.option
+                    classes.option,
                   )}
                   onClick={onClickOption(option.value)}
                 >

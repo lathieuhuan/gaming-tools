@@ -7,7 +7,7 @@ import { CORE_STAT_TYPES } from "@/constants/global";
 import { useTranslation } from "@/hooks";
 
 // Component
-import { markGreen } from "@/components";
+import { markGreen } from "@/components/Span";
 import { CoreStatRow } from "./CoreStatRow";
 
 export type CoreStatRowsProps = {

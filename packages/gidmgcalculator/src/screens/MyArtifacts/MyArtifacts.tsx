@@ -5,17 +5,14 @@ import { useScreenWatcher, useValues, WarehouseLayout } from "rond";
 import type { Artifact } from "@/models";
 import type { ArtifactType } from "@/types";
 
+import { type ArtifactFilterCondition, useArtifactFilter } from "@/components/ArtifactFilter";
 import { createArtifact } from "@/logic/entity.logic";
 import { useDispatch, useSelector } from "@Store/hooks";
 import { selectDbArtifacts, sortDbArtifacts } from "@Store/userdbSlice";
 
 // Component
-import {
-  ArtifactFilterCondition,
-  ArtifactTypeSelect,
-  InventoryRack,
-  useArtifactFilter,
-} from "@/components";
+import { ArtifactTypeSelect } from "@/components/ArtifactTypeSelect";
+import { InventoryRack } from "@/components/InventoryRack";
 import { UserItemSortButton } from "../components/UserItemSortButton";
 import { WarehouseWrapper } from "../components/WarehouseWrapper";
 import { ActiveArtifactView } from "./ActiveArtifactView";

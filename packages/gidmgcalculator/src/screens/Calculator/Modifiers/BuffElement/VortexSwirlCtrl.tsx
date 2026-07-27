@@ -1,4 +1,4 @@
-import { GenshinModifierView } from "@/components";
+import { GenshinModifierView } from "@/components/GenshinModifierView";
 import { updateElementalEvent } from "@Store/calculator/actions";
 
 type StellarVortexCtrlProps = {

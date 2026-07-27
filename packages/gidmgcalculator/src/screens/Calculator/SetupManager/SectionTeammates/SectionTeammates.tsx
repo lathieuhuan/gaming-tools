@@ -8,7 +8,8 @@ import { isTourFinished } from "@Store/tours";
 import { updateUI } from "@Store/ui";
 
 // Component
-import { CharacterPortrait, Tavern, TavernProps } from "@/components";
+import { CharacterPortrait } from "@/components/CharacterPortrait";
+import { Tavern, type TavernProps } from "@/components/Tavern";
 import { Section } from "../components/Section";
 import { CopySelect } from "./CopySelect";
 import { TeammateDetail } from "./TeammateDetail";

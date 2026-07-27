@@ -5,7 +5,7 @@ import { MAX_TARGET_LEVEL } from "@/constants";
 import { genSequentialOptions } from "@/utils/pure.utils";
 
 // Components
-import { CharacterLevelControl, WeaponLevelControl } from "@/components";
+import { CharacterLevelControl, WeaponLevelControl } from "@/components/LevelControl";
 import { SettingsGroup, SettingsGroupItem } from "./SettingsGroup";
 
 type DefaultValuesSettingsProps = {

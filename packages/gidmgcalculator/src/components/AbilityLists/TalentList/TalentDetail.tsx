@@ -1,22 +1,24 @@
 import { useQuery } from "@tanstack/react-query";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useLayoutEffect, useMemo, useRef, useState } from "react";
 import { FaCaretDown } from "react-icons/fa";
 import { Array_, round } from "ron-utils";
-import { CloseButton, LoadingSpin, StatsTable, VersatileSelect } from "rond";
+import { CloseButton, LoadingSpin, StatsTable, Tabs, VersatileSelect } from "rond";
 
 import type { AppCharacter, TalentType } from "@/types";
 
 import { getTalentDefaultValues } from "@/calculation/calculator/getTalentDefaultValues";
 import { ATTACK_PATTERNS } from "@/constants/global";
-import { useTabs, useTranslation } from "@/hooks";
+import { useTranslation } from "@/hooks";
 import { Character } from "@/models";
 import { fetchTalentDescriptions } from "@/services/app-data";
 import { genSequentialOptions } from "@/utils/pure.utils";
 import { NORMAL_ATTACK_ICONS } from "./config";
 
 // Component
-import { markDim } from "../../Span";
+import { HintText } from "@/components/Text";
 import { AbilityCarousel } from "../components/AbilityCarousel";
+
+type TabType = "description" | "attributes";
 
 type TalentDetailProps = {
   character: AppCharacter;
@@ -38,9 +40,8 @@ export function TalentDetail({
   const images = [NORMAL_ATTACK_ICONS[`${weaponType}_${vision}`] || "", ES.image, EB.image];
 
   const [talentLevel, setTalentLevel] = useState(1);
+  const [tab, setTab] = useState<TabType>("attributes");
   const intervalRef = useRef<NodeJS.Timeout>();
-
-  const { activeIndex, tabProps, setActiveIndex, Tabs } = useTabs(1);
 
   const {
     isLoading,
@@ -49,7 +50,7 @@ export function TalentDetail({
   } = useQuery({
     queryKey: ["talent-description", character.code],
     queryFn: () => fetchTalentDescriptions(character.code),
-    enabled: !activeIndex,
+    enabled: tab === "description",
     staleTime: Infinity,
   });
 
@@ -60,10 +61,10 @@ export function TalentDetail({
     images.push(talent.image);
   }
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     // Passive talents have no Skill Attributes
-    if (isPassiveTalent && activeIndex === 1) {
-      setActiveIndex(0);
+    if (isPassiveTalent && tab === "attributes") {
+      setTab("description");
     }
   }, [isPassiveTalent]);
 
@@ -100,7 +101,7 @@ export function TalentDetail({
     return (
       <button
         className={
-          "w-7 h-7 flex-center rounded border-2 border-dark-line text-dark-line text-1.5xl " +
+          "w-7 h-7 flex-center rounded border-2 border-dark-line text-dark-line text-xlp " +
           (disabled ? "opacity-50" : "hover:border-secondary-1 hover:text-secondary-1")
         }
         disabled={disabled}
@@ -118,7 +119,7 @@ export function TalentDetail({
       <div className="hide-scrollbar">
         <AbilityCarousel
           className="pt-1 pb-2"
-          label={t(talent.type)}
+          label={talent.label}
           currentIndex={detailIndex}
           images={images}
           vision={vision}
@@ -128,20 +129,23 @@ export function TalentDetail({
 
         <p className={`text-lg font-semibold text-${vision} text-center`}>{talent.name}</p>
         <Tabs
-          {...tabProps}
           className="my-2"
-          configs={[
+          options={[
             {
-              text: "Talent Info",
+              value: "description",
+              label: "Talent Info",
             },
             {
-              text: "Skill Attributes",
+              value: "attributes",
+              label: "Skill Attributes",
               disabled: isPassiveTalent,
             },
           ]}
+          value={tab}
+          onChange={setTab}
         />
 
-        {activeIndex ? (
+        {tab === "attributes" ? (
           <div>
             <div className="py-2 flex-center bg-dark-1 sticky -top-1">
               {levelable ? (
@@ -182,7 +186,7 @@ export function TalentDetail({
         ) : (
           <p className={isLoading ? "py-4 flex justify-center" : "mt-4 whitespace-pre-wrap"}>
             <LoadingSpin active={isLoading} />
-            {isError && markDim("Error. Rebooting...")}
+            {isError && <HintText>Error. Rebooting...</HintText>}
             {descriptions?.[detailIndex]}
           </p>
         )}
@@ -204,7 +208,7 @@ type ProcessedTalentType = TalentType | "A1" | "A4" | "utility";
 
 type ProcessedTalent = {
   name: string;
-  label: string;
+  label?: string;
   type: ProcessedTalentType;
   stats: ProcessedStat[];
 };
@@ -212,7 +216,7 @@ type ProcessedTalent = {
 function processTalents(
   character: AppCharacter,
   level: number,
-  translate: (word: string) => string
+  translate: (word: string) => string,
 ): ProcessedTalent[] {
   const { NAs, ES, EB, altSprint } = character.activeTalents;
 
@@ -223,11 +227,7 @@ function processTalents(
   ];
 
   for (const attPatt of ATTACK_PATTERNS) {
-    const default_ = getTalentDefaultValues(
-      character,
-      attPatt,
-      attPatt === "ES" || attPatt === "EB"
-    );
+    const default_ = getTalentDefaultValues(character, attPatt);
     const resultKey = attPatt === "ES" || attPatt === "EB" ? attPatt : "NAs";
     const talent = result.find((item) => item.type === resultKey);
     if (!talent) continue;
@@ -298,7 +298,7 @@ function processTalents(
         label: passiveLabels[i],
         stats: [],
       };
-    })
+    }),
   );
 
   return result;

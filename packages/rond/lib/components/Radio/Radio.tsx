@@ -37,7 +37,7 @@ export function Radio(props: RadioProps) {
     <span
       className={clsx(
         `relative overflow-hidden cursor-pointer flex-center rounded-circle select-none border-light-3 has-checked:border-light-3/70 ${classBySize[size]}`,
-        props.disabled && "is-disabled"
+        props.disabled && "opacity-disabled"
       )}
       onClick={handleClick}
     >

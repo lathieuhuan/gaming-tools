@@ -9,7 +9,8 @@ import { selectAppReady, useUIStore } from "@Store/ui";
 import { useCalcModalCtrl } from "../ContextProvider";
 
 // Component
-import { CharacterIntro, ComplexSelect } from "@/components";
+import { CharacterIntro } from "@/components/CharacterIntro";
+import { ComplexSelect } from "@/components/ComplexSelect";
 import {
   ArtifactsTab,
   AttributesTab,

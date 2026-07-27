@@ -15,14 +15,10 @@ import { selectActiveMain } from "@Store/calculator/selectors";
 import { useSettingsStore } from "@Store/settings";
 
 // Component
-import {
-  ArtifactForge,
-  ArtifactForgeProps,
-  GenshinImage,
-  LoadoutStash,
-  LoadoutStashProps,
-} from "@/components";
+import { ArtifactForge, ArtifactForgeProps } from "@/components/ArtifactForge";
 import { ArtifactInventory, ArtifactInventoryProps } from "@/components/ArtifactInventory";
+import { GenshinImage } from "@/components/GenshinImage";
+import { LoadoutStash, type LoadoutStashProps } from "@/components/LoadoutStash";
 import { Section } from "../components/Section";
 import { ArtifactInfo, ArtifactSourceType } from "./ArtifactInfo";
 import { CopySelect } from "./CopySelect";
@@ -142,7 +138,7 @@ export function SectionArtifacts() {
   const handleForgeArtifactBatch: ArtifactForgeProps["onForgeArtifactBatch"] = (
     types,
     rarity,
-    data
+    data,
   ) => {
     const idStore = new IdStore();
     let leftMostIndex = Infinity;
@@ -155,7 +151,7 @@ export function SectionArtifacts() {
           type,
           rarity,
         },
-        data
+        data,
       );
 
       setArtifactPiece(artifact, keepArtStatsOnSwitch);
@@ -218,14 +214,14 @@ export function SectionArtifacts() {
               key={type}
               className={clsx(
                 "w-1/5 border-2",
-                type === activeArtifactType ? "border-light-1" : "border-transparent"
+                type === activeArtifactType ? "border-light-1" : "border-transparent",
               )}
               onClick={() => handleClickTab(type)}
             >
               <GenshinImage
                 className={clsx(
                   `h-full bg-gradient-${piece ? piece.rarity || 5 : 1} cursor-pointer`,
-                  !piece && "p-2 opacity-80"
+                  !piece && "p-2 opacity-80",
                 )}
                 title={piece?.data?.name}
                 src={icon}

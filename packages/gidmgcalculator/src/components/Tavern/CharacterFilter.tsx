@@ -91,14 +91,7 @@ export function CharacterFilter({
           clearAllDisabled={!weaponTypes.length}
           onClearAll={() => updateWeaponTypes([])}
         >
-          <WeaponTypeSelect
-            className="px-1"
-            imageProps={{
-              defaultFallback: { cls: "p-1.5" },
-            }}
-            values={weaponTypes}
-            onSelect={toggleWeaponType}
-          />
+          <WeaponTypeSelect className="px-1" values={weaponTypes} onSelect={toggleWeaponType} />
         </FilterTemplate>
 
         <div className="w-full h-px bg-dark-line" />

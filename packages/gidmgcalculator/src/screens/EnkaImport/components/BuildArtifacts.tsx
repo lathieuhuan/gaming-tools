@@ -8,7 +8,8 @@ import { Artifact } from "@/models";
 import { GenshinUserBuild } from "@/services/enka";
 import { useSelectedBuildState } from "../DataImporter";
 
-import { GenshinImage, ItemThumbnail } from "@/components";
+import { GenshinImage } from "@/components/GenshinImage";
+import { ItemThumbnail } from "@/components/ItemThumbnail";
 
 type BuildArtifactProps = {
   className?: string;

@@ -9,6 +9,7 @@ import type {
   BONUS_KEYS,
   CORE_STAT_TYPES,
   ELEMENT_TYPES,
+  LEVELABLE_TALENT_TYPES,
   LEVELS,
   LUNAR_REACTIONS,
   LUNAR_TYPES,
@@ -38,7 +39,7 @@ export type ArtifactType = (typeof ARTIFACT_TYPES)[number];
 
 export type TalentType = (typeof TALENT_TYPES)[number];
 
-export type LevelableTalentType = Exclude<TalentType, "altSprint">;
+export type LevelableTalentType = (typeof LEVELABLE_TALENT_TYPES)[number];
 
 export type AttackBonusKey = (typeof BONUS_KEYS)[number];
 

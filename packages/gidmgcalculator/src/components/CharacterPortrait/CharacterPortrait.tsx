@@ -4,7 +4,7 @@ import { clsx, type ClassValue } from "rond";
 import { $AppCharacter } from "@/services";
 import type { ElementType } from "@/types";
 
-import { GenshinImage } from "@/components";
+import { GenshinImage } from "@/components/GenshinImage";
 
 type PortraitSize = "small" | "medium" | "custom";
 

@@ -2,11 +2,12 @@ import { useState } from "react";
 import { FaChevronDown } from "react-icons/fa";
 import { BottomSheet, CarouselSpace, SwitchNode } from "rond";
 
+import { type MobileBottomNavOption } from "@/components/MobileBottomNav";
 import { useDispatch } from "@Store/hooks";
 import { viewDbCharacter } from "@Store/userdbSlice";
 
 // Component
-import { MobileBottomNav, MobileBottomNavOption } from "@/components";
+import { MobileBottomNav } from "@/components/MobileBottomNav";
 import { ActiveCharProvider } from "../ActiveCharProvider";
 import { ContextProvider } from "../ContextProvider";
 import { PanelAttributes } from "../PanelAttributes";

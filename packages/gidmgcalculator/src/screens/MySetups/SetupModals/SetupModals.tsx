@@ -7,13 +7,11 @@ import { updateUI, useUIStore } from "@Store/ui";
 import { removeDbSetup } from "@Store/userdbSlice";
 
 // Component
-import {
-  ArtifactCard,
-  AttributeTable,
-  SetBonusesView,
-  SetupExporter,
-  WeaponCard,
-} from "@/components";
+import { ArtifactCard } from "@/components/ArtifactCard";
+import { AttributeTable } from "@/components/AttributeTable";
+import { SetBonusesView } from "@/components/SetBonusesView";
+import { SetupExporter } from "@/components/SetupExporter";
+import { WeaponCard } from "@/components/WeaponCard";
 import { Modifiers } from "./Modifiers";
 
 type SetupModalsProps = {

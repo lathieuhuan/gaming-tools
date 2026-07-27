@@ -15,7 +15,7 @@ type TourOperatorProps = {
   tourType: TourType;
 };
 
-export const TourOperator = ({ tourType }: TourOperatorProps) => {
+export function TourOperator({ tourType }: TourOperatorProps) {
   const TOUR_FORCE_END_MESSAGE = "The tour has ended prematurely.";
   let steps: TourStep[] = [];
 
@@ -97,4 +97,4 @@ export const TourOperator = ({ tourType }: TourOperatorProps) => {
   return (
     <TourGuide steps={steps} onError={handleError} onFinish={handleFinish} onCancel={endTour} />
   );
-};
+}

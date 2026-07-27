@@ -10,7 +10,7 @@ import { duplicateSetup, removeSetup, updateCalculator } from "@Store/calculator
 import { useCalcModalCtrl } from "../ContextProvider";
 
 // Component
-import { ComplexSelect } from "@/components";
+import { ComplexSelect } from "@/components/ComplexSelect";
 
 type ModalState = {
   type: "REMOVE_SETUP" | "";
@@ -126,7 +126,7 @@ export function SetupSelect() {
                 },
                 {
                   className: setup.ID === standardId ? "bg-bonus" : "bg-light-1 hover:bg-primary-1",
-                  children: <SiTarget className="text-1.5xl" />,
+                  children: <SiTarget className="text-xlp" />,
                   disabled: comparedIds.length < 2 || !comparedIds.includes(setup.ID),
                   onClick: handleSelectStandard(setup.ID),
                 },
@@ -134,7 +134,7 @@ export function SetupSelect() {
                   className: comparedIds.includes(setup.ID)
                     ? "bg-bonus"
                     : "bg-light-1 hover:bg-primary-1",
-                  children: <FaBalanceScaleLeft className="text-1.5xl" />,
+                  children: <FaBalanceScaleLeft className="text-xlp" />,
                   disabled: setupManagers.length < 2,
                   onClick: handleToggleCompared(setup.ID),
                 },

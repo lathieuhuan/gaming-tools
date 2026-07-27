@@ -1,21 +1,21 @@
 import { IconSelect, IconSelectProps } from "rond";
 
-import type { ArtifactType } from "@/types";
 import { Artifact } from "@/models";
-import { getImgSrc } from "@/utils/getImgSrc";
+import type { ArtifactType } from "@/types";
+import { GenshinImage } from "../GenshinImage";
 
-const OPTIONS = Artifact.allIcons((icon) => {
+const OPTIONS: IconSelectProps<ArtifactType>["options"] = Artifact.allIcons((icon) => {
   return {
-    value: icon.value,
-    icon: getImgSrc(icon.icon),
+    title: icon.type,
+    value: icon.type,
+    icon: <GenshinImage src={icon.src} />,
   };
 });
 
-type ArtifactTypeSelectProps = Omit<
-  IconSelectProps<ArtifactType>,
-  "iconCls" | "selectedCls" | "options"
->;
+type ArtifactTypeSelectProps = Omit<IconSelectProps<ArtifactType>, "classNames" | "options">;
 
 export function ArtifactTypeSelect(props: ArtifactTypeSelectProps) {
-  return <IconSelect {...props} iconCls="p-1" selectedCls="bg-active" options={OPTIONS} />;
+  return (
+    <IconSelect {...props} classNames={{ item: "p-1", selected: "bg-active" }} options={OPTIONS} />
+  );
 }

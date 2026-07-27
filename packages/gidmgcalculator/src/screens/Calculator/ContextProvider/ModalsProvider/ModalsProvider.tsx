@@ -6,7 +6,7 @@ import { initSessionWithCharacter } from "@Store/calculator/actions";
 import { CalculatorModalsContext, CalculatorModalsControl } from "./context";
 
 // Component
-import { Tavern } from "@/components";
+import { Tavern } from "@/components/Tavern";
 import { SaveSetup } from "./SaveSetup";
 import { SetupExportGate } from "./SetupExportGate";
 import { SetupImportGate } from "./SetupImportGate";
@@ -69,10 +69,11 @@ export function ModalsProvider(props: { children: React.ReactNode }) {
         active={modalType === "SWITCH_CHARACTER"}
         sourceType="mixed"
         onSelectCharacter={(character) => {
-          initSessionWithCharacter(
-            character,
-            store.select((state) => state.userdb)
-          );
+          initSessionWithCharacter({
+            character: character.userData,
+            data: character.data,
+            userDb: store.select((state) => state.userdb),
+          });
         }}
         onClose={closeModal}
       />

@@ -1,8 +1,9 @@
 import { ItemCase } from "rond";
 
-import { CharacterPortrait } from "@/components";
 import { GenshinUserBuild } from "@/services/enka";
 import { useSelectedBuildState } from "../DataImporter";
+
+import { CharacterPortrait } from "@/components/CharacterPortrait";
 
 type BuildCharacterProps = {
   build: GenshinUserBuild;

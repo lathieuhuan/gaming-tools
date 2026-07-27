@@ -71,11 +71,7 @@ export function calculateSetup(setup: CalcSetup, options: CalculateSetupOptions 
     const talentType = ATT_PATT === "ES" || ATT_PATT === "EB" ? ATT_PATT : "NAs";
     const resultGroup = result[talentType];
     const alterConfig = attackAlters[ATT_PATT];
-    const defaultValues = getTalentDefaultValues(
-      main.data,
-      ATT_PATT,
-      ATT_PATT === "ES" || ATT_PATT === "EB",
-    );
+    const defaultValues = getTalentDefaultValues(main.data, ATT_PATT);
 
     const calculator = makeTalentCalc(main, target, talentType, defaultValues, alterConfig);
 

@@ -1,7 +1,8 @@
 import type { ClassValue } from "clsx";
 import { useState } from "react";
+
 import { cn } from "@lib/utils";
-import { useRondConfig } from "../../providers/ConfigProvider";
+import { useRondConfig, type DefaultImageFallbackProps } from "@lib/providers/ConfigProvider";
 
 export type ImageProps = {
   src?: string;
@@ -14,10 +15,10 @@ export type ImageProps = {
   draggable?: boolean;
   /** Default true */
   showFallbackOnError?: boolean;
-  defaultFallback?: Record<string, unknown>;
   imgCls?: ClassValue;
   imgStyle?: React.CSSProperties;
   fallback?: React.ReactNode;
+  defaultFallbackProps?: DefaultImageFallbackProps;
   title?: string;
   onError?: (e: React.SyntheticEvent<HTMLImageElement, Event>) => void;
 };
@@ -31,7 +32,7 @@ export const Image = ({
   width,
   height,
   showFallbackOnError = true,
-  defaultFallback,
+  defaultFallbackProps,
   imgCls,
   imgStyle,
   fallback,
@@ -52,7 +53,7 @@ export const Image = ({
         height,
       }}
     >
-      {showFallback ? fallback ?? <ImageFallback {...defaultFallback} /> : null}
+      {showFallback ? (fallback ?? <ImageFallback {...defaultFallbackProps} />) : null}
       <img
         src={src}
         alt={alt}

@@ -8,7 +8,7 @@ import { useTeamBuffCtrlGroup } from "./_hooks/useTeamBuffCtrlGroup";
 
 import type { ControlGroup } from "./types";
 
-import { GenshinModifierView } from "@/components";
+import { GenshinModifierView } from "@/components/GenshinModifierView";
 import { SECRET_RITE_BUFF_CONFIG } from "@/components/ModifierItems/config";
 
 export function BuffTeamBonus() {

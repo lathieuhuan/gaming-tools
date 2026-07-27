@@ -1,6 +1,6 @@
 import type { TourStep } from "@/lib/tour-guide";
 
-import { ENHANCE_TOUR_SITE_ID, TOUR_STEP_ID } from "@/constants";
+import { ECalculatorModifierTab, ENHANCE_TOUR_SITE_ID, TOUR_STEP_ID } from "@/constants";
 import { $AppCharacter } from "@/services";
 import { nextFrame } from "@/utils/window.utils";
 import { useCalcStore } from "@Store/calculator";
@@ -82,7 +82,7 @@ export function getEnhanceTourSteps(): TourStep[] {
         (c) =>
           c.enhanceType === main.data.enhanceType &&
           c.code !== main.code &&
-          teammates.every((t) => t.data.code !== c.code)
+          teammates.every((t) => t.data.code !== c.code),
       );
 
     addSlot = teammates.length;
@@ -121,8 +121,15 @@ export function getEnhanceTourSteps(): TourStep[] {
           });
           await nextFrame();
 
-          $(TOUR_STEP_ID.buffsTab).act.click();
-          await nextFrame();
+          const buffTab = document
+            .getElementById(TOUR_STEP_ID.modifiersTab)
+            ?.querySelector(`[data-value="${ECalculatorModifierTab.BUFFS}"]`);
+
+          if (buffTab instanceof HTMLElement) {
+            buffTab.click();
+            await nextFrame();
+          }
+
 
           if (
             triggerEl instanceof HTMLElement &&
@@ -134,7 +141,7 @@ export function getEnhanceTourSteps(): TourStep[] {
 
           triggerEl.scrollIntoView();
         },
-      }
+      },
     );
   }
 

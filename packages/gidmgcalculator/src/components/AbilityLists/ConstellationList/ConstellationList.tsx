@@ -19,7 +19,7 @@ type ConstellationListProps = {
 export function ConstellationList(props: ConstellationListProps) {
   const { character, mutable = true } = props;
   const { vision, constellation } = character.data;
-  const [consLv, setConsLv] = useState(0);
+  const [detailConsLv, setDetailConsLv] = useState<number | null>(null);
   const [atDetail, setAtDetail] = useState(false);
 
   useEffect(() => {
@@ -34,32 +34,38 @@ export function ConstellationList(props: ConstellationListProps) {
     );
   }
 
-  const onClickInfo = (level: number) => {
+  const handleSeeDetail = (consLv: number) => {
     setAtDetail(true);
-    setConsLv(level);
+    setDetailConsLv(consLv);
   };
 
   return (
-    <CarouselSpace current={atDetail ? 1 : 0} className={props.className}>
+    <CarouselSpace
+      current={atDetail ? 1 : 0}
+      className={props.className}
+      onTransitionEnd={() => {
+        if (!atDetail) {
+          setDetailConsLv(null);
+        }
+      }}
+    >
       <div className="h-full hide-scrollbar flex flex-col space-y-4">
         {constellation.map((cons, i) => {
+          const active = character.cons >= i + 1;
+
           return (
             <div key={i} className="flex items-center">
               <div className="shrink-0 py-1 pr-2 flex-center">
                 <AbilityIcon
                   className={mutable && "cursor-pointer"}
                   img={cons.image}
-                  active={character.cons >= i + 1}
+                  active={active}
                   vision={vision}
                   onClick={() => props.onClickIcon?.(i)}
                 />
               </div>
-              <div className="grow flex group" onClick={() => onClickInfo(i + 1)}>
-                <p
-                  className={
-                    "px-2 text-lg font-bold" + (character.cons < i + 1 ? " opacity-50" : "")
-                  }
-                >
+              <div className="grow flex group" onClick={() => handleSeeDetail(i + 1)}>
+                <p className={clsx("px-2 text-lg font-bold", !active && "opacity-50")}>
                   {cons.name}
                 </p>
                 <Button
@@ -72,17 +78,14 @@ export function ConstellationList(props: ConstellationListProps) {
           );
         })}
       </div>
-      {consLv ? (
+      {detailConsLv !== null && (
         <ConstellationDetail
           character={character.data}
-          consLv={consLv}
-          onChangeConsLv={setConsLv}
-          onClose={() => {
-            setAtDetail(false);
-            setTimeout(() => setConsLv(0), 200);
-          }}
+          consLv={detailConsLv}
+          onChangeConsLv={setDetailConsLv}
+          onClose={() => setAtDetail(false)}
         />
-      ) : null}
+      )}
     </CarouselSpace>
   );
 }

@@ -1,104 +1,62 @@
-import { useRef, useState } from "react";
 import { FaPuzzlePiece } from "react-icons/fa";
-import { Popover, useClickOutside, type ClickOutsideHandler } from "rond";
+import { cn, Popover } from "rond";
 
-import type { RawArtifact, DbSetup, RawWeapon } from "@/types";
+import type { RawArtifact, RawWeapon } from "@/types";
 
-import { useItemBoundSetups } from "@/hooks";
-import { isWeapon } from "@/logic/entity.logic";
 import { $AppCharacter } from "@/services";
+import { useItemBoundSetups } from "./useItemBoundSetups";
 
-type SetupListProps = {
-  setups: DbSetup[];
-  onClickOutside: ClickOutsideHandler;
-};
-
-const SetupList = ({ setups, onClickOutside }: SetupListProps) => {
-  const listRef = useClickOutside<HTMLDivElement>(onClickOutside);
-
-  return (
-    <div ref={listRef} className="px-4 py-2 flex flex-col overflow-auto">
-      <p className="text-heading font-medium">This item is used on these setups:</p>
-      <ul className="mt-1 pl-4 list-disc font-semibold overflow-auto custom-scrollbar">
-        {setups.map((setup, i) => {
-          return <li key={i}>{setup.name}</li>;
-        })}
-      </ul>
-      {/* <p className="text-center text-light-hint">[No valid setups found]</p> */}
-    </div>
-  );
-};
-
-type OwnerLabelProps = {
-  className?: string;
-  style?: React.CSSProperties;
+type OwnerLabelProps = React.ComponentProps<"div"> & {
   item?: RawArtifact | RawWeapon;
 };
 
-export function OwnerLabel({ className = "", style, item }: OwnerLabelProps) {
-  const puzzleBtnRef = useRef<HTMLButtonElement>(null);
-  const [list, setList] = useState({
-    isVisible: false,
-    isMounted: false,
-  });
+export function OwnerLabel({ className, item, ...restProps }: OwnerLabelProps) {
+  const containingSetups = useItemBoundSetups(item);
 
-  const containingSetups = useItemBoundSetups(item, item && isWeapon(item));
-
-  const onClickPuzzlePiece = () => {
-    setList((prevList) => {
-      return {
-        isVisible: !prevList.isVisible,
-        isMounted: prevList.isVisible ? prevList.isMounted : true,
-      };
-    });
-
-    setTimeout(() => {
-      setList((prevList) => {
-        return prevList.isVisible
-          ? prevList
-          : {
-              ...prevList,
-              isMounted: false,
-            };
-      });
-    }, 200);
-  };
-
-  const onClickOutsideList: ClickOutsideHandler = (target) => {
-    if (puzzleBtnRef.current && !puzzleBtnRef.current.contains(target)) {
-      onClickPuzzlePiece();
+  const handleMouseDown = ({ currentTarget }: React.MouseEvent<HTMLButtonElement>) => {
+    if (currentTarget.matches(":focus")) {
+      setTimeout(() => {
+        currentTarget.blur();
+      }, 100);
     }
   };
 
-  const cls = `pl-4 rounded-sm font-bold bg-primary-2 text-black flex justify-between relative ${className}`;
+  const classNames = [
+    "pl-4 rounded-sm font-bold bg-primary-2 text-black flex justify-between relative",
+    className,
+  ];
 
   if (!item) {
-    return <div className={`h-8 ${cls}`} style={style} />;
+    return <div className={cn("h-8", classNames)} {...restProps} />;
   }
 
   const ownerName = item.owner ? $AppCharacter.get(item.owner)?.name : undefined;
 
   return (
-    <div className={cls} style={style}>
+    <div className={cn(classNames)} {...restProps}>
       <p className="py-1">Equipped: {ownerName || <span className="opacity-80">None</span>}</p>
 
-      {containingSetups.length ? (
+      {containingSetups.length !== 0 && (
         <>
-          <button ref={puzzleBtnRef} className="w-8 h-8 flex-center" onClick={onClickPuzzlePiece}>
+          <button className="w-8 h-8 flex-center peer" onMouseDown={handleMouseDown}>
             <FaPuzzlePiece className="w-5 h-5" />
           </button>
 
           <Popover
-            className="bottom-full right-2 mb-2 shadow-popup"
-            active={list.isVisible}
+            className="bottom-full right-2 mb-2 shadow-popup scale-0 peer-focus:scale-100"
             withTooltipStyle
           >
-            {list.isMounted && (
-              <SetupList setups={containingSetups} onClickOutside={onClickOutsideList} />
-            )}
+            <div className="px-4 py-2 flex flex-col overflow-auto">
+              <p className="text-heading font-medium">This item is used on these setups:</p>
+              <ul className="mt-1 pl-4 list-disc font-semibold overflow-auto custom-scrollbar">
+                {containingSetups.map((setup, i) => {
+                  return <li key={i}>{setup.name}</li>;
+                })}
+              </ul>
+            </div>
           </Popover>
         </>
-      ) : null}
+      )}
     </div>
   );
 }

@@ -3,7 +3,7 @@ import { Button, Checkbox } from "rond";
 
 import type { TourKey } from "@/types";
 
-import { TOURS } from "@/lib/tour-operator";
+import { TOURS } from "@/lib/tour-operator/catalogue";
 import { useToursStore } from "@Store/tours";
 import { setTourFinished } from "@Store/tours/actions";
 

@@ -2,7 +2,8 @@ import type { Team } from "@/models";
 import type { ResonanceModCtrl } from "@/types";
 import type { ControlGroup } from "../types";
 
-import { AutoResonanceBuffs, ResonanceBuffItem } from "@/components";
+import { ResonanceBuffItem } from "@/components/ModifierItems";
+import { AutoResonanceBuffs } from "@/components/ModifierLists";
 import { useCalcStore } from "@Store/calculator";
 import { updateActiveSetup } from "@Store/calculator/actions";
 import { selectSetup } from "@Store/calculator/selectors";

@@ -11,7 +11,8 @@ import {
 } from "@Store/userdbSlice";
 
 // Components
-import { ArtifactCard, Tavern } from "@/components";
+import { ArtifactCard } from "@/components/ArtifactCard";
+import { Tavern } from "@/components/Tavern";
 import { ReforgeButton } from "./ReforgeButton";
 
 type NewOwner = {

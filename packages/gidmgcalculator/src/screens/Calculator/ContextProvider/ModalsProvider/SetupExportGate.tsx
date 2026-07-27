@@ -1,4 +1,4 @@
-import { SetupExporter } from "@/components";
+import { SetupExporter } from "@/components/SetupExporter";
 import { useShallowCalcStore } from "@Store/calculator";
 
 type SetupExportGateProps = {

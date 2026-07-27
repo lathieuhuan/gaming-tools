@@ -2,7 +2,7 @@ import { useState } from "react";
 import { MdEdit } from "react-icons/md";
 import { Button } from "rond";
 
-import { ArtifactForge } from "@/components";
+import { ArtifactForge } from "@/components/ArtifactForge";
 import { Artifact } from "@/models";
 import { useDispatch } from "@Store/hooks";
 import { updateDbArtifact } from "@Store/userdbSlice";

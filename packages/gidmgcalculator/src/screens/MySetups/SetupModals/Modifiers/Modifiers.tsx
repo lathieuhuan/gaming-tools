@@ -10,13 +10,13 @@ import { $AppData } from "@/services";
 import {
   ArtifactBuffsView,
   ArtifactDebuffsView,
-  markYellow,
   SelfBuffsView,
   SelfDebuffsView,
   TeammateBuffsView,
   TeammateDebuffsView,
   WeaponBuffsView,
-} from "@/components";
+} from "@/components/ModifierLists";
+import { markYellow } from "@/components/Span";
 import { CustomBuffs, ElementBuffs, TeamBuffs } from "./BuffComponents";
 import { CustomDebuffs, ElementDebuffs } from "./DebuffComponents";
 

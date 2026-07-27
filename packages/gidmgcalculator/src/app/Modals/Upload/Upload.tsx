@@ -9,7 +9,7 @@ import { useDispatch } from "@Store/hooks";
 import { addUserDatabase } from "@Store/userdbSlice";
 
 // Component
-import { ItemMultiSelect, ItemMultiSelectIds } from "@/components";
+import { ItemMultiSelect, ItemMultiSelectIds } from "@/components/ItemMultiSelect";
 import { FileUpload } from "./FileUpload";
 
 // const MAX_USER_WEAPONS = 3;

@@ -2,7 +2,7 @@ import { useDispatch } from "@Store/hooks";
 import { updateDbCharacter } from "@Store/userdbSlice";
 import { useActiveChar } from "./ActiveCharProvider";
 
-import { ConstellationList } from "@/components";
+import { ConstellationList } from "@/components/AbilityLists";
 
 type PanelConstellationProps = {
   className?: string;
