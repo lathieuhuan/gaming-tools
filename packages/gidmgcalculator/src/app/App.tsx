@@ -1,9 +1,9 @@
 import { ImporterProvider } from "@/lib/setup-importer";
-
 import { Greeter } from "./Greeter";
 import { Main } from "./Main";
 import { Modals } from "./Modals";
 import { Navbar } from "./Navbar";
+import { TourOperator } from "./TourOperator";
 import { Tracker } from "./Tracker";
 
 export function App() {
@@ -14,6 +14,7 @@ export function App() {
         <Main />
         <Modals />
         <Tracker />
+        <TourOperator />
         <Greeter />
       </div>
     </ImporterProvider>
