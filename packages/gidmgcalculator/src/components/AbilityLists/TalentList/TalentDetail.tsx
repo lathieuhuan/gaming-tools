@@ -2,13 +2,13 @@ import { useQuery } from "@tanstack/react-query";
 import { useLayoutEffect, useMemo, useRef, useState } from "react";
 import { FaCaretDown } from "react-icons/fa";
 import { Array_, round } from "ron-utils";
-import { CloseButton, LoadingSpin, StatsTable, VersatileSelect } from "rond";
+import { CloseButton, LoadingSpin, StatsTable, Tabs, VersatileSelect } from "rond";
 
 import type { AppCharacter, TalentType } from "@/types";
 
 import { getTalentDefaultValues } from "@/calculation/calculator/getTalentDefaultValues";
 import { ATTACK_PATTERNS } from "@/constants/global";
-import { useTabs, useTranslation } from "@/hooks";
+import { useTranslation } from "@/hooks";
 import { Character } from "@/models";
 import { fetchTalentDescriptions } from "@/services/app-data";
 import { genSequentialOptions } from "@/utils/pure.utils";
@@ -17,6 +17,8 @@ import { NORMAL_ATTACK_ICONS } from "./config";
 // Component
 import { HintText } from "@/components/Text";
 import { AbilityCarousel } from "../components/AbilityCarousel";
+
+type TabType = "description" | "attributes";
 
 type TalentDetailProps = {
   character: AppCharacter;
@@ -38,9 +40,8 @@ export function TalentDetail({
   const images = [NORMAL_ATTACK_ICONS[`${weaponType}_${vision}`] || "", ES.image, EB.image];
 
   const [talentLevel, setTalentLevel] = useState(1);
+  const [tab, setTab] = useState<TabType>("attributes");
   const intervalRef = useRef<NodeJS.Timeout>();
-
-  const { activeIndex, tabProps, setActiveIndex, Tabs } = useTabs(1);
 
   const {
     isLoading,
@@ -49,7 +50,7 @@ export function TalentDetail({
   } = useQuery({
     queryKey: ["talent-description", character.code],
     queryFn: () => fetchTalentDescriptions(character.code),
-    enabled: !activeIndex,
+    enabled: tab === "description",
     staleTime: Infinity,
   });
 
@@ -62,8 +63,8 @@ export function TalentDetail({
 
   useLayoutEffect(() => {
     // Passive talents have no Skill Attributes
-    if (isPassiveTalent && activeIndex === 1) {
-      setActiveIndex(0);
+    if (isPassiveTalent && tab === "attributes") {
+      setTab("description");
     }
   }, [isPassiveTalent]);
 
@@ -128,20 +129,23 @@ export function TalentDetail({
 
         <p className={`text-lg font-semibold text-${vision} text-center`}>{talent.name}</p>
         <Tabs
-          {...tabProps}
           className="my-2"
-          configs={[
+          options={[
             {
-              text: "Talent Info",
+              value: "description",
+              label: "Talent Info",
             },
             {
-              text: "Skill Attributes",
+              value: "attributes",
+              label: "Skill Attributes",
               disabled: isPassiveTalent,
             },
           ]}
+          value={tab}
+          onChange={setTab}
         />
 
-        {activeIndex ? (
+        {tab === "attributes" ? (
           <div>
             <div className="py-2 flex-center bg-dark-1 sticky -top-1">
               {levelable ? (

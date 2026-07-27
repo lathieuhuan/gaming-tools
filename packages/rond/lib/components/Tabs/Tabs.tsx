@@ -1,62 +1,59 @@
 import { cn } from "@lib/utils";
 import clsx, { type ClassValue } from "clsx";
+import type { ComponentProps } from "react";
 
 const classByLevel = {
   1: "bg-heading",
   2: "bg-secondary-1",
 };
 
-export type TabConfig =
-  | string
-  | {
-      id?: string;
-      text: string;
-      disabled?: boolean;
-    };
+export type TabValue = string | number;
 
-export type TabsProps = {
-  className?: ClassValue;
-  style?: React.CSSProperties;
-  level?: 1 | 2;
-  activeIndex?: number;
-  configs?: TabConfig[];
-  onClickTab?: (index: number) => void;
+export type TabOption<V extends TabValue> = {
+  label: string;
+  value: V;
+  disabled?: boolean;
 };
 
-export function Tabs({
+export type TabsProps<V extends TabValue, O extends TabOption<V> = TabOption<V>> = Omit<
+  ComponentProps<"div">,
+  "className" | "children" | "onChange"
+> & {
+  className?: ClassValue;
+  level?: 1 | 2;
+  options?: O[];
+  value?: V;
+  onChange?: (value: V, option: O) => void;
+};
+
+export function Tabs<V extends TabValue, O extends TabOption<V> = TabOption<V>>({
   className,
-  style,
   level = 1,
-  configs,
-  activeIndex = 0,
-  onClickTab,
-}: TabsProps) {
+  options,
+  value,
+  onChange,
+  ...rest
+}: TabsProps<V, O>) {
   return (
     <div
       className={cn("w-full flex rounded-full overflow-hidden divide-x-2 divide-dark-3", className)}
-      style={style}
+      {...rest}
     >
-      {configs?.map((config, index) => {
-        const {
-          id,
-          text,
-          disabled = false,
-        } = typeof config === "string" ? { text: config } : config;
-
+      {options?.map((option) => {
         return (
           <button
-            id={id}
-            key={index}
+            key={option.value}
             type="button"
-            disabled={disabled}
+            data-slot="tab-option"
+            data-value={option.value}
+            disabled={option.disabled}
             className={clsx(
-              "w-1/2 py-0.5 text-black font-bold flex-center",
-              index === activeIndex ? classByLevel[level] : "bg-light-1 glow-on-hover",
-              disabled && "opacity-disabled"
+              "w-1/2 py-0.5 text-black font-bold flex-center disabled:opacity-disabled",
+              option.value === value ? classByLevel[level] : "bg-light-1 glow-on-hover",
             )}
-            onClick={() => onClickTab?.(index)}
+            onClick={() => onChange?.(option.value, option)}
           >
-            {text}
+            {option.label}
           </button>
         );
       })}

@@ -1,7 +1,7 @@
-import { CollapseList } from "rond";
+import { useState } from "react";
+import { CollapseList, Tabs } from "rond";
 
-import { TOUR_STEP_ID } from "@/constants/ui";
-import { useTabs } from "@/hooks";
+import { ECalculatorModifierTab, TOUR_STEP_ID } from "@/constants/ui";
 
 // Component
 import BuffArtifact from "./BuffArtifact";
@@ -18,26 +18,31 @@ import DebuffSelf from "./DebuffSelf";
 import DebuffTeammates from "./DebuffTeammates";
 
 export function Modifiers() {
-  const { activeIndex, tabProps, Tabs } = useTabs(1);
+  const [tab, setTab] = useState(ECalculatorModifierTab.BUFFS);
 
   return (
     <div className="h-full flex flex-col">
       <Tabs
-        {...tabProps}
+        id={TOUR_STEP_ID.modifiersTab}
         className="text-lg shrink-0"
-        configs={[
-          { text: "Debuffs" },
+        options={[
           {
-            id: TOUR_STEP_ID.buffsTab,
-            text: "Buffs",
+            value: ECalculatorModifierTab.DEBUFFS,
+            label: "Debuffs",
+          },
+          {
+            value: ECalculatorModifierTab.BUFFS,
+            label: "Buffs",
           },
         ]}
+        value={tab}
+        onChange={setTab}
       />
 
       <div className="mt-4 grow custom-scrollbar">
         <CollapseList
           key="buff"
-          className={!activeIndex ? "hidden" : undefined}
+          className={tab === ECalculatorModifierTab.DEBUFFS ? "hidden" : undefined}
           items={[
             {
               id: TOUR_STEP_ID.teamBonus,
@@ -80,7 +85,7 @@ export function Modifiers() {
 
         <CollapseList
           key="debuff"
-          className={activeIndex ? "hidden" : undefined}
+          className={tab === ECalculatorModifierTab.BUFFS ? "hidden" : undefined}
           items={[
             {
               title: "Elemental Event debuffs",

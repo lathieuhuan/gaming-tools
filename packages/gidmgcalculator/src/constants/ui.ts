@@ -16,6 +16,11 @@ export const TOUR_STEP_ID = {
   teamBonus: "team-bonus",
   overviewPanel: "overview-panel",
   modifiersPanel: "modifiers-panel",
+  modifiersTab: "modifier-tabs",
   setupPanel: "setup-panel",
-  buffsTab: "buffs-tab",
 };
+
+export enum ECalculatorModifierTab {
+  DEBUFFS = "DEBUFFS",
+  BUFFS = "BUFFS",
+}

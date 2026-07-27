@@ -1,6 +1,5 @@
-import { CarouselSpace } from "rond";
+import { CarouselSpace, Tabs } from "rond";
 
-import { useTabs } from "@/hooks";
 import { useCalcStore } from "@Store/calculator";
 import { updateMain, updateMainWeapon } from "@Store/calculator/actions";
 import { selectActiveMain, selectSetup } from "@Store/calculator/selectors";
@@ -9,6 +8,7 @@ import { ConstellationList, TalentList } from "@/components/AbilityLists";
 import { AttributeTable } from "@/components/AttributeTable";
 import { SetBonusesView } from "@/components/SetBonusesView";
 import { WeaponView } from "@/components/WeaponCard";
+import { useState } from "react";
 
 export function AttributesTab() {
   const allAttrs = useCalcStore((state) => selectActiveMain(state).allAttrsCtrl.finals);
@@ -42,14 +42,21 @@ function AttributeTableTab() {
 
 export function ArtifactsTab() {
   const atfGear = useCalcStore((state) => selectActiveMain(state).atfGear);
-
-  const { activeIndex, tabProps, Tabs } = useTabs();
+  const [tab, setTab] = useState(0);
 
   return (
     <div className="h-full flex flex-col">
-      <Tabs {...tabProps} level={2} configs={["Details", "Set Bonus"]} />
+      <Tabs
+        level={2}
+        options={[
+          { value: 0, label: "Details" },
+          { value: 1, label: "Set Bonus" },
+        ]}
+        value={tab}
+        onChange={setTab}
+      />
 
-      <CarouselSpace className="mt-3 grow" current={activeIndex}>
+      <CarouselSpace className="mt-3 grow" current={tab}>
         <div className="h-full custom-scrollbar">
           <AttributeTableTab />
         </div>
