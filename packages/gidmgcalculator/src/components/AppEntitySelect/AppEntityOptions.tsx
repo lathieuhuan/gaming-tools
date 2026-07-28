@@ -1,8 +1,9 @@
 import { ReactNode, useLayoutEffect, useRef, useState } from "react";
 import { clsx, ItemCase, useIntersectionObserver, type EntitySelectRenderArgs } from "rond";
 
-import { filterSortOptions } from "./_utils";
-import { AppEntityOption, AppEntityOptionModel } from "./AppEntityOption";
+import { AppEntityOption } from "./AppEntityOption";
+import { filterSortOptions } from "./filterSortOptions";
+import type { AppEntityOptionModel } from "./types";
 
 /** false if this pick is invalid */
 type Return = boolean | void;

@@ -1,20 +1,10 @@
 import { memo } from "react";
 import { Badge, clsx } from "rond";
 
-import type { ElementType } from "@/types";
+import type { AppEntityOptionModel } from "./types";
 
 import { ElementIcon } from "@/components/ElementIcon";
 import { GenshinImage } from "@/components/GenshinImage";
-
-export type AppEntityOptionModel = {
-  code: number;
-  beta?: boolean;
-  name: string;
-  icon: string;
-  rarity?: number;
-  vision?: ElementType;
-  cons?: number;
-};
 
 type AppEntityOptionProps = {
   className?: string;
@@ -41,7 +31,7 @@ const AppEntityOptionCore = ({
         className={clsx(
           "overflow-hidden relative rounded-t-lg",
           item.rarity && `bg-gradient-${item.rarity}`,
-          item.vision ? "pt-4" : "p-1"
+          item.vision ? "pt-4" : "p-1",
         )}
       >
         <div
@@ -66,7 +56,7 @@ const AppEntityOptionCore = ({
         <div
           className={clsx(
             "absolute -top-1 -right-1 p-1 flex-center rounded-full bg-black shadow-popup",
-            item.cons !== undefined && "flex rounded-2xl pl-1.5"
+            item.cons !== undefined && "flex rounded-2xl pl-1.5",
           )}
         >
           {item.cons !== undefined && (
