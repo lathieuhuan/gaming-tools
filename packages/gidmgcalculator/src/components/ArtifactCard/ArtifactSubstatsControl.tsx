@@ -1,5 +1,5 @@
 import { useRef } from "react";
-import { InputNumber, VersatileSelect } from "rond";
+import { cn, InputNumber, VersatileSelect } from "rond";
 
 import type { ArtifactSubStat, AttributeStat } from "@/types";
 import { useTranslation } from "@/hooks";
@@ -7,7 +7,7 @@ import { suffixOf } from "@/utils/pure.utils";
 
 // Constant
 import { ARTIFACT_SUBSTAT_TYPES } from "@/constants/global";
-import VALID_SUBSTAT_VALUES from "./valid-substat-values";
+import { VALID_SUBSTAT_VALUES } from "./constants";
 
 type ArtifactSubstatsControlProps = {
   className?: string;
@@ -19,7 +19,7 @@ type ArtifactSubstatsControlProps = {
 };
 
 export function ArtifactSubstatsControl({
-  className = "",
+  className,
   mutable,
   mainStatType,
   subStats,
@@ -45,7 +45,7 @@ export function ArtifactSubstatsControl({
   };
 
   return (
-    <div ref={wrapper} className={"space-y-2 " + className}>
+    <div ref={wrapper} className={cn("space-y-2", className)}>
       {subStats.map(({ type, value }, i) => {
         const isValid = isValidSubstatValue(value, VALID_SUBSTAT_VALUES[type][rarity]);
 
@@ -54,7 +54,7 @@ export function ArtifactSubstatsControl({
             <VersatileSelect
               title="Select Sub-stat"
               className={[
-                "w-44 h-full",
+                "w-41 h-full",
                 statTypeCount[type] === 1 ? "text-light-1" : "text-danger-2",
               ]}
               transparent
@@ -66,13 +66,13 @@ export function ArtifactSubstatsControl({
             <span>+</span>
             <InputNumber
               transparent
-              className={`w-18 h-full pt-1.5 ${isValid ? "text-light-1" : "text-danger-2"}`}
+              className={`w-17 h-full pt-1.5 px-0.5 ${isValid ? "text-light-1" : "text-danger-2"}`}
               maxDecimalDigits={2}
               value={value}
               onChange={(value) => onChangeSubStat?.(i, { value })}
               onKeyDown={onKeyDownValue(i)}
             />
-            <span className="w-4 pt-2 pb-1">{suffixOf(type)}</span>
+            <span className="w-5 pt-2 pb-1">{suffixOf(type)}</span>
           </div>
         ) : (
           <div key={i} className="mt-2 pt-2 pb-1 flex items-center bg-dark-2">
