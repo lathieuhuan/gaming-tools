@@ -8,12 +8,12 @@ import { DEFAULT_ARTIFACT_FILTER } from "../constants";
 
 export function useArtifactFilter<T extends RawArtifact = RawArtifact>(
   artifacts: T[],
-  initialFilter: Partial<ArtifactFilterCondition> = {}
+  initialFilter: Partial<ArtifactFilterCondition> = {},
 ) {
-  const [filter, setFilter] = useState<ArtifactFilterCondition>({
+  const [filter, setFilter] = useState<ArtifactFilterCondition>(() => ({
     ...DEFAULT_ARTIFACT_FILTER,
     ...initialFilter,
-  });
+  }));
 
   const filteredArtifacts = useMemo(() => filterArtifacts(artifacts, filter), [artifacts, filter]);
 
@@ -24,9 +24,9 @@ export function useArtifactFilter<T extends RawArtifact = RawArtifact>(
   };
 }
 
-export function filterArtifacts<T extends RawArtifact = RawArtifact>(
+function filterArtifacts<T extends RawArtifact = RawArtifact>(
   artifacts: T[],
-  filterCondition: Partial<ArtifactFilterCondition>
+  filterCondition: Partial<ArtifactFilterCondition>,
 ) {
   const {
     stats: statsFilter = DEFAULT_ARTIFACT_FILTER.stats,
@@ -53,7 +53,7 @@ export function filterArtifacts<T extends RawArtifact = RawArtifact>(
 
   if (requiredSubstats.length) {
     result = result.filter((item) =>
-      requiredSubstats.every((requiredSS) => item.subStats.some((ss) => ss.type === requiredSS))
+      requiredSubstats.every((requiredSS) => item.subStats.some((ss) => ss.type === requiredSS)),
     );
   }
 

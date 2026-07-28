@@ -6,7 +6,7 @@ import { Button, clsx, Modal, useScreenWatcher, useValues, type ClassValue } fro
 import type { ArtifactType, RawArtifact } from "@/types";
 import type { ArtifactFilterCondition } from "./types";
 
-import { useArtifactSetFilter, useArtifactStatFilter } from "./_hooks";
+import { useArtifactSetFilter, useArtifactStatFilter } from "./hooks";
 
 // Component
 import { ArtifactTypeSelect } from "@/components/ArtifactTypeSelect";
@@ -32,40 +32,9 @@ export const ArtifactFilter = <T extends RawArtifact = RawArtifact>({
 }: ArtifactFilterProps<T>) => {
   const screenWatcher = useScreenWatcher();
   const minIndex = forcedType ? 1 : 0;
+  const maxIndex = 2; // There are 3 filters, indexes are 0, 1, 2
 
   const [activeIndex, setActiveIndex] = useState(minIndex);
-
-  const renderTitle = (title: string, position: number) => {
-    return (
-      <div className="flex items-centers gap-2">
-        <button
-          type="button"
-          className="w-6 h-6 flex-center md:hidden"
-          disabled={position <= minIndex}
-          onClick={() => setActiveIndex((prev) => prev - 1)}
-        >
-          {position > minIndex ? (
-            <FaCaretRight className="text-2xl rotate-180" />
-          ) : (
-            <TbRectangleVerticalFilled className="opacity-50" />
-          )}
-        </button>
-        <p style={{ width: 100 }}>{title}</p>
-        <button
-          type="button"
-          className="w-6 h-6 flex-center md:hidden"
-          disabled={position >= 2}
-          onClick={() => setActiveIndex((prev) => prev + 1)}
-        >
-          {position < 2 ? (
-            <FaCaretRight className="text-2xl" />
-          ) : (
-            <TbRectangleVerticalFilled className="opacity-50" />
-          )}
-        </button>
-      </div>
-    );
-  };
 
   const {
     values: artifactTypes,
@@ -121,7 +90,11 @@ export const ArtifactFilter = <T extends RawArtifact = RawArtifact>({
           isSmallScreen ? (
             <FilterTemplate
               className={wrapperCls(activeIndex !== 0)}
-              title={renderTitle("Filter by Type", 0)}
+              title={
+                <Title index={0} min={minIndex} max={maxIndex} onChange={setActiveIndex}>
+                  Filter by Type
+                </Title>
+              }
               clearAllDisabled={!artifactTypes.length}
               onClearAll={() => updateArtifactTypes([])}
             >
@@ -159,7 +132,11 @@ export const ArtifactFilter = <T extends RawArtifact = RawArtifact>({
         <div className={clsx(wrapperCls(activeIndex !== 1), "shrink-0", !isSmallScreen && "w-56")}>
           <ArtifactStatFilter
             filter={statsFilter}
-            title={renderTitle("Filter by Stat", 1)}
+            title={
+              <Title index={1} min={minIndex} max={maxIndex} onChange={setActiveIndex}>
+                Filter by Stat
+              </Title>
+            }
             artifactType={forcedType}
             hasDuplicates={hasDuplicatedStats}
             onMainStatChange={changeMainStat}
@@ -172,7 +149,11 @@ export const ArtifactFilter = <T extends RawArtifact = RawArtifact>({
 
         <div className={clsx([wrapperCls(activeIndex !== 2), "grow custom-scrollbar"])}>
           <ArtifactSetFilter
-            title={renderTitle("Filter by Set", 2)}
+            title={
+              <Title index={2} min={minIndex} max={maxIndex} onChange={setActiveIndex}>
+                Filter by Set
+              </Title>
+            }
             setsWrapCls="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-3 xm:grid-cols-5 lg:grid-cols-8"
             setOptions={setOptions}
             onSetClick={toggleSet}
@@ -189,3 +170,47 @@ export const ArtifactFilter = <T extends RawArtifact = RawArtifact>({
     </div>
   );
 };
+
+function Title({
+  children,
+  index,
+  min,
+  max,
+  onChange,
+}: {
+  children: React.ReactNode;
+  index: number;
+  min: number;
+  max: number;
+  onChange: (index: number) => void;
+}) {
+  return (
+    <div className="flex items-centers gap-2">
+      <button
+        type="button"
+        className="w-6 h-6 flex-center md:hidden"
+        disabled={index <= min}
+        onClick={() => onChange(index - 1)}
+      >
+        {index > min ? (
+          <FaCaretRight className="text-2xl rotate-180" />
+        ) : (
+          <TbRectangleVerticalFilled className="opacity-50" />
+        )}
+      </button>
+      <p className="w-25">{children}</p>
+      <button
+        type="button"
+        className="w-6 h-6 flex-center md:hidden"
+        disabled={index >= max}
+        onClick={() => onChange(index + 1)}
+      >
+        {index < max ? (
+          <FaCaretRight className="text-2xl" />
+        ) : (
+          <TbRectangleVerticalFilled className="opacity-50" />
+        )}
+      </button>
+    </div>
+  );
+}
