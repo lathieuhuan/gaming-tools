@@ -13,10 +13,69 @@ type Option = {
   value: SortDirection;
 };
 
-type OptionGroupProps = {
+type OptionGroupType = {
   title: string;
   value: SortOption;
   options: Option[];
+};
+
+const OPTION_GROUPS: OptionGroupType[] = [
+  {
+    title: "By time added",
+    value: "time_added",
+    options: [
+      { label: "Oldest first", value: "asc" },
+      { label: "Newest first", value: "desc" },
+    ],
+  },
+  {
+    title: "By level",
+    value: "level",
+    options: [
+      { label: "Lowest first", value: "asc" },
+      { label: "Highest first", value: "desc" },
+    ],
+  },
+];
+
+type UserItemSortButtonProps = {
+  onSelectSort?: (sort: DbItemSortPayload) => void;
+};
+
+export function UserItemSortButton({ onSelectSort }: UserItemSortButtonProps) {
+  const handleSelect: OptionGroupProps["onSelectSort"] = (option, direction) => {
+    onSelectSort?.({ option, direction });
+  };
+
+  return (
+    <PopoverAction
+      className="z-50 left-0 pt-2"
+      origin="top left"
+      content={({ handleClose }) => (
+        <div className="p-2 rounded-md bg-light-1 text-black space-y-2 shadow-common">
+          {OPTION_GROUPS.map((group) => (
+            <OptionGroup
+              key={group.value}
+              {...group}
+              onSelectSort={(...args) => {
+                handleSelect(...args);
+                handleClose();
+              }}
+            />
+          ))}
+        </div>
+      )}
+    >
+      {(props) => (
+        <Button icon={<FaSortAmountUpAlt />} onClick={props.onClick}>
+          Sort
+        </Button>
+      )}
+    </PopoverAction>
+  );
+}
+
+type OptionGroupProps = OptionGroupType & {
   onSelectSort?: (value: SortOption, direction: SortDirection) => void;
 };
 
@@ -38,57 +97,5 @@ function OptionGroup({ title, value, options, onSelectSort }: OptionGroupProps) 
         ))}
       </div>
     </div>
-  );
-}
-
-type UserItemSortButtonProps = {
-  onSelectSort?: (sort: DbItemSortPayload) => void;
-};
-
-export function UserItemSortButton({ onSelectSort }: UserItemSortButtonProps) {
-  const optionGroups: OptionGroupProps[] = [
-    {
-      title: "By time added",
-      value: "time_added",
-      options: [
-        { label: "Oldest first", value: "asc" },
-        { label: "Newest first", value: "desc" },
-      ],
-    },
-    {
-      title: "By level",
-      value: "level",
-      options: [
-        { label: "Lowest first", value: "asc" },
-        { label: "Highest first", value: "desc" },
-      ],
-    },
-  ];
-
-  const handleSelect: OptionGroupProps["onSelectSort"] = (option, direction) => {
-    onSelectSort?.({ option, direction });
-  };
-
-  return (
-    <PopoverAction
-      className="z-50 left-0 pt-2"
-      origin="top left"
-      content={(close) => (
-        <div className="p-2 rounded-md bg-light-1 text-black space-y-2 shadow-common">
-          {optionGroups.map((optionGroup) => (
-            <OptionGroup
-              key={optionGroup.value}
-              {...optionGroup}
-              onSelectSort={(...args) => {
-                handleSelect(...args);
-                close();
-              }}
-            />
-          ))}
-        </div>
-      )}
-    >
-      <Button icon={<FaSortAmountUpAlt />}>Sort</Button>
-    </PopoverAction>
   );
 }

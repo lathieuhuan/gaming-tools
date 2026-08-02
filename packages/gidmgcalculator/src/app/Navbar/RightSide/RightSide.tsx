@@ -79,13 +79,13 @@ export function RightSide({ appReady }: RightSideProps) {
       <PopoverAction
         className="z-50 right-0 pt-2 pr-2"
         origin="top right"
-        content={(close) => (
+        content={({ handleClose }) => (
           <div className="bg-light-1 text-black rounded-md overflow-hidden shadow-common">
             <ModalOptions
               disabledTypes={appReady ? [] : ["DOWNLOAD", "UPLOAD", "SETTINGS"]}
               onSelect={(option) => {
                 handleSelectModal(option);
-                close();
+                handleClose();
               }}
             />
             <MenuOption
@@ -94,15 +94,17 @@ export function RightSide({ appReady }: RightSideProps) {
               disabled={!appReady}
               onSelect={() => {
                 handleSelectEnkaImport();
-                close();
+                handleClose();
               }}
             />
           </div>
         )}
       >
-        <button className="w-8 h-8 flex-center bg-dark-3 text-xl">
-          <FaBars />
-        </button>
+        {(props) => (
+          <button className="w-8 h-8 flex-center bg-dark-3 text-xl" onClick={props.onClick}>
+            <FaBars />
+          </button>
+        )}
       </PopoverAction>
     </div>
   );
