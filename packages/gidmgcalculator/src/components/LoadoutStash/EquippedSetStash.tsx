@@ -1,8 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Array_ } from "ron-utils";
-import { Button, clsx, ItemCase, useIntersectionObserver } from "rond";
-
-import type { ElementType } from "@/types";
+import { Button, useIntersectionObserver } from "rond";
 
 import { createArtifact } from "@/logic/entity.logic";
 import { Artifact } from "@/models";
@@ -11,16 +9,10 @@ import { useSelector } from "@Store/hooks";
 import { selectDbArtifacts, selectDbCharacters } from "@Store/userdbSlice";
 
 // Component
-import { CharacterPortrait } from "@/components/CharacterPortrait";
-import { GenshinImage } from "@/components/GenshinImage";
+import { EquippedSet, type EquippedSetOwner } from "./EquippedSet";
 
 type EquippedSetOption = {
-  character: {
-    code: number;
-    name: string;
-    icon: string;
-    elementType: ElementType;
-  };
+  owner: EquippedSetOwner;
   artifacts: Artifact[];
 };
 
@@ -39,14 +31,13 @@ export function EquippedSetStash({
     characterCode: 0,
     artifactId: 0,
   });
-  const [empty, setEmpty] = useState(false);
 
   const characters = useSelector(selectDbCharacters);
   const artifacts = useSelector(selectDbArtifacts);
 
-  const { observedAreaRef, visibleMap, itemUtils } = useIntersectionObserver();
+  const { container } = useIntersectionObserver();
 
-  const shouldCheckKeyword = keyword && keyword.length >= 1;
+  const shouldCheckKeyword = keyword !== undefined && keyword.length >= 1;
   const lowerKeyword = keyword?.toLowerCase() ?? "";
 
   const setOptions = useMemo(() => {
@@ -60,7 +51,7 @@ export function EquippedSetStash({
       const appCharacter = $AppCharacter.get(character.code);
 
       const option: EquippedSetOption = {
-        character: {
+        owner: {
           code: appCharacter.code,
           name: appCharacter.name,
           icon: appCharacter.icon,
@@ -84,104 +75,66 @@ export function EquippedSetStash({
   }, []);
 
   useEffect(() => {
-    // Check if any item visible
-    let visibleCount = 0;
-    let shouldCheckSelected = !!selection.characterCode;
-
-    for (const item of itemUtils.queryAll()) {
-      if (item.isVisible()) {
-        visibleCount++;
-      }
-      // Unselect if not visible
-      else if (shouldCheckSelected && item.getId() === `${selection.characterCode}`) {
-        setSelection({
-          characterCode: 0,
-          artifactId: 0,
-        });
-        onSelectArtifact(undefined);
-
-        shouldCheckSelected = false;
-      }
+    if (selection.characterCode === 0) {
+      return;
     }
 
-    setEmpty(!visibleCount);
+    const selectedItem = container.getItemById(selection.characterCode);
+
+    if (selectedItem !== null && selectedItem.element.hidden) {
+      setSelection({
+        characterCode: 0,
+        artifactId: 0,
+      });
+      onSelectArtifact(undefined);
+    }
   }, [keyword]);
 
   return (
-    <div ref={observedAreaRef} className="pr-2 h-full custom-scrollbar">
-      {empty ? <p className="py-4 text-light-hint text-lg text-center">No Loadouts found</p> : null}
-
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-2">
-        {setOptions.map(({ character, artifacts }, i) => {
-          const visible = visibleMap[character.code];
-          const hidden = shouldCheckKeyword && !character.name.toLowerCase().includes(lowerKeyword);
-          const opacityCls = `transition-opacity duration-400 ${
-            visible ? "opacity-100" : "opacity-0"
-          }`;
+    <div ref={container.ref} className="pr-2 h-full custom-scrollbar">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-2 peer">
+        {setOptions.map(({ owner, artifacts }) => {
+          const viewed = container.isItemViewed(owner.code);
+          const hidden = shouldCheckKeyword && !owner.name.toLowerCase().includes(lowerKeyword);
 
           return (
             <div
-              key={character.code}
-              {...itemUtils.getProps(character.code, [
-                "break-inside-avoid relative",
-                hidden && "hidden",
-              ])}
+              key={owner.code}
+              data-slot="set-option"
+              className="break-inside-avoid relative group"
+              hidden={hidden}
+              {...container.itemAttributes(owner.code)}
             >
               <Button
                 className="absolute top-3 right-3"
-                variant={character.code === selection.characterCode ? "primary" : "default"}
+                variant={owner.code === selection.characterCode ? "primary" : "default"}
                 size="small"
                 onClick={() => onSelectSet(artifacts)}
               >
                 Select
               </Button>
 
-              <div className="p-3 rounded-lg bg-dark-1">
-                <div className="flex items-start space-x-3">
-                  <div className={opacityCls}>
-                    {visible ? <CharacterPortrait size="small" info={character} /> : null}
-                  </div>
-                  <p className={`text-lg text-${character.elementType} font-bold`}>
-                    {character.name}
-                  </p>
-                </div>
-
-                <div className="mt-3 h-12 flex space-x-2">
-                  {artifacts.map((artifact) => {
-                    const { ID } = artifact;
-
-                    return (
-                      <ItemCase
-                        key={ID}
-                        className={`w-12 h-12 cursor-pointer ${opacityCls}`}
-                        selected={ID === selection.artifactId}
-                        onClick={() => {
-                          setSelection({
-                            characterCode: character.code,
-                            artifactId: ID,
-                          });
-                          onSelectArtifact(artifact);
-                        }}
-                      >
-                        {(className, imgCls) => {
-                          return visible ? (
-                            <GenshinImage
-                              className={clsx("p-1 rounded-circle", className)}
-                              imgCls={imgCls}
-                              src={artifact.icon}
-                              imgType="artifact"
-                            />
-                          ) : null;
-                        }}
-                      </ItemCase>
-                    );
-                  })}
-                </div>
-              </div>
+              <EquippedSet
+                owner={owner}
+                artifacts={artifacts}
+                selectedArtifactId={selection.artifactId}
+                viewed={viewed}
+                onClickItem={(artifact) => {
+                  setSelection({
+                    characterCode: owner.code,
+                    artifactId: artifact.ID,
+                  });
+                  onSelectArtifact(artifact);
+                }}
+              />
             </div>
           );
         })}
       </div>
+
+      <p className="py-4 text-light-hint text-lg text-center peer-has-[>:not([hidden])]:hidden">
+        No Loadouts found
+      </p>
     </div>
   );
 }

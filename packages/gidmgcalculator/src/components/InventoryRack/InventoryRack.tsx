@@ -1,6 +1,6 @@
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { FaMinus } from "react-icons/fa";
-import { ItemCase, clsx, useIntersectionObserver } from "rond";
+import { cn, ItemCase, useIntersectionObserver } from "rond";
 
 import type { AppArtifact, AppWeapon, RawItem, RawWeapon } from "@/types";
 
@@ -13,7 +13,7 @@ import { Pagination } from "./Pagination";
 
 export type ItemOption<
   T extends RawItem,
-  U = T extends RawWeapon ? AppWeapon : AppArtifact
+  U = T extends RawWeapon ? AppWeapon : AppArtifact,
 > = ItemThumbProps["item"] & {
   userData: T;
   data: U;
@@ -21,7 +21,7 @@ export type ItemOption<
 
 export type InventoryRackProps<
   T extends RawItem,
-  U = T extends RawWeapon ? AppWeapon : AppArtifact
+  U = T extends RawWeapon ? AppWeapon : AppArtifact,
 > = {
   itemCls?: string;
   emptyText?: string;
@@ -36,7 +36,7 @@ export type InventoryRackProps<
 
 export function InventoryRack<
   T extends RawItem,
-  U = T extends RawWeapon ? AppWeapon : AppArtifact
+  U = T extends RawWeapon ? AppWeapon : AppArtifact,
 >({
   data,
   itemCls,
@@ -47,30 +47,18 @@ export function InventoryRack<
   onUnselectItem,
   onChangeItem,
 }: InventoryRackProps<T, U>): JSX.Element {
-  const pioneerRef = useRef<HTMLDivElement>(null);
-  const heightRef = useRef(0);
-
-  const [ready, setReady] = useState(false);
   const [pageIndex, setPageIndex] = useState(0);
 
-  const { observedAreaRef, visibleMap, itemUtils } = useIntersectionObserver({
-    ready,
-    dependencies: [ready, data, pageIndex, pageSize],
+  const { container } = useIntersectionObserver({
+    deps: [data, pageIndex, pageSize],
   });
-
-  useEffect(() => {
-    if (pioneerRef.current) {
-      heightRef.current = pioneerRef.current.clientHeight;
-      setReady(true);
-    }
-  }, []);
 
   const firstItemIndex = pageSize * pageIndex;
   const nextFirstItemIndex = firstItemIndex + pageSize;
 
   const resetScroll = () => {
-    if (observedAreaRef.current) {
-      observedAreaRef.current.scrollTop = 0;
+    if (container.ref.current) {
+      container.ref.current.scrollTop = 0;
     }
   };
 
@@ -79,12 +67,12 @@ export function InventoryRack<
     resetScroll();
   };
 
-  const toItemOption = (item: T): ItemOption<T, U> => {
+  const toItemOption = (item: T, viewed: boolean): ItemOption<T, U> => {
     if (isWeapon(item)) {
       const data = $AppWeapon.get(item.code)!;
 
       return {
-        icon: data.icon,
+        icon: viewed ? data.icon : undefined,
         rarity: data.rarity,
         level: item.level,
         refi: item.refi,
@@ -97,7 +85,7 @@ export function InventoryRack<
     const data = $AppArtifact.getSet(item.code)!;
 
     return {
-      icon: data[item.type].icon,
+      icon: viewed ? data[item.type].icon : undefined,
       rarity: item.rarity,
       level: item.level,
       owner: item.owner,
@@ -106,8 +94,8 @@ export function InventoryRack<
     };
   };
 
-  const renderItem = (item: T) => {
-    const option = toItemOption(item);
+  const renderItem = (item: T, viewed: boolean) => {
+    const option = toItemOption(item, viewed);
 
     return (
       <>
@@ -129,47 +117,34 @@ export function InventoryRack<
   };
 
   return (
-    <div className="w-full flex flex-col overflow-hidden" style={{ minWidth: "21rem" }}>
-      <div
-        ref={observedAreaRef}
-        className="grow custom-scrollbar xm:pr-2"
-        style={{ overflowX: "hidden" }}
-      >
-        {!ready && (
-          <div ref={pioneerRef} className={clsx("opacity-0", itemCls)}>
-            <ItemThumbnail item={{ icon: "", level: "1/20", rarity: 5 }} />
-          </div>
-        )}
+    <div className="w-full min-w-84 flex flex-col overflow-hidden">
+      <div ref={container.ref} className="grow custom-scrollbar overflow-x-hidden xm:pr-2">
+        <div className="flex flex-wrap peer">
+          {data.map((dataItem, index) => {
+            const viewed = container.isItemViewed(dataItem.code);
+            const isOnPage = index >= firstItemIndex && index < nextFirstItemIndex;
 
-        {ready && data.length !== 0 && (
-          <div className="flex flex-wrap">
-            {data.map((item, index) => {
-              const visible = visibleMap[item.code];
-              const isOnPage = index >= firstItemIndex && index < nextFirstItemIndex;
-              const rendered = isOnPage && visible;
+            return (
+              <div
+                key={dataItem.ID}
+                className={cn(
+                  "p-2 transition-opacity duration-400 relative",
+                  isOnPage && viewed ? "opacity-100" : "opacity-0",
+                  itemCls,
+                )}
+                hidden={!isOnPage}
+                data-index={index}
+                {...container.itemAttributes(dataItem.code)}
+              >
+                {isOnPage && renderItem(dataItem, viewed)}
+              </div>
+            );
+          })}
+        </div>
 
-              return (
-                <div
-                  key={item.ID}
-                  {...itemUtils.getProps(item.code, [
-                    "p-2 transition-opacity duration-400 relative",
-                    rendered ? "opacity-100" : "opacity-0 !p-0",
-                    itemCls,
-                  ])}
-                  style={{
-                    height: isOnPage ? (visible ? "auto" : heightRef.current) : 0,
-                  }}
-                >
-                  {rendered && renderItem(item)}
-                </div>
-              );
-            })}
-          </div>
-        )}
-
-        {ready && !data.length && (
-          <p className="py-4 text-light-hint text-lg text-center">{emptyText}</p>
-        )}
+        <p className="py-4 text-light-hint text-lg text-center peer-has-[>:not([hidden])]:hidden">
+          {emptyText}
+        </p>
       </div>
 
       {data.length !== 0 && (

@@ -29,12 +29,14 @@ export function BottomMenu(props: BottomMenuProps) {
 
   const [keyword, setKeyword] = useState("");
 
-  const { observedAreaRef: intersectObsArea, visibleMap, itemUtils } = useIntersectionObserver();
+  const { container, observe, unobserve } = useIntersectionObserver();
+
   const { observedAreaRef: listObsArea } = useChildListObserver({
-    onNodesAdded: (addedNodes) => {
-      for (const node of addedNodes) {
-        itemUtils.observe(node as Element);
-      }
+    onNodesAdded(addedNodes) {
+      addedNodes.forEach((node) => observe(node as Element));
+    },
+    onNodesRemoved(removedNodes) {
+      removedNodes.forEach((node) => unobserve(node as Element));
     },
   });
 
@@ -42,43 +44,43 @@ export function BottomMenu(props: BottomMenuProps) {
   const lowerKeyword = keyword.toLowerCase();
 
   return (
-    <div ref={intersectObsArea} className="h-full flex flex-col">
+    <div ref={container.ref} className="h-full flex flex-col">
       {userChars.length ? (
         <div className="px-4 py-3">
           <Input className="w-1/2" placeholder="Search..." onChange={setKeyword} />
         </div>
       ) : null}
 
-      <div ref={listObsArea} className="px-4 grow hide-scrollbar">
-        {userChars.map((character) => {
-          const data = $AppCharacter.get(character.code);
+      <div className="grow hide-scrollbar">
+        <div ref={listObsArea} className="px-4 peer">
+          {userChars.map((character) => {
+            const data = $AppCharacter.get(character.code);
+            if (!data) return null;
 
-          if (data) {
-            const visible = visibleMap[data.code];
+            const viewed = container.isItemViewed(data.code);
             const hidden = shouldCheckKeyword && !data.name.toLowerCase().includes(lowerKeyword);
-            const isActive = character.code === activeChar;
+            const active = character.code === activeChar;
 
             return (
               <button
                 key={character.code}
-                {...itemUtils.getProps(data.code, [
-                  "w-full py-2 border-b border-dark-line flex items-center gap-3",
-                  hidden && "hidden",
-                ])}
+                className="w-full py-2 border-b border-dark-line flex items-center gap-3"
+                hidden={hidden}
                 onClick={() => {
-                  if (!isActive) {
+                  if (!active) {
                     props.onSelect(character);
                   }
                   props.onClose();
                 }}
+                {...container.itemAttributes(data.code)}
               >
                 <div
                   className={
                     "w-6 h-6 shrink-0 relative transition-opacity duration-300 " +
-                    (visible ? "opacity-100" : "opacity-0")
+                    (viewed ? "opacity-100" : "opacity-0")
                   }
                 >
-                  {visible && (
+                  {viewed && (
                     <GenshinImage
                       src={data.sideIcon}
                       fallbackCls="p-1"
@@ -86,18 +88,17 @@ export function BottomMenu(props: BottomMenuProps) {
                     />
                   )}
                 </div>
-                <span className={`font-semibold ${isActive ? "text-active" : ""}`}>
+                <span data-active={active} className="font-semibold data-[active=true]:text-active">
                   {data.name}
                 </span>
               </button>
             );
-          }
-          return null;
-        })}
+          })}
+        </div>
 
-        {!userChars.length && (
-          <p className="pt-8 text-center text-light-hint">No characters found</p>
-        )}
+        <p className="pt-8 text-center text-light-hint peer-has-[>:not([hidden])]:hidden">
+          No characters found
+        </p>
       </div>
 
       <ButtonGroup

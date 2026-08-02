@@ -56,12 +56,7 @@ export function LoadoutStashCore({ onSelect, onClose }: LoadoutStashProps) {
           </div>
 
           <div className="pt-3 grow flex space-x-2 hide-scrollbar">
-            <div
-              className="grow hide-scrollbar"
-              style={{
-                minWidth: "18rem",
-              }}
-            >
+            <div className="min-w-72 grow hide-scrollbar">
               <SwitchNode
                 value={selectedType}
                 cases={[

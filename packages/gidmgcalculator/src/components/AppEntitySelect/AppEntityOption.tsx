@@ -9,7 +9,7 @@ import { GenshinImage } from "@/components/GenshinImage";
 type AppEntityOptionProps = {
   className?: string;
   imgCls?: string;
-  visible: boolean;
+  viewed: boolean;
   item: AppEntityOptionModel;
   selectedAmount?: number;
 };
@@ -17,7 +17,7 @@ type AppEntityOptionProps = {
 const AppEntityOptionCore = ({
   className,
   imgCls,
-  visible,
+  viewed,
   item,
   selectedAmount,
 }: AppEntityOptionProps) => {
@@ -35,11 +35,10 @@ const AppEntityOptionCore = ({
         )}
       >
         <div
-          className={`aspect-square transition-opacity duration-400 ${
-            visible ? "opacity-100" : "opacity-0"
-          }`}
+          data-viewed={viewed}
+          className="aspect-square transition-opacity duration-400 opacity-0 data-[viewed=true]:opacity-100"
         >
-          {visible && (
+          {viewed && (
             <GenshinImage className={imgCls} src={item.icon} imgType="unknown" fallbackCls="p-4" />
           )}
         </div>
@@ -52,7 +51,7 @@ const AppEntityOptionCore = ({
         {item.name}
       </p>
 
-      {item.vision && visible && (
+      {item.vision && viewed && (
         <div
           className={clsx(
             "absolute -top-1 -right-1 p-1 flex-center rounded-full bg-black shadow-popup",
@@ -70,5 +69,5 @@ const AppEntityOptionCore = ({
 };
 
 export const AppEntityOption = memo(AppEntityOptionCore, (prev, next) => {
-  return prev.visible === next.visible && prev.selectedAmount === next.selectedAmount;
+  return prev.viewed === next.viewed && prev.selectedAmount === next.selectedAmount;
 });
