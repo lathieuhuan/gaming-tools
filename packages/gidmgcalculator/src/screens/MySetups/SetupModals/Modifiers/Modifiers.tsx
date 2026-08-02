@@ -16,7 +16,7 @@ import {
   TeammateDebuffsView,
   WeaponBuffsView,
 } from "@/components/ModifierLists";
-import { markYellow } from "@/components/Span";
+import { HighlightText } from "@/components/Text";
 import { CustomBuffs, ElementBuffs, TeamBuffs } from "./BuffComponents";
 import { CustomDebuffs, ElementDebuffs } from "./DebuffComponents";
 
@@ -152,7 +152,9 @@ export function Modifiers({ setup }: ModifiersProps) {
       <SectionLayout title="Target" className="w-68">
         <div className="h-full px-2">
           <p className="text-lg">{title}</p>
-          <p className="my-1">Level: {markYellow(target.level)}</p>
+          <p className="my-1">
+            Level: <HighlightText>{target.level}</HighlightText>
+          </p>
 
           {variant && <p className="capitalize">{variant}</p>}
 

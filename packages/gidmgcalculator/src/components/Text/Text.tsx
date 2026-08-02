@@ -1,18 +1,16 @@
 import { ComponentProps } from "react";
 import { clsx } from "rond";
 
-export function PositiveText({
-  className,
-  bold,
-  ...rest
-}: ComponentProps<"span"> & { bold?: boolean }) {
+type TextProps = ComponentProps<"span"> & { bold?: boolean };
+
+export function PositiveText({ className, bold, ...rest }: TextProps) {
   return <span className={clsx("text-bonus", bold && "font-bold", className)} {...rest} />;
 }
 
-export function HintText({
-  className,
-  bold,
-  ...rest
-}: ComponentProps<"span"> & { bold?: boolean }) {
+export function HighlightText({ className, bold, ...rest }: TextProps) {
+  return <span className={clsx("text-primary-1", bold && "font-bold", className)} {...rest} />;
+}
+
+export function HintText({ className, bold, ...rest }: TextProps) {
   return <span className={clsx("text-light-hint", bold && "font-bold", className)} {...rest} />;
 }

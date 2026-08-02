@@ -4,7 +4,7 @@ import type { Character } from "@/models";
 import type { AmplifyingReaction, ElementType } from "@/types";
 
 import { GenshinModifierView, type GenshinModifierViewProps } from "../GenshinModifierView";
-import { markGreen } from "../Span";
+import { PositiveText } from "@/components/Text";
 
 type VapMeltBuffItemProps = Pick<GenshinModifierViewProps, "mutable" | "checked" | "onToggle"> & {
   reaction: AmplifyingReaction;
@@ -29,7 +29,7 @@ export function VapMeltBuffItem({ reaction, element, character, ...rest }: VapMe
       description={
         <>
           Increases <span className={`text-${element} capitalize`}>{element} DMG</span> by{" "}
-          {markGreen(round(mult, 3), "bold")} times.
+          <PositiveText bold>{round(mult, 3)}</PositiveText> times.
         </>
       }
     />

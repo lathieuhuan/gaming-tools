@@ -1,7 +1,7 @@
 import { FaBars, FaCog } from "react-icons/fa";
 import { CollapseList } from "rond";
 
-import { markYellow } from "@/components/Span";
+import { HighlightText } from "@/components/Text";
 import { CalculatorGuide } from "./CalculatorGuide";
 
 export function Guides() {
@@ -16,20 +16,38 @@ export function Guides() {
                 <div>
                   <p>- Acronyms used in the App:</p>
                   <ul className="pl-8 mt-1 list-disc space-y-1">
-                    <li>{markYellow("NA")}: Normal Attacks</li>
-                    <li>{markYellow("ES")}: Elemental Skill</li>
-                    <li>{markYellow("EB")}: Elemental Burst</li>
                     <li>
-                      {markYellow("A")}: Ascension, e.g. A4 is the talent unlocked at Acsension 4
+                      <HighlightText>NA</HighlightText>: Normal Attacks
                     </li>
                     <li>
-                      {markYellow("C")}: Constellation, e.g. C1 is the skill unlocked at
-                      Constellation 1
+                      <HighlightText>ES</HighlightText>: Elemental Skill
                     </li>
-                    <li>{markYellow("PHEC")}: Pyro, Hydro, Electro, Cryo</li>
-                    <li>{markYellow("SC")} / {markYellow("R:SC")}: Stellar-Conduct / Radiance:Stellar-Conduct</li>
-                    <li>{markYellow("SS")} / {markYellow("R:SS")}: Stellar-Swirl / Radiance:Stellar-Swirl</li>
-                    <li>{markYellow("SG")} / {markYellow("R:SG")}: Stellar-Glimmer / Radiance:Stellar-Glimmer</li>
+                    <li>
+                      <HighlightText>EB</HighlightText>: Elemental Burst
+                    </li>
+                    <li>
+                      <HighlightText>A</HighlightText>: Ascension, e.g. A4 is the talent unlocked at
+                      Acsension 4
+                    </li>
+                    <li>
+                      <HighlightText>C</HighlightText>: Constellation, e.g. C1 is the skill unlocked
+                      at Constellation 1
+                    </li>
+                    <li>
+                      <HighlightText>PHEC</HighlightText>: Pyro, Hydro, Electro, Cryo
+                    </li>
+                    <li>
+                      <HighlightText>SC</HighlightText> / <HighlightText>R:SC</HighlightText>:
+                      Stellar-Conduct / Radiance:Stellar-Conduct
+                    </li>
+                    <li>
+                      <HighlightText>SS</HighlightText> / <HighlightText>R:SS</HighlightText>:
+                      Stellar-Swirl / Radiance:Stellar-Swirl
+                    </li>
+                    <li>
+                      <HighlightText>SG</HighlightText> / <HighlightText>R:SG</HighlightText>:
+                      Stellar-Glimmer / Radiance:Stellar-Glimmer
+                    </li>
                   </ul>
                 </div>
                 <p>
@@ -59,12 +77,13 @@ export function Guides() {
               <div className="space-y-1 contains-inline-svg">
                 <p>
                   - You can add and manage your characters and items in{" "}
-                  {markYellow("My Characters")}, {markYellow("My Weapons")},{" "}
-                  {markYellow("My Artifacts")}.
+                  <HighlightText>My Characters</HighlightText>,{" "}
+                  <HighlightText>My Weapons</HighlightText>,{" "}
+                  <HighlightText>My Artifacts</HighlightText>.
                 </p>
                 <p>
                   - You can save setups from the Calculator and view them in{" "}
-                  {markYellow("My Setups")}.
+                  <HighlightText>My Setups</HighlightText>.
                 </p>
                 <p className="text-danger-2">
                   - Your data saved in the App is just temporary. If you wish it to be available in
@@ -76,8 +95,9 @@ export function Guides() {
                   <FaCog /> Settings.
                 </p>
                 <p>
-                  - Open the <FaBars /> menu at the top right corner to {markYellow("download")} and{" "}
-                  {markYellow("upload")} your data.
+                  - Open the <FaBars /> menu at the top right corner to{" "}
+                  <HighlightText>download</HighlightText> and <HighlightText>upload</HighlightText>{" "}
+                  your data.
                 </p>
                 <p>
                   - Your saved data is <span className="text-danger-2">limited</span>. When creating
@@ -97,8 +117,8 @@ export function Guides() {
                 </p>
                 <p>
                   - Be careful when the Calculator is under the effect of{" "}
-                  {markYellow("Separate main character's info on each setup")} (level,
-                  constellation, talents) on each setup. It can make things complicated.
+                  <HighlightText>Separate main character's info on each setup</HighlightText>{" "}
+                  (level, constellation, talents) on each setup. It can make things complicated.
                 </p>
                 <p>
                   - When the "Separate main character's info on each setup" option is deactivated.
@@ -107,17 +127,17 @@ export function Guides() {
                   character).
                 </p>
                 <p>
-                  - {markYellow("Auto save my database to browser's local storage")} will help you
-                  store your data for the next visits. It takes less than 500KB to store 200 weapons
-                  & 800 artifacts. Those are current limits of the user database.
+                  - <HighlightText>Auto save my database to browser's local storage</HighlightText>{" "}
+                  will help you store your data for the next visits. It takes less than 500KB to
+                  store 200 weapons & 800 artifacts. Those are current limits of the user database.
                 </p>
                 <p className="text-danger-2">
                   - Change of "Auto save my database to browser's local storage" option can remove
                   your current data and works on the App.
                 </p>
                 <p>
-                  - {markYellow("Default values")} will be used whenever a new character or item is
-                  created in your data or in the Calculator tab.
+                  - <HighlightText>Default values</HighlightText> will be used whenever a new
+                  character or item is created in your data or in the Calculator tab.
                 </p>
               </div>
             ),

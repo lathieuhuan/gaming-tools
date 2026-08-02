@@ -1,7 +1,7 @@
 import { FaBars, FaDiscord, FaPuzzlePiece } from "react-icons/fa";
 import { Skeleton } from "rond";
 
-import { markYellow } from "@/components/Span";
+import { HighlightText } from "@/components/Text";
 
 export const VersionRecap = (
   <div className="space-y-2 contains-inline-svg">
@@ -87,8 +87,8 @@ const CONTACTS = [
 export const About = (
   <div className="space-y-1">
     <p>
-      - Hello, I'm {markYellow("Ronqueroc")} the owner of GI DMG Calculator which was released on
-      August 2021.
+      - Hello, I'm <HighlightText>Ronqueroc</HighlightText> the owner of GI DMG Calculator which was
+      released on August 2021.
     </p>
     <p>
       - This App is for calculating DMG a character in game Genshin Impact can do with their attacks
