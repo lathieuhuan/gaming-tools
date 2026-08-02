@@ -9,6 +9,7 @@ export * from "./CollapseList";
 export * from "./CollapseSpace";
 export * from "./ConfirmModal";
 export * from "./Drawer";
+export * from "./EmptyFallback";
 export * from "./EntitySelectTemplate";
 export * from "./HiddenSpace";
 export * from "./IconSelect";

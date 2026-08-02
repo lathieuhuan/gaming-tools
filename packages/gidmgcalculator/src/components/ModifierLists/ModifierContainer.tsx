@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { WithEmptyMessage } from "../WithEmptyMessage";
+import { EmptyFallback } from "rond";
 
 export type ModifierContainerProps = {
   type: "buffs" | "debuffs";
@@ -9,11 +9,11 @@ export type ModifierContainerProps = {
 
 export function ModifierContainer({ type, mutable, children }: ModifierContainerProps) {
   return (
-    <WithEmptyMessage
+    <EmptyFallback
       className={`pt-2 ${mutable ? "space-y-3" : "space-y-2"}`}
       message={`No ${type} found`}
     >
       {children}
-    </WithEmptyMessage>
+    </EmptyFallback>
   );
 }
