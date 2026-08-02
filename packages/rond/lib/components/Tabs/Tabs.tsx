@@ -1,62 +1,50 @@
 import { cn } from "@lib/utils";
-import clsx, { type ClassValue } from "clsx";
-import type { ComponentProps } from "react";
+import { ClassValue } from "clsx";
 
-const classByLevel = {
-  1: "bg-heading",
-  2: "bg-secondary-1",
-};
+export type TabItemProps = Omit<React.ComponentProps<"button">, "children">;
 
-export type TabValue = string | number;
-
-export type TabOption<V extends TabValue> = {
+export type TabItem<T> = {
   label: string;
-  value: V;
-  disabled?: boolean;
+  value: T;
+  props?: TabItemProps;
 };
 
-export type TabsProps<V extends TabValue, O extends TabOption<V> = TabOption<V>> = Omit<
-  ComponentProps<"div">,
-  "className" | "children" | "onChange"
-> & {
+export type TabsProps<V, T extends TabItem<V>> = Omit<React.ComponentProps<"div">, "onChange"> & {
   className?: ClassValue;
-  level?: 1 | 2;
-  options?: O[];
-  value?: V;
-  onChange?: (value: V, option: O) => void;
+  itemClassName?: ClassValue;
+  items: T[];
+  value: V;
+  onChange?: (value: V, tab: T) => void;
 };
 
-export function Tabs<V extends TabValue, O extends TabOption<V> = TabOption<V>>({
+export function Tabs<V extends string | number, T extends TabItem<V>>({
   className,
-  level = 1,
-  options,
+  itemClassName,
+  items,
   value,
   onChange,
-  ...rest
-}: TabsProps<V, O>) {
+  ...restProps
+}: TabsProps<V, T>) {
   return (
-    <div
-      className={cn("w-full flex rounded-full overflow-hidden divide-x-2 divide-dark-3", className)}
-      {...rest}
-    >
-      {options?.map((option) => {
-        return (
-          <button
-            key={option.value}
-            type="button"
-            data-slot="tab-option"
-            data-value={option.value}
-            disabled={option.disabled}
-            className={clsx(
-              "w-1/2 py-0.5 text-black font-bold flex-center disabled:opacity-disabled",
-              option.value === value ? classByLevel[level] : "bg-light-1 glow-on-hover",
-            )}
-            onClick={() => onChange?.(option.value, option)}
-          >
-            {option.label}
-          </button>
-        );
-      })}
+    <div className={cn("flex border-b border-heading", className)} {...restProps}>
+      {items.map((tab) => (
+        <button
+          key={tab.value}
+          {...tab.props}
+          data-active={value === tab.value}
+          className={cn(
+            "px-2 pt-1 font-semibold rounded-t-sm text-light-2 data-[active=true]:text-black data-[active=true]:bg-heading",
+            itemClassName,
+            tab.props?.className,
+          )}
+          onClick={(e) => {
+            onChange?.(tab.value, tab);
+            tab.props?.onClick?.(e);
+          }}
+        >
+          {tab.label}
+        </button>
+      ))}
     </div>
   );
 }

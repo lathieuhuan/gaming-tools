@@ -8,8 +8,7 @@ const meta = {
     layout: "centered",
   },
   argTypes: {
-    configs: { control: false },
-    level: { control: "inline-radio", options: [1, 2] },
+    items: { control: false },
   },
   tags: ["autodocs"],
 } satisfies Meta<typeof Tabs>;
@@ -19,9 +18,11 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   args: {
-    level: 1,
-    configs: ["Tab 1", "Tab 2"],
-    activeIndex: 0,
+    items: [
+      { label: "Tab 1", value: 1 },
+      { label: "Tab 2", value: 2 },
+    ],
+    value: 1,
   },
   render: (args) => (
     <div className="w-60">

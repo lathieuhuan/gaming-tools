@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { CarouselSpace, Tabs } from "rond";
 
 import { useCalcStore } from "@Store/calculator";
@@ -8,7 +9,6 @@ import { ConstellationList, TalentList } from "@/components/AbilityLists";
 import { AttributeTable } from "@/components/AttributeTable";
 import { SetBonusesView } from "@/components/SetBonusesView";
 import { WeaponView } from "@/components/WeaponCard";
-import { useState } from "react";
 
 export function AttributesTab() {
   const allAttrs = useCalcStore((state) => selectActiveMain(state).allAttrsCtrl.finals);
@@ -47,8 +47,7 @@ export function ArtifactsTab() {
   return (
     <div className="h-full flex flex-col">
       <Tabs
-        level={2}
-        options={[
+        items={[
           { value: 0, label: "Details" },
           { value: 1, label: "Set Bonus" },
         ]}

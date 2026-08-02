@@ -25,7 +25,8 @@ export function Modifiers() {
       <Tabs
         id={TOUR_STEP_ID.modifiersTab}
         className="text-lg shrink-0"
-        options={[
+        itemClassName="px-3"
+        items={[
           {
             value: ECalculatorModifierTab.DEBUFFS,
             label: "Debuffs",
