@@ -1,3 +1,4 @@
+import type { AriaAttributes } from "react";
 import { FaPlus } from "react-icons/fa";
 import { clsx, type ClassValue } from "rond";
 
@@ -13,7 +14,7 @@ const sizeCls: Partial<Record<PortraitSize, string>> = {
   medium: "w-18 h-18",
 };
 
-type CharacterPortraitProps = React.AriaAttributes & {
+type CharacterPortraitProps = AriaAttributes & {
   id?: string;
   className?: ClassValue;
   imgCls?: ClassValue;
@@ -33,7 +34,6 @@ type CharacterPortraitProps = React.AriaAttributes & {
 };
 
 export function CharacterPortrait({
-  id,
   className,
   imgCls,
   info,
@@ -41,8 +41,7 @@ export function CharacterPortrait({
   zoomable = true,
   recruitable,
   withColorBg: withColorBgProp,
-  onClick,
-  ...ariaAttributes
+  ...restProps
 }: CharacterPortraitProps) {
   const { code, icon, vision } = info || {};
 
@@ -60,11 +59,9 @@ export function CharacterPortrait({
   if (recruitable) {
     return (
       <button
-        id={id}
         className={clsx(cls, !info && "flex-center glow-on-hover")}
         title={info?.name}
-        onClick={onClick}
-        {...ariaAttributes}
+        {...restProps}
       >
         {info ? (
           <GenshinImage src={icon} imgType="character" imgCls={imgCls} fallbackCls="p-2" />
@@ -76,7 +73,7 @@ export function CharacterPortrait({
   }
 
   return (
-    <div id={id} className={clsx(cls)} title={info?.name} onClick={onClick} {...ariaAttributes}>
+    <div className={clsx(cls)} title={info?.name} {...restProps}>
       {info && <GenshinImage src={icon} imgType="character" imgCls={imgCls} fallbackCls="p-2" />}
     </div>
   );

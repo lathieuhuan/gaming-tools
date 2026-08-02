@@ -19,7 +19,7 @@ export type GearsOverviewProps = {
   style?: React.CSSProperties;
   detailType: GearsDetailType;
   onClickDetail: (newDetailsType: GearsDetailType) => void;
-  onClickEmptyAtfSlot: EquipmentDisplayProps["onClickEmptyAtfSlot"];
+  onFillAtfSlot: EquipmentDisplayProps["onFillAtfSlot"];
 };
 
 export function GearsOverview({
@@ -27,7 +27,7 @@ export function GearsOverview({
   style,
   detailType,
   onClickDetail,
-  onClickEmptyAtfSlot,
+  onFillAtfSlot,
 }: GearsOverviewProps) {
   const { weapon, atfGear } = useActiveChar();
   const atfGearSets = atfGear.sets;
@@ -55,7 +55,7 @@ export function GearsOverview({
         weapon={weapon}
         atfGear={atfGear}
         onClickItem={onClickDetail}
-        onClickEmptyAtfSlot={onClickEmptyAtfSlot}
+        onFillAtfSlot={onFillAtfSlot}
       />
 
       <div
