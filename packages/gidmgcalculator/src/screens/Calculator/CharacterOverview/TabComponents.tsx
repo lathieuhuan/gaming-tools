@@ -61,7 +61,7 @@ export function ArtifactsTab() {
           <AttributeTableTab />
         </div>
         <div className="h-full hide-scrollbar">
-          <SetBonusesView sets={atfGear.sets} noTitle />
+          <SetBonusesView hideTitle sets={atfGear.sets} />
         </div>
       </CarouselSpace>
     </div>

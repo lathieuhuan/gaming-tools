@@ -110,7 +110,7 @@ export function SetupModals({ setupName, setup }: SetupModalsProps) {
           <div className="w-72 flex flex-col shrink-0">
             <p className="text-lg text-center font-semibold">Set bonus</p>
             <div className="grow custom-scrollbar">
-              <SetBonusesView noTitle sets={atfGear.sets} />
+              <SetBonusesView hideTitle sets={atfGear.sets} />
             </div>
           </div>
         </div>
