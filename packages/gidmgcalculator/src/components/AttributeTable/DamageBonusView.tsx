@@ -5,9 +5,9 @@ import { Match, StatsTable, Tabs } from "rond";
 import type { AttackBonusControl } from "@/models/Character";
 import type { AllAttributes, LunarType, StellarType } from "@/types";
 
+import { getRxnBonusesFromEM } from "@/calculation/core/getRxnBonusesFromEM";
 import { ATTACK_ELEMENTS, LUNAR_TYPES, STELLAR_TYPES } from "@/constants/global";
 import { useTranslation } from "@/hooks";
-import { getRxnBonusesFromEM } from "@/calculation/core/getRxnBonusesFromEM";
 
 const { Row, Cell } = StatsTable;
 

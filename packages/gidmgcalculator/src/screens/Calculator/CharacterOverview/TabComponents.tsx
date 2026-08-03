@@ -1,5 +1,5 @@
-import { useState } from "react";
 import { CarouselSpace, Tabs } from "rond";
+import { useState } from "react";
 
 import { useCalcStore, useShallowCalcStore } from "@Store/calculator";
 import { updateMain, updateMainWeapon } from "@Store/calculator/actions";
