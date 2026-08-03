@@ -38,22 +38,23 @@ export function EmSection({ value = 0 }: EmSectionProps) {
       <CollapseSpace active={dropped}>
         <ul className="px-2 py-1 text-sm flex flex-col space-y-1">
           <li>
-            Increases damage dealt by Vaporize and Melt by{" "}
-            <PositiveText>{rxnBonusesFromEM.amplifying}</PositiveText>
-            %.
+            • Vaporize, Melt DMG +<PositiveText>{rxnBonusesFromEM.amplifying}%</PositiveText>.
           </li>
           <li>
-            Increases damage dealt by Overloaded, Superconduct, Electro-Charged, Burning, Shattered,
-            Swirl, Bloom, Hyperbloom, and Burgeon by{" "}
-            <PositiveText>{rxnBonusesFromEM.transformative}</PositiveText>%.
+            • Overloaded, Superconduct, Electro-Charged, Burning, Shattered, Swirl, Bloom,
+            Hyperbloom, Burgeon DMG +<PositiveText>{rxnBonusesFromEM.transformative}%</PositiveText>
+            .
           </li>
           <li>
-            Increases the DMG Bonus provided by Aggravate and Spread by{" "}
-            <PositiveText>{rxnBonusesFromEM.quicken}</PositiveText>%.
+            • Aggravate, Spread DMG +<PositiveText>{rxnBonusesFromEM.quicken}%</PositiveText>.
           </li>
           <li>
-            Increases the damage absorption power of shields created through Crystallize by{" "}
-            <PositiveText>{rxnBonusesFromEM.shield}</PositiveText>%.
+            • Lunar-Charged, Solar-Bloom, Lunar-Crystallize, Stellar-Conduct, Stellar-Swirl DMG +
+            <PositiveText>{rxnBonusesFromEM.lunar}%</PositiveText>.
+          </li>
+          <li>
+            • Crystallize shield DMG absorption +
+            <PositiveText>{rxnBonusesFromEM.shield}%</PositiveText>
           </li>
         </ul>
       </CollapseSpace>

@@ -1,7 +1,7 @@
-import { useState } from "react";
 import { CarouselSpace, Tabs } from "rond";
+import { useState } from "react";
 
-import { useCalcStore } from "@Store/calculator";
+import { useCalcStore, useShallowCalcStore } from "@Store/calculator";
 import { updateMain, updateMainWeapon } from "@Store/calculator/actions";
 import { selectActiveMain, selectSetup } from "@Store/calculator/selectors";
 
@@ -11,11 +11,17 @@ import { SetBonusesView } from "@/components/SetBonusesView";
 import { WeaponView } from "@/components/WeaponCard";
 
 export function AttributesTab() {
-  const allAttrs = useCalcStore((state) => selectActiveMain(state).allAttrsCtrl.finals);
+  const { allAttrs, attkBonusCtrl } = useShallowCalcStore((state) => {
+    const { allAttrsCtrl, attkBonusCtrl } = selectActiveMain(state);
+    return {
+      allAttrs: allAttrsCtrl.finals,
+      attkBonusCtrl,
+    };
+  });
 
   return (
     <div className="h-full custom-scrollbar">
-      <AttributeTable attributes={allAttrs} />
+      <AttributeTable attributes={allAttrs} attkBonusCtrl={attkBonusCtrl} />
     </div>
   );
 }
@@ -47,6 +53,8 @@ export function ArtifactsTab() {
   return (
     <div className="h-full flex flex-col">
       <Tabs
+        size="md"
+        variant="primary"
         items={[
           { value: 0, label: "Details" },
           { value: 1, label: "Set Bonus" },

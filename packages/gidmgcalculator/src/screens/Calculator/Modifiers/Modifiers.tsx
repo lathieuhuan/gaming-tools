@@ -24,8 +24,8 @@ export function Modifiers() {
     <div className="h-full flex flex-col">
       <Tabs
         id={TOUR_STEP_ID.modifiersTab}
-        className="text-lg shrink-0"
-        itemClassName="px-3"
+        variant="primary"
+        size="lg"
         items={[
           {
             value: ECalculatorModifierTab.DEBUFFS,
