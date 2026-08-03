@@ -1,4 +1,5 @@
 import { Array_ } from "ron-utils";
+import { EmptyFallback } from "rond";
 
 import type { ArtifactGearSet } from "@/types";
 import { parseArtifactDesc } from "@/utils/descriptionParsers";
@@ -15,7 +16,7 @@ export function SetBonusesView({ sets, hideTitle }: SetBonusesViewProps) {
         Set bonus
       </p>
 
-      <div className="space-y-2 peer">
+      <EmptyFallback className="space-y-2" message="No set bonus">
         {sets.map((set, index) => {
           const content: React.ReactNode[] = [];
           const { name, descriptions, setBonuses } = set.data;
@@ -45,9 +46,7 @@ export function SetBonusesView({ sets, hideTitle }: SetBonusesViewProps) {
             </div>
           );
         })}
-      </div>
-
-      <p className="text-light-hint font-medium hidden peer-empty:block">No set bonus</p>
+      </EmptyFallback>
     </div>
   );
 }
