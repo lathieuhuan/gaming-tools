@@ -1,5 +1,5 @@
 import { useId, useState } from "react";
-import { Button, SwitchNode, type SwitchNodeCase } from "rond";
+import { Button, Match, type MatchCase } from "rond";
 
 import { ENHANCE_TOUR_SITE_ID } from "@/constants/ui";
 import { useCalcStore } from "@Store/calculator";
@@ -21,13 +21,13 @@ import {
 
 type TabType = "Attributes" | "Weapon" | "Artifacts" | "Constellation" | "Talents";
 
-const TABS: SwitchNodeCase<TabType>[] = [
-  { value: "Attributes", element: <AttributesTab /> },
-  { value: "Weapon", element: <WeaponTab /> },
-  { value: "Artifacts", element: <ArtifactsTab /> },
-  { value: "Constellation", element: <ConstellationTab /> },
-  { value: "Talents", element: <TalentsTab /> },
-];
+const TABS = [
+  { value: "Attributes", render: <AttributesTab /> },
+  { value: "Weapon", render: <WeaponTab /> },
+  { value: "Artifacts", render: <ArtifactsTab /> },
+  { value: "Constellation", render: <ConstellationTab /> },
+  { value: "Talents", render: <TalentsTab /> },
+] satisfies MatchCase<TabType>[];
 
 function CharacterOverviewCore(props: { onClickSwitchCharacter: () => void }) {
   const id = useId();
@@ -58,7 +58,7 @@ function CharacterOverviewCore(props: { onClickSwitchCharacter: () => void }) {
       />
 
       <div className="grow hide-scrollbar">
-        <SwitchNode value={activeTab} cases={TABS} />
+        <Match value={activeTab} cases={TABS} />
       </div>
     </div>
   );

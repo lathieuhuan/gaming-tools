@@ -9,7 +9,10 @@ export type TabItem<T> = {
   props?: TabItemProps;
 };
 
-export type TabsProps<V, T extends TabItem<V>> = Omit<React.ComponentProps<"div">, "onChange"> & {
+export type TabsProps<V, T extends TabItem<V> = TabItem<V>> = Omit<
+  React.ComponentProps<"div">,
+  "onChange"
+> & {
   className?: ClassValue;
   itemClassName?: ClassValue;
   items: T[];
@@ -17,7 +20,7 @@ export type TabsProps<V, T extends TabItem<V>> = Omit<React.ComponentProps<"div"
   onChange?: (value: V, tab: T) => void;
 };
 
-export function Tabs<V extends string | number, T extends TabItem<V>>({
+export function Tabs<V extends string | number, T extends TabItem<V> = TabItem<V>>({
   className,
   itemClassName,
   items,

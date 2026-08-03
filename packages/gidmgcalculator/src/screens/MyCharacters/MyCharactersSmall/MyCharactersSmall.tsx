@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { FaChevronDown } from "react-icons/fa";
-import { BottomSheet, CarouselSpace, SwitchNode } from "rond";
+import { BottomSheet, CarouselSpace, Match } from "rond";
 
 import { type MobileBottomNavOption } from "@/components/MobileBottomNav";
 import { useDispatch } from "@Store/hooks";
@@ -37,13 +37,13 @@ export function MyCharactersSmall() {
       <div className="h-full flex flex-col">
         <div className="p-4 grow hide-scrollbar bg-dark-1">
           <ActiveCharProvider>
-            <SwitchNode
+            <Match
               value={activePanel}
               cases={[
-                { value: "ATTRIBUTES", element: <PanelAttributes /> },
+                { value: "ATTRIBUTES", render: <PanelAttributes /> },
                 {
                   value: "GEARS",
-                  element: (
+                  render: (
                     <PanelGears>
                       {({ detailActive, renderGearsOverview, renderGearsDetail, removeDetail }) => {
                         return (
@@ -62,8 +62,8 @@ export function MyCharactersSmall() {
                     </PanelGears>
                   ),
                 },
-                { value: "CONSTELATION", element: <PanelConstellation /> },
-                { value: "TALENTS", element: <PanelTalents /> },
+                { value: "CONSTELATION", render: <PanelConstellation /> },
+                { value: "TALENTS", render: <PanelTalents /> },
               ]}
             />
           </ActiveCharProvider>
