@@ -7,8 +7,11 @@ import type { AllAttributes, LunarType, StellarType } from "@/types";
 
 import { ATTACK_ELEMENTS, LUNAR_TYPES, STELLAR_TYPES } from "@/constants/global";
 import { useTranslation } from "@/hooks";
+import { getRxnBonusesFromEM } from "@/calculation/core/getRxnBonusesFromEM";
 
 const { Row, Cell } = StatsTable;
+
+const lunarStellarTypes: (LunarType | StellarType)[] = [...LUNAR_TYPES, ...STELLAR_TYPES];
 
 type DamageBonusType = "elemental" | "lunar-stellar";
 
@@ -35,7 +38,7 @@ export function DamageBonusView({ attributes, attkBonusCtrl }: DamageBonusViewPr
     return elementalRows;
   }
 
-  const lunarStellarTypes: (LunarType | StellarType)[] = [...LUNAR_TYPES, ...STELLAR_TYPES];
+  const bonusFromEm = getRxnBonusesFromEM(attributes.get("em")).lunar;
 
   return (
     <div className="pt-2">
@@ -70,7 +73,7 @@ export function DamageBonusView({ attributes, attkBonusCtrl }: DamageBonusViewPr
               <div className="min-h-64">
                 {lunarStellarTypes.map((type) => {
                   const label = t(type) + " DMG Bonus";
-                  const value = attkBonusCtrl.get("pct_", [type]);
+                  const value = attkBonusCtrl.get("pct_", [type]) - bonusFromEm;
 
                   return (
                     <Row key={type} aria-label={label}>

@@ -22,9 +22,10 @@ export class Container<
   ObservedArea extends HTMLElement = HTMLDivElement,
   ObservedElement extends HTMLElement = HTMLDivElement,
 > {
-  ref = createRef<ObservedArea>();
-
-  constructor(public viewedMap: ViewMap = new Map()) {}
+  constructor(
+    public viewedMap: ViewMap = new Map(),
+    public ref = createRef<ObservedArea>(),
+  ) {}
 
   getItemById = (id: ObservedItemId): ObservedItem<ObservedElement> | null => {
     const element = this.ref.current?.querySelector(
@@ -60,6 +61,11 @@ export class Container<
       "data-viewed": this.isItemViewed(id),
     };
   };
+
+  /** Create new instance, no mutation */
+  update = (viewedMap: ViewMap) => {
+    return new Container<ObservedArea, ObservedElement>(viewedMap, this.ref);
+  }
 }
 
 export class ObservedItem<ObservedElement extends HTMLElement = HTMLDivElement> {

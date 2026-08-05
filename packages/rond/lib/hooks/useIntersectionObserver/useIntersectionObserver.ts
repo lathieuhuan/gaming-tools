@@ -29,16 +29,17 @@ export function useIntersectionObserver<
       return;
     }
 
+    // container.viewedMap is stale during handleIntersection
+    // so we create a clone here and update it after each handleIntersection
     let viewedMapRef: ViewMap;
 
     if (resetOnDepsChange) {
       viewedMapRef = new Map();
 
       if (container.viewedMap.size > 0) {
-        setContainer(new Container(new Map()));
+        setContainer((container) => container.update(new Map()));
       }
     } else {
-      // Create a clone here because viewedMap is stale
       viewedMapRef = new Map(container.viewedMap);
     }
 
@@ -56,7 +57,7 @@ export function useIntersectionObserver<
       }
 
       if (changed) {
-        setContainer(new Container(newViewedMap));
+        setContainer((container) => container.update(newViewedMap));
         viewedMapRef = newViewedMap;
       }
     };

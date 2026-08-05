@@ -1,4 +1,4 @@
-import { ReactNode, useLayoutEffect, useRef, useState } from "react";
+import { ReactNode, useEffect, useLayoutEffect, useRef, useState } from "react";
 import {
   clsx,
   ItemCase,
@@ -66,7 +66,7 @@ export function AppEntityOptions<T extends AppEntityOptionModel = AppEntityOptio
     return item.viewed && !item.element.hidden;
   };
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     const handleEnter = (e: KeyboardEvent) => {
       const inputEl = inputRef?.current;
 
