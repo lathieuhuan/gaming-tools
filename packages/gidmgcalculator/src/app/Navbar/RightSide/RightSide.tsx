@@ -49,11 +49,13 @@ export function RightSide({ appReady }: RightSideProps) {
     setRefetching(false);
   };
 
-  // const handleUpdateCache = async () => {
+  // const handleUpdateCache = () => {
   //   console.log("Updating cache...");
-  //   const response = await updateCache();
-  //   console.log("Completed!");
-  //   console.log(response);
+
+  //   void updateCache().then((response) => {
+  //     console.log("Completed!");
+  //     console.log(response);
+  //   });
   // };
 
   return (

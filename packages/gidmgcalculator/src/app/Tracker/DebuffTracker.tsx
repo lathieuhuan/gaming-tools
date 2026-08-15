@@ -1,4 +1,5 @@
 import { clsx } from "rond";
+import { round } from "ron-utils";
 
 import type { TargetCalc } from "@/models";
 
@@ -26,10 +27,10 @@ export function DebuffTracker({ listClassName, target }: DebuffTrackerProps) {
               <div key={attElmt} className="break-inside-avoid">
                 <Heading
                   label={`${t(attElmt, { ns: "resistance" })} reduction`}
-                  value={reduction + "%"}
+                  value={round(reduction, 2) + "%"}
                 />
 
-                <List records={records} calcFn={(value) => value + "%"} />
+                <List records={records} calcFn={(value) => round(value, 2) + "%"} />
               </div>
             )
           );
@@ -42,8 +43,8 @@ export function DebuffTracker({ listClassName, target }: DebuffTrackerProps) {
           {ATTACK_ELEMENTS.map((attElmt) => {
             const resistance = target.resistances[attElmt];
             const reduction = target.getReduction(attElmt).value;
-            const reducedResistance = resistance - reduction;
-            const label = `RES ${resistance}% - Reduction ${reduction}% = ${reducedResistance}% or`;
+            const reducedResistance = round(resistance - reduction, 2);
+            const label = `RES ${resistance}% - Reduction ${round(reduction, 2)}% = ${reducedResistance}% or`;
 
             return (
               <div key={attElmt} className="pl-2 break-inside-avoid">
@@ -51,11 +52,11 @@ export function DebuffTracker({ listClassName, target }: DebuffTrackerProps) {
                   label={
                     <span className="capitalize">{attElmt === "phys" ? "physical" : attElmt}</span>
                   }
-                  value={target.resistMults[attElmt]}
+                  value={round(target.resistMults[attElmt], 4)}
                 />
 
                 <Container>
-                  <Item label={label} value={reducedResistance / 100} />
+                  <Item label={label} value={round(reducedResistance / 100, 2)} />
                   <Item label="Equation" value={target.getResistMultEquation(attElmt)} />
                 </Container>
               </div>

@@ -63,7 +63,7 @@ export function ArtifactView<T extends Artifact>({
 
         <div className={`bg-gradient-${rarity} relative rounded-lg shrink-0`}>
           <GenshinImage
-            src={Artifact.iconOf(artifact.type)}
+            src={artifact.icon}
             alt={name}
             className="p-2"
             imgType="artifact"

@@ -1,3 +1,4 @@
+import { round } from "ron-utils";
 import type { AppMonster, AttackElement, TargetData, ResistReductionKey } from "@/types";
 
 import { ATTACK_ELEMENTS } from "@/constants/global";
@@ -61,7 +62,8 @@ export class TargetCalc extends Target {
   }
 
   getResistMultEquation(key: AttackElement) {
-    const RES = (this.resistances[key] - this.getReduction(key).value) / 100;
+    let RES = (this.resistances[key] - this.getReduction(key).value) / 100;
+    RES = round(RES, 4);
 
     return `${RES < 0 ? `1 - (${RES} / 2)` : RES >= 0.75 ? `1 / (4 * ${RES} + 1)` : `1 - ${RES}`}`;
   }
