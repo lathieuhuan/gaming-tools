@@ -19,6 +19,7 @@ export type BonusAttributeScalingSpec =
       altIndex?: number;
       /** Default true. */
       isDynamic?: boolean;
+      max?: number;
     };
 
 // ========== CHARACTER EXCLUSIVE ==========
