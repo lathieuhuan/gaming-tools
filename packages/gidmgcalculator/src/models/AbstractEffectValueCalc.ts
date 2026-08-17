@@ -50,7 +50,7 @@ export abstract class AbstractEffectValueCalc<TPerformer extends TeamMember = Te
     protected inputs: number[] = [],
   ) {
     this.teammateElmtCount = team.elmtCount.clone();
-    this.teammateElmtCount.remove(performer.data.vision);
+    this.teammateElmtCount.add(performer.data.vision, -1);
   }
 
   // UTILS
@@ -127,12 +127,11 @@ export abstract class AbstractEffectValueCalc<TPerformer extends TeamMember = Te
       case "ELEMENT": {
         const { elements } = spec;
 
-        stacks = elements
-          ? elmtCount.keys.reduce(
-              (total, elementType) => total + (elements.includes(elementType) ? 1 : 0),
-              0,
-            )
-          : elmtCount.keys.length;
+        if (elements) {
+          stacks = elements.reduce((total, type) => total + (elmtCount.has(type) ? 1 : 0), 0);
+        } else {
+          stacks = elmtCount.size;
+        }
         break;
       }
       case "MEMBER": {
@@ -140,22 +139,22 @@ export abstract class AbstractEffectValueCalc<TPerformer extends TeamMember = Te
 
         switch (spec.element) {
           case "DIFFERENT":
-            teammateElmtCount.forEach((type, value) => {
+            teammateElmtCount.forEach((value, type) => {
               stacks += type !== performerElmt ? value : 0;
             });
             break;
           case "SAME_EXCLUDED":
-            teammateElmtCount.forEach((type, value) => {
+            teammateElmtCount.forEach((value, type) => {
               stacks += type === performerElmt ? value : 0;
             });
             break;
           case "SAME_INCLUDED":
-            team.elmtCount.forEach((type, value) => {
+            team.elmtCount.forEach((value, type) => {
               stacks += type === performerElmt ? value : 0;
             });
             break;
           default:
-            team.elmtCount.forEach((type, value) => {
+            team.elmtCount.forEach((value, type) => {
               stacks += spec.element.includes(type) ? value : 0;
             });
         }

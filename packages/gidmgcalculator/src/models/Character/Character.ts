@@ -1,7 +1,7 @@
 import { Object_ } from "ron-utils";
 
 import type {
-  AllAttributes,
+  AllAttributeStat,
   AmplifyingReaction,
   AppCharacter,
   AttackBonus,
@@ -18,13 +18,12 @@ import type {
   PenaltyCoreSpec,
   QuickenReaction,
   RawCharacter,
-  TeamMember
+  TeamMember,
 } from "@/types";
 import type { EffectToParseDesc } from "../AbstractEffectValueCalc";
 import type { Clonable } from "../interfaces";
 
 import { FlatGetters } from "@/decorators/FlatGetters.decorator";
-import { TypeCounterKey } from "@/utils/TypeCounter";
 import { isPassedComparison } from "../utils/isPassedComparison";
 
 import { ArtifactGear } from "../ArtifactGear";
@@ -102,7 +101,7 @@ export class Character implements TeamMember, Clonable<Character> {
     code: number,
     public data: AppCharacter,
     weapon: Weapon,
-    options: CharacterConstructOptions
+    options: CharacterConstructOptions,
   ) {
     const {
       atfGear = new ArtifactGear(),
@@ -176,7 +175,7 @@ export class Character implements TeamMember, Clonable<Character> {
     }
   }
 
-  getAttr(key: TypeCounterKey<AllAttributes>) {
+  getAttr(key: AllAttributeStat) {
     return this.allAttrsCtrl.finals.get(key);
   }
 
@@ -222,7 +221,7 @@ export class Character implements TeamMember, Clonable<Character> {
 
     if (condition.checkAny) {
       const anyInvalid = condition.checkAny.some(
-        (condition) => !this.canPerformEffect(condition, inputs)
+        (condition) => !this.canPerformEffect(condition, inputs),
       );
 
       if (anyInvalid) {
@@ -390,7 +389,7 @@ export class Character implements TeamMember, Clonable<Character> {
   // ===== STATIC =====
 
   static getTalentMult(scale: number, talentLv: number) {
-    return scale ? TALENT_LV_MULTIPLIERS[scale]?.[talentLv] ?? 0 : 1;
+    return scale ? (TALENT_LV_MULTIPLIERS[scale]?.[talentLv] ?? 0) : 1;
   }
 
   static serialize(character: RawCharacter): RawCharacter {

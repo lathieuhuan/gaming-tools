@@ -1,4 +1,4 @@
-import type TypeCounter from "@/utils/TypeCounter";
+import type { CountMap } from "ron-utils";
 import type {
   AMPLIFYING_REACTIONS,
   ARTIFACT_TYPES,
@@ -137,8 +137,8 @@ export type BaseAttributeStat = (typeof BASE_ATTRIBUTE_STATS)[number];
 
 export type AttributeStat = (typeof ATTRIBUTE_STAT_TYPES)[number];
 
-export type ElementCount = TypeCounter<ElementType>;
+export type ElementCount = CountMap<ElementType>;
 
 export type AllAttributeStat = AttributeStat | BaseAttributeStat;
 
-export type AllAttributes = TypeCounter<AllAttributeStat>;
+export type AllAttributes = CountMap<AllAttributeStat>;

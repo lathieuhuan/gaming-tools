@@ -1,11 +1,10 @@
-import { Object_, round } from "ron-utils";
+import { CountMap, Object_, round } from "ron-utils";
 
 import type { AllAttributes, AttributeBonus, AttributeStat, BaseAttributeStat } from "@/types";
 import type { Character } from "./Character";
 
 import { ATTRIBUTE_STAT_TYPES } from "@/constants";
 import { baseStatToCoreStat, isBaseStat, isCoreStat } from "@/logic/stat.logic";
-import TypeCounter from "@/utils/TypeCounter";
 
 const ASC_MULT_BY_ASC = [0, 38 / 182, 65 / 182, 101 / 182, 128 / 182, 155 / 182, 1];
 
@@ -41,7 +40,7 @@ export class AllAttributesControl {
 
   /** Deep clone initial if it is reused */
   constructor(initial: AllAttributesControlInitial = {}) {
-    const { details = {}, finals = new TypeCounter() } = initial;
+    const { details = {}, finals = new CountMap() } = initial;
 
     this.details = details as DetailedAttributes;
     this.finals = finals;
@@ -114,19 +113,21 @@ export class AllAttributesControl {
     }
 
     // ===== Artifacts =====
-    character.atfGear
-      .finalizeAttributes({
+    {
+      const attributes = character.atfGear.finalizeAttributes({
         hp_base: this.getBase("hp"),
         atk_base: this.getBase("atk"),
         def_base: this.getBase("def"),
-      })
-      .entries.forEach(([stat, value]) => {
+      });
+
+      for (const [stat, value] of attributes.entries()) {
         this.applyBonus({
           toStat: stat,
           value,
           label: "Artifact stat",
         });
-      });
+      }
+    }
 
     // ===== Resonances =====
     for (const resonance of character.team.resonances) {
@@ -162,7 +163,7 @@ export class AllAttributesControl {
   private _set<T extends keyof InternalAttribute>(
     stat: AttributeStat,
     key: T,
-    valueOrSetter: InternalAttribute[T] | ((attr: InternalAttribute[T]) => InternalAttribute[T])
+    valueOrSetter: InternalAttribute[T] | ((attr: InternalAttribute[T]) => InternalAttribute[T]),
   ) {
     const attr = this._get(stat);
 
@@ -238,9 +239,7 @@ export class AllAttributesControl {
   // ===== FINALS =====
 
   finalize() {
-    const allAttrs: AllAttributes = new TypeCounter(undefined, {
-      allowNegative: true,
-    });
+    const allAttrs: AllAttributes = new CountMap();
 
     for (const key of ATTRIBUTE_STAT_TYPES) {
       if (key === "hp_" || key === "atk_" || key === "def_") {
@@ -271,7 +270,7 @@ export class AllAttributesControl {
 
   clear() {
     this.details = {} as DetailedAttributes;
-    this.finals = new TypeCounter();
+    this.finals = new CountMap();
     return this;
   }
 }

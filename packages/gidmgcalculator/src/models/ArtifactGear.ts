@@ -1,10 +1,9 @@
-import { applyPercent } from "ron-utils";
+import { applyPercent, CountMap } from "ron-utils";
 
 import type { AllAttributes, ArtifactGearSet, ArtifactType } from "@/types";
 import type { Clonable } from "./interfaces";
 
 import { ARTIFACT_TYPES, CORE_STAT_TYPES } from "@/constants/global";
-import TypeCounter from "@/utils/TypeCounter";
 import { Artifact } from "./Artifact";
 import { ArtifactPieces } from "./ArtifactPieces";
 
@@ -22,8 +21,8 @@ export type ArtifactGearSlot =
 export class ArtifactGear implements Clonable<ArtifactGear> {
   pieces: ArtifactPieces;
   sets: ArtifactGearSet[] = [];
-  attributes: AllAttributes = new TypeCounter();
-  finalAttrs: AllAttributes = new TypeCounter();
+  attributes: AllAttributes = new CountMap();
+  finalAttrs: AllAttributes = new CountMap();
 
   constructor(pieces?: ArtifactPieces | Artifact[]) {
     const gearPieces: Partial<Record<ArtifactType, Artifact>> = {};
@@ -45,8 +44,8 @@ export class ArtifactGear implements Clonable<ArtifactGear> {
 
   private processPieces() {
     const sets: ArtifactGearSet[] = [];
-    const attributes: AllAttributes = new TypeCounter();
-    const counter = new TypeCounter();
+    const attributes: AllAttributes = new CountMap();
+    const counter = new CountMap<number>();
 
     for (const piece of this.pieces.values()) {
       const codeCount = counter.add(piece.code);
