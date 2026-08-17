@@ -25,10 +25,6 @@ export class ArtifactPieces
     }
   }
 
-  list(): Artifact[] {
-    return Array.from(this.values());
-  }
-
   clone(): ArtifactPieces {
     return new ArtifactPieces(this);
   }

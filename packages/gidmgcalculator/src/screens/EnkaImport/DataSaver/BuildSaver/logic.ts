@@ -50,7 +50,7 @@ export const getArtifactSavingStep = (
   atfGear: GenshinUserBuild["atfGear"],
   dbArtifacts: RawArtifact[]
 ): ArtifactSavingStep[] => {
-  const configByType = atfGear.pieces
+  const configByType = atfGear
     .list()
     .reduce<Partial<Record<ArtifactType, ArtifactSavingStep>>>((acc, artifact) => {
       acc[artifact.type] = {

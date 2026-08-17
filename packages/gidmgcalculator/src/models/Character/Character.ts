@@ -73,9 +73,8 @@ export type CharacterCloneOptions = CharacterConstructOptions & {
 @FlatGetters("state", ["level", "NAs", "ES", "EB", "cons", "enhanced", "bareLv", "ascension"])
 export class Character implements TeamMember, Clonable<Character> {
   readonly code: number;
-  readonly state: CharacterState;
-
   readonly isTraveler: boolean;
+  readonly state: CharacterState;
 
   weapon: Weapon;
   atfGear: ArtifactGear;

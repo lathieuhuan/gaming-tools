@@ -73,6 +73,12 @@ export class ArtifactGear implements Clonable<ArtifactGear> {
     this.attributes = attributes;
   }
 
+  /** No order */
+  list(): Artifact[] {
+    return Array.from(this.pieces.values());
+  }
+
+  /** Order: Flower, Plume, Sands, Goblet, Circlet */
   slots<U>(callback: (slot: ArtifactGearSlot) => U): U[];
   slots(): ArtifactGearSlot[];
   slots<U>(callback?: (slot: ArtifactGearSlot) => U): ArtifactGearSlot[] | U[] {
@@ -116,12 +122,12 @@ export class ArtifactGear implements Clonable<ArtifactGear> {
   }
 
   deepClone() {
-    const pieces: Partial<Record<ArtifactType, Artifact>> = {};
+    const pieces = new ArtifactPieces();
 
-    for (const type of ARTIFACT_TYPES) {
-      pieces[type] = this.pieces.get(type)?.clone();
-    }
+    this.pieces.forEach((piece, type) => {
+      pieces.set(type, piece.clone());
+    });
 
-    return new ArtifactGear(new ArtifactPieces(pieces));
+    return new ArtifactGear(pieces);
   }
 }

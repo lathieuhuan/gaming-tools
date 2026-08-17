@@ -70,15 +70,19 @@ export function SetupModals({ setupName, setup }: SetupModalsProps) {
         onClose={closeModal}
       >
         <div className="flex space-x-1 hide-scrollbar">
-          {atfGear.pieces.list().map((piece) => {
+          {atfGear.slots((slot) => {
+            if (!slot.isFilled) {
+              return null;
+            }
+
             return (
               <ArtifactCard
-                key={piece.type}
+                key={slot.type}
                 wrapperCls="shrink-0"
                 className="w-60"
                 withGutter={false}
                 withOwnerLabel
-                artifact={piece}
+                artifact={slot.piece}
               />
             );
           })}
