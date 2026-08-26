@@ -26,7 +26,7 @@ export function TrackerCore({ trackerState }: TrackerCoreProps) {
 
   useLayoutEffect(() => {
     if (trackerState === "open") {
-      const state = calculateSetup(activeSetup, {
+      const state = calculateSetup(activeSetup.clone(), {
         shouldLog: true,
         resonatedElmts,
       });
