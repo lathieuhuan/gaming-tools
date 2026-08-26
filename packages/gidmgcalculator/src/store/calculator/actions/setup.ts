@@ -8,7 +8,7 @@ import { useCalcStore } from "../calculatorStore";
 import { getCopyName, onActiveSetup } from "../utils";
 
 export const updateActiveSetup = (
-  callback: (setup: WritableDraft<CalcSetup>) => boolean | void
+  callback: (setup: WritableDraft<CalcSetup>) => boolean | void,
 ) => {
   useCalcStore.setState(onActiveSetup(callback));
 };
@@ -16,7 +16,7 @@ export const updateActiveSetup = (
 export const updateSetupAfterSave = (
   setupId: number,
   weaponId: number,
-  newPieceIds: Partial<Record<ArtifactType, number>>
+  newPieceIds: Partial<Record<ArtifactType, number>>,
 ) => {
   useCalcStore.setState((state) => {
     const setup = state.setupsById[setupId];
@@ -28,7 +28,7 @@ export const updateSetupAfterSave = (
     const { main } = setup;
     const { pieces } = setup.main.atfGear;
 
-    main.weapon = main.weapon.clone({ key: { ID: weaponId } });
+    main.weapon = main.weapon.clone({ ID: weaponId });
 
     for (const [type, id] of Object_.entries(newPieceIds)) {
       const piece = pieces.get(type);

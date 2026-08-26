@@ -30,8 +30,9 @@ import type {
 
 import { ARTIFACT_TYPES } from "@/constants/global";
 import { createCharacter, createWeapon } from "@/logic/entity.logic";
+import { splitLevel } from "@/logic/level.logic";
 import { isDbSetup } from "@/logic/setup.logic";
-import { Artifact, Ascendable, Weapon } from "@/models";
+import { Artifact, Weapon } from "@/models";
 import IdStore from "@/utils/IdStore";
 
 export type UserdbState = {
@@ -293,8 +294,8 @@ export const userdbSlice = createSlice({
           break;
         case "level":
           state.userWps.sort((a, b) => {
-            const { bareLv: lvA, ascension: ascA } = Ascendable.splitLevel(a.level);
-            const { bareLv: lvB, ascension: ascB } = Ascendable.splitLevel(b.level);
+            const { bareLv: lvA, ascension: ascA } = splitLevel(a.level);
+            const { bareLv: lvB, ascension: ascB } = splitLevel(b.level);
 
             if (lvA !== lvB) {
               return isAsc ? lvA - lvB : lvB - lvA;

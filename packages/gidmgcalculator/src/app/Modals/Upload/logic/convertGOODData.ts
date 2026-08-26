@@ -70,7 +70,8 @@ export function convertGOODData(data: GOODData) {
       continue;
     }
 
-    weapon.relation.set("owner", owner?.code);
+    weapon.owner = owner?.code;
+
     result.weapons.push(weapon.serialize());
 
     if (owner) {

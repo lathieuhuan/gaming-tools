@@ -9,10 +9,10 @@ function isEmpty(value: unknown): boolean {
 
 export class Object_ {
   //
-  static set<TObj, const TPath extends NestedPath<TObj>>(
+  static set<TObj, const TPath extends NestedPath<TObj> = NestedPath<TObj>>(
     object: TObj,
     path: NoInfer<TPath>,
-    value: NoInfer<NestedValue<TObj, TPath>>
+    value: NoInfer<NestedValue<TObj, TPath>>,
   ) {
     if (!path.length || !Object_.isObject(object) || Object_.isEmpty(object)) {
       return object;
@@ -58,17 +58,14 @@ export class Object_ {
 
   static forEach<TObject extends object = object, TKey extends keyof TObject = keyof TObject>(
     obj: TObject,
-    callback: (key: TKey, value: TObject[TKey]) => void
+    callback: (key: TKey, value: TObject[TKey]) => void,
   ) {
     for (const key in obj) {
       callback(key as unknown as TKey, obj[key] as unknown as TObject[TKey]);
     }
   }
 
-  static extract<TObject, TKey extends keyof TObject = keyof TObject>(
-    obj: TObject,
-    keys: TKey[]
-  ) {
+  static extract<TObject, TKey extends keyof TObject = keyof TObject>(obj: TObject, keys: TKey[]) {
     const result = {} as Pick<TObject, TKey>;
 
     for (const key of keys) {
@@ -112,7 +109,7 @@ export class Object_ {
     return object;
   }
 
-   /**
+  /**
    * @caution This utility leads to redundant properties in the `obj`
    * when the actual properties in `sources` is more than its type definition.
    */
@@ -161,26 +158,28 @@ export class Object_ {
   }
 }
 
-type NestedPath<TObj> = TObj extends Array<infer TItem>
-  ? [number] | [number, ...NestedPath<TItem>]
-  : TObj extends Primitive // Block primitive here or it would access to methods of Number, String, etc.
-  ? never
-  : TObj extends Record<infer TKey, unknown>
-  ? [TKey] | [TKey, ...NestedPath<TObj[TKey]>]
-  : never;
+type NestedPath<TObj> =
+  TObj extends Array<infer TItem>
+    ? [number] | [number, ...NestedPath<TItem>]
+    : TObj extends Primitive // Block primitive here or it would access to methods of Number, String, etc.
+      ? never
+      : TObj extends Record<infer TKey, unknown>
+        ? [TKey] | [TKey, ...NestedPath<TObj[TKey]>]
+        : never;
 
 type Primitive = string | number | boolean | null | undefined;
 
-type NestedValue<TObj, TPath> = TObj extends Array<infer TItem>
-  ? TPath extends [number, ...infer TSubPath1]
-    ? TSubPath1 extends []
-      ? TItem
-      : NestedValue<TItem, TSubPath1>
-    : never
-  : TObj extends Primitive
-  ? TObj
-  : TPath extends [infer TKey extends keyof TObj, ...infer TSubPath2]
-  ? TSubPath2 extends []
-    ? TObj[TKey]
-    : NestedValue<TObj[TKey], TSubPath2>
-  : never;
+type NestedValue<TObj, TPath> =
+  TObj extends Array<infer TItem>
+    ? TPath extends [number, ...infer TSubPath1]
+      ? TSubPath1 extends []
+        ? TItem
+        : NestedValue<TItem, TSubPath1>
+      : never
+    : TObj extends Primitive
+      ? TObj
+      : TPath extends [infer TKey extends keyof TObj, ...infer TSubPath2]
+        ? TSubPath2 extends []
+          ? TObj[TKey]
+          : NestedValue<TObj[TKey], TSubPath2>
+        : never;

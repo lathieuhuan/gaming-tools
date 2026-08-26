@@ -1,5 +1,6 @@
 import { Object_ } from "ron-utils";
 
+import { splitLevel } from "@/logic/level.logic";
 import type { CharacterStateData, Level } from "@/types";
 import { Ascendable } from "../Ascendable";
 
@@ -67,7 +68,7 @@ export class CharacterState extends Ascendable implements CharacterStateData {
     });
 
     if (changes.level) {
-      const { bareLv, ascension } = Ascendable.splitLevel(changes.level);
+      const { bareLv, ascension } = splitLevel(changes.level);
 
       Object_.patch<CharacterState>(this, {
         bareLv,

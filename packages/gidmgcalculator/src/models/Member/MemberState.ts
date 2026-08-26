@@ -1,7 +1,8 @@
 import { Object_ } from "ron-utils";
 
-import type { Level } from "@/types";
+import { splitLevel } from "@/logic/level.logic";
 import { Ascendable } from "@/models/Ascendable";
+import { Level } from "@/types";
 
 export type MemberStateData = {
   level: Level;
@@ -78,7 +79,7 @@ export class MemberState extends Ascendable implements MemberStateData {
     });
 
     if (level) {
-      const { bareLv, ascension } = Ascendable.splitLevel(level);
+      const { bareLv, ascension } = splitLevel(level);
 
       Object_.patch<MemberState>(this, {
         bareLv,

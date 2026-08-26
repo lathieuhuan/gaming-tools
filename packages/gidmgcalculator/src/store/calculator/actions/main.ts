@@ -64,15 +64,8 @@ export const updateMainWeapon = (data: Partial<WeaponStateData>) => {
   useCalcStore.setState(
     onActiveSetup((setup) => {
       const { main } = setup;
-      // const oldWeaponCode = main.weapon.code;
-      // const newWeaponCode = data.code;
 
-      main.weapon = main.weapon.clone({ state: data });
-
-      // if (newWeaponCode && newWeaponCode !== oldWeaponCode) {
-      //   main.weapon.data = $AppWeapon.get(newWeaponCode)!;
-      //   setup.wpBuffCtrls = createWeaponBuffCtrls(main.weapon.data, true);
-      // }
+      main.weapon = main.weapon.clone(data);
     }),
   );
 };

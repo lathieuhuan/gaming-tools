@@ -1,12 +1,12 @@
 import Dropdown from "@rc-component/dropdown";
 import { ChevronDownSvg, ClassValue, cn } from "rond";
 
-import { Ascendable } from "@/models";
+import { useControllableState } from "@/hooks/useControllableState";
+import { splitLevel, validCapsOfLevel } from "@/logic/level.logic";
 import { Level } from "@/types";
 import { LevelMenu, LevelMenuProps } from "./LevelMenu";
-import { useControllableState } from "@/hooks/useControllableState";
 
-export type LevelControlProps = Pick<LevelMenuProps, "levelCaps"> & {
+export type LevelControlProps = Pick<LevelMenuProps, "allLevelCaps"> & {
   className?: ClassValue;
   menuCls?: LevelMenuProps["classNames"];
   value?: Level;
@@ -19,7 +19,7 @@ export function LevelControl({
   menuCls,
   value,
   defaultValue = "1/20",
-  levelCaps = [],
+  allLevelCaps = [],
   onChange,
 }: LevelControlProps) {
   const [level, setLevel] = useControllableState({
@@ -28,7 +28,7 @@ export function LevelControl({
     onChange,
   });
 
-  const { bareLv, lvCap } = Ascendable.splitLevel(level);
+  const { bareLv, lvCap } = splitLevel(level);
 
   const handleChange = (values: { level?: number; lvCap?: number }) => {
     const newLv = values.level ?? bareLv;
@@ -38,7 +38,7 @@ export function LevelControl({
   };
 
   const handleLevelChange = (newLevel: number) => {
-    const possibleLvCaps = Ascendable.getPossibleLvCaps(newLevel, levelCaps);
+    const possibleLvCaps = validCapsOfLevel(newLevel, allLevelCaps);
 
     if (possibleLvCaps.includes(lvCap)) {
       handleChange({ level: newLevel });
@@ -64,7 +64,7 @@ export function LevelControl({
           classNames={menuCls}
           level={bareLv}
           levelCap={lvCap}
-          levelCaps={levelCaps}
+          allLevelCaps={allLevelCaps}
           onSelectLevel={handleLevelChange}
           onSelectLevelCap={handleSelectLvCap}
         />

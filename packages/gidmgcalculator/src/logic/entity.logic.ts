@@ -2,6 +2,8 @@ import { Array_, Object_ } from "ron-utils";
 import type { PartiallyRequiredOnly } from "rond";
 
 import type {
+  AbilityBuffCtrl,
+  AbilityDebuffCtrl,
   AppArtifact,
   AppCharacter,
   AppMonster,
@@ -10,18 +12,14 @@ import type {
   ArtifactStateData,
   CharacterStateData,
   EquipmentRelationData,
-  AbilityBuffCtrl,
-  AbilityDebuffCtrl,
-  RawTarget,
   MonsterInputChanges,
   RawArtifact,
   RawCharacter,
+  RawTarget,
   RawTeammate,
   RawWeapon,
   TeammateArtifact,
-  TeammateArtifactBuffCtrl,
   TeammateWeapon,
-  WeaponStateData,
 } from "@/types";
 
 import { ATTACK_ELEMENTS } from "@/constants/global";
@@ -53,7 +51,7 @@ export type CreateArtifactOptions = {
 export function createArtifact(
   raw: PartiallyRequiredOnly<RawArtifact, keyof ArtifactKey>,
   data?: AppArtifact | null,
-  options: CreateArtifactOptions = {}
+  options: CreateArtifactOptions = {},
 ) {
   const state: Partial<ArtifactStateData> = {
     ...raw,
@@ -71,29 +69,17 @@ export function createArtifact(
 
 // ========== WEAPON ==========
 
-export type CreateWeaponOptions = {
-  newState?: Partial<WeaponStateData>;
-  newRelation?: Partial<EquipmentRelationData>;
-};
+export type CreateWeaponOptions = Partial<Pick<RawWeapon, "level" | "refi" | "owner" | "setupIDs">>;
 
 export function createWeapon(
   raw: PartiallyRequiredOnly<RawWeapon, "type">,
   data?: AppWeapon | null,
-  options: CreateWeaponOptions = {}
+  options: CreateWeaponOptions = {},
 ) {
   const { ID = Date.now(), type, code = Weapon.DEFAULT_CODE[type] } = raw;
-  const state: Partial<WeaponStateData> = {
-    ...raw,
-    ...options.newState,
-  };
-  const relation: Partial<EquipmentRelationData> = {
-    ...raw,
-    ...options.newRelation,
-  };
-
   data ??= $AppWeapon.get(code)!;
 
-  return new Weapon({ ID, type, code }, data, { state, relation });
+  return Weapon.create(ID, type, data, { ...raw, ...options });
 }
 
 // ========== ITEMS ==========
@@ -111,7 +97,7 @@ export type CreateCharacterOptions = CharacterConstructOptions & {
 export function createCharacter(
   raw: PartiallyRequiredOnly<RawCharacter, "code">,
   data?: AppCharacter | null,
-  options: CreateCharacterOptions = {}
+  options: CreateCharacterOptions = {},
 ) {
   data ??= $AppCharacter.get(raw.code);
 
@@ -134,7 +120,7 @@ type CreateTeammateOptions = {
 export function createTeammate(
   raw: PartiallyRequiredOnly<RawTeammate, "code">,
   data?: AppCharacter | null,
-  options: CreateTeammateOptions = {}
+  options: CreateTeammateOptions = {},
 ) {
   data ??= $AppCharacter.get(raw.code);
 
@@ -216,7 +202,7 @@ export const createTargetBasic = (params: CreateTargetParams): RawTarget => {
 
 export const createTarget = (
   params: CreateTargetParams,
-  data: AppMonster = params.code === 0 ? Target.DEFAULT_MONSTER : $AppData.getMonster(params)!
+  data: AppMonster = params.code === 0 ? Target.DEFAULT_MONSTER : $AppData.getMonster(params)!,
 ) => {
   const basic = createTargetBasic(params);
 
@@ -300,6 +286,6 @@ export const createTarget = (
       ...basic,
       resistances,
     },
-    data
+    data,
   );
 };

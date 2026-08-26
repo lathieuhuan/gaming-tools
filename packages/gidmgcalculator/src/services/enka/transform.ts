@@ -14,7 +14,7 @@ import IdStore from "@/utils/IdStore";
 
 export function transformGenshinUserResponse(
   response: GenshinUserResponse,
-  idStore = new IdStore()
+  idStore = new IdStore(),
 ): GenshinUser {
   const builds: GenshinUserBuild[] = [];
 
@@ -29,7 +29,7 @@ export function transformGenshinUserResponse(
       convertGOODWeapon(build.weapon, idStore.gen()) ||
       createWeapon({ ID: idStore.gen(), type: character.data.weaponType });
 
-    weapon.relation.set("owner", character.data.code);
+    weapon.owner = character.data.code;
 
     const artifacts = ARTIFACT_TYPES.map<Artifact | undefined>((type) => {
       const GOODArtifact = build.artifacts.find((artifact) => artifact?.slotKey === type);
