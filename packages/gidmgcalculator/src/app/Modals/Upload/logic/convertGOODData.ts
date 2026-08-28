@@ -50,7 +50,7 @@ export function convertGOODData(data: GOODData) {
       continue;
     }
 
-    artifact.relation.set("owner", owner?.code);
+    artifact.owner = owner?.code;
     result.artifacts.push(artifact.serialize());
 
     if (owner) {

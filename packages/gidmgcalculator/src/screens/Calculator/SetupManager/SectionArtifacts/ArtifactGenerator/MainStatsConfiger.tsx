@@ -5,7 +5,7 @@ import { Button, CheckboxGroup, CheckboxGroupProps, clsx, CollapseSpace, TrashCa
 import type { ArtifactType, AttributeStat } from "@/types";
 
 import { useTranslation } from "@/hooks";
-import { ArtifactState } from "@/models";
+import { Artifact } from "@/models";
 import { useGeneratorStore } from "./store";
 
 type ConfigurableAtfTypes = "sands" | "goblet" | "circlet";
@@ -17,7 +17,7 @@ export function MainStatsConfiger() {
   const mainStatTypes = useGeneratorStore((state) => state.mainStatTypes);
 
   const getOptions = (type: ArtifactType) => {
-    return ArtifactState.allMainStatTypesOf(type).map((statType) => {
+    return Artifact.allMainStatTypesOf(type).map((statType) => {
       return { value: statType };
     });
   };
@@ -35,7 +35,7 @@ export function MainStatsConfiger() {
         <button
           className={clsx(
             "px-2 h-6 flex-center rounded-full text-sm font-medium border border-dark-line",
-            props.checked ? "bg-light-4 text-black" : ""
+            props.checked ? "bg-light-4 text-black" : "",
           )}
           onClick={props.onClick}
         >
@@ -80,7 +80,7 @@ export function MainStatsConfiger() {
                   "rounded-sm bg-gradient-to-r to-transparent grow flex items-center glow-on-hover",
                   active
                     ? "text-black font-medium from-primary-2 via-primary-2"
-                    : "text-light-1 from-dark-2 via-dark-2"
+                    : "text-light-1 from-dark-2 via-dark-2",
                 )}
               >
                 <button

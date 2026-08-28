@@ -8,4 +8,3 @@ export * from "./TargetCalc";
 export * from "./Team";
 export * from "./Teammate";
 export * from "./Weapon";
-

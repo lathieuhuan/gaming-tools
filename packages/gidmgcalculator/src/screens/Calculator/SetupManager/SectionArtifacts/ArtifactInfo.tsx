@@ -29,7 +29,7 @@ export function ArtifactInfo({ artifact, onRemove, onRequestChange }: ArtifactIn
 
   const { rarity = 5, mainStatType } = artifact;
 
-  const mainStatOptions = artifact.state.possibleMainStatTypes.map((type) => ({
+  const mainStatOptions = Artifact.allMainStatTypesOf(artifact.type).map((type) => ({
     label: t(type),
     value: type,
   }));
@@ -65,9 +65,7 @@ export function ArtifactInfo({ artifact, onRemove, onRequestChange }: ArtifactIn
               arrowAt="start"
               options={mainStatOptions}
               value={mainStatType}
-              onChange={(mainStatType) =>
-                updateArtifactPiece(artifact.type, { mainStatType })
-              }
+              onChange={(mainStatType) => updateArtifactPiece(artifact.type, { mainStatType })}
             />
           )}
           <p className={`pl-6 text-xlp leading-7 text-rarity-${rarity} font-bold`}>

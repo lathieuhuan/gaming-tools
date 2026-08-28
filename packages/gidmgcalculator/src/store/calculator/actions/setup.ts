@@ -37,7 +37,7 @@ export const updateSetupAfterSave = (
         continue;
       }
 
-      pieces.set(type, piece?.clone({ key: { ID: id } }));
+      pieces.set(type, piece?.clone({ ID: id }));
     }
   });
 };

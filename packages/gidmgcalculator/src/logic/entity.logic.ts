@@ -8,10 +8,7 @@ import type {
   AppCharacter,
   AppMonster,
   AppWeapon,
-  ArtifactKey,
-  ArtifactStateData,
   CharacterStateData,
-  EquipmentRelationData,
   MonsterInputChanges,
   RawArtifact,
   RawCharacter,
@@ -43,28 +40,25 @@ import {
 
 // ========== ARTIFACT ==========
 
-export type CreateArtifactOptions = {
-  newState?: Partial<ArtifactStateData>;
-  newRelation?: Partial<EquipmentRelationData>;
-};
+export type CreateArtifactOptions = Partial<
+  Pick<
+    RawArtifact,
+    "type" | "rarity" | "level" | "mainStatType" | "subStats" | "owner" | "setupIDs"
+  >
+>;
 
 export function createArtifact(
-  raw: PartiallyRequiredOnly<RawArtifact, keyof ArtifactKey>,
+  raw: PartiallyRequiredOnly<RawArtifact, "code">,
   data?: AppArtifact | null,
   options: CreateArtifactOptions = {},
 ) {
-  const state: Partial<ArtifactStateData> = {
-    ...raw,
-    ...options.newState,
-  };
-  const relation: Partial<EquipmentRelationData> = {
-    ...raw,
-    ...options.newRelation,
-  };
+  const { ID = Date.now(), code } = raw;
 
-  data ??= $AppArtifact.getSet(raw.code)!;
+  if (data == null || data.code !== code) {
+    data = $AppArtifact.getSet(code)!;
+  }
 
-  return new Artifact(raw, data, { state, relation });
+  return Artifact.create(ID, data, { ...raw, ...options });
 }
 
 // ========== WEAPON ==========
@@ -77,7 +71,10 @@ export function createWeapon(
   options: CreateWeaponOptions = {},
 ) {
   const { ID = Date.now(), type, code = Weapon.DEFAULT_CODE[type] } = raw;
-  data ??= $AppWeapon.get(code)!;
+
+  if (data == null || data.code !== code) {
+    data = $AppWeapon.get(code)!;
+  }
 
   return Weapon.create(ID, type, data, { ...raw, ...options });
 }

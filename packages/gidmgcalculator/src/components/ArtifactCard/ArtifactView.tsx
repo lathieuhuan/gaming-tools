@@ -35,7 +35,7 @@ export function ArtifactView<T extends Artifact>({
 
   const { name, beta } = artifact.data;
   const { rarity = 5, mainStatType } = artifact;
-  const mainStatTypeOptions = artifact.state.possibleMainStatTypes.map((type) => ({
+  const mainStatTypeOptions = Artifact.allMainStatTypesOf(artifact.type).map((type) => ({
     label: t(type),
     value: type,
   }));

@@ -12,7 +12,7 @@ import type {
 
 import { createTarget } from "@/logic/entity.logic";
 import { createWeaponBuffCtrls } from "@/logic/modifier.logic";
-import { Artifact, ArtifactGear, Team, Weapon } from "@/models";
+import { Artifact, ArtifactCloneOptions, ArtifactGear, Team, Weapon } from "@/models";
 import { useSettingsStore } from "@Store/settings";
 import { useCalcStore } from "../calculatorStore";
 import { selectSetup } from "../selectors";
@@ -79,15 +79,18 @@ export const setArtifactPiece = (artifact: Artifact, shouldKeepStats = false) =>
     onActiveSetup(() => {
       const pieces = setup.main.atfGear.pieces.clone();
       const oldPiece = pieces.get(artifact.type);
-      const newState =
+      const cloneOptions: ArtifactCloneOptions =
         shouldKeepStats && oldPiece
           ? {
-              ...oldPiece?.state,
+              type: oldPiece.type,
               rarity: artifact.rarity,
+              level: oldPiece.level,
+              mainStatType: oldPiece.mainStatType,
+              subStats: oldPiece.subStats,
             }
-          : undefined;
+          : {};
 
-      pieces.set(artifact.type, artifact.clone({ state: newState }));
+      pieces.set(artifact.type, artifact.clone(cloneOptions));
 
       setup.setArtifactGear(new ArtifactGear(pieces));
     }),
@@ -113,7 +116,7 @@ export const updateArtifactPiece = (type: ArtifactType, newState: Partial<Artifa
   useCalcStore.setState(
     onActiveSetup(() => {
       const pieces = setup.main.atfGear.pieces.clone();
-      const piece = pieces.get(type)?.clone({ state: newState });
+      const piece = pieces.get(type)?.clone(newState);
 
       if (!piece) {
         return false;
@@ -140,7 +143,7 @@ export const updateArtifactPieceSubStat = (
         return false;
       }
 
-      piece.state.updateSubStat(index, data);
+      piece.updateSubStat(index, data);
       setup.main.atfGear = new ArtifactGear(pieces.set(type, piece));
     }),
   );

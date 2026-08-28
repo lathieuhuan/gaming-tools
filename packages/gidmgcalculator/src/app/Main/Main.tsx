@@ -3,7 +3,7 @@ import { useScreenWatcher } from "rond";
 
 import { Outlet, useRouter } from "@/lib/router";
 import { genAccountTravelerKey } from "@/logic/genAccountTravelerKey";
-import { ArtifactState, CharacterState, Teammate, Weapon } from "@/models";
+import { Artifact, CharacterState, Teammate, Weapon } from "@/models";
 
 import { CalculatorLarge, CalculatorSmall } from "@/screens/Calculator";
 import { $AppCharacter } from "@/services";
@@ -19,7 +19,7 @@ export function Main() {
   const isAtRoot = router.isRouteActive("/");
 
   const updateEntityConfigs = (settings: AppSettingsState) => {
-    ArtifactState.configure({
+    Artifact.configure({
       defaultLevel: settings.artLevel,
     });
     Weapon.configure({
