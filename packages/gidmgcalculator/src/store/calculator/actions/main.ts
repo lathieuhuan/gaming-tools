@@ -37,8 +37,7 @@ export const updateMain = (data: Partial<RawCharacter>, setupIds?: number[]) => 
       const main = setup.main;
       const prevEnhanced = main.enhanced;
 
-      main.state.update(data);
-      setup.main = main.clone();
+      setup.main = main.clone(data);
 
       if (data.enhanced !== undefined && data.enhanced !== prevEnhanced) {
         setup.team = new Team([setup.main, ...setup.teammates]);

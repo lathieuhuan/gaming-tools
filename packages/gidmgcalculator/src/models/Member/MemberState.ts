@@ -1,7 +1,6 @@
 import { Object_ } from "ron-utils";
 
 import { splitLevel } from "@/logic/level.logic";
-import { Ascendable } from "@/models/Ascendable";
 import { Level } from "@/types";
 
 export type MemberStateData = {
@@ -22,13 +21,15 @@ type MemberStateConfig = {
   defaultEB?: number;
 };
 
-export class MemberState extends Ascendable implements MemberStateData {
+export class MemberState implements MemberStateData {
   readonly level: Level;
   readonly enhanced: boolean;
   readonly cons: number;
   readonly NAs: number;
   readonly ES: number;
   readonly EB: number;
+  readonly bareLv: number;
+  readonly ascension: number;
 
   static #DEFAULT_LEVEL: Level = "1/20";
   static #DEFAULT_ENHANCED = false;
@@ -56,7 +57,7 @@ export class MemberState extends Ascendable implements MemberStateData {
       EB = MemberState.#DEFAULT_EB,
     } = init;
 
-    super(level);
+    const { bareLv, ascension } = splitLevel(level);
 
     this.level = level;
     this.enhanced = enhanced;
@@ -64,6 +65,8 @@ export class MemberState extends Ascendable implements MemberStateData {
     this.NAs = NAs;
     this.ES = ES;
     this.EB = EB;
+    this.bareLv = bareLv;
+    this.ascension = ascension;
   }
 
   update(changes: Partial<MemberStateData>) {

@@ -23,9 +23,9 @@ import type {
 import type { EffectToParseDesc } from "../AbstractEffectValueCalc";
 import type { Clonable } from "../interfaces";
 
-import { FlatGetters } from "@/decorators/FlatGetters.decorator";
 import { isPassedComparison } from "../utils/isPassedComparison";
 
+import { splitLevel } from "@/logic/level.logic";
 import { ArtifactGear } from "../ArtifactGear";
 import { Team } from "../Team";
 import { isValidInput } from "../utils/isValidInput";
@@ -33,8 +33,16 @@ import { Weapon } from "../Weapon";
 import { AllAttributesControl } from "./AllAttributesControl";
 import { AttackBonusControl } from "./AttackBonusControl";
 import { BonusCalc } from "./BonusCalc";
-import { CharacterState } from "./CharacterState";
 import { PenaltyCalc } from "./PenaltyCalc";
+
+type CharacterStateOptions = {
+  defaultLevel?: Level;
+  defaultNAs?: number;
+  defaultES?: number;
+  defaultEB?: number;
+  defaultCons?: number;
+  defaultEnhanced?: boolean;
+};
 
 type BonusMonoRecord = {
   trackId: string;
@@ -56,8 +64,7 @@ export type ReceivedAttackBonus = AttackBonus & {
   effectSrc: BonusSpec;
 };
 
-export type CharacterConstructOptions = {
-  state?: Partial<CharacterStateData>;
+export type CharacterCreateOptions = Partial<CharacterStateData> & {
   atfGear?: ArtifactGear;
   levelBonuses?: Map<string, LevelBonus>;
   allAttrsCtrl?: AllAttributesControl;
@@ -65,63 +72,36 @@ export type CharacterConstructOptions = {
   team?: Team;
 };
 
-export type CharacterCloneOptions = CharacterConstructOptions & {
+export type CharacterCloneOptions = CharacterCreateOptions & {
   weapon?: Weapon;
 };
 
-@FlatGetters("state", ["level", "NAs", "ES", "EB", "cons", "enhanced", "bareLv", "ascension"])
 export class Character implements TeamMember, Clonable<Character> {
-  readonly code: number;
   readonly isTraveler: boolean;
-  readonly state: CharacterState;
-
-  weapon: Weapon;
-  atfGear: ArtifactGear;
-
-  levelBonuses: Map<string, LevelBonus>;
-  allAttrsCtrl: AllAttributesControl;
-  attkBonusCtrl: AttackBonusControl;
-
-  team: Team;
-
-  declare readonly level: Level;
-  declare readonly NAs: number;
-  declare readonly ES: number;
-  declare readonly EB: number;
-  declare readonly cons: number;
-  declare readonly enhanced: boolean;
-  declare readonly bareLv: number;
-  declare readonly ascension: number;
 
   get baseRxnDamage() {
-    return BASE_REACTION_DAMAGE[this.state.bareLv] ?? 0;
+    return BASE_REACTION_DAMAGE[this.bareLv] ?? 0;
   }
 
-  constructor(
-    code: number,
-    public data: AppCharacter,
-    weapon: Weapon,
-    options: CharacterConstructOptions,
+  private constructor(
+    public readonly code: number,
+    public readonly level: Level,
+    public readonly NAs: number,
+    public readonly ES: number,
+    public readonly EB: number,
+    public readonly cons: number,
+    public readonly enhanced: boolean,
+    public readonly bareLv: number,
+    public readonly ascension: number,
+    public readonly data: AppCharacter,
+    public weapon: Weapon,
+    public atfGear: ArtifactGear,
+    public levelBonuses: Map<string, LevelBonus>,
+    public allAttrsCtrl: AllAttributesControl,
+    public attkBonusCtrl: AttackBonusControl,
+    public team: Team,
   ) {
-    const {
-      atfGear = ArtifactGear.create(),
-      levelBonuses = new Map(),
-      allAttrsCtrl = new AllAttributesControl(),
-      attkBonusCtrl = new AttackBonusControl(),
-      team = new Team(),
-    } = options;
-
-    this.code = code;
-    this.state = new CharacterState(options.state);
     this.isTraveler = data.name.slice(-8) === "Traveler";
-
-    this.weapon = weapon;
-    this.atfGear = atfGear;
-
-    this.levelBonuses = levelBonuses;
-    this.allAttrsCtrl = allAttrsCtrl;
-    this.attkBonusCtrl = attkBonusCtrl;
-    this.team = team;
   }
 
   joinTeam(team: Team) {
@@ -342,12 +322,6 @@ export class Character implements TeamMember, Clonable<Character> {
     return false;
   }
 
-  // receiveTalentLevelBonus(bonus: ReceivedTalentBonus) {
-  //   if (this.canReceiveEffect(bonus.effectSrc)) {
-  //     const {  } = bonus
-  //   }
-  // }
-
   //
 
   serialize(): RawCharacter {
@@ -357,7 +331,12 @@ export class Character implements TeamMember, Clonable<Character> {
   clone(options: CharacterCloneOptions = {}) {
     const {
       weapon = this.weapon,
-      state = this.state,
+      level = this.level,
+      NAs = this.NAs,
+      ES = this.ES,
+      EB = this.EB,
+      cons = this.cons,
+      enhanced = this.enhanced,
       atfGear = this.atfGear,
       allAttrsCtrl = this.allAttrsCtrl,
       attkBonusCtrl = this.attkBonusCtrl,
@@ -365,28 +344,110 @@ export class Character implements TeamMember, Clonable<Character> {
       levelBonuses = this.levelBonuses,
     } = options;
 
-    return new Character(this.code, this.data, weapon, {
-      state,
+    let { bareLv = this.bareLv, ascension = this.ascension } = this;
+
+    if (level !== this.level) {
+      const derived = splitLevel(level);
+
+      bareLv = derived.bareLv;
+      ascension = derived.ascension;
+    }
+
+    return new Character(
+      this.code,
+      level,
+      NAs,
+      ES,
+      EB,
+      cons,
+      enhanced,
+      bareLv,
+      ascension,
+      this.data,
+      weapon,
       atfGear,
+      levelBonuses,
       allAttrsCtrl,
       attkBonusCtrl,
       team,
-      levelBonuses,
-    });
+    );
   }
 
   deepClone() {
-    return new Character(this.code, this.data, this.weapon.clone(), {
-      state: this.state,
-      atfGear: this.atfGear.deepClone(),
-      levelBonuses: Object_.clone(this.levelBonuses),
-      allAttrsCtrl: this.allAttrsCtrl.clone(),
-      attkBonusCtrl: this.attkBonusCtrl.clone(),
-      team: this.team,
-    });
+    return new Character(
+      this.code,
+      this.level,
+      this.NAs,
+      this.ES,
+      this.EB,
+      this.cons,
+      this.enhanced,
+      this.bareLv,
+      this.ascension,
+      this.data,
+      this.weapon.clone(),
+      this.atfGear.deepClone(),
+      Object_.clone(this.levelBonuses), // TODO fix
+      this.allAttrsCtrl.clone(),
+      this.attkBonusCtrl.clone(),
+      this.team,
+    );
   }
 
   // ===== STATIC =====
+
+  static #DEFAULT_LEVEL: Level = "1/20";
+  static #DEFAULT_NAs = 0;
+  static #DEFAULT_ES = 0;
+  static #DEFAULT_EB = 0;
+  static #DEFAULT_CONS = 0;
+  static #DEFAULT_ENHANCED = false;
+
+  static configure(config: CharacterStateOptions) {
+    this.#DEFAULT_LEVEL = config.defaultLevel ?? this.#DEFAULT_LEVEL;
+    this.#DEFAULT_NAs = config.defaultNAs ?? this.#DEFAULT_NAs;
+    this.#DEFAULT_ES = config.defaultES ?? this.#DEFAULT_ES;
+    this.#DEFAULT_EB = config.defaultEB ?? this.#DEFAULT_EB;
+    this.#DEFAULT_CONS = config.defaultCons ?? this.#DEFAULT_CONS;
+    this.#DEFAULT_ENHANCED = config.defaultEnhanced ?? this.#DEFAULT_ENHANCED;
+  }
+
+  static create(data: AppCharacter, weapon: Weapon, options: CharacterCreateOptions) {
+    const {
+      level = this.#DEFAULT_LEVEL,
+      NAs = this.#DEFAULT_NAs,
+      ES = this.#DEFAULT_ES,
+      EB = this.#DEFAULT_EB,
+      cons = this.#DEFAULT_CONS,
+      enhanced = this.#DEFAULT_ENHANCED,
+      atfGear = ArtifactGear.create(),
+      levelBonuses = new Map<string, LevelBonus>(),
+      allAttrsCtrl = new AllAttributesControl(),
+      attkBonusCtrl = new AttackBonusControl(),
+      team = new Team(),
+    } = options;
+
+    const { bareLv, ascension } = splitLevel(level);
+
+    return new Character(
+      data.code,
+      level,
+      NAs,
+      ES,
+      EB,
+      cons,
+      enhanced,
+      bareLv,
+      ascension,
+      data,
+      weapon,
+      atfGear,
+      levelBonuses,
+      allAttrsCtrl,
+      attkBonusCtrl,
+      team,
+    );
+  }
 
   static getTalentMult(scale: number, talentLv: number) {
     return scale ? (TALENT_LV_MULTIPLIERS[scale]?.[talentLv] ?? 0) : 1;

@@ -38,7 +38,7 @@ export const initSession = (payload: InitSessionPayload) => {
 };
 
 export const updateCalculator = (
-  data: Partial<Pick<CalculatorState, "activeId" | "standardId" | "comparedIds">>
+  data: Partial<Pick<CalculatorState, "activeId" | "standardId" | "comparedIds">>,
 ) => {
   useCalcStore.setState((state) => {
     state.activeId = data.activeId ?? state.activeId;
@@ -78,7 +78,7 @@ export const importSetup = (
   params: CalcSetupConstructData,
   /** ID in manageInfo is prioritized over params.ID */
   manageInfo: Partial<SetupManager> = {},
-  options: ImportSetupOptions = {}
+  options: ImportSetupOptions = {},
 ) => {
   const { overwriteChar = false, overwriteTarget = false } = options;
   const { type = "original", name = "New setup" } = manageInfo;
@@ -125,9 +125,9 @@ export function initSessionWithCharacter({
   data,
   userDb,
 }: {
-  character?: DbCharacter,
-  data: AppCharacter,
-  userDb: UserdbState
+  character?: DbCharacter;
+  data: AppCharacter;
+  userDb: UserdbState;
 }) {
   const { weaponID, artifactIDs } = character ?? {};
   const { userWps, userArts } = userDb;
@@ -142,7 +142,7 @@ export function initSessionWithCharacter({
   const atfGear = parseDbArtifacts(artifactIDs, userArts);
 
   const main = createCharacter({ code: data.code }, data, {
-    state: character,
+    ...character,
     weapon,
     atfGear,
   });

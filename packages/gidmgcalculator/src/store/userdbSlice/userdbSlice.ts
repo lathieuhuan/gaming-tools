@@ -84,7 +84,7 @@ export const userdbSlice = createSlice({
     addDbCharacter: (state, action: AddDbCharacterAction) => {
       const { code, weaponID, artifactIDs = [], data, ...characterState } = action.payload;
 
-      const character = createCharacter({ code }, data, { state: characterState });
+      const character = createCharacter({ code }, data, characterState);
 
       const foundIndex = state.userChars.findIndex((char) => char.code === code);
       const dbCharacter: DbCharacter = {

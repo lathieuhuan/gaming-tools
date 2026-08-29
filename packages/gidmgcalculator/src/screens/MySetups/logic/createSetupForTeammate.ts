@@ -59,7 +59,7 @@ export function createSetupForTeammate(
   }
 
   const newMain = createCharacter(teammate, teammate.data, {
-    state: Array_.findByCode(userChars, teammate.code),
+    ...Array_.findByCode(userChars, teammate.code),
     weapon: createWeapon(weaponBasic),
     atfGear: ArtifactGear.create(artifacts),
   });

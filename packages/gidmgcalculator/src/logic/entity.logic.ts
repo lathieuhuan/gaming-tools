@@ -8,7 +8,6 @@ import type {
   AppCharacter,
   AppMonster,
   AppWeapon,
-  CharacterStateData,
   MonsterInputChanges,
   RawArtifact,
   RawCharacter,
@@ -23,7 +22,7 @@ import { ATTACK_ELEMENTS } from "@/constants/global";
 import {
   Artifact,
   Character,
-  CharacterConstructOptions,
+  CharacterCreateOptions,
   Target,
   Team,
   Teammate,
@@ -87,7 +86,7 @@ export function isWeapon(item: RawWeapon | RawArtifact): item is RawWeapon {
 
 // ========== CHARACTER ==========
 
-export type CreateCharacterOptions = CharacterConstructOptions & {
+export type CreateCharacterOptions = CharacterCreateOptions & {
   weapon?: Weapon;
 };
 
@@ -96,18 +95,15 @@ export function createCharacter(
   data?: AppCharacter | null,
   options: CreateCharacterOptions = {},
 ) {
-  data ??= $AppCharacter.get(raw.code);
+  const { code } = raw;
+
+  if (data == null || data.code !== code) {
+    data = $AppCharacter.get(code)!;
+  }
 
   const { weapon = createWeapon({ type: data.weaponType }) } = options;
-  const state: Partial<CharacterStateData> = {
-    ...raw,
-    ...options.state,
-  };
 
-  return new Character(raw.code, data, weapon, {
-    ...options,
-    state,
-  });
+  return Character.create(data, weapon, { ...raw, ...options });
 }
 
 type CreateTeammateOptions = {

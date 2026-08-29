@@ -1,8 +1,7 @@
 export * from "./Artifact";
 export * from "./ArtifactGear";
-export * from "./Ascendable";
 export * from "./CalcSetup";
-export { Character, CharacterState, type CharacterConstructOptions } from "./Character";
+export { Character, type CharacterCreateOptions } from "./Character";
 export * from "./Target";
 export * from "./TargetCalc";
 export * from "./Team";
