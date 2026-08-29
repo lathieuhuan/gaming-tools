@@ -7,9 +7,9 @@ import type {
   AttributeStat,
   AttributeTargetPath,
   BareBonus,
+  BonusCoreSpec,
   BonusPerformTools,
   BonusSpec,
-  BonusCoreSpec,
   BuffSpec,
   ReactionType,
   TeamMember,
@@ -442,7 +442,7 @@ export function applyBuffs(
 
   if (reaction === "spread" || infuseReaction === "spread") {
     attkBonusCtrl.add({
-      value: main.getQuickenBuffDamage("spread"),
+      value: main.quickenDamageBonus("spread"),
       toType: "dendro",
       toKey: "flat",
       label: QUICKEN_BUFF_LABEL.spread,
@@ -450,7 +450,7 @@ export function applyBuffs(
   }
   if (reaction === "aggravate" || infuseReaction === "aggravate") {
     attkBonusCtrl.add({
-      value: main.getQuickenBuffDamage("aggravate"),
+      value: main.quickenDamageBonus("aggravate"),
       toType: "electro",
       toKey: "flat",
       label: QUICKEN_BUFF_LABEL.aggravate,

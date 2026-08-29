@@ -63,7 +63,7 @@ export function makeAttackItemCalc(
 
     if (!noU && attElmt !== "phys" && (reaction === "melt" || reaction === "vaporize")) {
       // deal elemental DMG and want amplifying reaction
-      rxnMult = performer.getAmplifyingMult(reaction, attElmt);
+      rxnMult = performer.amplifyingReactionMult(reaction, attElmt);
     }
 
     // DEFENSE MULTIPLIER
@@ -81,8 +81,7 @@ export function makeAttackItemCalc(
     const averageMult = 1 + cRate_ * cDmg_;
 
     const values = bases.map<CalcResultItemValue>((value) => {
-      const base =
-        (value * baseMult + flat) * bonusMult * elvMult * rxnMult * defMult * resMult;
+      const base = (value * baseMult + flat) * bonusMult * elvMult * rxnMult * defMult * resMult;
 
       return {
         base,

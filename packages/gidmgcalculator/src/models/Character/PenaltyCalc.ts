@@ -5,7 +5,7 @@ import { Character } from "./Character";
 
 export class PenaltyCalc extends AbstractPenaltyCalc<Character> {
   protected getTalentLevel(config: TalentLevelIncrementBaseSpec): number {
-    return this.performer.getFinalTalentLv(config.talent);
+    return this.performer.finalTalentLv(config.talent);
   }
 
   protected getInputIndex(stack: InputStackSpec) {

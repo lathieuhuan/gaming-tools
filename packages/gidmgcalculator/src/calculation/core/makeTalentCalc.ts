@@ -36,7 +36,7 @@ export function makeTalentCalc(
 ) {
   const { attkBonusCtrl } = performer;
   const { vision, weaponType } = performer.data;
-  const level = talentType ? performer.getFinalTalentLv(talentType) : 0;
+  const level = talentType ? performer.finalTalentLv(talentType) : 0;
 
   function parseFactor(factor: CalcItemFactor) {
     const {

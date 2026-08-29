@@ -59,7 +59,7 @@ export class Member implements Clonable<Member>, Serializable<RawCharacter> {
   declare readonly bareLv: number;
   declare readonly ascension: number;
 
-  get baseRxnDamage() {
+  get baseReactionDMG() {
     return BASE_REACTION_DAMAGE[this.bareLv] ?? 0;
   }
 
@@ -103,9 +103,9 @@ export class Member implements Clonable<Member>, Serializable<RawCharacter> {
 
     switch (reaction) {
       case "aggravate":
-        return Math.round(this.baseRxnDamage * 1.15 * (1 + pctBonus / 100));
+        return Math.round(this.baseReactionDMG * 1.15 * (1 + pctBonus / 100));
       case "spread":
-        return Math.round(this.baseRxnDamage * 1.25 * (1 + pctBonus / 100));
+        return Math.round(this.baseReactionDMG * 1.25 * (1 + pctBonus / 100));
       default:
         return 1;
     }

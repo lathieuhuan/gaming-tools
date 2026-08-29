@@ -24,7 +24,7 @@ export class BonusCalc extends AbstractBonusCalc<Character> {
   }
 
   protected getTalentLevel(config: TalentLevelIncrementBaseSpec): number {
-    return this.performer.getFinalTalentLv(config.talent);
+    return this.performer.finalTalentLv(config.talent);
   }
 
   protected getInputIndex(stack: InputStackSpec) {

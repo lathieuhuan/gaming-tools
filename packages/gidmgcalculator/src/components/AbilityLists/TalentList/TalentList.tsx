@@ -51,7 +51,7 @@ export function TalentList({
           const talent = activeTalents[talentType];
           if (!talent) return null;
 
-          const extraLevel = character.getTotalXtraTalentLv(talentType);
+          const extraLevel = character.totalExtraTalentLv(talentType);
           const imageSrc =
             talentType === "NAs" ? NORMAL_ATTACK_ICONS[`${weaponType}_${vision}`] : talent.image;
 

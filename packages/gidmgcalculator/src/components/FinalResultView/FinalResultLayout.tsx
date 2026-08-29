@@ -41,7 +41,7 @@ export function FinalResultLayout({
     return getTableKeys(
       character.data.calcList,
       showWeaponCalc ? character.weapon.data.calcItems : undefined,
-      extraKeys
+      extraKeys,
     );
   }, [character.code, character.weapon.code, showWeaponCalc, extraKeys]);
 
@@ -106,9 +106,7 @@ export function FinalResultLayout({
           }
           default: {
             const isLvling = sectionIndex === lvlingSectionI;
-            const talentLevel = showTalentLv
-              ? character.getFinalTalentLv(tableKey.main)
-              : undefined;
+            const talentLevel = showTalentLv ? character.finalTalentLv(tableKey.main) : undefined;
 
             return (
               <TalentSection

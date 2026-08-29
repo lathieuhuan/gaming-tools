@@ -79,7 +79,7 @@ export type CharacterCloneOptions = CharacterCreateOptions & {
 export class Character implements TeamMember, Clonable<Character> {
   readonly isTraveler: boolean;
 
-  get baseRxnDamage() {
+  get baseReactionDMG() {
     return BASE_REACTION_DAMAGE[this.bareLv] ?? 0;
   }
 
@@ -110,7 +110,7 @@ export class Character implements TeamMember, Clonable<Character> {
 
   // ===== GETTERS =====
 
-  getTotalXtraTalentLv(talentType: LevelableTalentType): number {
+  totalExtraTalentLv(talentType: LevelableTalentType): number {
     const requiredConsLv = this.data.talentLvBonus?.[talentType];
     const extraLvByCons = requiredConsLv !== undefined && this.cons >= requiredConsLv ? 3 : 0;
     let totalLvBonus = 0;
@@ -125,24 +125,24 @@ export class Character implements TeamMember, Clonable<Character> {
     return extraLvByCons + totalLvBonus + this.team.extraTalentLv.get(talentType);
   }
 
-  getFinalTalentLv(talent: LevelableTalentType) {
-    return this[talent] + this.getTotalXtraTalentLv(talent);
+  finalTalentLv(talent: LevelableTalentType) {
+    return this[talent] + this.totalExtraTalentLv(talent);
   }
 
-  getQuickenBuffDamage(reaction: QuickenReaction) {
+  quickenDamageBonus(reaction: QuickenReaction) {
     const pctBonus = this.attkBonusCtrl.get("pct_", [reaction]);
 
     switch (reaction) {
       case "aggravate":
-        return Math.round(this.baseRxnDamage * 1.15 * (1 + pctBonus / 100));
+        return Math.round(this.baseReactionDMG * 1.15 * (1 + pctBonus / 100));
       case "spread":
-        return Math.round(this.baseRxnDamage * 1.25 * (1 + pctBonus / 100));
+        return Math.round(this.baseReactionDMG * 1.25 * (1 + pctBonus / 100));
       default:
-        return 1;
+        return 0;
     }
   }
 
-  getAmplifyingMult(reaction: AmplifyingReaction, attElmt: AttackElement) {
+  amplifyingReactionMult(reaction: AmplifyingReaction, attElmt: AttackElement) {
     const pctBonus = this.attkBonusCtrl.get("pct_", [reaction]);
 
     switch (reaction) {
@@ -450,7 +450,7 @@ export class Character implements TeamMember, Clonable<Character> {
   }
 
   static getTalentMult(scale: number, talentLv: number) {
-    return scale ? (TALENT_LV_MULTIPLIERS[scale]?.[talentLv] ?? 0) : 1;
+    return scale === 0 ? 1 : (TALENT_LV_MULTIPLIERS[scale]?.[talentLv] ?? 0);
   }
 
   static serialize(character: RawCharacter): RawCharacter {

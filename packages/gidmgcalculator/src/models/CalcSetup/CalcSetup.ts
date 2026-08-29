@@ -1,6 +1,6 @@
 import { Array_ } from "ron-utils";
 
-import type { AppCharacter, TeammateData, TalentCalcItem, TeamMember } from "@/types";
+import type { AppCharacter, TalentCalcItem, TeammateData, TeamMember } from "@/types";
 import type { PartiallyRequiredOnly } from "rond";
 
 import { useSettingsStore } from "@Store/settings";
@@ -168,7 +168,7 @@ export class CalcSetup extends CalcSetupBase {
     }
 
     if (nicole instanceof Character) {
-      return nicole.getFinalTalentLv("EB");
+      return nicole.finalTalentLv("EB");
     }
 
     return undefined;
