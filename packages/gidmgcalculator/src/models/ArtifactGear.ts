@@ -1,11 +1,9 @@
 import { applyPercent, CountMap } from "ron-utils";
 
 import type { AllAttributes, ArtifactGearSet, ArtifactType } from "@/types";
-import type { Clonable } from "./interfaces";
 
 import { ARTIFACT_TYPES, CORE_STAT_TYPES } from "@/constants/global";
 import { Artifact } from "./Artifact";
-import { ArtifactPieces } from "./ArtifactPieces";
 
 export type ArtifactGearSlot =
   | {
@@ -18,63 +16,35 @@ export type ArtifactGearSlot =
       type: ArtifactType;
     };
 
-export class ArtifactGear implements Clonable<ArtifactGear> {
-  pieces: ArtifactPieces;
-  sets: ArtifactGearSet[] = [];
-  attributes: AllAttributes = new CountMap();
-  finalAttrs: AllAttributes = new CountMap();
+type ArtifactGearPieces = Record<ArtifactType, Artifact | undefined>;
 
-  constructor(pieces?: ArtifactPieces | Artifact[]) {
-    const gearPieces: Partial<Record<ArtifactType, Artifact>> = {};
+export class ArtifactGear {
+  private constructor(
+    public pieces: ArtifactGearPieces,
+    public sets: ArtifactGearSet[],
+    public attributes: AllAttributes,
+    public finalAttrs: AllAttributes,
+  ) {}
 
-    const getPiece = Array.isArray(pieces)
-      ? (type: ArtifactType) => pieces.find((piece) => piece.type === type)
-      : (type: ArtifactType) => pieces?.get(type);
+  deepClone() {
+    const pieces: ArtifactGearPieces = {
+      flower: undefined,
+      plume: undefined,
+      sands: undefined,
+      goblet: undefined,
+      circlet: undefined,
+    };
 
     for (const type of ARTIFACT_TYPES) {
-      const piece = getPiece(type);
-
-      gearPieces[type] = piece;
+      pieces[type] = this.pieces[type]?.clone();
     }
 
-    this.pieces = new ArtifactPieces(gearPieces);
-
-    this.processPieces();
-  }
-
-  private processPieces() {
-    const sets: ArtifactGearSet[] = [];
-    const attributes: AllAttributes = new CountMap();
-    const counter = new CountMap<number>();
-
-    for (const piece of this.pieces.values()) {
-      const codeCount = counter.add(piece.code);
-
-      if (codeCount === 2) {
-        sets.push({
-          bonusLv: 0,
-          pieceCount: 2,
-          data: piece.data,
-        });
-      } else if (codeCount === 4) {
-        sets[0].bonusLv = 1;
-        sets[0].pieceCount = 4;
-      }
-
-      attributes.add(piece.mainStatType, piece.mainStatValue);
-
-      piece.subStats.forEach((subStat) => {
-        attributes.add(subStat.type, subStat.value);
-      });
-    }
-
-    this.sets = sets;
-    this.attributes = attributes;
+    return new ArtifactGear(pieces, this.sets, this.attributes, this.finalAttrs);
   }
 
   /** No order */
   list(): Artifact[] {
-    return Array.from(this.pieces.values());
+    return Object.values(this.pieces).filter((piece) => piece !== undefined);
   }
 
   /** Order: Flower, Plume, Sands, Goblet, Circlet */
@@ -86,7 +56,7 @@ export class ArtifactGear implements Clonable<ArtifactGear> {
     }
 
     return ARTIFACT_TYPES.map((type) => {
-      const piece = this.pieces.get(type);
+      const piece = this.pieces[type];
 
       return piece
         ? {
@@ -116,17 +86,50 @@ export class ArtifactGear implements Clonable<ArtifactGear> {
     return (this.finalAttrs = attrs);
   };
 
-  clone() {
-    return new ArtifactGear(this.pieces);
-  }
+  // ===== STATIC =====
 
-  deepClone() {
-    const pieces = new ArtifactPieces();
+  static create(init?: Partial<ArtifactGearPieces> | (Artifact | null | undefined)[]) {
+    const pieces: ArtifactGearPieces = {
+      flower: undefined,
+      plume: undefined,
+      sands: undefined,
+      goblet: undefined,
+      circlet: undefined,
+    };
+    const sets: ArtifactGearSet[] = [];
+    const attributes: AllAttributes = new CountMap();
+    const counter = new CountMap<number>();
 
-    this.pieces.forEach((piece, type) => {
-      pieces.set(type, piece.clone());
-    });
+    const getPiece = Array.isArray(init)
+      ? (type: ArtifactType) => init.find((piece) => piece?.type === type)
+      : (type: ArtifactType) => init?.[type];
 
-    return new ArtifactGear(pieces);
+    for (const type of ARTIFACT_TYPES) {
+      const piece = getPiece(type);
+      if (!piece) continue;
+
+      pieces[type] = piece;
+
+      const codeCount = counter.add(piece.code);
+
+      if (codeCount === 2) {
+        sets.push({
+          bonusLv: 0,
+          pieceCount: 2,
+          data: piece.data,
+        });
+      } else if (codeCount === 4) {
+        sets[0].bonusLv = 1;
+        sets[0].pieceCount = 4;
+      }
+
+      attributes.add(piece.mainStatType, piece.mainStatValue);
+
+      piece.subStats.forEach((subStat) => {
+        attributes.add(subStat.type, subStat.value);
+      });
+    }
+
+    return new ArtifactGear(pieces, sets, attributes, new CountMap());
   }
 }

@@ -67,12 +67,10 @@ export function SectionDetail({ className }: SectionDetailProps) {
       break;
 
     default: {
-      const artifact = atfGear.pieces.get(detailType);
-
       extraTitle = t(detailType);
       content = (
         <ArtifactCard
-          artifact={artifact}
+          artifact={atfGear.pieces[detailType]}
           actions={[
             {
               children: "Save",

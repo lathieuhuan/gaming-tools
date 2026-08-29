@@ -22,7 +22,7 @@ import IdStore from "@/utils/IdStore";
 export function createSetupForTeammate(
   info: SetupOverviewInfo,
   teammateIndex: number,
-  { userChars, userWps }: UserdbState
+  { userChars, userWps }: UserdbState,
 ) {
   const { setup, dbSetup } = info;
   const teammates = [...setup.teammates];
@@ -52,7 +52,7 @@ export function createSetupForTeammate(
             type,
             rarity: maxRarity,
           },
-          artifact.data
+          artifact.data,
         );
       });
     }
@@ -61,7 +61,7 @@ export function createSetupForTeammate(
   const newMain = createCharacter(teammate, teammate.data, {
     state: Array_.findByCode(userChars, teammate.code),
     weapon: createWeapon(weaponBasic),
-    atfGear: new ArtifactGear(artifacts),
+    atfGear: ArtifactGear.create(artifacts),
   });
 
   // Place old main into the teammate's slot
@@ -85,7 +85,7 @@ export function createSetupForTeammate(
       },
     },
     main.data,
-    { team }
+    { team },
   );
 
   team.updateMembers([newMain, ...teammates]);

@@ -167,15 +167,13 @@ export function decodeSetupPrevious(code: string): DecodeResult {
     }
   };
 
-  const atfGear = new ArtifactGear(
-    Array_.truthify([
-      decodeArtifact(flowerStr, "flower"),
-      decodeArtifact(plumeStr, "plume"),
-      decodeArtifact(sandsStr, "sands"),
-      decodeArtifact(gobletStr, "goblet"),
-      decodeArtifact(circletStr, "circlet"),
-    ]),
-  );
+  const atfGear = ArtifactGear.create([
+    decodeArtifact(flowerStr, "flower"),
+    decodeArtifact(plumeStr, "plume"),
+    decodeArtifact(sandsStr, "sands"),
+    decodeArtifact(gobletStr, "goblet"),
+    decodeArtifact(circletStr, "circlet"),
+  ]);
 
   const main = createCharacter(
     {

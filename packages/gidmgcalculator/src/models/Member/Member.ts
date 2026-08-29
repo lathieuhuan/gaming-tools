@@ -70,7 +70,7 @@ export class Member implements Clonable<Member>, Serializable<RawCharacter> {
     options: MemberConstructOptions = {},
   ) {
     const {
-      atfGear = new ArtifactGear(),
+      atfGear = ArtifactGear.create(),
       attrsCtrl = new AttributeControl(),
       bonusCtrl = new BonusControl(),
     } = options;

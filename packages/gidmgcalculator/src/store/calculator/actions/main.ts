@@ -77,8 +77,8 @@ export const setArtifactPiece = (artifact: Artifact, shouldKeepStats = false) =>
 
   useCalcStore.setState(
     onActiveSetup(() => {
-      const pieces = setup.main.atfGear.pieces.clone();
-      const oldPiece = pieces.get(artifact.type);
+      const pieces = { ...setup.main.atfGear.pieces };
+      const oldPiece = pieces[artifact.type];
       const cloneOptions: ArtifactCloneOptions =
         shouldKeepStats && oldPiece
           ? {
@@ -90,9 +90,9 @@ export const setArtifactPiece = (artifact: Artifact, shouldKeepStats = false) =>
             }
           : {};
 
-      pieces.set(artifact.type, artifact.clone(cloneOptions));
+      pieces[artifact.type] = artifact.clone(cloneOptions);
 
-      setup.setArtifactGear(new ArtifactGear(pieces));
+      setup.setArtifactGear(ArtifactGear.create(pieces));
     }),
   );
 };
@@ -102,10 +102,12 @@ export const removeArtifactPiece = (type: ArtifactType) => {
 
   useCalcStore.setState(
     onActiveSetup(() => {
-      const pieces = setup.main.atfGear.pieces.clone();
+      const pieces = {
+        ...setup.main.atfGear.pieces,
+        [type]: undefined,
+      };
 
-      pieces.delete(type);
-      setup.setArtifactGear(new ArtifactGear(pieces));
+      setup.setArtifactGear(ArtifactGear.create(pieces));
     }),
   );
 };
@@ -115,14 +117,17 @@ export const updateArtifactPiece = (type: ArtifactType, newState: Partial<Artifa
 
   useCalcStore.setState(
     onActiveSetup(() => {
-      const pieces = setup.main.atfGear.pieces.clone();
-      const piece = pieces.get(type)?.clone(newState);
+      const { pieces } = setup.main.atfGear;
+      const piece = pieces[type];
 
-      if (!piece) {
+      if (piece === undefined) {
         return false;
       }
 
-      setup.main.atfGear = new ArtifactGear(pieces.set(type, piece));
+      setup.main.atfGear = ArtifactGear.create({
+        ...pieces,
+        [type]: piece.clone(newState),
+      });
     }),
   );
 };
@@ -136,15 +141,19 @@ export const updateArtifactPieceSubStat = (
 
   useCalcStore.setState(
     onActiveSetup(() => {
-      const pieces = setup.main.atfGear.pieces.clone();
-      const piece = pieces.get(type)?.clone();
+      const { pieces } = setup.main.atfGear;
+      const piece = pieces[type];
 
-      if (!piece) {
+      if (piece === undefined) {
         return false;
       }
 
       piece.updateSubStat(index, data);
-      setup.main.atfGear = new ArtifactGear(pieces.set(type, piece));
+
+      setup.main.atfGear = ArtifactGear.create({
+        ...pieces,
+        [type]: piece.clone(),
+      });
     }),
   );
 };

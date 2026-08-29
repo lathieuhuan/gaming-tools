@@ -1,5 +1,3 @@
-import { Array_ } from "ron-utils";
-
 import type { GenshinUser, GenshinUserBuild, GenshinUserResponse } from "./types";
 
 import { ARTIFACT_TYPES } from "@/constants/global";
@@ -41,12 +39,10 @@ export function transformGenshinUserResponse(
       return convertGOODArtifact(GOODArtifact, idStore.gen());
     });
 
-    const atfGear = new ArtifactGear(Array_.truthify(artifacts));
-
     builds.push({
       character,
       weapon,
-      atfGear,
+      atfGear: ArtifactGear.create(artifacts),
     });
   }
 

@@ -25,8 +25,6 @@ export type ArtifactCloneOptions = Partial<
 >;
 
 export class Artifact implements Clonable<Artifact> {
-  public readonly subStats: ArtifactSubStat[];
-
   owner?: number;
   setupIDs?: number[];
 
@@ -41,8 +39,8 @@ export class Artifact implements Clonable<Artifact> {
     public readonly rarity: number,
     public readonly level: number,
     public readonly mainStatType: AttributeStat,
+    public readonly subStats: ArtifactSubStat[],
     public readonly mainStatValue: number,
-    subStats: ArtifactSubStat[],
     public readonly data: AppArtifact,
     relation: EquipmentRelationData = {},
   ) {
@@ -75,16 +73,19 @@ export class Artifact implements Clonable<Artifact> {
       ID = this.ID,
       type = this.type,
       rarity = this.rarity,
-      mainStatType = this.mainStatType,
       subStats = this.subStats,
       owner = this.owner,
       setupIDs = this.setupIDs,
     } = options;
 
-    let { level = this.level } = options;
+    let { level = this.level, mainStatType = this.mainStatType } = options;
 
-    if (rarity < 5 && level > 16) {
-      level = 16;
+    if (level !== this.level) {
+      level = correctLevel(level, rarity);
+    }
+
+    if (mainStatType !== this.mainStatType) {
+      mainStatType = correctMainStatType(mainStatType, type);
     }
 
     return new Artifact(
@@ -94,8 +95,8 @@ export class Artifact implements Clonable<Artifact> {
       rarity,
       level,
       mainStatType,
-      Artifact.mainStatValueOf({ type, rarity, level, mainStatType }),
       subStats,
+      Artifact.mainStatValueOf({ type, rarity, level, mainStatType }),
       this.data,
       { owner, setupIDs },
     );
@@ -110,19 +111,11 @@ export class Artifact implements Clonable<Artifact> {
   }
 
   static create(ID: number, data: AppArtifact, options: ArtifactCreateOptions = {}) {
-    const {
-      type = "flower",
-      level = this.#DEFAULT_LEVEL,
-      rarity = 4,
-      subStats = DEFAULT_SUB_STATS,
-    } = options;
+    const { type = "flower", rarity = 4, subStats = DEFAULT_SUB_STATS } = options;
+    let { level = this.#DEFAULT_LEVEL } = options;
 
-    const mainStatTypeSpec = mainStatTypeByAtfType(type);
-    let { mainStatType } = options;
-
-    if (mainStatType === undefined || !(mainStatType in mainStatTypeSpec.map)) {
-      mainStatType = mainStatTypeSpec.default;
-    }
+    level = correctLevel(level, rarity);
+    const mainStatType = correctMainStatType(options.mainStatType, type);
 
     return new Artifact(
       ID,
@@ -131,8 +124,8 @@ export class Artifact implements Clonable<Artifact> {
       rarity,
       level,
       mainStatType,
-      this.mainStatValueOf({ type, rarity, level, mainStatType }),
       subStats,
+      this.mainStatValueOf({ type, rarity, level, mainStatType }),
       data,
       options,
     );
@@ -178,9 +171,18 @@ export class Artifact implements Clonable<Artifact> {
   }
 }
 
-function mainStatTypeByAtfType(type: ArtifactType) {
+function correctLevel(level: number, rarity: number) {
+  return rarity < 5 ? Math.min(level, 16) : level;
+}
+
+function correctMainStatType(mainStatType: AttributeStat | undefined, type: ArtifactType) {
   const map = ARTIFACT_MAIN_STATS[type];
-  return { map, default: Object_.keys(map)[0] };
+
+  if (mainStatType === undefined || !(mainStatType in map)) {
+    mainStatType = Object_.keys(map)[0];
+  }
+
+  return mainStatType;
 }
 
 type ArtifactTypeIcon = { type: ArtifactType; src: string };

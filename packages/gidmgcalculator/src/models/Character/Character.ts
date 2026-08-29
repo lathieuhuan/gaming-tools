@@ -104,7 +104,7 @@ export class Character implements TeamMember, Clonable<Character> {
     options: CharacterConstructOptions,
   ) {
     const {
-      atfGear = new ArtifactGear(),
+      atfGear = ArtifactGear.create(),
       levelBonuses = new Map(),
       allAttrsCtrl = new AllAttributesControl(),
       attkBonusCtrl = new AttackBonusControl(),

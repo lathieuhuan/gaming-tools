@@ -18,8 +18,8 @@ export class Weapon implements Clonable<Weapon> {
     public readonly ID: number,
     public readonly code: number,
     public readonly type: WeaponType,
-    public level: Level,
-    public refi: number,
+    public readonly level: Level,
+    public readonly refi: number,
     public readonly bareLv: number,
     public readonly ascension: number,
     public readonly mainStatValue: number,
@@ -37,19 +37,17 @@ export class Weapon implements Clonable<Weapon> {
 
   clone(options: WeaponCloneOptions = {}) {
     const { refi = this.refi, owner = this.owner, setupIDs = this.setupIDs } = options;
-    let level: Level;
+    let { level = this.level } = options;
     let { bareLv, ascension, mainStatValue, subStatValue } = this;
 
-    if (options.level !== undefined && options.level !== this.level) {
-      const derivedState = deriveStateFromLevel(options.level, this.data);
+    if (level !== this.level) {
+      const derivedState = deriveStateFromLevel(level, this.data);
 
       level = derivedState.validLevel;
       bareLv = derivedState.bareLv;
       ascension = derivedState.ascension;
       mainStatValue = derivedState.mainStatValue;
       subStatValue = derivedState.subStatValue;
-    } else {
-      level = this.level;
     }
 
     return new Weapon(

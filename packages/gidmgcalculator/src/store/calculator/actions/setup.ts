@@ -31,13 +31,13 @@ export const updateSetupAfterSave = (
     main.weapon = main.weapon.clone({ ID: weaponId });
 
     for (const [type, id] of Object_.entries(newPieceIds)) {
-      const piece = pieces.get(type);
+      const piece = pieces[type];
 
-      if (!piece || !id) {
+      if (piece === undefined || id === undefined) {
         continue;
       }
 
-      pieces.set(type, piece?.clone({ ID: id }));
+      pieces[type] = piece.clone({ ID: id });
     }
   });
 };

@@ -12,13 +12,13 @@ type Option = {
 
 export function CopySelect() {
   const { setupManagers, setupsById } = useShallowCalcStore((state) =>
-    Object_.extract(state, ["setupManagers", "setupsById"])
+    Object_.extract(state, ["setupManagers", "setupsById"]),
   );
 
   const copyOptions = setupManagers.reduce<Option[]>((results, manager) => {
-    const { pieces } = setupsById[manager.ID].main.atfGear;
+    const { atfGear } = setupsById[manager.ID].main;
 
-    if (Array.from(pieces).length) {
+    if (atfGear.list().length) {
       results.push({
         label: manager.name,
         value: manager.ID,

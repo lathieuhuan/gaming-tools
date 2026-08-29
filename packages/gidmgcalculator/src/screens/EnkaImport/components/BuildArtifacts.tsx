@@ -36,7 +36,7 @@ export function BuildArtifact({
     );
   }
 
-  const selectedArtifact = selectedBuild?.atfGear.pieces.get(artifactType);
+  const selectedArtifact = selectedBuild?.atfGear.pieces[artifactType];
   const selected =
     selectedBuild?.detailType === artifactType && selectedArtifact?.ID === artifact.ID;
 
@@ -72,7 +72,7 @@ export function BuildArtifacts({ build, showLevel }: BuildArtifactsProps) {
         <BuildArtifact
           key={type}
           showLevel={showLevel}
-          artifact={build.atfGear.pieces.get(type)}
+          artifact={build.atfGear.pieces[type]}
           selectedBuild={selectedBuild}
           artifactType={type}
           onClick={() => setSelectedBuild({ ...build, detailType: type })}
