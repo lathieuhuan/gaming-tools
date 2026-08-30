@@ -24,7 +24,6 @@ import {
   TRANSFORMATIVE_REACTIONS,
 } from "@/constants/global";
 import { BonusCalc } from "@/models/Character";
-import { QUICKEN_BUFF_LABEL } from "../constants";
 import { getRxnBonusesFromEM } from "../core/getRxnBonusesFromEM";
 
 type ApplyBuffsOptions = {
@@ -428,25 +427,6 @@ export function applyBuffs(
         label: "From Elemental Mastery",
       });
     }
-  }
-
-  const { reaction, infuseReaction } = setup.elmtEvent;
-
-  if (reaction === "spread" || infuseReaction === "spread") {
-    attkBonusCtrl.add({
-      value: main.quickenDamageBonus("spread"),
-      toType: "dendro",
-      toKey: "flat",
-      label: QUICKEN_BUFF_LABEL.spread,
-    });
-  }
-  if (reaction === "aggravate" || infuseReaction === "aggravate") {
-    attkBonusCtrl.add({
-      value: main.quickenDamageBonus("aggravate"),
-      toType: "electro",
-      toKey: "flat",
-      label: QUICKEN_BUFF_LABEL.aggravate,
-    });
   }
 }
 

@@ -14,7 +14,7 @@ import type { CalcResultReactionItem } from "../types";
 import type { ResultRecorder } from "./ResultRecorder";
 
 import { limitCRate } from "@/logic/stat.logic";
-import { GetBonusPaths } from "@/models/Character";
+import { GetAttackBonusPaths } from "@/models/Character";
 import { LUNAR_ATTACK_ELEMENT, LUNAR_REACTION_COEFFICIENT } from "../constants";
 
 const TRANSFORMATIVE_REACTION_CONFIG: Record<
@@ -39,7 +39,7 @@ export function makeReactionCalc(performer: Character, target: TargetCalc) {
     reaction: LunarReaction,
     recorder: ResultRecorder,
   ): CalcResultReactionItem {
-    const getBonus = (key: AttackBonusKey, paths: GetBonusPaths = []) => {
+    const getBonus = (key: AttackBonusKey, paths: GetAttackBonusPaths = []) => {
       return attkBonusCtrl.get(key, [reaction, ...paths]);
     };
 
@@ -88,7 +88,7 @@ export function makeReactionCalc(performer: Character, target: TargetCalc) {
     vortexLv: number,
     recorder: ResultRecorder,
   ): CalcResultReactionItem {
-    const getBonus = (key: AttackBonusKey, paths: GetBonusPaths = []) => {
+    const getBonus = (key: AttackBonusKey, paths: GetAttackBonusPaths = []) => {
       return attkBonusCtrl.get(key, ["stellarSwirl", ...paths]);
     };
 
@@ -139,7 +139,7 @@ export function makeReactionCalc(performer: Character, target: TargetCalc) {
     recorder: ResultRecorder,
     elmtEvent?: ElementalEvent,
   ): CalcResultReactionItem {
-    const paths: GetBonusPaths = [reaction];
+    const paths: GetAttackBonusPaths = [reaction];
 
     function getBonus(key: AttackBonusKey) {
       return attkBonusCtrl.get(key, paths);

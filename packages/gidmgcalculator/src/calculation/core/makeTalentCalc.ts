@@ -137,9 +137,8 @@ export function makeTalentCalc(
     const { getBonus, calculate } = makeAttackItemCalc(performer, target, {
       attElmt,
       attPatt,
-      reaction,
+      reaction: item.noU ? null : reaction,
       itemId: item.id,
-      noU: item.noU,
     });
 
     const bases = getBases(item, getBonus("mult_"), recorder);

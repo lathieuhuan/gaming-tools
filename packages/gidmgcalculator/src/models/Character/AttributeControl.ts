@@ -43,6 +43,40 @@ export class AttributeControl {
     return new AttributeControl(new Map(), new CountMap());
   }
 
+  base(key: AttributeStat) {
+    return this._get(key).base;
+  }
+
+  total(key: AttributeStat | BaseAttributeStat, staticOnly = false) {
+    if (isBaseStat(key)) {
+      return this.base(baseStatToCoreStat(key));
+    }
+
+    const attr = this._get(key);
+    let total = attr.base + attr.static;
+
+    if (!staticOnly) {
+      total += attr.dynamic;
+    }
+
+    if (isCoreStat(key)) {
+      const percent = this._get(`${key}_`);
+      let totalPercent = percent.base + percent.static;
+
+      if (!staticOnly) {
+        totalPercent += percent.dynamic;
+      }
+
+      total += (attr.base * totalPercent) / 100;
+    }
+
+    return total;
+  }
+
+  private addBase(key: AttributeStat, value: number, label = "Character base stat") {
+    this._add(key, "base", value, label);
+  }
+
   init(character: Character) {
     const { data } = character;
 
@@ -170,12 +204,6 @@ export class AttributeControl {
     return this._get(key).logs;
   }
 
-  // ===== UPDATE =====
-
-  private addBase(key: AttributeStat, value: number, label = "Character base stat") {
-    this._add(key, "base", value, label);
-  }
-
   addBonus(bonus: AttributeBonus) {
     const attrEl: InternalAttributeElement = bonus.isDynamic ? "dynamic" : "static";
 
@@ -187,40 +215,6 @@ export class AttributeControl {
 
     this._add(bonus.toStat, attrEl, bonus.value, bonus.label);
   }
-
-  // ===== READ =====
-
-  base(key: AttributeStat) {
-    return this._get(key).base;
-  }
-
-  total(key: AttributeStat | BaseAttributeStat, staticOnly = false) {
-    if (isBaseStat(key)) {
-      return this.base(baseStatToCoreStat(key));
-    }
-
-    const attr = this._get(key);
-    let total = attr.base + attr.static;
-
-    if (!staticOnly) {
-      total += attr.dynamic;
-    }
-
-    if (isCoreStat(key)) {
-      const percent = this._get(`${key}_`);
-      let totalPercent = percent.base + percent.static;
-
-      if (!staticOnly) {
-        totalPercent += percent.dynamic;
-      }
-
-      total += (attr.base * totalPercent) / 100;
-    }
-
-    return total;
-  }
-
-  // ===== FINALS =====
 
   finalize() {
     const allAttrs: AllAttributes = new CountMap();

@@ -7,13 +7,7 @@ import type {
   TalentCalcItemBonusId,
 } from "@/types";
 
-export type GetBonusPaths = Array<AttackBonusType | null | undefined | false>;
-
-export type GetBonusOptions = {
-  filter?: (bonus: AttackBonus) => boolean;
-};
-
-const defaultFilter = () => true;
+export type GetAttackBonusPaths = Array<AttackBonusType | null | undefined | false>;
 
 export class AttackBonusControl {
   private constructor(public records: Map<AttackBonusType, AttackBonus[]>) {}
@@ -31,19 +25,20 @@ export class AttackBonusControl {
     return this;
   }
 
-  get(key: AttackBonusKey, paths: GetBonusPaths, options: GetBonusOptions = {}) {
-    const { filter = defaultFilter } = options;
-    let result = 0;
-
-    for (const path of paths) {
-      const bonuses = (path && this.records.get(path)) || [];
-
-      result += bonuses.reduce((total, bonus) => {
-        return total + (bonus.toKey === key && filter(bonus) ? bonus.value : 0);
-      }, 0);
+  get(key: AttackBonusKey, paths: AttackBonusType | GetAttackBonusPaths) {
+    if (typeof paths === "string") {
+      paths = [paths];
     }
 
-    return result;
+    return paths.reduce((total, path) => {
+      const bonuses = (path && this.records.get(path)) || [];
+
+      const totalByKey = bonuses.reduce((total, bonus) => {
+        return total + (bonus.toKey === key ? bonus.value : 0);
+      }, 0);
+
+      return total + totalByKey;
+    }, 0);
   }
 
   exclusiveGroups = (id?: TalentCalcItemBonusId) => {

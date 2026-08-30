@@ -9,7 +9,7 @@ import type {
 } from "@/types";
 import type { AttackBonus, AttributeBonus, Bonus, TalentLevelBonus } from "./types";
 
-export type GetBonusPaths = Array<AttackBonusType | null | undefined | false>;
+export type GetAttackBonusPaths = Array<AttackBonusType | null | undefined | false>;
 
 type TalentLvBonusRecord = Map<LevelableTalentType, TalentLevelBonus[]>;
 
@@ -72,7 +72,7 @@ export class BonusControl {
     };
   }
 
-  totalAttkBonus(key: AttackBonusKey, paths: GetBonusPaths) {
+  totalAttkBonus(key: AttackBonusKey, paths: GetAttackBonusPaths) {
     return paths.reduce((total, path) => {
       const bonuses = (path && this.attkRecord.get(path)) || [];
       const pathTotal = bonuses.reduce(this.accumulateAttkBonuses(key), 0);

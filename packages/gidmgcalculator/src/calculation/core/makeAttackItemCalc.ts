@@ -1,9 +1,9 @@
 import { toMult } from "ron-utils";
 
 import type { Character, TargetCalc } from "@/models";
+import type { GetAttackBonusPaths } from "@/models/Character";
 import type {
   ActualAttackPattern,
-  AttackBonus,
   AttackBonusKey,
   AttackElement,
   AttackReaction,
@@ -13,15 +13,12 @@ import type { CalcResultAttackItem, CalcResultItemValue } from "../types";
 import type { ResultRecorder } from "./ResultRecorder";
 
 import { limitCRate } from "@/logic/stat.logic";
-import { GetBonusOptions } from "@/models/Character";
-import { QUICKEN_BUFF_LABEL } from "../constants";
 
 type MakeAttackCalcTools = {
   attElmt?: AttackElement;
   attPatt?: ActualAttackPattern;
   itemId?: TalentCalcItemBonusId;
   reaction?: AttackReaction;
-  noU?: boolean;
 };
 
 export function makeAttackItemCalc(
@@ -30,23 +27,16 @@ export function makeAttackItemCalc(
   tools: MakeAttackCalcTools = {},
 ) {
   const { attkBonusCtrl, bareLv } = performer;
-  const { attElmt = "phys", attPatt = "none", itemId, reaction = null, noU = false } = tools;
-
-  let filterBonus: GetBonusOptions["filter"];
-
-  if (noU) {
-    filterBonus = (bonus: AttackBonus) =>
-      bonus.label !== QUICKEN_BUFF_LABEL.spread && bonus.label !== QUICKEN_BUFF_LABEL.aggravate;
-  }
+  const { attElmt = "phys", attPatt = "none", itemId, reaction = null } = tools;
 
   function getBonus(key: AttackBonusKey) {
-    if (attPatt === "none") {
-      return attkBonusCtrl.get(key, ["all", attElmt, itemId], { filter: filterBonus });
+    const paths: GetAttackBonusPaths = ["all", attElmt, itemId];
+
+    if (attPatt !== "none") {
+      paths.push(attPatt, `${attPatt}.${attElmt}`);
     }
 
-    return attkBonusCtrl.get(key, ["all", attElmt, itemId, attPatt, `${attPatt}.${attElmt}`], {
-      filter: filterBonus,
-    });
+    return attkBonusCtrl.get(key, paths);
   }
 
   function calculate(bases: number[], recorder: ResultRecorder): CalcResultAttackItem {
@@ -54,14 +44,23 @@ export function makeAttackItemCalc(
     let baseMult = getBonus("baseMult_");
     baseMult = baseMult >= 0 ? toMult(baseMult) : -baseMult / 100;
 
-    const flat = getBonus("flat");
+    // FLAT
+    let flat = getBonus("flat");
+
+    if (attElmt === "dendro" && reaction === "spread") {
+      flat += performer.quickenDamageBonus("spread");
+    }
+    if (attElmt === "electro" && reaction === "aggravate") {
+      flat += performer.quickenDamageBonus("aggravate");
+    }
+
     const bonusMult = toMult(getBonus("pct_") + performer.getAttr(attElmt));
     const elvMult = toMult(getBonus("elvMult_"));
 
     // REACTION MULTIPLIER
     let rxnMult = 1;
 
-    if (!noU && attElmt !== "phys" && (reaction === "melt" || reaction === "vaporize")) {
+    if (attElmt !== "phys" && (reaction === "melt" || reaction === "vaporize")) {
       // deal elemental DMG and want amplifying reaction
       rxnMult = performer.amplifyingReactionMult(reaction, attElmt);
     }

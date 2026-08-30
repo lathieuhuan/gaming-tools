@@ -130,7 +130,7 @@ export class Character implements TeamMember, Clonable<Character> {
   }
 
   quickenDamageBonus(reaction: QuickenReaction) {
-    const pctBonus = this.attkBonusCtrl.get("pct_", [reaction]);
+    const pctBonus = this.attkBonusCtrl.get("pct_", reaction);
 
     switch (reaction) {
       case "aggravate":
@@ -143,7 +143,7 @@ export class Character implements TeamMember, Clonable<Character> {
   }
 
   amplifyingReactionMult(reaction: AmplifyingReaction, attElmt: AttackElement) {
-    const pctBonus = this.attkBonusCtrl.get("pct_", [reaction]);
+    const pctBonus = this.attkBonusCtrl.get("pct_", reaction);
 
     switch (reaction) {
       case "melt":
