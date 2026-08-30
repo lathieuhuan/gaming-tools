@@ -25,7 +25,7 @@ export function AttributeTracker({ listClassName, attrCtrl }: AttributeTrackerPr
       {CORE_STAT_TYPES.map((statType) => {
         const logs = attrCtrl.logsOf(statType);
         const logs_ = attrCtrl.logsOf(`${statType}_`);
-        const base = attrCtrl.getBase(statType);
+        const base = attrCtrl.base(statType);
 
         return (
           <div key={statType} className="break-inside-avoid">
@@ -54,7 +54,7 @@ export function AttributeTracker({ listClassName, attrCtrl }: AttributeTrackerPr
 
         return (
           <div key={statType} className="break-inside-avoid">
-            <Heading label={t(statType)} value={round(attrCtrl.getTotal(statType), 2) + percent} />
+            <Heading label={t(statType)} value={round(attrCtrl.total(statType), 2) + percent} />
             <List records={logs} calcFn={(value) => round(value, 1) + percent} />
           </div>
         );

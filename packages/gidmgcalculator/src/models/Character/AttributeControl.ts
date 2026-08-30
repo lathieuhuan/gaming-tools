@@ -40,7 +40,7 @@ export class AttributeControl {
   ) {}
 
   static create() {
-    return new AttributeControl({} as InternalAttributes, new CountMap());
+    return new AttributeControl(new Map(), new CountMap());
   }
 
   init(character: Character) {
@@ -112,9 +112,9 @@ export class AttributeControl {
     // ===== Artifacts =====
     {
       const attributes = character.atfGear.finalizeAttributes({
-        hp_base: this.getBase("hp"),
-        atk_base: this.getBase("atk"),
-        def_base: this.getBase("def"),
+        hp_base: this.base("hp"),
+        atk_base: this.base("atk"),
+        def_base: this.base("def"),
       });
 
       for (const [stat, value] of attributes.entries()) {
@@ -180,7 +180,8 @@ export class AttributeControl {
     const attrEl: InternalAttributeElement = bonus.isDynamic ? "dynamic" : "static";
 
     if (isBaseStat(bonus.toStat)) {
-      this._add(baseStatToCoreStat(bonus.toStat), attrEl, bonus.value, bonus.label);
+      // TODO remove `BaseAttributeStat` from `AttributeBonus.toStat` and especially handle it.
+      // Only Mavuika has this mechanism.
       return;
     }
 
@@ -189,19 +190,19 @@ export class AttributeControl {
 
   // ===== READ =====
 
-  getBase(key: AttributeStat) {
+  base(key: AttributeStat) {
     return this._get(key).base;
   }
 
-  getTotal(key: AttributeStat | BaseAttributeStat, fixedOnly = false) {
+  total(key: AttributeStat | BaseAttributeStat, staticOnly = false) {
     if (isBaseStat(key)) {
-      return this.getBase(baseStatToCoreStat(key));
+      return this.base(baseStatToCoreStat(key));
     }
 
     const attr = this._get(key);
     let total = attr.base + attr.static;
 
-    if (!fixedOnly) {
+    if (!staticOnly) {
       total += attr.dynamic;
     }
 
@@ -209,7 +210,7 @@ export class AttributeControl {
       const percent = this._get(`${key}_`);
       let totalPercent = percent.base + percent.static;
 
-      if (!fixedOnly) {
+      if (!staticOnly) {
         totalPercent += percent.dynamic;
       }
 
@@ -233,7 +234,7 @@ export class AttributeControl {
         allAttrs.add(`base_${key}`, this._get(key).base);
       }
 
-      const total = this.getTotal(key);
+      const total = this.total(key);
       const isSpeedStat = key === "naAtkSpd_" || key === "caAtkSpd_";
 
       allAttrs.add(key, isSpeedStat ? Math.min(total, 160) : total);
@@ -251,7 +252,7 @@ export class AttributeControl {
   }
 
   clear() {
-    this.attrs = {} as InternalAttributes;
+    this.attrs = new Map();
     this.finals = new CountMap();
     return this;
   }

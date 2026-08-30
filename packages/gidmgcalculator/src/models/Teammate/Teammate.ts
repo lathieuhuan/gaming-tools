@@ -57,7 +57,7 @@ export class Teammate implements TeammateData, TeamMember, Clonable<Teammate> {
     code: number,
     public data: AppCharacter,
     weapon: TeammateWeapon,
-    options: TeammateConstructOptions = {}
+    options: TeammateConstructOptions = {},
   ) {
     const {
       enhanced = Teammate.#DEFAULT_ENHANCED,
@@ -125,9 +125,9 @@ export class Teammate implements TeammateData, TeamMember, Clonable<Teammate> {
 
   performBonus(
     config: BonusCoreSpec,
-    { inputs = [], refi = 0, basedOnFixed = false }: Partial<BonusPerformTools>
+    { inputs = [], refi = 0, basedOnStatic = false }: Partial<BonusPerformTools>,
   ): BareBonus {
-    return new BonusCalc(this, this.team, { inputs, refi, basedOnFixed }).makeBonus(config);
+    return new BonusCalc(this, this.team, { inputs, refi, basedOnStatic }).makeBonus(config);
   }
 
   performPenalty(config: PenaltyCoreSpec, inputs?: number[]) {

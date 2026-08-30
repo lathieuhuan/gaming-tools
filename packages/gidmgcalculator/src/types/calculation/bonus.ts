@@ -9,7 +9,7 @@ import type {
 export type BonusPerformTools = {
   inputs: number[];
   refi?: number;
-  basedOnFixed?: boolean;
+  basedOnStatic?: boolean;
 };
 
 export type BareBonus = {

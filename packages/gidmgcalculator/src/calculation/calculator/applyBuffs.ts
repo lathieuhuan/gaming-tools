@@ -130,7 +130,7 @@ export function applyBuffs(
     label: string,
     performer: TeamMember,
     specs: BuffSpec["effects"] = [],
-    support: Omit<Partial<BonusPerformTools>, "basedOnFixed">,
+    support: Omit<Partial<BonusPerformTools>, "basedOnStatic">,
     isFinalStage?: boolean,
   ) {
     for (const spec of Array_.toArray(specs)) {
@@ -140,11 +140,11 @@ export function applyBuffs(
         performer.canPerformEffect(spec, support.inputs)
       ) {
         const { target } = spec;
-        const basedOnFixed = target.module === "ATTR";
+        const basedOnStatic = target.module === "ATTR";
 
         const bonus = performer.performBonus(spec, {
           ...support,
-          basedOnFixed,
+          basedOnStatic,
         });
 
         // console.log("===========");

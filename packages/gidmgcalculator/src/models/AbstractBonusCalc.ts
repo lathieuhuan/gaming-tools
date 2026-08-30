@@ -18,18 +18,18 @@ export abstract class AbstractBonusCalc<
   TPerformer extends TeamMember = TeamMember,
 > extends AbstractEffectValueCalc<TPerformer> {
   //
-  protected basedOnFixed = false;
+  protected basedOnStatic = false;
   protected refi = 0;
 
   constructor(
     protected performer: TPerformer,
     protected team: Team,
-    { inputs = [], refi = 0, basedOnFixed = false }: Partial<BonusPerformTools>,
+    { inputs = [], refi = 0, basedOnStatic = false }: Partial<BonusPerformTools>,
   ) {
     super(performer, team, inputs);
 
     this.refi = refi;
-    this.basedOnFixed = basedOnFixed;
+    this.basedOnStatic = basedOnStatic;
   }
 
   protected scaleRefi(base: number, increment: number | number[] = base / 3) {
