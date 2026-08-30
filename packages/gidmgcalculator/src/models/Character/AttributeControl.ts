@@ -40,7 +40,7 @@ export class AttributeControl {
   ) {}
 
   static create() {
-    return new AttributeControl(new Map(), new CountMap());
+    return new AttributeControl(new Map(), new CountMap([], { min: -Infinity }));
   }
 
   base(key: AttributeStat) {
@@ -217,7 +217,7 @@ export class AttributeControl {
   }
 
   finalize() {
-    const allAttrs: AllAttributes = new CountMap();
+    const allAttrs: AllAttributes = new CountMap([], { min: -Infinity });
 
     for (const key of ATTRIBUTE_STAT_TYPES) {
       if (key === "hp_" || key === "atk_" || key === "def_") {
@@ -247,7 +247,7 @@ export class AttributeControl {
 
   clear() {
     this.attrs = new Map();
-    this.finals = new CountMap();
+    this.finals = new CountMap([], { min: -Infinity });
     return this;
   }
 }
