@@ -2,7 +2,7 @@ import type { Team } from "@/models";
 import type { AppArtifact, ArtifactBuff } from "../app-artifact";
 import type { AppCharacter } from "../app-character";
 import type { AppWeapon } from "../app-weapon";
-import type { TeammateArtifactState, TeammateStateData, TeammateWeaponState } from "../entity";
+import type { RawTeammateState, TeammateArtifactState, TeammateWeaponState } from "../entity";
 import type {
   AbilityBuffCtrl,
   AbilityDebuffCtrl,
@@ -42,7 +42,7 @@ export type TeammateArtifact = TeammateArtifactState & {
   data: AppArtifact;
 };
 
-export type TeammateData = TeammateStateData & {
+export type TeammateData = RawTeammateState & {
   buffCtrls: AbilityBuffCtrl[];
   debuffCtrls: AbilityDebuffCtrl[];
   weapon: TeammateWeapon;

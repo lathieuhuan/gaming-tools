@@ -1,13 +1,13 @@
 import { Object_ } from "ron-utils";
 
 import type {
-  ArtifactStateData,
   ArtifactSubStat,
   ArtifactType,
   ElementalEvent,
+  RawArtifactState,
   RawCharacter,
+  RawWeaponState,
   TargetData,
-  WeaponStateData,
 } from "@/types";
 
 import { createTarget } from "@/logic/entity.logic";
@@ -59,7 +59,7 @@ export const switchMainWeapon = (weapon: Weapon) => {
   );
 };
 
-export const updateMainWeapon = (data: Partial<WeaponStateData>) => {
+export const updateMainWeapon = (data: Partial<RawWeaponState>) => {
   useCalcStore.setState(
     onActiveSetup((setup) => {
       const { main } = setup;
@@ -111,7 +111,7 @@ export const removeArtifactPiece = (type: ArtifactType) => {
   );
 };
 
-export const updateArtifactPiece = (type: ArtifactType, newState: Partial<ArtifactStateData>) => {
+export const updateArtifactPiece = (type: ArtifactType, newState: Partial<RawArtifactState>) => {
   const setup = selectSetup(useCalcStore.getState());
 
   useCalcStore.setState(

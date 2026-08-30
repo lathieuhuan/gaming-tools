@@ -1,6 +1,6 @@
 import { Object_ } from "ron-utils";
 
-import type { AppWeapon, EquipmentRelationData, Level, RawWeapon, WeaponType } from "@/types";
+import type { AppWeapon, EquipmentRelation, Level, RawWeapon, WeaponType } from "@/types";
 import type { Clonable } from "./interfaces";
 
 import { LEVELS } from "@/constants";
@@ -25,7 +25,7 @@ export class Weapon implements Clonable<Weapon> {
     public readonly mainStatValue: number,
     public readonly subStatValue: number,
     public readonly data: AppWeapon,
-    relation: EquipmentRelationData = {},
+    relation: EquipmentRelation = {},
   ) {
     this.owner = relation.owner;
     this.setupIDs = relation.setupIDs;

@@ -3,7 +3,7 @@ import { FaInfoCircle } from "react-icons/fa";
 import { ButtonGroup, FancyBackSvg, Modal, useValues } from "rond";
 
 import type { Artifact } from "@/models";
-import type { AppArtifact, ArtifactStateData, ArtifactType } from "@/types";
+import type { AppArtifact, ArtifactType, RawArtifactState } from "@/types";
 
 import { createArtifact } from "@/logic/entity.logic";
 import { $AppArtifact } from "@/services";
@@ -60,8 +60,8 @@ const ArtifactSmith = ({
 
   const updateConfig = (
     changesOrUpdater:
-      | Partial<ArtifactStateData>
-      | ((prevConfig: Artifact) => Partial<ArtifactStateData>),
+      | Partial<RawArtifactState>
+      | ((prevConfig: Artifact) => Partial<RawArtifactState>),
   ) => {
     if (!artifactConfig) {
       return;

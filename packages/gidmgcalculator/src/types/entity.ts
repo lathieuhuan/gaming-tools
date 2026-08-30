@@ -10,39 +10,33 @@ import type {
 } from "./common";
 import type { ModifierCtrlState } from "./modifier-controls";
 
-export type EquipmentRelationData = {
+export type EquipmentRelation = {
   owner?: number;
   setupIDs?: number[];
 };
 
 // ========== WEAPON ==========
 
-export type WeaponKey = {
-  ID: number;
-  code: number;
-  type: WeaponType;
-};
-
-export type WeaponStateData = {
+export type RawWeaponState = {
   level: Level;
   refi: number;
 };
 
-export type RawWeapon = WeaponKey & WeaponStateData & EquipmentRelationData;
+export type RawWeapon = RawWeaponState &
+  EquipmentRelation & {
+    ID: number;
+    code: number;
+    type: WeaponType;
+  };
 
 // ========== ARTIFACT ==========
-
-export type ArtifactKey = {
-  ID: number;
-  code: number;
-};
 
 export type ArtifactSubStat = {
   type: AttributeStat;
   value: number;
 };
 
-export type ArtifactStateData = {
+export type RawArtifactState = {
   type: ArtifactType;
   rarity: number;
   level: number;
@@ -50,9 +44,11 @@ export type ArtifactStateData = {
   subStats: ArtifactSubStat[];
 };
 
-export type ArtifactStateKey = keyof ArtifactStateData;
-
-export type RawArtifact = ArtifactKey & ArtifactStateData & EquipmentRelationData;
+export type RawArtifact = RawArtifactState &
+  EquipmentRelation & {
+    ID: number;
+    code: number;
+  };
 
 export type ArtifactGearSet = {
   bonusLv: number;
@@ -91,12 +87,12 @@ export type TeammateArtifactState = {
   code: number;
 };
 
-export type TeammateStateData = {
+export type RawTeammateState = {
   code: number;
   enhanced: boolean;
 };
 
-export type RawTeammate = TeammateStateData & {
+export type RawTeammate = RawTeammateState & {
   buffCtrls: ModifierCtrlState[];
   debuffCtrls: ModifierCtrlState[];
   weapon: TeammateWeaponState & {

@@ -5,7 +5,7 @@ import type {
   ArtifactSubStat,
   ArtifactType,
   AttributeStat,
-  EquipmentRelationData,
+  EquipmentRelation,
   RawArtifact,
 } from "@/types";
 import type { Clonable } from "./interfaces";
@@ -42,7 +42,7 @@ export class Artifact implements Clonable<Artifact> {
     public readonly subStats: ArtifactSubStat[],
     public readonly mainStatValue: number,
     public readonly data: AppArtifact,
-    relation: EquipmentRelationData = {},
+    relation: EquipmentRelation = {},
   ) {
     this.subStats = Object_.clone(subStats);
     this.owner = relation.owner;
