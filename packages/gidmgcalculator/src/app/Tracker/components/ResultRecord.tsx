@@ -25,7 +25,7 @@ type RecordExclusivesProps = {
 export function RecordExclusives({ id, attkBonusCtrl }: RecordExclusivesProps) {
   const { t } = useTranslation();
 
-  const exclusiveBonuses = attkBonusCtrl.collectExclusiveBonuses(id);
+  const exclusiveBonuses = attkBonusCtrl.exclusiveGroups(id);
 
   if (exclusiveBonuses.length === 0) {
     return null;

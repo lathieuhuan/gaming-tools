@@ -163,8 +163,8 @@ export class Character implements TeamMember, Clonable<Character> {
 
   initCalculation() {
     this.levelBonuses.clear();
+    this.attkBonusCtrl.clear();
     this.attrCtrl.init(this);
-    this.attkBonusCtrl = new AttackBonusControl();
     return this;
   }
 
@@ -423,7 +423,7 @@ export class Character implements TeamMember, Clonable<Character> {
       atfGear = ArtifactGear.create(),
       levelBonuses = new Map<string, LevelBonus>(),
       attrCtrl = AttributeControl.create(),
-      attkBonusCtrl = new AttackBonusControl(),
+      attkBonusCtrl = AttackBonusControl.create(),
       team = new Team(),
     } = options;
 

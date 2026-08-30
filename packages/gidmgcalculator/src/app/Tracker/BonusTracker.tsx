@@ -1,4 +1,4 @@
-import { Object_, round } from "ron-utils";
+import { round } from "ron-utils";
 import { clsx } from "rond";
 
 import type { AttackBonus, AttackBonusKey, AttackElement } from "@/types";
@@ -18,13 +18,12 @@ type BonusTrackerProps = {
 export function BonusTracker({ listClassName, attkBonusCtrl }: BonusTrackerProps) {
   const { t } = useTranslation();
 
-  const records = attkBonusCtrl.records;
-  const types = Object_.keys(records);
+  const attkBonusRecordEntries = Array.from(attkBonusCtrl.records.entries());
 
   return (
     <div>
       <div className={clsx("pl-2 pt-1 peer", listClassName)}>
-        {types.map((type) => {
+        {attkBonusRecordEntries.map(([type, records]) => {
           if (type.slice(0, 2) === "id") {
             return null;
           }
@@ -34,7 +33,7 @@ export function BonusTracker({ listClassName, attkBonusCtrl }: BonusTrackerProps
             records: AttackBonus[];
           }> = [];
 
-          for (const record of records[type]) {
+          for (const record of records) {
             const existed = list.find((item) => item.key === record.toKey);
 
             if (existed) {

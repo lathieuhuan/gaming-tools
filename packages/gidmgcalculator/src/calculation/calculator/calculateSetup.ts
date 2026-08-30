@@ -79,7 +79,7 @@ export function calculateSetup(setup: CalcSetup, options: CalculateSetupOptions 
       const { type = "attack", stellar } = calcItem;
       const recorder = new ResultRecorder(
         {
-          exclusives: main.attkBonusCtrl.collectExclusiveBonuses(calcItem.id),
+          exclusives: main.attkBonusCtrl.exclusiveGroups(calcItem.id),
         },
         options?.shouldLog,
       );

@@ -1,5 +1,3 @@
-import { Object_ } from "ron-utils";
-
 import type {
   AttackBonus,
   AttackBonusKey,
@@ -8,8 +6,6 @@ import type {
   ExclusiveAttackBonusGroup,
   TalentCalcItemBonusId,
 } from "@/types";
-
-type AttackBonusGroup = Record<AttackBonusType, AttackBonus[]>;
 
 export type GetBonusPaths = Array<AttackBonusType | null | undefined | false>;
 
@@ -20,23 +16,17 @@ export type GetBonusOptions = {
 const defaultFilter = () => true;
 
 export class AttackBonusControl {
-  protected group = {} as AttackBonusGroup;
-  protected initial = {} as AttackBonusGroup;
+  private constructor(public records: Map<AttackBonusType, AttackBonus[]>) {}
 
-  constructor(initial: Partial<AttackBonusGroup> = {}) {
-    this.initial = Object_.cloneProps(initial) as AttackBonusGroup;
-    this.group = initial as AttackBonusGroup;
-  }
-
-  get records() {
-    return this.group;
+  static create() {
+    return new AttackBonusControl(new Map());
   }
 
   add(bonus: AttackBonus) {
-    const current = this.group[bonus.toType] || [];
+    const bonuses = this.records.get(bonus.toType) || [];
 
-    current.push(bonus);
-    this.group[bonus.toType] = current;
+    bonuses.push(bonus);
+    this.records.set(bonus.toType, bonuses);
 
     return this;
   }
@@ -46,7 +36,7 @@ export class AttackBonusControl {
     let result = 0;
 
     for (const path of paths) {
-      const bonuses = (path && this.group[path]) || [];
+      const bonuses = (path && this.records.get(path)) || [];
 
       result += bonuses.reduce((total, bonus) => {
         return total + (bonus.toKey === key && filter(bonus) ? bonus.value : 0);
@@ -56,9 +46,9 @@ export class AttackBonusControl {
     return result;
   }
 
-  collectExclusiveBonuses = (id?: TalentCalcItemBonusId) => {
+  exclusiveGroups = (id?: TalentCalcItemBonusId) => {
     const result: ExclusiveAttackBonusGroup[] = [];
-    const bonusRecords = (id && this.group[id]) || [];
+    const bonusRecords = (id && this.records.get(id)) || [];
 
     for (const record of bonusRecords) {
       const existed = result.find((filterRecord) => filterRecord.type === record.toKey);
@@ -81,16 +71,11 @@ export class AttackBonusControl {
   };
 
   clone() {
-    return new AttackBonusControl(Object_.cloneProps(this.group));
-  }
-
-  reset() {
-    this.group = Object_.cloneProps(this.initial);
-    return this;
+    return new AttackBonusControl(this.records);
   }
 
   clear() {
-    this.group = {} as AttackBonusGroup;
+    this.records = new Map();
     return this;
   }
 }
