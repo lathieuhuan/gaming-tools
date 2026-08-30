@@ -116,8 +116,9 @@ export class CalcSetup extends CalcSetupBase {
       resonatedElmts: useSettingsStore.getState().traveler.resonatedElmts,
     });
 
+    // TODO check
     const newMain = main.clone({
-      allAttrsCtrl: main.allAttrsCtrl.clone(),
+      attrCtrl: main.attrCtrl.clone(),
       attkBonusCtrl: main.attkBonusCtrl.clone(),
     });
 

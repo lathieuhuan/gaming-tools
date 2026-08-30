@@ -40,7 +40,7 @@ export function TrackerCore({ trackerState }: TrackerCoreProps) {
   }
 
   const { result, target } = state;
-  const { attkBonusCtrl, allAttrsCtrl } = state.main;
+  const { attkBonusCtrl, attrCtrl } = state.main;
   const charLv = activeSetup.main.bareLv;
   const defIgnoreAll = attkBonusCtrl.get("defIgn_", ["all"]);
   const totalDefReduct = target.getReduction("def").value;
@@ -50,7 +50,7 @@ export function TrackerCore({ trackerState }: TrackerCoreProps) {
   const collapseItems: CollapseListProps["items"] = [
     {
       heading: "Attributes",
-      body: <AttributeTracker listClassName={listClassName} allAttrsCtrl={allAttrsCtrl} />,
+      body: <AttributeTracker listClassName={listClassName} attrCtrl={attrCtrl} />,
     },
     {
       heading: "Bonuses",

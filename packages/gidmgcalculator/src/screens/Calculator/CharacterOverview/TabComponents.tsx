@@ -1,5 +1,5 @@
-import { CarouselSpace, Tabs } from "rond";
 import { useState } from "react";
+import { CarouselSpace, Tabs } from "rond";
 
 import { useCalcStore, useShallowCalcStore } from "@Store/calculator";
 import { updateMain, updateMainWeapon } from "@Store/calculator/actions";
@@ -12,9 +12,9 @@ import { WeaponView } from "@/components/WeaponCard";
 
 export function AttributesTab() {
   const { allAttrs, attkBonusCtrl } = useShallowCalcStore((state) => {
-    const { allAttrsCtrl, attkBonusCtrl } = selectActiveMain(state);
+    const { attrCtrl, attkBonusCtrl } = selectActiveMain(state);
     return {
-      allAttrs: allAttrsCtrl.finals,
+      allAttrs: attrCtrl.finals,
       attkBonusCtrl,
     };
   });

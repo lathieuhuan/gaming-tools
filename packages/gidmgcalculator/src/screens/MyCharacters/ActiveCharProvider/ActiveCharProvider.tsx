@@ -19,7 +19,7 @@ const parseUserdb = (state: RootState) => {
 
   const character = makeCharacterCalcFromDb(activeCharacter, userWps, userArts).initCalculation();
 
-  character.allAttrsCtrl.finalize();
+  character.attrCtrl.finalize();
 
   return {
     character,

@@ -30,8 +30,8 @@ import { ArtifactGear } from "../ArtifactGear";
 import { Team } from "../Team";
 import { isValidInput } from "../utils/isValidInput";
 import { Weapon } from "../Weapon";
-import { AllAttributesControl } from "./AllAttributesControl";
 import { AttackBonusControl } from "./AttackBonusControl";
+import { AttributeControl } from "./AttributeControl";
 import { BonusCalc } from "./BonusCalc";
 import { PenaltyCalc } from "./PenaltyCalc";
 
@@ -67,7 +67,7 @@ export type ReceivedAttackBonus = AttackBonus & {
 export type CharacterCreateOptions = Partial<CharacterStateData> & {
   atfGear?: ArtifactGear;
   levelBonuses?: Map<string, LevelBonus>;
-  allAttrsCtrl?: AllAttributesControl;
+  attrCtrl?: AttributeControl;
   attkBonusCtrl?: AttackBonusControl;
   team?: Team;
 };
@@ -97,7 +97,7 @@ export class Character implements TeamMember, Clonable<Character> {
     public weapon: Weapon,
     public atfGear: ArtifactGear,
     public levelBonuses: Map<string, LevelBonus>,
-    public allAttrsCtrl: AllAttributesControl,
+    public attrCtrl: AttributeControl,
     public attkBonusCtrl: AttackBonusControl,
     public team: Team,
   ) {
@@ -156,14 +156,14 @@ export class Character implements TeamMember, Clonable<Character> {
   }
 
   getAttr(key: AllAttributeStat) {
-    return this.allAttrsCtrl.finals.get(key);
+    return this.attrCtrl.finals.get(key);
   }
 
   // ===== CALCULATION =====
 
   initCalculation() {
     this.levelBonuses.clear();
-    this.allAttrsCtrl.init(this);
+    this.attrCtrl.init(this);
     this.attkBonusCtrl = new AttackBonusControl();
     return this;
   }
@@ -294,7 +294,7 @@ export class Character implements TeamMember, Clonable<Character> {
       const notRecorded = !monoId || !this.isRecordedBonus(monoId, toStat);
 
       if (notRecorded) {
-        this.allAttrsCtrl.applyBonus({
+        this.attrCtrl.addBonus({
           ...bonus,
           toStat,
         });
@@ -338,7 +338,7 @@ export class Character implements TeamMember, Clonable<Character> {
       cons = this.cons,
       enhanced = this.enhanced,
       atfGear = this.atfGear,
-      allAttrsCtrl = this.allAttrsCtrl,
+      attrCtrl = this.attrCtrl,
       attkBonusCtrl = this.attkBonusCtrl,
       team = this.team,
       levelBonuses = this.levelBonuses,
@@ -367,7 +367,7 @@ export class Character implements TeamMember, Clonable<Character> {
       weapon,
       atfGear,
       levelBonuses,
-      allAttrsCtrl,
+      attrCtrl,
       attkBonusCtrl,
       team,
     );
@@ -388,7 +388,7 @@ export class Character implements TeamMember, Clonable<Character> {
       this.weapon.clone(),
       this.atfGear.deepClone(),
       Object_.clone(this.levelBonuses), // TODO fix
-      this.allAttrsCtrl.clone(),
+      this.attrCtrl.clone(),
       this.attkBonusCtrl.clone(),
       this.team,
     );
@@ -422,7 +422,7 @@ export class Character implements TeamMember, Clonable<Character> {
       enhanced = this.#DEFAULT_ENHANCED,
       atfGear = ArtifactGear.create(),
       levelBonuses = new Map<string, LevelBonus>(),
-      allAttrsCtrl = new AllAttributesControl(),
+      attrCtrl = AttributeControl.create(),
       attkBonusCtrl = new AttackBonusControl(),
       team = new Team(),
     } = options;
@@ -443,7 +443,7 @@ export class Character implements TeamMember, Clonable<Character> {
       weapon,
       atfGear,
       levelBonuses,
-      allAttrsCtrl,
+      attrCtrl,
       attkBonusCtrl,
       team,
     );

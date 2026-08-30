@@ -38,7 +38,7 @@ export function applyBuffs(
   options: ApplyBuffsOptions = {},
 ) {
   const { team } = setup;
-  const { weapon, allAttrsCtrl, attkBonusCtrl } = main;
+  const { weapon, attrCtrl, attkBonusCtrl } = main;
   const { resonatedElmts = [] } = options;
 
   // POLYSTAR FIELD BONUSES
@@ -48,12 +48,12 @@ export function applyBuffs(
     const label = "Polestar Field";
     const bonus = 20 + (polestarCount ? 8 : 0) + polestarCount * 1;
 
-    allAttrsCtrl.applyBonus({
+    attrCtrl.addBonus({
       value: bonus,
       toStat: "cryo",
       label,
     });
-    allAttrsCtrl.applyBonus({
+    attrCtrl.addBonus({
       value: bonus,
       toStat: "electro",
       label,
@@ -134,14 +134,6 @@ export function applyBuffs(
     isFinalStage?: boolean,
   ) {
     for (const spec of Array_.toArray(specs)) {
-      // console.log("===========");
-      // console.log("applyBonus", spec);
-      // console.log(
-      //   isFinalStage === undefined,
-      //   isFinalStage === isFinalEffect(spec),
-      //   performer.isPerformableEffect(spec, support.inputs)
-      // );
-
       if (
         (isFinalStage === undefined || isFinalStage === isFinalEffect(spec)) &&
         team.isAvailableEffect(spec) &&
@@ -247,7 +239,7 @@ export function applyBuffs(
   for (const { category, type, subType, value } of setup.customBuffCtrls) {
     switch (category) {
       case "totalAttr":
-        allAttrsCtrl.applyBonus({
+        attrCtrl.addBonus({
           value,
           toStat: type as AttributeStat,
           label: "Custom buff",
@@ -255,7 +247,7 @@ export function applyBuffs(
         break;
       case "attElmtBonus": {
         if (subType === "pct_") {
-          allAttrsCtrl.applyBonus({
+          attrCtrl.addBonus({
             value,
             toStat: type as AttributeStat,
             label: "Custom buff",
@@ -319,7 +311,7 @@ export function applyBuffs(
         });
         break;
       case "dendro":
-        allAttrsCtrl.applyBonus({
+        attrCtrl.addBonus({
           value: (inputs[0] ? 20 : 0) + (inputs[1] ? 30 : 0),
           toStat: "em",
           label: "Dendro resonance / Trigger Dendro reactions",
@@ -385,7 +377,7 @@ export function applyBuffs(
   applyAbilityBuffs(true);
   applyArtifactBuffs(true);
 
-  allAttrsCtrl.finalize();
+  attrCtrl.finalize();
 
   const em = main.getAttr("em");
 

@@ -38,7 +38,7 @@ export function SectionDetail({ className }: SectionDetailProps) {
         weapon,
         atfGear,
       });
-      const allAttrs = $character.initCalculation().allAttrsCtrl.finalize();
+      const allAttrs = $character.initCalculation().attrCtrl.finalize();
 
       extraTitle = "Attributes";
       content = (

@@ -1,4 +1,4 @@
-import { CountMap, Object_, round } from "ron-utils";
+import { CountMap, round } from "ron-utils";
 
 import type { AllAttributes, AttributeBonus, AttributeStat, BaseAttributeStat } from "@/types";
 import type { Character } from "./Character";
@@ -15,8 +15,8 @@ const AUTO_RESONANCE_STATS: Record<string, { key: AttributeStat; value: number }
   dendro: { key: "em", value: 50 },
 };
 
-type AllAttributesControlInitial = {
-  details?: DetailedAttributes;
+type AttributeControlCloneOptions = {
+  details?: InternalAttributes;
   finals?: AllAttributes;
 };
 
@@ -25,25 +25,22 @@ type AttributeControlLog = {
   value: number;
 };
 
-type InternalAttribute = {
-  base: number;
-  fixedBonus: number;
-  dynamicBonus: number;
+type InternalAttributeElement = "base" | "static" | "dynamic";
+
+type InternalAttribute = Record<InternalAttributeElement, number> & {
   logs: AttributeControlLog[];
 };
 
-type DetailedAttributes = Record<AttributeStat, InternalAttribute>;
+type InternalAttributes = Map<AttributeStat, InternalAttribute>;
 
-export class AllAttributesControl {
-  private details: DetailedAttributes;
-  public finals: AllAttributes;
+export class AttributeControl {
+  private constructor(
+    private attrs: InternalAttributes,
+    public finals: AllAttributes,
+  ) {}
 
-  /** Deep clone initial if it is reused */
-  constructor(initial: AllAttributesControlInitial = {}) {
-    const { details = {}, finals = new CountMap() } = initial;
-
-    this.details = details as DetailedAttributes;
-    this.finals = finals;
+  static create() {
+    return new AttributeControl({} as InternalAttributes, new CountMap());
   }
 
   init(character: Character) {
@@ -104,7 +101,7 @@ export class AllAttributesControl {
       this.addBase("atk", mainStatValue, "Weapon main stat");
 
       if (subStatValue && subStat) {
-        this.applyBonus({
+        this.addBonus({
           value: subStatValue,
           toStat: subStat.type,
           label: `Weapon sub-stat`,
@@ -121,7 +118,7 @@ export class AllAttributesControl {
       });
 
       for (const [stat, value] of attributes.entries()) {
-        this.applyBonus({
+        this.addBonus({
           toStat: stat,
           value,
           label: "Artifact stat",
@@ -134,7 +131,7 @@ export class AllAttributesControl {
       if (resonance in AUTO_RESONANCE_STATS) {
         const { key, value } = AUTO_RESONANCE_STATS[resonance];
 
-        this.applyBonus({
+        this.addBonus({
           toStat: key,
           value,
           label: `${resonance} resonance`,
@@ -142,66 +139,52 @@ export class AllAttributesControl {
       }
     }
 
-    return this.details;
+    return this.attrs;
   }
 
-  // ===== GET & SET =====
-
   private _get(stat: AttributeStat): InternalAttribute {
-    if (this.details[stat]) {
-      return this.details[stat];
+    const attr = this.attrs.get(stat);
+
+    if (attr !== undefined) {
+      return attr;
     }
 
     return {
       base: 0,
-      fixedBonus: 0,
-      dynamicBonus: 0,
+      static: 0,
+      dynamic: 0,
       logs: [],
     };
   }
 
-  private _set<T extends keyof InternalAttribute>(
-    stat: AttributeStat,
-    key: T,
-    valueOrSetter: InternalAttribute[T] | ((attr: InternalAttribute[T]) => InternalAttribute[T]),
-  ) {
+  private _add(stat: AttributeStat, el: InternalAttributeElement, value: number, label: string) {
     const attr = this._get(stat);
 
-    attr[key] = typeof valueOrSetter === "function" ? valueOrSetter(attr[key]) : valueOrSetter;
-    this.details[stat] = attr;
+    attr[el] += value;
+    attr.logs.push({ label, value });
+
+    this.attrs.set(stat, attr);
   }
 
-  // ===== LOG =====
-
-  getLogs(key: AttributeStat) {
-    return this._get(key).logs || [];
-  }
-
-  private addLog(key: AttributeStat, value: number, label: string) {
-    this._set(key, "logs", (logs) => {
-      logs.push({ label, value });
-      return logs;
-    });
+  logsOf(key: AttributeStat) {
+    return this._get(key).logs;
   }
 
   // ===== UPDATE =====
 
-  addBase(key: AttributeStat, value: number, label = "Character base stat") {
-    this._set(key, "base", (base) => base + value);
-    this.addLog(key, value, label);
+  private addBase(key: AttributeStat, value: number, label = "Character base stat") {
+    this._add(key, "base", value, label);
   }
 
-  applyBonus(bonus: AttributeBonus) {
+  addBonus(bonus: AttributeBonus) {
+    const attrEl: InternalAttributeElement = bonus.isDynamic ? "dynamic" : "static";
+
     if (isBaseStat(bonus.toStat)) {
-      const statType = baseStatToCoreStat(bonus.toStat);
-      this.addBase(statType, bonus.value, bonus.label);
+      this._add(baseStatToCoreStat(bonus.toStat), attrEl, bonus.value, bonus.label);
       return;
     }
 
-    const bonusType = bonus.isDynamic ? "dynamicBonus" : "fixedBonus";
-
-    this._set(bonus.toStat, bonusType, (prev) => prev + bonus.value);
-    this.addLog(bonus.toStat, bonus.value, bonus.label);
+    this._add(bonus.toStat, attrEl, bonus.value, bonus.label);
   }
 
   // ===== READ =====
@@ -215,22 +198,22 @@ export class AllAttributesControl {
       return this.getBase(baseStatToCoreStat(key));
     }
 
-    const { base, fixedBonus, dynamicBonus } = this._get(key);
-    let total = base + fixedBonus;
+    const attr = this._get(key);
+    let total = attr.base + attr.static;
 
     if (!fixedOnly) {
-      total += dynamicBonus;
+      total += attr.dynamic;
     }
 
     if (isCoreStat(key)) {
       const percent = this._get(`${key}_`);
-      let totalPercent = percent.base + percent.fixedBonus;
+      let totalPercent = percent.base + percent.static;
 
       if (!fixedOnly) {
-        totalPercent += percent.dynamicBonus;
+        totalPercent += percent.dynamic;
       }
 
-      total += (base * totalPercent) / 100;
+      total += (attr.base * totalPercent) / 100;
     }
 
     return total;
@@ -261,15 +244,14 @@ export class AllAttributesControl {
     return allAttrs;
   }
 
-  clone() {
-    return new AllAttributesControl({
-      details: Object_.clone(this.details),
-      finals: this.finals.clone(),
-    });
+  clone(initial: AttributeControlCloneOptions = {}) {
+    const { details = this.attrs, finals = this.finals } = initial;
+
+    return new AttributeControl(details, finals);
   }
 
   clear() {
-    this.details = {} as DetailedAttributes;
+    this.attrs = {} as InternalAttributes;
     this.finals = new CountMap();
     return this;
   }
