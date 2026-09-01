@@ -1,7 +1,7 @@
 import { CloseButton, clsx, cn, VersatileSelect } from "rond";
 
 import type { Teammate } from "@/models";
-import { genSequentialOptions } from "@/utils/pure.utils";
+import { genSequentialOptions } from "@/utils/ui.utils";
 
 import { GenshinImage } from "../GenshinImage";
 
@@ -84,7 +84,7 @@ export function TeammateItems({
         <p
           className={clsx(
             "mt-1 grow font-semibold text-base truncate",
-            artifactSetName ? "text-light-1" : "text-light-hint"
+            artifactSetName ? "text-light-1" : "text-light-hint",
           )}
         >
           {artifactSetName || "No artifact buff / debuff"}

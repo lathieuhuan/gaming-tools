@@ -6,7 +6,7 @@ import type { AttackBonus, AttackBonusKey, AttackElement } from "@/types";
 import { ATTACK_ELEMENTS } from "@/constants/global";
 import { useTranslation } from "@/hooks";
 import { AttackBonusControl } from "@/models/Character";
-import { suffixOf } from "@/utils/pure.utils";
+import { suffixOf } from "@/utils/ui.utils";
 
 import { Heading, List } from "./components/ResourceLayout";
 

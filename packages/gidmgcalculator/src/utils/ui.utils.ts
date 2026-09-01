@@ -1,3 +1,9 @@
+import { CustomBuffCtrlCategory, CustomBuffCtrlType } from "@/types";
+
+/**
+ * @param count default 0
+ * @param startFrom default 1
+ */
 export function genSequentialOptions(count: number | undefined = 0, startFrom = 1) {
   return Array.from({ length: count }, (_, i) => {
     const value = i + startFrom;
@@ -12,6 +18,10 @@ export function suffixOf(stat: string) {
     : "";
 }
 
-export function toCustomBuffLabel(category: string, type: string, t: (origin: string) => string) {
+export function toCustomBuffLabel(
+  category: CustomBuffCtrlCategory,
+  type: CustomBuffCtrlType,
+  t: (origin: string) => string,
+) {
   return category === "attElmtBonus" ? (type === "phys" ? "physical" : type) : t(type);
 }

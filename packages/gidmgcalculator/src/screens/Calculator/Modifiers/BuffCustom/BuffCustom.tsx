@@ -3,12 +3,12 @@ import { clsx } from "rond";
 import type { CustomBuffCtrl } from "@/types";
 
 import { useTranslation } from "@/hooks";
-import { suffixOf, toCustomBuffLabel } from "@/utils/pure.utils";
+import { suffixOf, toCustomBuffLabel } from "@/utils/ui.utils";
 import { useCalcStore } from "@Store/calculator";
 import { updateActiveSetup } from "@Store/calculator/actions";
 import { selectSetup } from "@Store/calculator/selectors";
 
-import { CustomModLayout, CopySelect, ModItemRenderConfig } from "../CustomModLayout";
+import { CopySelect, CustomModLayout, ModItemRenderConfig } from "../CustomModLayout";
 import { BuffCtrlForm } from "./BuffCtrlForm";
 
 export function BuffCustom() {
@@ -23,7 +23,7 @@ export function BuffCustom() {
       label: clsx(
         toCustomBuffLabel(ctrl.category, ctrl.type, t),
         ctrl.subType && ` ${t(ctrl.subType)}`,
-        sign && `(${sign})`
+        sign && `(${sign})`,
       ),
       value: ctrl.value,
       min: sign ? -99 : -9999,
@@ -56,7 +56,7 @@ export function BuffCustom() {
       )}
       onValueChange={(value, index) => {
         handleUpdateCtrls(
-          customBuffCtrls.map((ctrl, i) => (i === index ? { ...ctrl, value } : ctrl))
+          customBuffCtrls.map((ctrl, i) => (i === index ? { ...ctrl, value } : ctrl)),
         );
       }}
       onRemoveItem={(ctrlIndex) => {

@@ -6,7 +6,7 @@ import type { AttackReaction, CustomBuffCtrl, ElementalEvent, ElementType } from
 
 import { useTranslation } from "@/hooks";
 import { parseDescription } from "@/utils/descriptionParsers";
-import { suffixOf, toCustomBuffLabel } from "@/utils/pure.utils";
+import { suffixOf, toCustomBuffLabel } from "@/utils/ui.utils";
 
 // Component
 import { GenshinModifierView } from "@/components/GenshinModifierView";

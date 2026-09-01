@@ -5,7 +5,7 @@ import type { AttributeControl } from "@/models/Character";
 
 import { ATTRIBUTE_STAT_TYPES, CORE_STAT_TYPES } from "@/constants/global";
 import { useTranslation } from "@/hooks";
-import { suffixOf } from "@/utils/pure.utils";
+import { suffixOf } from "@/utils/ui.utils";
 import { useCalcStore } from "@Store/calculator";
 import { selectSetup } from "@Store/calculator/selectors";
 

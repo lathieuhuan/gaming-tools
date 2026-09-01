@@ -5,7 +5,7 @@ import type { AttackBonusControl } from "@/models/Character";
 import type { TalentCalcItemBonusId } from "@/types";
 
 import { useTranslation } from "@/hooks";
-import { suffixOf } from "@/utils/pure.utils";
+import { suffixOf } from "@/utils/ui.utils";
 
 import { PositiveText } from "@/components/Text";
 import { Part, Parts } from "./ResultParts";

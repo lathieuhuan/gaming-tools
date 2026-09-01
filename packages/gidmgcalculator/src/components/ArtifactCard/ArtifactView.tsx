@@ -4,7 +4,7 @@ import type { ArtifactSubStat, AttributeStat } from "@/types";
 
 import { useTranslation } from "@/hooks";
 import { Artifact } from "@/models";
-import { suffixOf } from "@/utils/pure.utils";
+import { suffixOf } from "@/utils/ui.utils";
 
 // Component
 import { GenshinImage } from "../GenshinImage";

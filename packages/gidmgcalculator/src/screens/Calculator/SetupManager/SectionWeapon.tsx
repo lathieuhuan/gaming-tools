@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Badge, Button, PouchSvg, VersatileSelect } from "rond";
 
 import { $AppWeapon } from "@/services";
-import { genSequentialOptions } from "@/utils/pure.utils";
+import { genSequentialOptions } from "@/utils/ui.utils";
 import { useCalcStore } from "@Store/calculator";
 import { switchMainWeapon, updateMainWeapon } from "@Store/calculator/actions";
 import { selectActiveMain } from "@Store/calculator/selectors";
