@@ -55,7 +55,3 @@ export function validCapsOfLevel(level: number, allLvCaps: number[]): number[] {
 
   return [lastLvCap];
 }
-
-// export function getAscension(levelCap: number) {
-//   return levelCap === 20 ? 0 : levelCap >= 90 ? 6 : levelCap / 10 - 3;
-// };

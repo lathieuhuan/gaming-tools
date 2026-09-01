@@ -4,7 +4,7 @@ import type { AppWeapon, EquipmentRelation, Level, RawWeapon, WeaponType } from 
 import type { Clonable } from "./interfaces";
 
 import { LEVELS } from "@/constants";
-import { parseLevel } from "@/logic/level.logic";
+import { parseLevel } from "@/utils/level.utils";
 
 type WeaponCreateOptions = Partial<Pick<RawWeapon, "level" | "refi" | "owner" | "setupIDs">>;
 

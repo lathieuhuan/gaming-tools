@@ -11,7 +11,7 @@ import type {
 import { CountMap, Object_ } from "ron-utils";
 
 import { PHEC_ELEMENT_TYPES } from "@/constants";
-import { isAutoRsnElmt } from "@/logic/element.logic";
+import { isAutoRsnElmt } from "@/utils/element.utils";
 import { isPassedComparison } from "./utils/isPassedComparison";
 
 export class Team<TMember extends TeamMember = TeamMember> {

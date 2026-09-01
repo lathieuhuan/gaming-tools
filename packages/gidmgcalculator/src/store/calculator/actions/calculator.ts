@@ -8,7 +8,7 @@ import { createCharacter, createWeapon } from "@/logic/entity.logic";
 import { parseDbArtifacts } from "@/logic/userdb.logic";
 import { CalcSetup, CalcSetupConstructData } from "@/models";
 import { $AppCharacter } from "@/services";
-import IdStore from "@/utils/IdStore";
+import { IdStore } from "@/utils/IdStore";
 import { updateSettings } from "@Store/settings";
 import { isTourFinished } from "@Store/tours";
 import { updateUI } from "@Store/ui";

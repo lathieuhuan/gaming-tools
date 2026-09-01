@@ -12,7 +12,7 @@ import type {
 import type { CalcResultAttackItem, CalcResultItemValue } from "../types";
 import type { ResultRecorder } from "./ResultRecorder";
 
-import { limitCRate } from "@/logic/stat.logic";
+import { limitCRate } from "@/utils/stat.utils";
 
 type MakeAttackCalcTools = {
   attElmt?: AttackElement;

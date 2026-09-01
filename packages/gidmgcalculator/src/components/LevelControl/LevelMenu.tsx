@@ -1,4 +1,4 @@
-import { validCapsOfLevel } from "@/logic/level.logic";
+import { validCapsOfLevel } from "@/utils/level.utils";
 import { ClassValue, clsx, cn } from "rond";
 
 export type LevelMenuProps = {

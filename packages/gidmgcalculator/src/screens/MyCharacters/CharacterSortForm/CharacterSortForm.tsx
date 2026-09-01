@@ -6,8 +6,8 @@ import { CarouselSpace, Popover } from "rond";
 import type { CharacterToBeSorted } from "./types";
 
 import { useStoreSnapshot } from "@/lib/dynamic-store";
-import { splitLevel } from "@/logic/level.logic";
 import { $AppCharacter } from "@/services";
+import { splitLevel } from "@/utils/level.utils";
 import { useDispatch } from "@Store/hooks";
 import { selectDbCharacters, sortDbCharacters } from "@Store/userdbSlice";
 

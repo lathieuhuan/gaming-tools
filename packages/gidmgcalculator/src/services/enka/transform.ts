@@ -8,7 +8,7 @@ import {
 } from "@/logic/converGOOD.logic";
 import { createWeapon } from "@/logic/entity.logic";
 import { Artifact, ArtifactGear } from "@/models";
-import IdStore from "@/utils/IdStore";
+import { IdStore } from "@/utils/IdStore";
 
 export function transformGenshinUserResponse(
   response: GenshinUserResponse,

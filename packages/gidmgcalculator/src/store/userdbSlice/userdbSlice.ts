@@ -30,10 +30,10 @@ import type {
 
 import { ARTIFACT_TYPES } from "@/constants/global";
 import { createCharacter, createWeapon } from "@/logic/entity.logic";
-import { splitLevel } from "@/logic/level.logic";
 import { isDbSetup } from "@/logic/setup.logic";
 import { Artifact, Weapon } from "@/models";
-import IdStore from "@/utils/IdStore";
+import { IdStore } from "@/utils/IdStore";
+import { splitLevel } from "@/utils/level.utils";
 
 export type UserdbState = {
   userChars: DbCharacter[];

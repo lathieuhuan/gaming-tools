@@ -13,8 +13,8 @@ import type {
 import type { CalcResultReactionItem } from "../types";
 import type { ResultRecorder } from "./ResultRecorder";
 
-import { limitCRate } from "@/logic/stat.logic";
 import { GetAttackBonusPaths } from "@/models/Character";
+import { limitCRate } from "@/utils/stat.utils";
 import { LUNAR_ATTACK_ELEMENT, LUNAR_REACTION_COEFFICIENT } from "../constants";
 
 const TRANSFORMATIVE_REACTION_CONFIG: Record<

@@ -25,7 +25,7 @@ import type { Clonable } from "../interfaces";
 
 import { isPassedComparison } from "../utils/isPassedComparison";
 
-import { splitLevel } from "@/logic/level.logic";
+import { splitLevel } from "@/utils/level.utils";
 import { ArtifactGear } from "../ArtifactGear";
 import { Team } from "../Team";
 import { isValidInput } from "../utils/isValidInput";

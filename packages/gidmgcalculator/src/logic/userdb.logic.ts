@@ -5,7 +5,7 @@ import type { DbCharacter, RawArtifact, RawWeapon, WeaponType } from "@/types";
 import { createArtifact, createCharacter, createWeapon } from "@/logic/entity.logic";
 import { ArtifactGear, Team } from "@/models";
 import { $AppCharacter } from "@/services";
-import IdStore from "@/utils/IdStore";
+import { IdStore } from "@/utils/IdStore";
 
 export function parseDbWeapon(
   weaponID: number,

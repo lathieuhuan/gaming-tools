@@ -24,7 +24,7 @@ import type {
 
 import { DEFAULT_STELLAR_VORTEX_LV } from "@/constants";
 import { $AppArtifact, $AppData } from "@/services";
-import { isManualRsnElmt } from "./element.logic";
+import { isManualRsnElmt } from "@/utils/element.utils";
 
 export const MS_ASCENDANT_BUFF_ID = 1;
 

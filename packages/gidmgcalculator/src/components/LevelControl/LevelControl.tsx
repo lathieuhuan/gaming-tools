@@ -2,8 +2,8 @@ import Dropdown from "@rc-component/dropdown";
 import { ChevronDownSvg, ClassValue, cn } from "rond";
 
 import { useControllableState } from "@/hooks/useControllableState";
-import { splitLevel, validCapsOfLevel } from "@/logic/level.logic";
 import { Level } from "@/types";
+import { splitLevel, validCapsOfLevel } from "@/utils/level.utils";
 import { LevelMenu, LevelMenuProps } from "./LevelMenu";
 
 export type LevelControlProps = Pick<LevelMenuProps, "allLevelCaps"> & {

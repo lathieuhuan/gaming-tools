@@ -12,7 +12,7 @@ import {
 } from "@/logic/converGOOD.logic";
 import { createWeapon } from "@/logic/entity.logic";
 import { $AppCharacter } from "@/services";
-import IdStore from "@/utils/IdStore";
+import { IdStore } from "@/utils/IdStore";
 
 type GOODData = {
   characters?: GOODCharacter[];

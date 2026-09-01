@@ -3,7 +3,7 @@ import { ClassValue, clsx } from "rond";
 import { useSetupImporter } from "@/lib/setup-importer";
 import { createCharacter } from "@/logic/entity.logic";
 import { GenshinUserBuild } from "@/services/enka";
-import IdStore from "@/utils/IdStore";
+import { IdStore } from "@/utils/IdStore";
 import { useDataImportState } from "../DataImporter";
 import { useRequestSaveBuild } from "../DataSaver/BuildSaver";
 import { useLayoutState } from "../Layout";

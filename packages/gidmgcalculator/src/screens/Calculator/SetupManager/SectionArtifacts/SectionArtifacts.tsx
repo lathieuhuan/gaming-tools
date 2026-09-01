@@ -8,7 +8,7 @@ import type { ArtifactType } from "@/types";
 import { ARTIFACT_TYPES } from "@/constants/global";
 import { createArtifact } from "@/logic/entity.logic";
 import { Artifact } from "@/models";
-import IdStore from "@/utils/IdStore";
+import { IdStore } from "@/utils/IdStore";
 import { useCalcStore } from "@Store/calculator";
 import { setArtifactPiece } from "@Store/calculator/actions";
 import { selectActiveMain } from "@Store/calculator/selectors";

@@ -4,7 +4,7 @@ import type { AllAttributes, AttributeBonus, AttributeStat, BaseAttributeStat } 
 import type { Character } from "./Character";
 
 import { ATTRIBUTE_STAT_TYPES } from "@/constants";
-import { baseStatToCoreStat, isBaseStat, isCoreStat } from "@/logic/stat.logic";
+import { baseStatToCoreStat, isBaseStat, isCoreStat } from "@/utils/stat.utils";
 
 const ASC_MULT_BY_ASC = [0, 38 / 182, 65 / 182, 101 / 182, 128 / 182, 155 / 182, 1];
 

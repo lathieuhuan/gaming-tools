@@ -17,7 +17,7 @@ import {
   createWeaponBuffCtrls,
 } from "@/logic/modifier.logic";
 import { Artifact, ArtifactGear, CalcSetup, Team } from "@/models";
-import IdStore from "@/utils/IdStore";
+import { IdStore } from "@/utils/IdStore";
 
 export function createSetupForTeammate(
   info: SetupOverviewInfo,

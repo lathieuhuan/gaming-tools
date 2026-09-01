@@ -29,7 +29,6 @@ import {
   LEVELS,
   WEAPON_TYPES,
 } from "@/constants/global";
-import { isManualRsnElmt } from "@/logic/element.logic";
 import {
   createArtifact,
   createCharacter,
@@ -40,7 +39,8 @@ import {
 import { enhanceCtrls } from "@/logic/modifier.logic";
 import { Artifact, ArtifactGear, CalcSetup, Team, Teammate } from "@/models";
 import { $AppArtifact, $AppCharacter, $AppData } from "@/services";
-import IdStore from "@/utils/IdStore";
+import { isManualRsnElmt } from "@/utils/element.utils";
+import { IdStore } from "@/utils/IdStore";
 import { CUSTOM_BUFF_CATEGORIES, DECODE_ERROR_MSG, DIVIDER } from "./config";
 
 export function decodeSetupPrevious(code: string): DecodeResult {
