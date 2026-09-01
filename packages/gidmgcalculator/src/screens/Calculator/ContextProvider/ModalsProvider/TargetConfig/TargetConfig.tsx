@@ -1,14 +1,15 @@
 import { Array_ } from "ron-utils";
 import { clsx, InputNumber, Modal, VersatileSelect } from "rond";
 
-import type { AttackElement, ElementType } from "@/types";
+import type { AppMonster, AttackElement, ElementType } from "@/types";
 
 import { MAX_TARGET_LEVEL } from "@/constants/config";
 import { ATTACK_ELEMENTS } from "@/constants/global";
 import { useTranslation } from "@/hooks";
+import { createTarget } from "@/logic/entity.logic";
 import { useCalcStore } from "@Store/calculator";
-import { updateTarget } from "@Store/calculator/actions";
-import { useUIStore, updateUI } from "@Store/ui";
+import { setTarget } from "@Store/calculator/actions";
+import { updateUI, useUIStore } from "@Store/ui";
 
 import { ComboBox } from "./ComboBox";
 import { InputControl } from "./InputControl";
@@ -21,26 +22,30 @@ function TargetConfigCore() {
   const variantTypes = monster.variant?.types;
   const inputConfigs = monster.inputConfigs ? Array_.toArray(monster.inputConfigs) : [];
 
-  const onChangeElementVariant = (value: string) => {
-    updateTarget({ variantType: value as ElementType });
+  const handleChangeTarget = (monster: AppMonster) => {
+    setTarget(createTarget(monster.code, monster));
   };
 
-  const onChangeTargetResistance = (attElmt: AttackElement) => {
-    return (value: number) => {
-      updateTarget({
-        resistances: {
-          ...target.resistances,
-          [attElmt]: value,
-        },
-      });
-    };
+  const handleChangeLevel = (level: number) => {
+    setTarget(target.update({ level }));
   };
 
-  const onChangeInput = (value: number, index: number) => {
-    const { inputs = [] } = target;
-    inputs[index] = value;
+  const handleChangeElementVariant = (value: string) => {
+    setTarget(target.update({ variantType: value as ElementType }));
+  };
 
-    updateTarget({ inputs });
+  const handleChangeResistance = (attElmt: AttackElement, value: number) => {
+    setTarget(target.updateResistances({ [attElmt]: value }));
+  };
+
+  const handleChangeInput = (value: number, index: number) => {
+    const { inputs } = target;
+
+    if (inputs?.length) {
+      inputs[index] = value;
+
+      setTarget(target.update({ inputs: [...inputs] }));
+    }
   };
 
   return (
@@ -59,7 +64,7 @@ function TargetConfigCore() {
                 value={target.level}
                 max={MAX_TARGET_LEVEL}
                 maxDecimalDigits={0}
-                onChange={(value) => updateTarget({ level: value })}
+                onChange={handleChangeLevel}
               />
             </label>
           </div>
@@ -68,13 +73,7 @@ function TargetConfigCore() {
             className="mt-3"
             targetCode={target.code}
             targetTitle={monster.title}
-            onSelectMonster={({ monsterCode, inputs, variantType }) => {
-              updateTarget({
-                code: monsterCode,
-                inputs,
-                variantType,
-              });
-            }}
+            onSelectMonster={handleChangeTarget}
           />
 
           {variantTypes?.length && target.variantType ? (
@@ -93,7 +92,7 @@ function TargetConfigCore() {
                   };
                 })}
                 value={target.variantType}
-                onChange={onChangeElementVariant}
+                onChange={handleChangeElementVariant}
               />
             </div>
           ) : null}
@@ -105,7 +104,7 @@ function TargetConfigCore() {
                 <InputControl
                   config={config}
                   input={target.inputs?.[index] || 0}
-                  onChange={(value) => onChangeInput(value, index)}
+                  onChange={(value) => handleChangeInput(value, index)}
                 />
               </div>
             );
@@ -121,7 +120,7 @@ function TargetConfigCore() {
                 <p
                   className={clsx(
                     "mr-4 text-base",
-                    attElmt === "phys" ? "text-light-1" : `text-${attElmt}`
+                    attElmt === "phys" ? "text-light-1" : `text-${attElmt}`,
                   )}
                 >
                   {t(attElmt, { ns: "resistance" })}
@@ -134,7 +133,7 @@ function TargetConfigCore() {
                   maxDecimalDigits={0}
                   max={200}
                   min={-200}
-                  onChange={onChangeTargetResistance(attElmt)}
+                  onChange={(value) => handleChangeResistance(attElmt, value)}
                 />
               </div>
             );

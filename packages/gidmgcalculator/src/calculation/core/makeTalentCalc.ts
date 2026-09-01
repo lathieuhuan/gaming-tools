@@ -1,6 +1,6 @@
 import { Array_, toMult } from "ron-utils";
 
-import type { TargetCalc } from "@/models";
+import type { Target } from "@/models";
 import type {
   AttackBonusKey,
   AttackElement,
@@ -29,7 +29,7 @@ import { makeOtherItemCalc } from "./makeOtherItemCalc";
 
 export function makeTalentCalc(
   performer: Character,
-  target: TargetCalc,
+  target: Target,
   talentType: LevelableTalentType | null,
   default_: CalcItemDefaultValues,
   alterConfig: AttackAlter = {},

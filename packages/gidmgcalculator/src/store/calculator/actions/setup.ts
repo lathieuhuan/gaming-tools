@@ -99,9 +99,11 @@ export type MultiSetupChange = SetupManager & {
 
 export const updateMultiSetups = (changes: MultiSetupChange[], newStandardId: number) => {
   useCalcStore.setState((state) => {
-    const { setupManagers, setupsById, activeId, target } = state;
+    const { setupManagers, setupsById, activeId } = state;
     const removedIds: number[] = [];
     const tempManagers: SetupManager[] = [];
+
+    const target = state.target.clone();
 
     // Reset comparedIds before repopulate with changes
     state.comparedIds = [];

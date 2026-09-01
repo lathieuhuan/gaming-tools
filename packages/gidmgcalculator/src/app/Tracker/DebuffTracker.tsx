@@ -1,16 +1,16 @@
-import { clsx } from "rond";
 import { round } from "ron-utils";
+import { clsx } from "rond";
 
-import type { TargetCalc } from "@/models";
+import type { Target } from "@/models";
 
 import { ATTACK_ELEMENTS } from "@/constants/global";
 import { useTranslation } from "@/hooks";
 
-import { Heading, Container, Item, List } from "./components/ResourceLayout";
+import { Container, Heading, Item, List } from "./components/ResourceLayout";
 
 type DebuffTrackerProps = {
   listClassName?: string;
-  target: TargetCalc;
+  target: Target;
 };
 
 export function DebuffTracker({ listClassName, target }: DebuffTrackerProps) {
@@ -20,17 +20,17 @@ export function DebuffTracker({ listClassName, target }: DebuffTrackerProps) {
     <div className="-mt-1 -mb-3 divide-y divide-dark-line">
       <div className={clsx("py-3 empty:hidden", listClassName)}>
         {(["def", ...ATTACK_ELEMENTS] as const).map((attElmt) => {
-          const { value: reduction, records = [] } = target.getReduction(attElmt);
+          const { value: reduction, logs } = target.resistReduction(attElmt);
 
           return (
-            records.length !== 0 && (
+            logs.length !== 0 && (
               <div key={attElmt} className="break-inside-avoid">
                 <Heading
                   label={`${t(attElmt, { ns: "resistance" })} reduction`}
                   value={round(reduction, 2) + "%"}
                 />
 
-                <List records={records} calcFn={(value) => round(value, 2) + "%"} />
+                <List records={logs} calcFn={(value) => round(value, 2) + "%"} />
               </div>
             )
           );
@@ -42,7 +42,7 @@ export function DebuffTracker({ listClassName, target }: DebuffTrackerProps) {
         <div className={listClassName}>
           {ATTACK_ELEMENTS.map((attElmt) => {
             const resistance = target.resistances[attElmt];
-            const reduction = target.getReduction(attElmt).value;
+            const reduction = target.resistReduction(attElmt).value;
             const reducedResistance = round(resistance - reduction, 2);
             const label = `RES ${resistance}% - Reduction ${round(reduction, 2)}% = ${reducedResistance}% or`;
 

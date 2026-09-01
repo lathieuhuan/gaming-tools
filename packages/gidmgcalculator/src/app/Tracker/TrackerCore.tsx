@@ -43,7 +43,7 @@ export function TrackerCore({ trackerState }: TrackerCoreProps) {
   const { attkBonusCtrl, attrCtrl } = state.main;
   const charLv = activeSetup.main.bareLv;
   const defIgnoreAll = attkBonusCtrl.get("defIgn_", ["all"]);
-  const totalDefReduct = target.getReduction("def").value;
+  const totalDefReduct = target.resistReduction("def").value;
 
   const listClassName = "columns-1 md:columns-2 space-y-1";
 

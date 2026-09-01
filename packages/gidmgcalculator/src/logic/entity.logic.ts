@@ -1,4 +1,3 @@
-import { Array_, Object_ } from "ron-utils";
 import type { PartiallyRequiredOnly } from "rond";
 
 import type {
@@ -8,7 +7,6 @@ import type {
   AppCharacter,
   AppMonster,
   AppWeapon,
-  MonsterInputChanges,
   RawArtifact,
   RawCharacter,
   RawTarget,
@@ -18,7 +16,6 @@ import type {
   TeammateWeapon,
 } from "@/types";
 
-import { ATTACK_ELEMENTS } from "@/constants/global";
 import {
   Artifact,
   Character,
@@ -29,7 +26,6 @@ import {
   Weapon,
 } from "@/models";
 import { $AppArtifact, $AppCharacter, $AppData, $AppWeapon } from "@/services";
-import { useSettingsStore } from "@Store/settings";
 import {
   createAbilityBuffCtrls,
   createAbilityDebuffCtrls,
@@ -175,110 +171,20 @@ export function createTeammate(
 
 export type CreateTargetParams = PartiallyRequiredOnly<RawTarget, "code">;
 
-export const createTargetBasic = (params: CreateTargetParams): RawTarget => {
-  const {
-    level = useSettingsStore.getState().targetLevel,
-    resistances = {
-      pyro: 10,
-      hydro: 10,
-      electro: 10,
-      cryo: 10,
-      geo: 10,
-      anemo: 10,
-      dendro: 10,
-      phys: 10,
-    },
-  } = params;
-
-  return { ...params, level, resistances: { ...resistances } };
-};
-
-export const createTarget = (
-  params: CreateTargetParams,
-  data: AppMonster = params.code === 0 ? Target.DEFAULT_MONSTER : $AppData.getMonster(params)!,
-) => {
-  const basic = createTargetBasic(params);
-
-  if (data.code === 0) {
-    // Custom target
-    return new Target(basic, data);
+export const createTarget = (codeOrRaw: number | RawTarget = 0, data?: AppMonster) => {
+  if (codeOrRaw === 0) {
+    return Target.default();
   }
 
-  // Target is preset monster, update resistances based on target's inputs and monster data
+  const code = typeof codeOrRaw === "number" ? codeOrRaw : codeOrRaw.code;
 
-  const { variantType, inputs = [] } = basic;
-  const resistances = { ...basic.resistances };
-  const { resistance, variant } = data;
-  const { base, ...otherResistances } = resistance;
-  const inputConfigs = data.inputConfigs ? Array_.toArray(data.inputConfigs) : [];
-
-  for (const atkElmt of ATTACK_ELEMENTS) {
-    resistances[atkElmt] = otherResistances[atkElmt] ?? base;
+  if (data == null || data.code !== code) {
+    data = $AppData.getMonster({ code })!;
   }
 
-  if (variantType && variant?.change) {
-    resistances[variantType] += variant.change;
+  if (typeof codeOrRaw === "number") {
+    return Target.create(data);
   }
 
-  const updateAsChanges = (changes: MonsterInputChanges) => {
-    for (const [key, value = 0] of Object_.entries(changes)) {
-      switch (key) {
-        case "base":
-          for (const attElmt of ATTACK_ELEMENTS) {
-            resistances[attElmt] += value;
-          }
-          break;
-        case "variant":
-          if (variantType) {
-            resistances[variantType] += value;
-          }
-          break;
-        default:
-          resistances[key] += value;
-      }
-    }
-  };
-
-  for (let index = 0; index < inputs.length; index++) {
-    const config = inputConfigs[index];
-
-    if (!config) {
-      continue;
-    }
-
-    const input = inputs[index];
-    const { type = "CHECK" } = config;
-
-    switch (type) {
-      case "CHECK":
-        if (input && config.changes) {
-          updateAsChanges(config.changes);
-        }
-        break;
-      case "SELECT": {
-        if (input === -1 || !config.options) {
-          continue;
-        }
-
-        const option = config.options[input];
-
-        if (typeof option === "string") {
-          if (config.optionChange) {
-            resistances[option] += config.optionChange;
-          }
-        } else {
-          updateAsChanges(option.changes);
-        }
-        break;
-      }
-    }
-  }
-
-  return new Target(
-    {
-      ...basic,
-      resistances,
-    },
-    data,
-  );
+  return Target.fromRaw(codeOrRaw, data);
 };

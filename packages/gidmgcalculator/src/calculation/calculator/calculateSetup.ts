@@ -9,7 +9,6 @@ import {
   STELLAR_REACTIONS,
   TRANSFORMATIVE_REACTIONS,
 } from "@/constants/global";
-import { TargetCalc } from "@/models";
 import { makeAttackItemCalc } from "../core/makeAttackItemCalc";
 import { makeOtherItemCalc } from "../core/makeOtherItemCalc";
 import { makeReactionCalc } from "../core/makeReactionCalc";
@@ -26,16 +25,18 @@ type CalculateSetupOptions = {
 };
 
 export function calculateSetup(setup: CalcSetup, options: CalculateSetupOptions = {}) {
-  const { main, teammates, calcItems } = setup;
-  const target = new TargetCalc(setup.target, setup.target.data, options);
+  const { main, teammates, calcItems, target } = setup;
 
   const { calcList } = main.data;
   const { elmtEvent } = setup;
 
   main.initCalculation();
+  target.initCalculation();
 
   applyBuffs(main, teammates, setup, options);
   applyDebuffs(main, teammates, setup, target);
+
+  target.finalizeCalculation();
 
   const attackAlters = getAttackAlters(main, setup);
 
@@ -203,5 +204,7 @@ export function calculateSetup(setup: CalcSetup, options: CalculateSetupOptions 
     }
   });
 
-  return { main, result, target };
+  setup.result = result;
+
+  return setup;
 }

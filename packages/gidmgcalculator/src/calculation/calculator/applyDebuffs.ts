@@ -1,6 +1,6 @@
 import { Array_ } from "ron-utils";
 
-import type { CalcSetup, Character, TargetCalc, Teammate } from "@/models";
+import type { CalcSetup, Character, Target, Teammate } from "@/models";
 import type {
   DebuffSpec,
   ElementType,
@@ -15,7 +15,7 @@ export function applyDebuffs(
   main: Character,
   teammates: Teammate[],
   setup: CalcSetup,
-  target: TargetCalc,
+  target: Target,
 ) {
   const { team } = setup;
 
@@ -70,7 +70,7 @@ export function applyDebuffs(
         const reductionPaths = getReductionPaths(targets, inputs);
         const penalty = performer.performPenalty(effect, inputs);
 
-        reductionPaths.forEach((path) => target.takeReduction(path, penalty, label));
+        reductionPaths.forEach((path) => target.takeResistReduction(path, penalty, label));
       }
     }
   }
@@ -79,7 +79,7 @@ export function applyDebuffs(
 
   // APPLY CUSTOM DEBUFFS
   for (const control of setup.customDebuffCtrls) {
-    target.takeReduction(control.type, control.value, "Custom Debuff");
+    target.takeResistReduction(control.type, control.value, "Custom Debuff");
   }
 
   // APPLY SELF DEBUFFS
@@ -120,11 +120,11 @@ export function applyDebuffs(
   const geoDebuffCtrl = setup.rsnDebuffCtrls.find((ctrl) => ctrl.element === "geo");
 
   if (geoDebuffCtrl?.activated) {
-    target.takeReduction("geo", 20, "Geo resonance / Hit by Shielded");
+    target.takeResistReduction("geo", 20, "Geo resonance / Hit by Shielded");
   }
   if (setup.elmtEvent.superconduct) {
-    target.takeReduction("phys", 40, "Superconduct");
+    target.takeResistReduction("phys", 40, "Superconduct");
   }
 
-  target.finalize();
+  target.finalizeCalculation();
 }

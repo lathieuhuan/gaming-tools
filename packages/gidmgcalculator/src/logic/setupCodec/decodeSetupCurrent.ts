@@ -38,7 +38,7 @@ import {
   createWeapon,
 } from "@/logic/entity.logic";
 import { enhanceCtrls } from "@/logic/modifier.logic";
-import { Artifact, ArtifactGear, CalcSetup, Target, Team, Teammate } from "@/models";
+import { Artifact, ArtifactGear, CalcSetup, Team, Teammate } from "@/models";
 import { $AppArtifact, $AppCharacter, $AppData } from "@/services";
 import IdStore from "@/utils/IdStore";
 import { CUSTOM_BUFF_CATEGORIES, DECODE_ERROR_MSG, DIVIDER } from "./config";
@@ -424,10 +424,10 @@ export function decodeSetupCurrent(code: string): DecodeResult {
   const [tgCode, tgLevel, tgVariant, tgInputs, tgResistances] = split(targetStr, 1);
   const targetData = $AppData.getMonster({ code: +tgCode });
 
-  let target: Target | undefined;
+  let target: ReturnType<typeof createTarget> | undefined;
 
   if (targetData) {
-    target = new Target(
+    target = createTarget(
       {
         code: parseNumber(tgCode, "Target Code"),
         level: parseNumber(tgLevel, "Target Level"),
@@ -461,7 +461,7 @@ export function decodeSetupCurrent(code: string): DecodeResult {
       }
     }
   } else {
-    target = createTarget({ code: 0 });
+    target = createTarget(0);
   }
 
   const importInfo: SetupImportData = {

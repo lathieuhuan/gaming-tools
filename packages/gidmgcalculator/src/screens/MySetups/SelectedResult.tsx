@@ -4,8 +4,9 @@ import type { ArtifactBuffCtrl, ArtifactDebuffCtrl, DbSetup } from "@/types";
 import type { SetupOverviewInfo } from "./types";
 
 import { calculateSetup } from "@/calculation/calculator";
+import { createTarget } from "@/logic/entity.logic";
 import { enhanceCtrls } from "@/logic/modifier.logic";
-import { CalcSetup, Target, Team } from "@/models";
+import { CalcSetup, Team } from "@/models";
 import { $AppArtifact, $AppData } from "@/services";
 
 import { FinalResultView } from "@/components/FinalResultView";
@@ -62,7 +63,7 @@ export function SelectedResult({ setup, dbSetup }: SelectedResultProps) {
       elmtEvent: dbSetup.elmtEvent,
       customBuffCtrls: dbSetup.customBuffCtrls,
       customDebuffCtrls: dbSetup.customDebuffCtrls,
-      target: new Target(dbSetup.target, $AppData.getMonster(dbSetup.target)!),
+      target: createTarget(dbSetup.target),
     });
 
     const { main, result, target: calcTarget } = calculateSetup(calcSetup);

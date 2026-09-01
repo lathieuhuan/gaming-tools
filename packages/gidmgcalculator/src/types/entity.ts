@@ -105,12 +105,15 @@ export type RawTeammate = RawTeammateState & {
 
 // ========== TARGET ==========
 
-export type RawTarget = {
-  code: number;
+export type RawTargetState = {
   level: number;
   variantType?: ElementType;
   inputs?: number[];
   resistances: Record<AttackElement, number>;
+};
+
+export type RawTarget = RawTargetState & {
+  code: number;
 };
 
 export type TargetData = RawTarget & {

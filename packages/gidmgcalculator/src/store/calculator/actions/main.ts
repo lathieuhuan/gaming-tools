@@ -7,12 +7,10 @@ import type {
   RawArtifactState,
   RawCharacter,
   RawWeaponState,
-  TargetData,
 } from "@/types";
 
-import { createTarget } from "@/logic/entity.logic";
 import { createWeaponBuffCtrls } from "@/logic/modifier.logic";
-import { Artifact, ArtifactCloneOptions, ArtifactGear, Team, Weapon } from "@/models";
+import { Artifact, ArtifactCloneOptions, ArtifactGear, Target, Team, Weapon } from "@/models";
 import { useSettingsStore } from "@Store/settings";
 import { useCalcStore } from "../calculatorStore";
 import { selectSetup } from "../selectors";
@@ -185,23 +183,14 @@ export const updateElementalEvent = (data: Partial<ElementalEvent>) => {
 
 // ===== TARGET =====
 
-export const updateTarget = (data: Partial<TargetData>) => {
+export const setTarget = (target: Target) => {
   useCalcStore.setState((state) => {
-    const { setupsById, target: currentTarget } = state;
-    const newInfo: TargetData = {
-      ...currentTarget,
-      ...data,
-    };
-
-    const target =
-      newInfo.code !== currentTarget.code
-        ? createTarget(newInfo)
-        : createTarget(newInfo, currentTarget.data);
+    const { setupsById } = state;
 
     state.target = target;
 
     for (const { ID } of state.setupManagers) {
-      setupsById[ID].target = state.target;
+      setupsById[ID].target = target.clone();
       setupsById[ID] = setupsById[ID].calculate();
     }
   });

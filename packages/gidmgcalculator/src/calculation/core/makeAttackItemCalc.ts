@@ -1,6 +1,6 @@
 import { toMult } from "ron-utils";
 
-import type { Character, TargetCalc } from "@/models";
+import type { Character, Target } from "@/models";
 import type { GetAttackBonusPaths } from "@/models/Character";
 import type {
   ActualAttackPattern,
@@ -23,7 +23,7 @@ type MakeAttackCalcTools = {
 
 export function makeAttackItemCalc(
   performer: Character,
-  target: TargetCalc,
+  target: Target,
   tools: MakeAttackCalcTools = {},
 ) {
   const { attkBonusCtrl, bareLv } = performer;

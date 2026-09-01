@@ -1,9 +1,8 @@
 import { ChangeEvent, useRef, useState } from "react";
 import { FaChevronDown } from "react-icons/fa";
-import { Array_ } from "ron-utils";
 import { clsx } from "rond";
 
-import type { AppMonster, ElementType } from "@/types";
+import type { AppMonster } from "@/types";
 
 import { $AppData } from "@/services";
 
@@ -13,11 +12,7 @@ type ComboBoxProps = {
   className: string;
   targetCode: number;
   targetTitle: string;
-  onSelectMonster: (args: {
-    monsterCode: number;
-    inputs: number[];
-    variantType?: ElementType;
-  }) => void;
+  onSelectMonster: (monster: AppMonster) => void;
 };
 
 export function ComboBox({ className, targetCode, targetTitle, onSelectMonster }: ComboBoxProps) {
@@ -38,25 +33,10 @@ export function ComboBox({ className, targetCode, targetTitle, onSelectMonster }
     }
   };
 
-  const onClickMonster = (monster: AppMonster) => () => {
+  const handleSelectMonster = (monster: AppMonster) => {
     if (monster.code !== targetCode) {
-      let newVariantType;
-      const newInputs = monster.inputConfigs
-        ? Array_.toArray(monster.inputConfigs).map((config) => (config.type === "SELECT" ? -1 : 0))
-        : [];
-
-      if (monster.variant) {
-        const firstVariant = monster.variant.types[0];
-        newVariantType = typeof firstVariant === "string" ? firstVariant : firstVariant.value;
-      }
-
       setKeyword("");
-
-      onSelectMonster({
-        monsterCode: monster.code,
-        inputs: newInputs,
-        variantType: newVariantType,
-      });
+      onSelectMonster(monster);
     }
 
     inputRef.current?.blur();
@@ -83,7 +63,7 @@ export function ComboBox({ className, targetCode, targetTitle, onSelectMonster }
         className="absolute top-full z-10 mt-1 w-full text-black bg-light-1 custom-scrollbar cursor-default hidden peer-focus-within:block"
         style={{ maxHeight: "50vh" }}
       >
-        {$AppData.getAllMonsters().map((monster, i) => {
+        {$AppData.getAllMonsters().map((monster) => {
           if (
             keyword &&
             !monster.title.toLowerCase().includes(keyword) &&
@@ -98,10 +78,10 @@ export function ComboBox({ className, targetCode, targetTitle, onSelectMonster }
               id={`monster-${monster.code}`}
               className={clsx(
                 "px-2 py-1 flex flex-col font-semibold",
-                monster.code === targetCode ? "bg-light-4" : "hover:bg-primary-1"
+                monster.code === targetCode ? "bg-light-4" : "hover:bg-primary-1",
               )}
               onMouseDown={(e) => e.preventDefault()}
-              onClick={onClickMonster(monster)}
+              onClick={() => handleSelectMonster(monster)}
             >
               <p>{monster.title}</p>
               {monster.subtitle && <p className="text-sm italic">* {monster.subtitle}</p>}

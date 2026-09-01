@@ -1,6 +1,6 @@
 import { toMult } from "ron-utils";
 
-import type { Character, TargetCalc } from "@/models";
+import type { Character, Target } from "@/models";
 import type {
   ActualAttackElement,
   AttackBonusKey,
@@ -32,7 +32,7 @@ const TRANSFORMATIVE_REACTION_CONFIG: Record<
   shattered: { mult: 3, attElmt: "phys" },
 };
 
-export function makeReactionCalc(performer: Character, target: TargetCalc) {
+export function makeReactionCalc(performer: Character, target: Target) {
   const { attkBonusCtrl, baseReactionDMG } = performer;
 
   function calcLunarReaction(

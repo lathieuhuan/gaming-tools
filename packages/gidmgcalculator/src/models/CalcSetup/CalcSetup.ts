@@ -52,7 +52,7 @@ export class CalcSetup extends CalcSetupBase {
       elmtEvent = createElementalEvent(),
       customBuffCtrls = [],
       customDebuffCtrls = [],
-      target = createTarget({ code: 0 }),
+      target = createTarget(),
       result = {
         NAs: {},
         ES: {},
@@ -98,6 +98,7 @@ export class CalcSetup extends CalcSetupBase {
     const main = this.main.deepClone();
     const teammates = this.teammates.map((teammate) => teammate.clone());
     const team = new Team([main, ...teammates]);
+    const target = this.target.clone();
 
     return new CalcSetup({
       ...this,
@@ -105,28 +106,34 @@ export class CalcSetup extends CalcSetupBase {
       main,
       teammates,
       team,
+      target,
     });
   }
 
   calculate(shouldLog?: boolean) {
     this.updateCalcItems();
 
-    const { main, result } = calculateSetup(this, {
+    return calculateSetup(this.clone(), {
       shouldLog,
       resonatedElmts: useSettingsStore.getState().traveler.resonatedElmts,
     });
 
-    // TODO check
-    const newMain = main.clone({
-      attrCtrl: main.attrCtrl.clone(),
-      attkBonusCtrl: main.attkBonusCtrl.clone(),
-    });
+    // const { main, result } = calculateSetup(this, {
+    //   shouldLog,
+    //   resonatedElmts: useSettingsStore.getState().traveler.resonatedElmts,
+    // });
 
-    return new CalcSetup({
-      ...this,
-      main: newMain,
-      result,
-    });
+    // // TODO check
+    // const newMain = main.clone({
+    //   attrCtrl: main.attrCtrl.clone(),
+    //   attkBonusCtrl: main.attkBonusCtrl.clone(),
+    // });
+
+    // return new CalcSetup({
+    //   ...this,
+    //   main: newMain,
+    //   result,
+    // });
   }
 
   // ===== ARTIFACTS =====
