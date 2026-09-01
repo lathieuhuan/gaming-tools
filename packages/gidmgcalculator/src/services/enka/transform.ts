@@ -5,7 +5,7 @@ import {
   convertGOODArtifact,
   convertGOODCharacter,
   convertGOODWeapon,
-} from "@/logic/converGOOD.logic";
+} from "@/logic/convertGOOD.logic";
 import { createWeapon } from "@/logic/entity.logic";
 import { Artifact, ArtifactGear } from "@/models";
 import { IdStore } from "@/utils/IdStore";

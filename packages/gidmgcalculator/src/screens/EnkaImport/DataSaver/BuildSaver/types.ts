@@ -1,6 +1,6 @@
+import type { GOODCharacterConvertReturn } from "@/logic/convertGOOD.logic";
 import type { Artifact, Weapon } from "@/models";
-import type { RawArtifact, RawCharacter, DbCharacter, RawWeapon } from "@/types";
-import type { GOODCharacterConvertReturn } from "@/logic/converGOOD.logic";
+import type { DbCharacter, RawArtifact, RawCharacter, RawWeapon } from "@/types";
 
 // ===== Saving Step =====
 

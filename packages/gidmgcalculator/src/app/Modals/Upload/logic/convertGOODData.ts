@@ -9,7 +9,7 @@ import {
   convertGOODCharacter,
   convertGOODWeapon,
   findGOODCharacter,
-} from "@/logic/converGOOD.logic";
+} from "@/logic/convertGOOD.logic";
 import { createWeapon } from "@/logic/entity.logic";
 import { $AppCharacter } from "@/services";
 import { IdStore } from "@/utils/IdStore";

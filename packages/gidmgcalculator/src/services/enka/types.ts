@@ -1,4 +1,4 @@
-import type { GOODCharacterConvertReturn } from "@/logic/converGOOD.logic";
+import type { GOODCharacterConvertReturn } from "@/logic/convertGOOD.logic";
 import type { ArtifactGear, Weapon } from "@/models";
 import type { GOODArtifact, GOODCharacter, GOODWeapon } from "@/types/GOOD";
 

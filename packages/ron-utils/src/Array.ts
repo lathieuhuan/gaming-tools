@@ -13,6 +13,10 @@ export class Array_ {
     return a.length === b.length && a.every((item, i) => item === b[i]);
   }
 
+  /**
+   * Remove item from target if it is not in source.
+   * Add item from source if it is missing in target.
+   */
   static sync<T extends object, K>(target: T[], source: T[], key: keyof T | ((obj: T) => K)) {
     const keyFn = typeof key === "function" ? key : (obj: T) => obj[key];
 
@@ -32,8 +36,10 @@ export class Array_ {
     }
 
     for (const obj of sourceMap.values()) {
-      if (!syncedMap.has(keyFn(obj))) {
-        syncedMap.set(keyFn(obj), obj);
+      const key = keyFn(obj);
+
+      if (!syncedMap.has(key)) {
+        syncedMap.set(key, obj);
       }
     }
 
@@ -43,7 +49,7 @@ export class Array_ {
   static filterMap<T, K>(
     list: T[],
     filter: (value: T) => unknown,
-    map: (value: T, index: number) => K
+    map: (value: T, index: number) => K,
   ): K[] {
     const resultList: K[] = [];
 
@@ -61,17 +67,17 @@ export class Array_ {
   static filterForEach<T, K extends T>(
     list: T[],
     filter: (item: T) => item is K,
-    forEach: (item: K) => void
+    forEach: (item: K) => void,
   ): void;
   static filterForEach<T>(
     list: T[],
     filter: (item: T) => boolean,
-    forEach: (item: T) => void
+    forEach: (item: T) => void,
   ): void;
   static filterForEach<T>(
     list: T[],
     filter: (item: T) => boolean,
-    forEach: (item: T) => void
+    forEach: (item: T) => void,
   ): void {
     for (const value of list) {
       const result = filter(value);
