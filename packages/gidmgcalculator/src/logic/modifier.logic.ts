@@ -1,6 +1,6 @@
 import { Array_ } from "ron-utils";
 
-import type { CalcSetup, Team, Teammate } from "@/models";
+import type { CalcSetup, Teammate } from "@/models";
 import type {
   AbilityBuffCtrl,
   AbilityDebuffCtrl,
@@ -11,6 +11,7 @@ import type {
   ArtifactDebuffCtrl,
   ArtifactGearSet,
   ElementalEvent,
+  ElementCount,
   ModAffectType,
   ModifierBaseSpec,
   ModifierCtrl,
@@ -25,8 +26,6 @@ import type {
 import { DEFAULT_STELLAR_VORTEX_LV } from "@/constants";
 import { $AppArtifact, $AppData } from "@/services";
 import { isManualRsnElmt } from "@/utils/element.utils";
-
-export const MS_ASCENDANT_BUFF_ID = 1;
 
 function getDefaultInitValue(type: ModInputType) {
   switch (type) {
@@ -82,6 +81,7 @@ export function createModCtrl(forSelf: boolean) {
   };
 }
 
+// TODO check to remove
 export function createTeamBuffCtrls(setup: CalcSetup): TeamBuffCtrl[] {
   const { team, artBuffCtrls = [] } = setup;
 
@@ -90,7 +90,7 @@ export function createTeamBuffCtrls(setup: CalcSetup): TeamBuffCtrl[] {
   const teamBuffIds = new Set<number>();
 
   if (team.moonsignLv >= 2) {
-    teamBuffIds.add(MS_ASCENDANT_BUFF_ID);
+    teamBuffIds.add($AppData.MS_ASCENDANT_BUFF_ID);
   }
 
   for (const { data } of artBuffCtrls) {
@@ -231,11 +231,11 @@ export function createArtifactDebuffCtrls(sets: ArtifactGearSet[], teammates: Te
   return ctrls;
 }
 
-export function createRsnModCtrls(team: Team) {
+export function createRsnModCtrls(elmtCount: ElementCount) {
   const buffCtrls: ResonanceModCtrl[] = [];
   const debuffCtrls: ResonanceModCtrl[] = [];
 
-  team.elmtCount.forEach((count, element) => {
+  elmtCount.forEach((count, element) => {
     if (isManualRsnElmt(element) && count >= 2) {
       const ctrl: ResonanceModCtrl = {
         element,

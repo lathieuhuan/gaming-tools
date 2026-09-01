@@ -1,7 +1,7 @@
 import type { TeamBuffCtrl } from "@/types";
 import type { ControlGroup } from "../types";
 
-import { MS_ASCENDANT_BUFF_ID } from "@/logic/modifier.logic";
+import { $AppData } from "@/services";
 import { parseDescription } from "@/utils/descriptionParsers";
 import { useCalcStore } from "@Store/calculator";
 import { updateActiveSetup } from "@Store/calculator/actions";
@@ -14,7 +14,7 @@ function reorderCtrls(teamBuffCtrls: TeamBuffCtrl[] = []) {
   let ascendantCtrl: TeamBuffCtrl | undefined;
 
   const otherCtrls = teamBuffCtrls.filter((ctrl) => {
-    if (ctrl.data.id === MS_ASCENDANT_BUFF_ID) {
+    if (ctrl.data.id === $AppData.MS_ASCENDANT_BUFF_ID) {
       ascendantCtrl = ctrl;
       return false;
     }

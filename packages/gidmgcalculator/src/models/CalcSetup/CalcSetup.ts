@@ -62,7 +62,7 @@ export class CalcSetup extends CalcSetupBase {
         WP: {},
       },
     } = info;
-    const defaultRsnModCtrls = createRsnModCtrls(team);
+    const defaultRsnModCtrls = createRsnModCtrls(team.elmtCount);
     const {
       rsnBuffCtrls = defaultRsnModCtrls.buffCtrls,
       rsnDebuffCtrls = defaultRsnModCtrls.debuffCtrls,
@@ -152,7 +152,7 @@ export class CalcSetup extends CalcSetupBase {
 
   /** Run after team update */
   updateRsnModCtrls() {
-    const rsnModCtrls = createRsnModCtrls(this.team);
+    const rsnModCtrls = createRsnModCtrls(this.team.elmtCount);
 
     this.rsnBuffCtrls = Array_.sync(this.rsnBuffCtrls, rsnModCtrls.buffCtrls, "element");
     this.rsnDebuffCtrls = Array_.sync(this.rsnDebuffCtrls, rsnModCtrls.debuffCtrls, "element");
