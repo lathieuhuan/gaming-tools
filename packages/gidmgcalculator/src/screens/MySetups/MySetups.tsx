@@ -5,9 +5,9 @@ import { Button, WarehouseLayout, clsx, useScreenWatcher } from "rond";
 
 import type { SetupOverviewInfo } from "./types";
 
+import { useSetupImporter } from "@/lib/setup-importer";
 import { isDbSetup, restoreCalcSetup } from "@/logic/setup.logic";
 import { parseDbArtifacts, parseDbWeapon } from "@/logic/userdb.logic";
-import { useSetupImporter } from "@/lib/setup-importer";
 import { useDispatch, useSelector } from "@Store/hooks";
 import { MySetupsModalType, updateUI } from "@Store/ui";
 import { selectActiveSetupId, viewDbSetup } from "@Store/userdbSlice";
@@ -94,7 +94,7 @@ function MySetups() {
       <div
         className={clsx(
           userSetups.length && "p-1 xm:pr-3",
-          "shrink-0 custom-scrollbar scroll-smooth"
+          "shrink-0 custom-scrollbar scroll-smooth",
         )}
         style={{
           minWidth: screenWatcher.isFromSize("lg") ? "541px" : "19.5rem",
@@ -112,7 +112,7 @@ function MySetups() {
                     "px-2 pt-3 pb-2 rounded-lg bg-dark-3",
                     setupId === selectedSetupId
                       ? "shadow-hightlight-1 shadow-active"
-                      : "shadow-common"
+                      : "shadow-common",
                   )}
                   onClick={() => dispatch(viewDbSetup(setupId))}
                 >

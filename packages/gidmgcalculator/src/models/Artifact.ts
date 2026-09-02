@@ -43,9 +43,11 @@ export class Artifact {
     public readonly data: AppArtifact,
     relation: EquipmentRelation = {},
   ) {
+    const { owner, setupIDs } = relation;
+
     this.subStats = Object_.clone(subStats);
-    this.owner = relation.owner;
-    this.setupIDs = relation.setupIDs;
+    this.owner = owner;
+    this.setupIDs = setupIDs?.length ? [...setupIDs] : undefined;
   }
 
   updateSubStat(index: number, data: Partial<ArtifactSubStat>) {

@@ -1,37 +1,16 @@
 import { CountMap, round } from "ron-utils";
 
-import type { AllAttributes, AttributeBonus, AttributeStat, BaseAttributeStat } from "@/types";
-import type { Character, CharacterInitCalcOptions } from "./Character";
+import type {
+  AllAttributes,
+  AttributeBonus,
+  AttributeStat,
+  AutoRsnElmtType,
+  BaseAttributeStat,
+} from "@/types";
+import type { Character } from "./Character";
 
 import { ATTRIBUTE_STAT_TYPES } from "@/constants";
 import { baseStatToCoreStat, isBaseStat, isCoreStat } from "@/utils/stat.utils";
-
-const ASC_MULT_BY_ASC = [0, 38 / 182, 65 / 182, 101 / 182, 128 / 182, 155 / 182, 1];
-
-const AUTO_RESONANCE_STATS: Record<string, { key: AttributeStat; value: number }> = {
-  pyro: { key: "atk_", value: 25 },
-  geo: { key: "shieldS_", value: 15 },
-  hydro: { key: "hp_", value: 25 },
-  dendro: { key: "em", value: 50 },
-};
-
-type AttributeControlCloneOptions = {
-  details?: InternalAttributes;
-  finals?: AllAttributes;
-};
-
-type AttributeControlLog = {
-  label: string;
-  value: number;
-};
-
-type InternalAttributeElement = "base" | "static" | "dynamic";
-
-type InternalAttribute = Record<InternalAttributeElement, number> & {
-  logs: AttributeControlLog[];
-};
-
-type InternalAttributes = Map<AttributeStat, InternalAttribute>;
 
 export class AttributeControl {
   private constructor(private attrs: InternalAttributes) {}
@@ -70,15 +49,38 @@ export class AttributeControl {
     return total;
   }
 
+  private _get(stat: AttributeStat): InternalAttribute {
+    const attr = this.attrs.get(stat);
+
+    if (attr !== undefined) {
+      return attr;
+    }
+
+    return {
+      base: 0,
+      static: 0,
+      dynamic: 0,
+      logs: [],
+    };
+  }
+
+  private _add(stat: AttributeStat, el: InternalAttributeElement, value: number, label: string) {
+    const attr = this._get(stat);
+
+    attr[el] += value;
+    attr.logs.push({ label, value });
+
+    this.attrs.set(stat, attr);
+  }
+
   private addBase(key: AttributeStat, value: number, label = "Character base stat") {
     this._add(key, "base", value, label);
   }
 
-  init(character: Character, options: CharacterInitCalcOptions = {}) {
-    const { resonances = [] } = options;
+  init(character: Character, resonances: AutoRsnElmtType[] = []) {
     const { data } = character;
 
-    this.clear();
+    this.attrs = new Map();
 
     // ===== Base stats =====
     {
@@ -174,30 +176,6 @@ export class AttributeControl {
     return this.attrs;
   }
 
-  private _get(stat: AttributeStat): InternalAttribute {
-    const attr = this.attrs.get(stat);
-
-    if (attr !== undefined) {
-      return attr;
-    }
-
-    return {
-      base: 0,
-      static: 0,
-      dynamic: 0,
-      logs: [],
-    };
-  }
-
-  private _add(stat: AttributeStat, el: InternalAttributeElement, value: number, label: string) {
-    const attr = this._get(stat);
-
-    attr[el] += value;
-    attr.logs.push({ label, value });
-
-    this.attrs.set(stat, attr);
-  }
-
   logsOf(key: AttributeStat) {
     return this._get(key).logs;
   }
@@ -208,6 +186,7 @@ export class AttributeControl {
     if (isBaseStat(bonus.toStat)) {
       // TODO remove `BaseAttributeStat` from `AttributeBonus.toStat` and especially handle it.
       // Only Mavuika has this mechanism.
+      this.addBase(baseStatToCoreStat(bonus.toStat), bonus.value, bonus.label);
       return;
     }
 
@@ -240,9 +219,31 @@ export class AttributeControl {
 
     return new AttributeControl(details);
   }
-
-  clear() {
-    this.attrs = new Map();
-    return this;
-  }
 }
+
+type AttributeControlCloneOptions = {
+  details?: InternalAttributes;
+  finals?: AllAttributes;
+};
+
+type AttributeControlLog = {
+  label: string;
+  value: number;
+};
+
+type InternalAttributeElement = "base" | "static" | "dynamic";
+
+type InternalAttribute = Record<InternalAttributeElement, number> & {
+  logs: AttributeControlLog[];
+};
+
+type InternalAttributes = Map<AttributeStat, InternalAttribute>;
+
+const ASC_MULT_BY_ASC = [0, 38 / 182, 65 / 182, 101 / 182, 128 / 182, 155 / 182, 1];
+
+const AUTO_RESONANCE_STATS: Record<string, { key: AttributeStat; value: number }> = {
+  pyro: { key: "atk_", value: 25 },
+  geo: { key: "shieldS_", value: 15 },
+  hydro: { key: "hp_", value: 25 },
+  dendro: { key: "em", value: 50 },
+};

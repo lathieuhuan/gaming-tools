@@ -26,8 +26,10 @@ export class Weapon {
     public readonly data: AppWeapon,
     relation: EquipmentRelation = {},
   ) {
-    this.owner = relation.owner;
-    this.setupIDs = relation.setupIDs;
+    const { owner, setupIDs } = relation;
+
+    this.owner = owner;
+    this.setupIDs = setupIDs?.length ? [...setupIDs] : undefined;
   }
 
   serialize(): RawWeapon {

@@ -26,11 +26,10 @@ export type CalculateSetupOptions = {
 };
 
 export function calculateSetup(setup: CalcSetup, options: CalculateSetupOptions = {}) {
-  const { main, target } = setup;
-  const calcItems = createExtraCalcItems(setup);
+  const { target, elmtEvent } = setup;
+  const main = (setup.main = setup.main.clone());
 
   const { calcList } = main.data;
-  const { elmtEvent } = setup;
 
   applyBuffs(setup, options);
   applyDebuffs(setup);
@@ -145,7 +144,9 @@ export function calculateSetup(setup: CalcSetup, options: CalculateSetupOptions 
     flatFactorScale: 3,
   });
 
-  for (const calcItem of calcItems) {
+  setup.calcItems = createExtraCalcItems(setup);
+
+  for (const calcItem of setup.calcItems) {
     const { name, type = "attack" } = calcItem;
     const recorder = new ResultRecorder({}, options?.shouldLog);
 
@@ -201,7 +202,6 @@ export function calculateSetup(setup: CalcSetup, options: CalculateSetupOptions 
     }
   });
 
-  setup.calcItems = calcItems;
   setup.result = result;
 
   return setup.clone();

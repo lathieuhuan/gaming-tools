@@ -7,7 +7,7 @@ import type {
   GOODWeapon,
 } from "@/types/GOOD";
 
-import { ELEMENT_TYPES, LEVELS } from "@/constants/global";
+import { DESCENDING_LEVEL_CAPS, ELEMENT_TYPES, LEVELS } from "@/constants/global";
 import { $AppArtifact, $AppCharacter, $AppWeapon } from "@/services";
 import { createArtifact, createWeapon } from "./entity.logic";
 
@@ -29,12 +29,41 @@ export function toGOODKey(name: string) {
 }
 
 export function convertGOODLevel(entity: GOODAscendable): Level {
+  let level: Level | undefined;
+
   if (entity.level > 90) {
-    return `${entity.level}/${entity.level}` as Level;
+    level = `${entity.level}/${entity.level}` as Level;
+  } //
+  else {
+    for (let i = 0; i < DESCENDING_LEVEL_CAPS.length; i++) {
+      const thisCap = DESCENDING_LEVEL_CAPS[i];
+
+      if (entity.level === thisCap) {
+        const ascensionCaps = DESCENDING_LEVEL_CAPS.toReversed();
+
+        level = `${entity.level}/${ascensionCaps[entity.ascension]}` as Level;
+        break;
+      }
+
+      if (entity.level > thisCap) {
+        // thisCap starts from 80 because greater than or equal to 90 is already handled
+
+        const higherCap = DESCENDING_LEVEL_CAPS[i - 1];
+        const average = (thisCap + higherCap) / 2;
+        const bareLv = entity.level >= average ? higherCap : thisCap;
+
+        level = `${bareLv}/${higherCap}` as Level;
+        break;
+      }
+    }
+
+    // entity.level < 20
+    if (level === undefined) {
+      return entity.level >= (1 + 20) / 2 ? "20/20" : "1/20";
+    }
   }
 
-  const levelCaps = [20, 40, 50, 60, 70, 80, 90];
-  const level = `${entity.level}/${levelCaps[entity.ascension]}` as Level;
+  // final check
   return LEVELS.includes(level) ? level : "1/20";
 }
 

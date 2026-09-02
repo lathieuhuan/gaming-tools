@@ -66,8 +66,8 @@ export class CalcSetup extends CalcSetupCore {
   }
 
   deepClone(ID: number) {
-    const main = this.main.clone();
-    const teammates = this.teammates.map((teammate) => teammate.clone());
+    const main = this.main.deepClone();
+    const teammates = this.teammates.map((teammate) => teammate.deepClone());
     const team = new Team([main, ...teammates]);
 
     return new CalcSetup(

@@ -39,12 +39,12 @@ export function BuffTeamBonus() {
   }
 
   return (
-    <div className="pt-2 peer">
+    <div className="pt-2">
       {groups
         .filter((group) => !group.isEmpty)
         .map((group, index) => (
           <Fragment key={group.key}>
-            {index ? <div className="mx-auto my-3 w-1/2 h-px bg-dark-3" /> : null}
+            {index !== 0 && <div className="mx-auto my-3 w-1/2 h-px bg-dark-3" />}
             {group.render("space-y-3")}
           </Fragment>
         ))}

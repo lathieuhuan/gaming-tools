@@ -13,8 +13,7 @@ import type {
 } from "@/types";
 
 import { createAbilityBuffCtrls, createAbilityDebuffCtrls } from "@/logic/modifier.logic";
-import { isPassedComparison } from "./utils/isPassedComparison";
-import { isValidInput } from "./utils/isValidInput";
+import { isPassedComparison, isValidInput } from "@/utils/effect.utils";
 
 export type TeammateConstructOptions = {
   enhanced?: boolean;
@@ -101,7 +100,7 @@ export class Teammate implements TeammateData, TeamMember {
     return true;
   }
 
-  clone() {
+  deepClone() {
     return new Teammate(this.code, this.data, this.weapon, {
       ...this,
       buffCtrls: Object_.clone(this.buffCtrls),

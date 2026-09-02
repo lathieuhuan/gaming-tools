@@ -1,3 +1,4 @@
+import { DESCENDING_LEVEL_CAPS } from "@/constants/global";
 import { LevelControl, LevelControlProps } from "./LevelControl";
 
 type CharacterLevelControlProps = Omit<LevelControlProps, "allLevelCaps">;
@@ -11,7 +12,7 @@ export function CharacterLevelControl(props: CharacterLevelControlProps) {
       }}
       {...props}
       className={["min-w-22", props.className]}
-      allLevelCaps={[100, 95, 90, 80, 70, 60, 50, 40, 20]}
+      allLevelCaps={DESCENDING_LEVEL_CAPS}
     />
   );
 }

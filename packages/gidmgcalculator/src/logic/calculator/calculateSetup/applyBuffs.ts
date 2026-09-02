@@ -34,7 +34,7 @@ export function applyBuffs(setup: CalcSetup, options: ApplyBuffsOptions = {}) {
   const { weapon, attrCtrl, attkBonusCtrl } = main;
   const { resonatedElmts = [] } = options;
 
-  main.initCalculation({ resonances: team.resonances });
+  main.initCalculation({ team });
 
   // POLYSTAR FIELD BONUSES
   const { polestarProc = false, polestarCount = 0 } = setup.elmtEvent;
@@ -100,7 +100,7 @@ export function applyBuffs(setup: CalcSetup, options: ApplyBuffsOptions = {}) {
       case "TLT": {
         if (!spec.id) return;
 
-        main.levelBonuses.set(spec.id, {
+        main.tllvBonusCtrl.set(spec.id, {
           id: spec.id,
           talent: target.path,
           value: bonus.value,

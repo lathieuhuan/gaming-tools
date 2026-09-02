@@ -8,7 +8,7 @@ import type { ArtifactType } from "@/types";
 
 import { ARTIFACT_TYPES } from "@/constants/global";
 import { createArtifact } from "@/logic/entity.logic";
-import { Artifact } from "@/models";
+import { Artifact, ArtifactGear } from "@/models";
 import { IdStore } from "@/utils/IdStore";
 import { useCalcStore } from "@Store/calculator";
 import { updateSetup } from "@Store/calculator/actions";
@@ -97,10 +97,10 @@ export function SectionArtifacts() {
   };
 
   const handleSelectLoadout: LoadoutStashProps["onSelect"] = (pieces) => {
-    // TODO update
-    for (const piece of pieces) {
-      setArtifactPiece(piece);
-    }
+    updateSetup((setup) => {
+      setup.setArtifactGear(ArtifactGear.create(pieces.map((piece) => piece.clone())));
+    });
+
     closeModal();
   };
 

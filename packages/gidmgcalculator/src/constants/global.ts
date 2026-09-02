@@ -115,6 +115,8 @@ export const LEVELS = [
   "100/100",
 ] as const;
 
+export const DESCENDING_LEVEL_CAPS = [100, 95, 90, 80, 70, 60, 50, 40, 20];
+
 type CategorySpec = {
   label: string;
   types: readonly CustomBuffCtrlType[];

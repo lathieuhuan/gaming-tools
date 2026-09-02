@@ -1,3 +1,3 @@
 import { formatNumber } from "./pure.utils";
 
-console.log(formatNumber(1234567890));
+console.info(formatNumber(1234567890));

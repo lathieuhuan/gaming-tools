@@ -1,12 +1,10 @@
 import { Button, CheckboxGroup } from "@lib/components";
-import { useRef, useState } from "react";
 import { CheckboxGroupControl } from "@lib/components/Checkbox/logic";
+import { useRef, useState } from "react";
 
 function App() {
   const [values, setValues] = useState<string[]>(["1"]);
   const control = useRef<CheckboxGroupControl<string>>(null);
-
-  console.log(values);
 
   return (
     <div className="p-4 min-h-screen bg-dark-2 text-white relative">
@@ -17,7 +15,7 @@ function App() {
           { label: "Option 3", value: "option3" },
         ]}
         onChange={(values) => {
-          console.log(values);
+          console.info(values);
         }}
       />
 
@@ -33,7 +31,7 @@ function App() {
           </Button>
         )}
         onChange={(values) => {
-          console.log(values);
+          console.info(values);
           setValues(Array.from(values));
         }}
       />

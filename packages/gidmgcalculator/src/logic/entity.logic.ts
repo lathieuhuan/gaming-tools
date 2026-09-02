@@ -158,11 +158,17 @@ export function createTeammate(
 export type CreateTargetParams = PartiallyRequiredOnly<RawTarget, "code">;
 
 export const createTarget = (codeOrRaw: number | RawTarget = 0, data?: AppMonster) => {
-  if (codeOrRaw === 0) {
-    return Target.default();
-  }
-
   const code = typeof codeOrRaw === "number" ? codeOrRaw : codeOrRaw.code;
+
+  if (code === 0) {
+    const target = Target.default();
+
+    if (typeof codeOrRaw === "object") {
+      target.updateResistances(codeOrRaw.resistances);
+    }
+
+    return target;
+  }
 
   if (data == null || data.code !== code) {
     data = $AppData.getMonster({ code })!;

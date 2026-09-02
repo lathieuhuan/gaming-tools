@@ -4,7 +4,7 @@ import type {
   EffectPerformableConditionSpecs,
   ElementCount,
   ElementType,
-  TalentType,
+  LevelableTalentType,
   TeamConditionSpecs,
   TeamElementConditionSpecs,
   TeamMember,
@@ -31,8 +31,8 @@ export class Team<TMember extends TeamMember = TeamMember> {
   moonsignLv: number = 0;
   witchRiteLv: number = 0;
   elmtCount: ElementCount = new CountMap([], { min: 0 });
-  // TODO check if reasonable
-  extraTalentLv: CountMap<TalentType> = new CountMap();
+  // TODO move to character innate buffs
+  extraTalentLv: CountMap<LevelableTalentType> = new CountMap();
 
   constructor(members: TMember[] = []) {
     this.updateMembers(this.filterMembers(members));
@@ -96,7 +96,7 @@ export class Team<TMember extends TeamMember = TeamMember> {
 
     // ===== Extra Talent LV =====
 
-    const extraTalentLv = new CountMap<TalentType>();
+    const extraTalentLv = new CountMap<LevelableTalentType>();
 
     if (this.getMember("Tartaglia")) {
       extraTalentLv.add("NAs");

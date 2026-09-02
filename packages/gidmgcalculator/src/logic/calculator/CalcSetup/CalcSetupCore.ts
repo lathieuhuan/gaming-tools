@@ -174,6 +174,10 @@ export class CalcSetupCore {
     syncArtifactDebuffCtrls(this);
   }
 
+  /**
+   * Does NOT create new reference for Team,
+   * be careful when using for updates that involve changes in Team
+   */
   private updateTeammate(
     tmCode: number,
     data: TeammateUpdateData | ((teammate: Teammate) => TeammateUpdateData),
@@ -187,8 +191,7 @@ export class CalcSetupCore {
       return teammate;
     });
 
-    // TODO check if not trigger render on Team subscribers
-    this.team.updateMembers([this.main, ...this.teammates]);
+    // this.team.updateMembers([this.main, ...this.teammates]);
     syncArtifactDebuffCtrls(this);
   }
 
@@ -224,13 +227,13 @@ export class CalcSetupCore {
   }
 
   copyTeammates(setup: CalcSetupCore) {
-    setup.teammates = setup.teammates.map((teammate) => teammate.clone());
-    setup.team = new Team([setup.main, ...setup.teammates]);
-    setup.rsnBuffCtrls = Object_.clone(setup.rsnBuffCtrls);
-    setup.rsnDebuffCtrls = Object_.clone(setup.rsnDebuffCtrls);
-    setup.artDebuffCtrls = Object_.clone(setup.artDebuffCtrls); // TODO check
-    syncTeamBuffCtrls(setup);
-    syncArtifactDebuffCtrls(setup);
+    this.teammates = setup.teammates.map((teammate) => teammate.deepClone());
+    this.team = new Team([this.main, ...this.teammates]);
+    this.rsnBuffCtrls = Object_.clone(setup.rsnBuffCtrls);
+    this.rsnDebuffCtrls = Object_.clone(setup.rsnDebuffCtrls);
+    this.artDebuffCtrls = Object_.clone(setup.artDebuffCtrls); // TODO check
+    syncTeamBuffCtrls(this);
+    syncArtifactDebuffCtrls(this);
   }
 
   changeTeammateWeapon(tmCode: number, weapon: Weapon) {

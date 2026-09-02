@@ -20,9 +20,8 @@ export function CopySelect() {
 
   const copyOptions = setupManagers.reduce<Option[]>((results, manager) => {
     const setup = setupsById[manager.ID];
-    const { atfGear } = setup.main;
 
-    if (atfGear.list().length) {
+    if (setup.main.atfGear.list().length) {
       results.push({
         label: manager.name,
         value: manager.ID,

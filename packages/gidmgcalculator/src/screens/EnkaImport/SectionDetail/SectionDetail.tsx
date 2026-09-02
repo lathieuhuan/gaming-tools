@@ -41,8 +41,6 @@ export function SectionDetail({ className }: SectionDetailProps) {
         .initCalculation()
         .finalizeCalculation();
 
-      // TODO test
-
       extraTitle = "Attributes";
       content = (
         <AttributeTable
