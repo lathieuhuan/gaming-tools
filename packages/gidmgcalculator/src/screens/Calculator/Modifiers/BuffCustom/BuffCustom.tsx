@@ -5,7 +5,7 @@ import type { CustomBuffCtrl } from "@/types";
 import { useTranslation } from "@/hooks";
 import { suffixOf, toCustomBuffLabel } from "@/utils/ui.utils";
 import { useCalcStore } from "@Store/calculator";
-import { updateActiveSetup } from "@Store/calculator/actions";
+import { updateSetupModCtrls } from "@Store/calculator/actions";
 import { selectSetup } from "@Store/calculator/selectors";
 
 import { CopySelect, CustomModLayout, ModItemRenderConfig } from "../CustomModLayout";
@@ -32,7 +32,7 @@ export function BuffCustom() {
   });
 
   const handleUpdateCtrls = (newCtrls: CustomBuffCtrl[]) => {
-    updateActiveSetup((setup) => {
+    updateSetupModCtrls((setup) => {
       setup.customBuffCtrls = newCtrls;
     });
   };

@@ -4,7 +4,7 @@ import { ECalculatorModifierTab, ENHANCE_TOUR_SITE_ID, TOUR_STEP_ID } from "@/co
 import { $AppCharacter } from "@/services";
 import { nextFrame } from "@/utils/window.utils";
 import { useCalcStore } from "@Store/calculator";
-import { setTeammate, toggleTeammateEnhance, updateMain } from "@Store/calculator/actions";
+import { updateMain, updateSetup } from "@Store/calculator/actions";
 import { selectSetup } from "@Store/calculator/selectors";
 import { $ } from "../utils";
 
@@ -37,7 +37,9 @@ function genTeammateStep(teammateCode: number): TourStep {
       }
     },
     lastCheck: () => {
-      toggleTeammateEnhance(teammateCode, true);
+      updateSetup((setup) => {
+        setup.toggleTeammateEnhance(teammateCode, true);
+      });
     },
   };
 }
@@ -96,7 +98,9 @@ export function getEnhanceTourSteps(): TourStep[] {
         ...activateTeammateStep,
         sitePrep: () => {
           if (addSlot !== undefined) {
-            setTeammate(teammate, addSlot);
+            updateSetup((setup) => {
+              setup.setTeammate(teammate, addSlot);
+            });
           }
         },
       },
@@ -129,7 +133,6 @@ export function getEnhanceTourSteps(): TourStep[] {
             buffTab.click();
             await nextFrame();
           }
-
 
           if (
             triggerEl instanceof HTMLElement &&

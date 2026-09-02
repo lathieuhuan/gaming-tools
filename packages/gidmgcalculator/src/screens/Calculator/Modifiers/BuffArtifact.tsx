@@ -4,7 +4,7 @@ import type { Teammate } from "@/models";
 import type { ArtifactBuffCtrl, TeammateArtifactBuffCtrl } from "@/types";
 
 import { useShallowCalcStore } from "@Store/calculator";
-import { updateActiveSetup, updateTeammateArtifact } from "@Store/calculator/actions";
+import { updateSetup, updateSetupModCtrls } from "@Store/calculator/actions";
 import { selectSetup } from "@Store/calculator/selectors";
 import { toggleModCtrl, updateModCtrlInputs } from "@Store/calculator/utils";
 
@@ -16,17 +16,16 @@ export default function BuffArtifact() {
   });
 
   const handleUpdateSelfCtrls = (newCtrls: ArtifactBuffCtrl[]) => {
-    updateActiveSetup((setup) => {
+    updateSetupModCtrls((setup) => {
       setup.artBuffCtrls = newCtrls;
     });
   };
 
-  const handleUpdateTeammateCtrls = (
-    teammate: Teammate,
-    newCtrls: TeammateArtifactBuffCtrl[]
-  ) => {
-    updateTeammateArtifact(teammate.data.code, {
-      buffCtrls: newCtrls,
+  const handleUpdateTeammateCtrls = (teammate: Teammate, newCtrls: TeammateArtifactBuffCtrl[]) => {
+    updateSetup((setup) => {
+      setup.updateTeammateArtifact(teammate.data.code, {
+        buffCtrls: newCtrls,
+      });
     });
   };
 
@@ -40,7 +39,7 @@ export default function BuffArtifact() {
 
         const updateCtrlInput = (value: number, inputIndex: number) => {
           handleUpdateSelfCtrls(
-            updateModCtrlInputs(artBuffCtrls, ctrl.id, inputIndex, value, extraCheck)
+            updateModCtrlInputs(artBuffCtrls, ctrl.id, inputIndex, value, extraCheck),
           );
         };
 
@@ -65,7 +64,7 @@ export default function BuffArtifact() {
         const updateCtrlInput = (value: number, inputIndex: number) => {
           handleUpdateTeammateCtrls(
             teammate,
-            updateModCtrlInputs(buffCtrls, ctrl.id, inputIndex, value)
+            updateModCtrlInputs(buffCtrls, ctrl.id, inputIndex, value),
           );
         };
 

@@ -37,14 +37,17 @@ export function SectionDetail({ className }: SectionDetailProps) {
       const $character = createCharacter(character.basic, character.data, {
         weapon,
         atfGear,
-      });
-      const allAttrs = $character.initCalculation().attrCtrl.finalize();
+      })
+        .initCalculation()
+        .finalizeCalculation();
+
+      // TODO test
 
       extraTitle = "Attributes";
       content = (
         <AttributeTable
           className="max-h-full hide-scrollbar border-2 border-dark-3 rounded"
-          attributes={allAttrs}
+          attributes={$character.finalAttrs}
         />
       );
       break;

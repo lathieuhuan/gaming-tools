@@ -3,7 +3,7 @@ import { Object_ } from "ron-utils";
 import type { ArtifactDebuffCtrl } from "@/types";
 
 import { useShallowCalcStore } from "@Store/calculator";
-import { updateActiveSetup } from "@Store/calculator/actions";
+import { updateSetupModCtrls } from "@Store/calculator/actions";
 import { selectSetup } from "@Store/calculator/selectors";
 import { toggleModCtrl, updateModCtrlInputs } from "@Store/calculator/utils";
 
@@ -11,11 +11,11 @@ import { ArtifactDebuffsView } from "@/components/ModifierLists";
 
 export default function DebuffArtifact() {
   const { artDebuffCtrls } = useShallowCalcStore((state) =>
-    Object_.extract(selectSetup(state), ["artDebuffCtrls"])
+    Object_.extract(selectSetup(state), ["artDebuffCtrls"]),
   );
 
   const handleUpdateCtrls = (newCtrls: ArtifactDebuffCtrl[]) => {
-    updateActiveSetup((setup) => {
+    updateSetupModCtrls((setup) => {
       setup.artDebuffCtrls = newCtrls;
     });
   };
@@ -33,7 +33,7 @@ export default function DebuffArtifact() {
           },
           onSelectOption: (value, inputIndex) => {
             handleUpdateCtrls(
-              updateModCtrlInputs(artDebuffCtrls, ctrl.id, inputIndex, value, extraCheck)
+              updateModCtrlInputs(artDebuffCtrls, ctrl.id, inputIndex, value, extraCheck),
             );
           },
         };

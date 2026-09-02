@@ -8,7 +8,7 @@ import type { CalcSetup } from "../CalcSetup";
 import { NORMAL_ATTACKS } from "@/constants";
 
 export function getAttackAlters(main: Character, setup: CalcSetup) {
-  const configs: Partial<Record<AttackPattern | TalentCalcItemBonusId, AttackAlter>> = {};
+  const configs: Map<AttackPattern | TalentCalcItemBonusId, AttackAlter> = new Map();
 
   for (const ctrl of setup.selfBuffCtrls) {
     if (!ctrl.activated) {
@@ -28,11 +28,11 @@ export function getAttackAlters(main: Character, setup: CalcSetup) {
 
         if (forPatt === "ALL") {
           for (const type of NORMAL_ATTACKS) {
-            configs[type] = alter;
+            configs.set(type, alter);
           }
         } else {
           for (const id of Array_.toArray(forPatt)) {
-            configs[id] = alter;
+            configs.set(id, alter);
           }
         }
       }

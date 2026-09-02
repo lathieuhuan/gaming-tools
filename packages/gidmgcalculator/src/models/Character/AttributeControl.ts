@@ -34,13 +34,10 @@ type InternalAttribute = Record<InternalAttributeElement, number> & {
 type InternalAttributes = Map<AttributeStat, InternalAttribute>;
 
 export class AttributeControl {
-  private constructor(
-    private attrs: InternalAttributes,
-    public finals: AllAttributes,
-  ) {}
+  private constructor(private attrs: InternalAttributes) {}
 
   static create() {
-    return new AttributeControl(new Map(), new CountMap([], { min: -Infinity }));
+    return new AttributeControl(new Map());
   }
 
   base(key: AttributeStat) {
@@ -235,20 +232,17 @@ export class AttributeControl {
       allAttrs.add(key, isSpeedStat ? Math.min(total, 160) : total);
     }
 
-    this.finals = allAttrs;
-
     return allAttrs;
   }
 
   clone(initial: AttributeControlCloneOptions = {}) {
-    const { details = this.attrs, finals = this.finals } = initial;
+    const { details = this.attrs } = initial;
 
-    return new AttributeControl(details, finals);
+    return new AttributeControl(details);
   }
 
   clear() {
     this.attrs = new Map();
-    this.finals = new CountMap([], { min: -Infinity });
     return this;
   }
 }

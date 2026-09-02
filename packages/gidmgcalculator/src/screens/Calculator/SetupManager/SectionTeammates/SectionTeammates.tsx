@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { CollapseSpace, message } from "rond";
 
 import { useShallowCalcStore } from "@Store/calculator";
-import { removeTeammate, setTeammate } from "@Store/calculator/actions";
+import { updateSetup } from "@Store/calculator/actions";
 import { selectSetup, selectSetupManager } from "@Store/calculator/selectors";
 import { isTourFinished } from "@Store/tours";
 import { updateUI } from "@Store/ui";
@@ -53,7 +53,7 @@ export function SectionTeammates() {
 
   const warnSetupCombined = () => {
     message.info(
-      "This setup is marked as part of a Complex setup, thus teammates cannot be changed."
+      "This setup is marked as part of a Complex setup, thus teammates cannot be changed.",
     );
   };
 
@@ -76,7 +76,9 @@ export function SectionTeammates() {
     }
 
     if (selectedTeammate) {
-      removeTeammate(selectedTeammate);
+      updateSetup((setup) => {
+        setup.removeTeammate(selectedTeammate);
+      });
     }
   };
 
@@ -84,7 +86,10 @@ export function SectionTeammates() {
     const { recruitIndex } = tavern;
     if (recruitIndex === null) return;
 
-    setTeammate(data, recruitIndex);
+    updateSetup((setup) => {
+      setup.setTeammate(data, recruitIndex);
+    });
+
     setSelectedIndex(recruitIndex);
 
     if (!isTourFinished("CHAR_ENHANCE") && data.enhanceType) {

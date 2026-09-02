@@ -1,7 +1,7 @@
 import type { ResonanceModCtrl } from "@/types";
 
 import { useShallowCalcStore } from "@Store/calculator";
-import { updateActiveSetup, updateElementalEvent } from "@Store/calculator/actions";
+import { updateElementalEvent, updateSetupModCtrls } from "@Store/calculator/actions";
 import { selectSetup } from "@Store/calculator/selectors";
 import { toggleRsnModCtrl } from "@Store/calculator/utils";
 
@@ -20,7 +20,7 @@ export default function DebuffElement() {
   });
 
   const handleToggleRsnCtrls = (ctrl: ResonanceModCtrl) => {
-    updateActiveSetup((setup) => {
+    updateSetupModCtrls((setup) => {
       setup.rsnDebuffCtrls = toggleRsnModCtrl(setup.rsnDebuffCtrls, ctrl.element);
     });
   };

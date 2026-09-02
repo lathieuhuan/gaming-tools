@@ -1,4 +1,4 @@
-import type { AppCharacter, AttributeStat, ElementType, RawCharacter, Level } from "@/types";
+import type { AppCharacter, AttributeStat, ElementType, Level, RawCharacter } from "@/types";
 import type {
   GOODArtifact,
   GOODAscendable,
@@ -90,7 +90,7 @@ export type GOODCharacterConvertReturn = {
 };
 
 export function convertGOODCharacter(
-  character: GOODCharacter
+  character: GOODCharacter,
 ): GOODCharacterConvertReturn | undefined {
   //
   const data = findGOODCharacter(character.key);
@@ -107,7 +107,7 @@ export function convertGOODCharacter(
       NAs: character.talent.auto,
       ES: character.talent.skill,
       EB: character.talent.burst,
-      enhanced: false, // TODO: check if GOOD updated with enhanced
+      enhanced: false,
     },
     data,
   };
@@ -128,7 +128,7 @@ export function convertGOODWeapon(weapon: GOODWeapon, ID: number) {
       level: convertGOODLevel(weapon),
       refi: weapon.refinement,
     },
-    data
+    data,
   );
 }
 
@@ -156,6 +156,6 @@ export function convertGOODArtifact(artifact: GOODArtifact, ID: number) {
       })),
       level: artifact.level,
     },
-    data
+    data,
   );
 }

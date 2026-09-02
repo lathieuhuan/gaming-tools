@@ -23,7 +23,7 @@ export function SetupModals({ setupName, setup }: SetupModalsProps) {
   const dispatch = useDispatch();
   const modalType = useUIStore((state) => state.mySetupsModalType);
 
-  const { weapon, atfGear, attrCtrl, attkBonusCtrl } = setup.main;
+  const { weapon, atfGear, finalAttrs, attkBonusCtrl } = setup.main;
 
   const closeModal = () => {
     updateUI({ mySetupsModalType: "" });
@@ -100,7 +100,7 @@ export function SetupModals({ setupName, setup }: SetupModalsProps) {
           <div className="w-76 flex flex-col shrink-0">
             <p className="text-lg text-center font-semibold">Attributes</p>
             <div className="mt-1 custom-scrollbar">
-              <AttributeTable attributes={attrCtrl.finals} attkBonusCtrl={attkBonusCtrl} />
+              <AttributeTable attributes={finalAttrs} attkBonusCtrl={attkBonusCtrl} />
             </div>
           </div>
 

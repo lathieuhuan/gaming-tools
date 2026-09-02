@@ -1,12 +1,12 @@
 import { Array_ } from "ron-utils";
 
 import type { TeamBuffCtrl } from "@/types";
-import type { CalcSetup } from "./CalcSetup";
+import type { CalcSetupCore } from "./CalcSetup/CalcSetupCore";
 
 import { $AppData } from "@/services";
 import { createModCtrl } from "../modifier.logic";
 
-export function createTeamBuffCtrls(setup: CalcSetup): TeamBuffCtrl[] {
+export function createTeamBuffCtrls(setup: CalcSetupCore): TeamBuffCtrl[] {
   const { team, artBuffCtrls = [] } = setup;
 
   // Find available team buff ids

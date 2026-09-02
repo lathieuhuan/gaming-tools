@@ -4,7 +4,7 @@ import type { Teammate } from "@/models";
 import type { AbilityDebuffCtrl } from "@/types";
 
 import { useShallowCalcStore } from "@Store/calculator";
-import { updateTeammateModCtrls } from "@Store/calculator/actions";
+import { updateSetup } from "@Store/calculator/actions";
 import { selectSetup } from "@Store/calculator/selectors";
 import { toggleModCtrl, updateModCtrlInputs } from "@Store/calculator/utils";
 
@@ -16,8 +16,10 @@ export default function DebuffTeammates() {
   );
 
   const handleUpdateCtrls = (teammate: Teammate, ctrls: AbilityDebuffCtrl[]) => {
-    updateTeammateModCtrls(teammate.data.code, {
-      debuffCtrls: ctrls,
+    updateSetup((setup) => {
+      setup.updateTeammateModCtrls(teammate.data.code, {
+        debuffCtrls: ctrls,
+      });
     });
   };
 

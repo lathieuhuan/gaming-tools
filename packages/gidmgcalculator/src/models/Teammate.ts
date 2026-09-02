@@ -11,11 +11,11 @@ import type {
   TeamMember,
   WeaponBuffCtrl,
 } from "@/types";
-import type { Clonable } from "../interfaces";
+import type { Clonable } from "./interfaces";
 
 import { createAbilityBuffCtrls, createAbilityDebuffCtrls } from "@/logic/modifier.logic";
-import { isPassedComparison } from "../utils/isPassedComparison";
-import { isValidInput } from "../utils/isValidInput";
+import { isPassedComparison } from "./utils/isPassedComparison";
+import { isValidInput } from "./utils/isValidInput";
 
 export type TeammateConstructOptions = {
   enhanced?: boolean;
@@ -102,17 +102,6 @@ export class Teammate implements TeammateData, TeamMember, Clonable<Teammate> {
     return true;
   }
 
-  // performBonus(
-  //   config: BonusCoreSpec,
-  //   { inputs = [], refi = 0, basedOnStatic = false }: Partial<BonusPerformTools>,
-  // ): BareBonus {
-  //   return new BonusCalc(this, this.team, { inputs, refi, basedOnStatic }).makeBonus(config);
-  // }
-
-  // performPenalty(config: PenaltyCoreSpec, inputs?: number[]) {
-  //   return new PenaltyCalc(this, this.team, inputs).makePenalty(config);
-  // }
-
   clone() {
     return new Teammate(this.code, this.data, this.weapon, {
       ...this,
@@ -122,14 +111,4 @@ export class Teammate implements TeammateData, TeamMember, Clonable<Teammate> {
       artifact: Object_.clone(this.artifact),
     });
   }
-
-  // ===== DESCRIPTION =====
-
-  // parseBuffDesc(spec: EffectToParseDesc, inputs?: number[]) {
-  //   return new BonusCalc(this, this.team, { inputs }).parseAbilityDesc(spec);
-  // }
-
-  // parseDebuffDesc(spec: EffectToParseDesc, inputs?: number[]) {
-  //   return new PenaltyCalc(this, this.team, inputs).parseAbilityDesc(spec);
-  // }
 }

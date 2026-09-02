@@ -5,14 +5,11 @@ import { Button, PouchSvg, TrashCanSvg, VersatileSelect } from "rond";
 import { useTranslation } from "@/hooks";
 import { Artifact } from "@/models";
 import { suffixOf } from "@/utils/ui.utils";
-import {
-  removeArtifactPiece,
-  updateArtifactPiece,
-  updateArtifactPieceSubStat,
-} from "@Store/calculator/actions";
+import { updateSetup } from "@Store/calculator/actions";
 
 // Component
 import { ArtifactLevelSelect, ArtifactSubstatsControl } from "@/components/ArtifactCard";
+import { CalcSetupActions } from "@/logic/calculator";
 import { SaveConfirmModal } from "./SaveConfirmModal";
 
 export type ArtifactSourceType = "LOADOUT" | "INVENTORY" | "FORGE";
@@ -38,8 +35,27 @@ export function ArtifactInfo({ artifact, onRemove, onRequestChange }: ArtifactIn
     setIsSaving(false);
   };
 
+  const updateArtifactPiece: CalcSetupActions["updateArtifactPiece"] = (type, newState) => {
+    updateSetup((setup) => {
+      setup.updateArtifactPiece(type, newState);
+    });
+  };
+
+  const updateArtifactPieceSubStat: CalcSetupActions["updateArtifactPieceSubStat"] = (
+    type,
+    index,
+    data,
+  ) => {
+    updateSetup((setup) => {
+      setup.updateArtifactPieceSubStat(type, index, data);
+    });
+  };
+
   const handleRemove = () => {
-    removeArtifactPiece(artifact.type);
+    updateSetup((setup) => {
+      setup.removeArtifactPiece(artifact.type);
+    });
+
     onRemove?.();
   };
 

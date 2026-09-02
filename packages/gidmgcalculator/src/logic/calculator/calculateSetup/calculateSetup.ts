@@ -26,19 +26,14 @@ export type CalculateSetupOptions = {
 };
 
 export function calculateSetup(setup: CalcSetup, options: CalculateSetupOptions = {}) {
-  const { main, teammates, team, target } = setup;
+  const { main, target } = setup;
   const calcItems = createExtraCalcItems(setup);
 
   const { calcList } = main.data;
   const { elmtEvent } = setup;
 
-  main.initCalculation({ resonances: team.resonances });
-  target.initCalculation();
-
-  applyBuffs(main, teammates, setup, options);
-  applyDebuffs(main, teammates, setup, target);
-
-  target.finalizeCalculation();
+  applyBuffs(setup, options);
+  applyDebuffs(setup);
 
   const attackAlters = getAttackAlters(main, setup);
 
@@ -73,7 +68,7 @@ export function calculateSetup(setup: CalcSetup, options: CalculateSetupOptions 
   for (const ATT_PATT of ATTACK_PATTERNS) {
     const talentType = ATT_PATT === "ES" || ATT_PATT === "EB" ? ATT_PATT : "NAs";
     const resultGroup = result[talentType];
-    const alterConfig = attackAlters[ATT_PATT];
+    const alterConfig = attackAlters.get(ATT_PATT);
     const defaultValues = getTalentDefaultValues(main.data, ATT_PATT);
 
     const calculator = makeTalentCalc(main, target, talentType, defaultValues, alterConfig);
@@ -88,7 +83,7 @@ export function calculateSetup(setup: CalcSetup, options: CalculateSetupOptions 
       );
 
       if (type === "attack") {
-        const itemElmtAlter = calcItem.id ? attackAlters[calcItem.id]?.attElmt : undefined;
+        const itemElmtAlter = calcItem.id ? attackAlters.get(calcItem.id)?.attElmt : undefined;
 
         if (alterConfig?.disabled) {
           resultGroup[calcItem.name] = EMPTY_ATTACK_RESULT;
@@ -209,5 +204,5 @@ export function calculateSetup(setup: CalcSetup, options: CalculateSetupOptions 
   setup.calcItems = calcItems;
   setup.result = result;
 
-  return setup;
+  return setup.clone();
 }

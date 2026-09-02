@@ -3,6 +3,7 @@ import { FaToolbox } from "react-icons/fa";
 import { GiAnvil } from "react-icons/gi";
 import { Button, clsx, CollapseSpace, notification, PouchSvg } from "rond";
 
+import type { CalcSetupActions } from "@/logic/calculator";
 import type { ArtifactType } from "@/types";
 
 import { ARTIFACT_TYPES } from "@/constants/global";
@@ -10,7 +11,7 @@ import { createArtifact } from "@/logic/entity.logic";
 import { Artifact } from "@/models";
 import { IdStore } from "@/utils/IdStore";
 import { useCalcStore } from "@Store/calculator";
-import { setArtifactPiece } from "@Store/calculator/actions";
+import { updateSetup } from "@Store/calculator/actions";
 import { selectActiveMain } from "@Store/calculator/selectors";
 import { useSettingsStore } from "@Store/settings";
 
@@ -70,6 +71,12 @@ export function SectionArtifacts() {
     }
   }, [!activePiece]);
 
+  const setArtifactPiece: CalcSetupActions["setArtifactPiece"] = (artifact, shouldKeepStats) => {
+    updateSetup((setup) => {
+      setup.setArtifactPiece(artifact, shouldKeepStats);
+    });
+  };
+
   const handleClickTab = (type: ArtifactType) => {
     // there's already an artifact at tabIndex (or activePiece !== null after this excution)
     if (pieces[type] !== undefined) {
@@ -90,6 +97,7 @@ export function SectionArtifacts() {
   };
 
   const handleSelectLoadout: LoadoutStashProps["onSelect"] = (pieces) => {
+    // TODO update
     for (const piece of pieces) {
       setArtifactPiece(piece);
     }

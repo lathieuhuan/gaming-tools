@@ -2,16 +2,39 @@ import { Array_, Object_ } from "ron-utils";
 
 import type { ArtifactType, SetupManager } from "@/types";
 import type { WritableDraft } from "immer/src/internal.js";
+import type { CalculatorState } from "../types";
 
 import { CalcSetup } from "@/logic/calculator";
 import { useCalcStore } from "../calculatorStore";
-import { getCopyName, onActiveSetup } from "../utils";
+import { getCopyName } from "../utils";
 
-export const updateActiveSetup = (
-  callback: (setup: WritableDraft<CalcSetup>) => boolean | void,
+/**
+ * @param id Default activeId
+ */
+export const updateSetup = (
+  callback: (
+    setup: WritableDraft<CalcSetup>,
+    state: WritableDraft<CalculatorState>,
+  ) => boolean | void,
+  id?: number,
 ) => {
-  useCalcStore.setState(onActiveSetup(callback));
+  useCalcStore.setState((state) => {
+    const setupId = id ?? state.activeId;
+    const setup = state.setupsById[setupId];
+
+    if (setup) {
+      const shouldCalculate = callback(setup, state) ?? true;
+
+      if (shouldCalculate) {
+        state.setupsById[setupId] = setup.calculate();
+      }
+    } else {
+      console.error(`Setup with id ${setupId} not found`);
+    }
+  });
 };
+
+export const updateSetupModCtrls = updateSetup;
 
 export const updateSetupAfterSave = (
   setupId: number,
@@ -59,6 +82,7 @@ export const duplicateSetup = (sourceId: number) => {
         name: setupName || "New Setup",
         type: "original",
       });
+      // TODO check
       setupsById[setupID] = setupsById[sourceId].clone({ ID: setupID });
 
       if (comparedIds.includes(sourceId)) {
@@ -152,6 +176,7 @@ export const updateMultiSetups = (changes: MultiSetupChange[], newStandardId: nu
             type: "original",
           });
 
+          // TODO check logic
           const newSetup = CalcSetup.create(change.ID, setupsById[activeId].main.deepClone(), {
             target,
           });

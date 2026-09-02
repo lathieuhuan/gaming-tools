@@ -19,13 +19,11 @@ import type {
   ModInputSpec,
   ModInputType,
   ResonanceModCtrl,
-  TeamBuffCtrl,
   WeaponBuffCtrl,
 } from "@/types";
-import type { CalcSetup } from "./calculator";
 
 import { DEFAULT_STELLAR_VORTEX_LV } from "@/constants";
-import { $AppArtifact, $AppData } from "@/services";
+import { $AppArtifact } from "@/services";
 import { isManualRsnElmt } from "@/utils/element.utils";
 
 function getDefaultInitValue(type: ModInputType) {
@@ -80,39 +78,6 @@ export function createModCtrl(forSelf: boolean) {
       ...(inputs.length ? { inputs } : null),
     };
   };
-}
-
-// TODO remove with old CalcSetup
-export function createTeamBuffCtrls(setup: CalcSetup): TeamBuffCtrl[] {
-  const { team, teammates, artBuffCtrls = [] } = setup;
-
-  // Find available team buff ids
-
-  const teamBuffIds = new Set<number>();
-
-  if (team.moonsignLv >= 2) {
-    teamBuffIds.add($AppData.MS_ASCENDANT_BUFF_ID);
-  }
-
-  for (const { data } of artBuffCtrls) {
-    data.teamBuffId && teamBuffIds.add(data.teamBuffId);
-  }
-
-  for (const teammate of teammates) {
-    const { buffCtrls = [] } = teammate.artifact || {};
-
-    for (const { data } of buffCtrls) {
-      data.teamBuffId && teamBuffIds.add(data.teamBuffId);
-    }
-  }
-
-  // Turn ids into ctrls based on $AppData.teamBuffs
-
-  return Array_.filterMap(
-    $AppData.teamBuffs,
-    (buff) => teamBuffIds.has(buff.id),
-    createModCtrl(false),
-  );
 }
 
 type RefModifier = ModifierBaseSpec & {

@@ -15,7 +15,6 @@ import type {
 } from "@/types";
 import type { CalcSetup } from "../CalcSetup";
 
-import { getRxnBonusesFromEM } from "@/calculation/core/getRxnBonusesFromEM";
 import {
   AMPLIFYING_REACTIONS,
   ELEMENT_TYPES,
@@ -24,20 +23,18 @@ import {
   STELLAR_TYPES,
   TRANSFORMATIVE_REACTIONS,
 } from "@/constants/global";
+import { getRxnBonusesFromEM } from "../getRxnBonusesFromEM";
 
 type ApplyBuffsOptions = {
   resonatedElmts?: AttackElement[];
 };
 
-export function applyBuffs(
-  main: Character,
-  teammates: Teammate[],
-  setup: CalcSetup,
-  options: ApplyBuffsOptions = {},
-) {
-  const { team } = setup;
+export function applyBuffs(setup: CalcSetup, options: ApplyBuffsOptions = {}) {
+  const { main, teammates, team } = setup;
   const { weapon, attrCtrl, attkBonusCtrl } = main;
   const { resonatedElmts = [] } = options;
+
+  main.initCalculation({ resonances: team.resonances });
 
   // POLYSTAR FIELD BONUSES
   const { polestarProc = false, polestarCount = 0 } = setup.elmtEvent;
@@ -375,7 +372,7 @@ export function applyBuffs(
   applyAbilityBuffs(true);
   applyArtifactBuffs(true);
 
-  attrCtrl.finalize();
+  main.finalizeCalculation();
 
   const em = main.getAttr("em");
 

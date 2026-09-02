@@ -1,6 +1,7 @@
-import { Object_ } from "ron-utils";
+import { CountMap } from "ron-utils";
 
 import type {
+  AllAttributes,
   AllAttributeStat,
   AmplifyingReaction,
   AppCharacter,
@@ -76,6 +77,8 @@ export type CharacterInitCalcOptions = {
 export class Character implements TeamMember, Clonable<Character> {
   readonly isTraveler: boolean;
 
+  calculated = false;
+
   get baseReactionDMG() {
     return BASE_REACTION_DAMAGE[this.bareLv] ?? 0;
   }
@@ -96,6 +99,7 @@ export class Character implements TeamMember, Clonable<Character> {
     public levelBonuses: Map<string, LevelBonus>,
     public attrCtrl: AttributeControl,
     public attkBonusCtrl: AttackBonusControl,
+    public finalAttrs: AllAttributes = new CountMap([], { min: -Infinity }),
   ) {
     this.isTraveler = data.name.slice(-8) === "Traveler";
   }
@@ -149,7 +153,10 @@ export class Character implements TeamMember, Clonable<Character> {
   }
 
   getAttr(key: AllAttributeStat) {
-    return this.attrCtrl.finals.get(key);
+    if (!this.calculated) {
+      console.error("Character has not been calculated!");
+    }
+    return this.finalAttrs.get(key);
   }
 
   // ===== CALCULATION =====
@@ -159,10 +166,18 @@ export class Character implements TeamMember, Clonable<Character> {
     this.levelBonuses.clear();
     this.attkBonusCtrl.clear();
     this.attrCtrl.init(this, options);
+    this.finalAttrs = new CountMap([], { min: -Infinity });
+    this.calculated = false;
     return this;
   }
 
-  // ===== PERFORM EFFECTS =====
+  finalizeCalculation() {
+    this.finalAttrs = this.attrCtrl.finalize();
+    this.calculated = true;
+    return this;
+  }
+
+  // ===== EFFECTS =====
 
   canPerformEffect(condition?: EffectPerformableConditionSpecs, inputs: number[] = []): boolean {
     if (!condition) {
@@ -185,15 +200,6 @@ export class Character implements TeamMember, Clonable<Character> {
       return false;
     }
 
-    // TODO remove
-    // if (condition.checkMixed) {
-    //   const mixedCount = this.team.getMixedCount(this.data.vision);
-
-    //   if (!isPassedComparison(mixedCount, 3, "MIN")) {
-    //     return false;
-    //   }
-    // }
-
     if (condition.checkAny) {
       const anyInvalid = condition.checkAny.some(
         (condition) => !this.canPerformEffect(condition, inputs),
@@ -210,24 +216,6 @@ export class Character implements TeamMember, Clonable<Character> {
 
     return true;
   }
-
-  // performBonus(config: BonusCoreSpec, tools: Partial<BonusPerformTools>) {
-  //   return new BonusCalc(this, this.team, tools).makeBonus(config);
-  // }
-
-  // performPenalty(config: PenaltyCoreSpec, inputs?: number[]) {
-  //   return new PenaltyCalc(this, this.team, inputs).makePenalty(config);
-  // }
-
-  // parseBuffDesc(spec: EffectToParseDesc, inputs?: number[]) {
-  //   return new BonusCalc(this, this.team, { inputs }).parseAbilityDesc(spec);
-  // }
-
-  // parseDebuffDesc(spec: EffectToParseDesc, inputs?: number[]) {
-  //   return new PenaltyCalc(this, this.team, inputs).parseAbilityDesc(spec);
-  // }
-
-  // ===== RECEIVE BONUSES =====
 
   canReceiveEffect(condition: EffectReceiverConditionSpecs) {
     const { data } = this;
@@ -268,7 +256,7 @@ export class Character implements TeamMember, Clonable<Character> {
 
   private monoRecords: NonNullable<BonusMonoRecord>[] = [];
 
-  private isRecordedBonus(trackId: string, targetId: string) {
+  private isBonusRecorded(trackId: string, targetId: string) {
     const recorded = this.monoRecords.some((savedRecord) => {
       return trackId === savedRecord.trackId && targetId === savedRecord.targetId;
     });
@@ -286,7 +274,7 @@ export class Character implements TeamMember, Clonable<Character> {
     if (this.canReceiveEffect(bonus.effectSrc)) {
       const { monoId } = bonus.effectSrc;
       const toStat = bonus.toStat === "OWN_ELMT" ? this.data.vision : bonus.toStat;
-      const notRecorded = !monoId || !this.isRecordedBonus(monoId, toStat);
+      const notRecorded = !monoId || !this.isBonusRecorded(monoId, toStat);
 
       if (notRecorded) {
         this.attrCtrl.addBonus({
@@ -305,7 +293,7 @@ export class Character implements TeamMember, Clonable<Character> {
     if (this.canReceiveEffect(bonus.effectSrc)) {
       const { monoId } = bonus.effectSrc;
       const notRecorded =
-        !monoId || !this.isRecordedBonus(monoId, `${bonus.toType}/${bonus.toKey}`);
+        !monoId || !this.isBonusRecorded(monoId, `${bonus.toType}/${bonus.toKey}`);
 
       if (notRecorded) {
         this.attkBonusCtrl.add(bonus);
@@ -380,7 +368,7 @@ export class Character implements TeamMember, Clonable<Character> {
       this.data,
       this.weapon.clone(),
       this.atfGear.deepClone(),
-      Object_.clone(this.levelBonuses), // TODO fix
+      new Map(this.levelBonuses),
       this.attrCtrl.clone(),
       this.attkBonusCtrl.clone(),
     );

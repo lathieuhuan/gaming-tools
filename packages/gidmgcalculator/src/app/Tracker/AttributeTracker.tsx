@@ -18,7 +18,7 @@ type AttributeTrackerProps = {
 
 export function AttributeTracker({ listClassName, attrCtrl }: AttributeTrackerProps) {
   const { t } = useTranslation();
-  const allAttrs = useCalcStore((state) => selectSetup(state).main.attrCtrl.finals);
+  const finalAttrs = useCalcStore((state) => selectSetup(state).main.finalAttrs);
 
   return (
     <div className={clsx("pl-2 pt-2 pr-4", listClassName)}>
@@ -29,7 +29,7 @@ export function AttributeTracker({ listClassName, attrCtrl }: AttributeTrackerPr
 
         return (
           <div key={statType} className="break-inside-avoid">
-            <Heading label={t(statType)} value={Math.round(allAttrs.get(statType))} />
+            <Heading label={t(statType)} value={Math.round(finalAttrs.get(statType))} />
 
             <Container>
               {logs.map((log, index) => (

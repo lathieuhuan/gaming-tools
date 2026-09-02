@@ -3,8 +3,8 @@ import { FaCaretDown } from "react-icons/fa";
 import { round } from "ron-utils";
 import { clsx, CollapseSpace, StatsTable } from "rond";
 
-import { getRxnBonusesFromEM } from "@/calculation/core/getRxnBonusesFromEM";
 import { PositiveText } from "@/components/Text";
+import { getRxnBonusesFromEM } from "@/logic/calculator";
 
 const { Row, Cell } = StatsTable;
 

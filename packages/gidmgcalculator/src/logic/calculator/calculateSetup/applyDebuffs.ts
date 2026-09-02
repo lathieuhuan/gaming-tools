@@ -1,18 +1,15 @@
 import { Array_ } from "ron-utils";
 
-import type { Character, Target, Teammate } from "@/models";
+import type { Character, Teammate } from "@/models";
 import type { DebuffSpec, ElementType, PenaltyTargetsSpec, ResistReductionKey } from "@/types";
 import type { CalcSetup } from "../CalcSetup";
 
 import { ELEMENT_TYPES, PHEC_ELEMENT_TYPES } from "@/constants/global";
 
-export function applyDebuffs(
-  main: Character,
-  teammates: Teammate[],
-  setup: CalcSetup,
-  target: Target,
-) {
-  const { team } = setup;
+export function applyDebuffs(setup: CalcSetup) {
+  const { main, teammates, team, target } = setup;
+
+  target.initCalculation();
 
   // ↓↓↓↓↓ HELPERS ↓↓↓↓↓
 

@@ -1,8 +1,10 @@
 import { useState } from "react";
 import { CarouselSpace, Tabs } from "rond";
 
+import type { CalcSetupActions } from "@/logic/calculator";
+
 import { useCalcStore, useShallowCalcStore } from "@Store/calculator";
-import { updateMain, updateMainWeapon } from "@Store/calculator/actions";
+import { updateMain, updateSetup } from "@Store/calculator/actions";
 import { selectActiveMain, selectSetup } from "@Store/calculator/selectors";
 
 import { ConstellationList, TalentList } from "@/components/AbilityLists";
@@ -11,17 +13,17 @@ import { SetBonusesView } from "@/components/SetBonusesView";
 import { WeaponView } from "@/components/WeaponCard";
 
 export function AttributesTab() {
-  const { allAttrs, attkBonusCtrl } = useShallowCalcStore((state) => {
-    const { attrCtrl, attkBonusCtrl } = selectActiveMain(state);
+  const { finalAttrs, attkBonusCtrl } = useShallowCalcStore((state) => {
+    const { finalAttrs, attkBonusCtrl } = selectActiveMain(state);
     return {
-      allAttrs: attrCtrl.finals,
+      finalAttrs,
       attkBonusCtrl,
     };
   });
 
   return (
     <div className="h-full custom-scrollbar">
-      <AttributeTable attributes={allAttrs} attkBonusCtrl={attkBonusCtrl} />
+      <AttributeTable attributes={finalAttrs} attkBonusCtrl={attkBonusCtrl} />
     </div>
   );
 }
@@ -29,13 +31,19 @@ export function AttributesTab() {
 export function WeaponTab() {
   const weapon = useCalcStore((state) => selectActiveMain(state).weapon);
 
+  const handleUpdate: CalcSetupActions["updateMainWeapon"] = (data) => {
+    updateSetup((setup) => {
+      setup.updateMainWeapon(data);
+    });
+  };
+
   return (
     <div className="h-full hide-scrollbar">
       <WeaponView
         mutable
         weapon={weapon}
-        upgrade={(level) => updateMainWeapon({ level })}
-        refine={(refi) => updateMainWeapon({ refi })}
+        upgrade={(level) => handleUpdate({ level })}
+        refine={(refi) => handleUpdate({ refi })}
       />
     </div>
   );

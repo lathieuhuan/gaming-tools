@@ -5,11 +5,11 @@ import type {
 } from "@/calculation/types";
 import type { LevelableTalentType } from "@/types";
 
-export type CalcResultTalentItem = CalcResultAttackItem | CalcResultOtherItem;
+type CalcResultTalentItem = CalcResultAttackItem | CalcResultOtherItem;
 
-export type CalcResultWeaponItem = CalcResultAttackItem | CalcResultOtherItem;
+type CalcResultWeaponItem = CalcResultAttackItem | CalcResultOtherItem;
 
-export type CalcResultTalentGroup = Record<string, CalcResultTalentItem>;
+type CalcResultTalentGroup = Record<string, CalcResultTalentItem>;
 
 export type CalcResult = {
   [key in LevelableTalentType]: CalcResultTalentGroup;
