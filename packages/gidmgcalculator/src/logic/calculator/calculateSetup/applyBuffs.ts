@@ -1,6 +1,6 @@
 import { Array_ } from "ron-utils";
 
-import { Weapon, type CalcSetup, type Character, type Teammate } from "@/models";
+import { Weapon, type Character, type Teammate } from "@/models";
 import type {
   AttackElement,
   AttackPattern,
@@ -12,9 +12,10 @@ import type {
   BonusSpec,
   BuffSpec,
   ReactionType,
-  TeamMember,
 } from "@/types";
+import type { CalcSetup } from "../CalcSetup";
 
+import { getRxnBonusesFromEM } from "@/calculation/core/getRxnBonusesFromEM";
 import {
   AMPLIFYING_REACTIONS,
   ELEMENT_TYPES,
@@ -23,8 +24,6 @@ import {
   STELLAR_TYPES,
   TRANSFORMATIVE_REACTIONS,
 } from "@/constants/global";
-import { BonusCalc } from "@/models/Character";
-import { getRxnBonusesFromEM } from "../core/getRxnBonusesFromEM";
 
 type ApplyBuffsOptions = {
   resonatedElmts?: AttackElement[];
@@ -67,7 +66,7 @@ export function applyBuffs(
     const { outsource, target } = spec;
 
     if (outsource) {
-      const stacks = new BonusCalc(main, team, { inputs }).getStacks(outsource.stacks);
+      const stacks = team.member(main).bonusCalc({ inputs }).getStacks(outsource.stacks);
 
       bonus.value *= stacks?.value ?? 1;
     }
@@ -127,24 +126,27 @@ export function applyBuffs(
 
   function applyBonus(
     label: string,
-    performer: TeamMember,
+    performer: Character | Teammate,
     specs: BuffSpec["effects"] = [],
     support: Omit<Partial<BonusPerformTools>, "basedOnStatic">,
     isFinalStage?: boolean,
   ) {
+    const memberOps = team.member(performer);
+
     for (const spec of Array_.toArray(specs)) {
       if (
         (isFinalStage === undefined || isFinalStage === isFinalEffect(spec)) &&
-        team.isAvailableEffect(spec) &&
-        performer.canPerformEffect(spec, support.inputs)
+        memberOps.canPerformEffect(spec, support.inputs)
       ) {
         const { target } = spec;
         const basedOnStatic = target.module === "ATTR";
 
-        const bonus = performer.performBonus(spec, {
-          ...support,
-          basedOnStatic,
-        });
+        const bonus = memberOps
+          .bonusCalc({
+            ...support,
+            basedOnStatic,
+          })
+          .makeBonus(spec);
 
         // console.log("===========");
         // console.log("bonus", bonus);
@@ -156,18 +158,19 @@ export function applyBuffs(
 
   function applyAbilityBuffs(isFinalStage: boolean) {
     const { innateBuffs = [] } = main.data;
+    const mainOps = team.member(main);
 
     for (const buff of innateBuffs) {
-      if (team.isAvailableEffect(buff) && main.canPerformEffect(buff)) {
+      if (mainOps.canPerformEffect(buff)) {
         applyBonus(`Self / ${buff.src}`, main, buff.effects, {}, isFinalStage);
       }
     }
 
     for (const ctrl of setup.selfBuffCtrls) {
-      const buff = ctrl.data;
+      const { data: buff, inputs } = ctrl;
 
-      if (ctrl.activated && team.isAvailableEffect(buff) && main.canPerformEffect(buff)) {
-        applyBonus(`Self / ${buff.src}`, main, buff.effects, { inputs: ctrl.inputs }, isFinalStage);
+      if (ctrl.activated && mainOps.canPerformEffect(buff, inputs)) {
+        applyBonus(`Self / ${buff.src}`, main, buff.effects, { inputs }, isFinalStage);
       }
     }
   }
@@ -333,11 +336,7 @@ export function applyBuffs(
   for (const teammate of teammates) {
     //
     for (const ctrl of teammate.buffCtrls) {
-      if (
-        ctrl.activated &&
-        team.isAvailableEffect(ctrl.data) &&
-        teammate.canPerformEffect(ctrl.data)
-      ) {
+      if (ctrl.activated && team.member(teammate).canPerformEffect(ctrl.data, ctrl.inputs)) {
         const buff = ctrl.data;
         const label = `${teammate.data.name} / ${buff.src}`;
         applyBonus(label, teammate, buff.effects, { inputs: ctrl.inputs });

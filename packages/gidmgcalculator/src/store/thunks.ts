@@ -2,7 +2,7 @@ import isEqual from "react-fast-compare";
 import { Array_, Object_ } from "ron-utils";
 import { ExactOmit } from "rond";
 
-import type { CalcSetup } from "@/models";
+import type { CalcSetup } from "@/logic/calculator";
 import type { AppThunk } from "./store";
 
 import { isDbSetup, toDbSetup } from "@/logic/setup.logic";

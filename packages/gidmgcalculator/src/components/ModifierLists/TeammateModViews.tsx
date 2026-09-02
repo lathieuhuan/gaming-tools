@@ -1,7 +1,8 @@
-import type { Teammate, Team } from "@/models";
+import type { Teammate } from "@/models";
 import type { AbilityBuffCtrl, AbilityDebuffCtrl, ModifierCtrlState } from "@/types";
 import type { ModifierHanlders } from "./types";
 
+import { Team } from "@/logic/calculator";
 import { GenshinModifierView } from "../GenshinModifierView";
 import { ModifierContainer } from "./ModifierContainer";
 
@@ -16,11 +17,11 @@ function getTeammateModifierElmts<TModCtrl extends AbilityBuffCtrl | AbilityDebu
   props: TeamModsViewProps,
   teammate: Teammate,
   modCtrls: TModCtrl[],
-  renderDesc: (ctrl: TModCtrl) => string
+  renderDesc: (ctrl: TModCtrl) => string,
 ) {
   const { vision } = teammate.data;
-  const availableCtrls = modCtrls.filter(
-    (ctrl) => props.team.isAvailableEffect(ctrl.data) && teammate.canPerformEffect(ctrl.data)
+  const availableCtrls = modCtrls.filter((ctrl) =>
+    props.team.member(teammate).canPerformEffect(ctrl.data),
   );
 
   if (!availableCtrls.length) {
@@ -58,8 +59,10 @@ export function TeammateBuffsView(props: TeamModsViewProps) {
   return (
     <ModifierContainer type="buffs" mutable={props.mutable}>
       {props.teammates.map((teammate) => {
+        const memberOps = props.team.member(teammate);
+
         return getTeammateModifierElmts(props, teammate, teammate.buffCtrls, (ctrl) =>
-          teammate.parseBuffDesc(ctrl.data, ctrl.inputs)
+          memberOps.bonusCalc({ inputs: ctrl.inputs }).parseAbilityDesc(ctrl.data),
         );
       })}
     </ModifierContainer>
@@ -70,8 +73,10 @@ export function TeammateDebuffsView(props: TeamModsViewProps) {
   return (
     <ModifierContainer type="debuffs" mutable={props.mutable}>
       {props.teammates.map((teammate) => {
+        const memberOps = props.team.member(teammate);
+
         return getTeammateModifierElmts(props, teammate, teammate.debuffCtrls, (ctrl) =>
-          teammate.parseDebuffDesc(ctrl.data, ctrl.inputs)
+          memberOps.penaltyCalc(ctrl.inputs).parseAbilityDesc(ctrl.data),
         );
       })}
     </ModifierContainer>

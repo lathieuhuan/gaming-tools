@@ -1,4 +1,4 @@
-import type { Team } from "@/models";
+import type { Team } from "@/logic/calculator";
 import type { ResonanceModCtrl } from "@/types";
 import type { ControlGroup } from "../types";
 

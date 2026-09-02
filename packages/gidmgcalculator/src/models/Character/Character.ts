@@ -7,35 +7,29 @@ import type {
   AttackBonus,
   AttackElement,
   AttributeBonus,
-  BonusCoreSpec,
-  BonusPerformTools,
+  AutoRsnElmtType,
   BonusSpec,
-  CharacterStateData,
   EffectPerformableConditionSpecs,
   EffectReceiverConditionSpecs,
   Level,
   LevelableTalentType,
-  PenaltyCoreSpec,
   QuickenReaction,
   RawCharacter,
+  RawCharacterState,
   TeamMember,
 } from "@/types";
-import type { EffectToParseDesc } from "../AbstractEffectValueCalc";
 import type { Clonable } from "../interfaces";
 
 import { isPassedComparison } from "../utils/isPassedComparison";
 
 import { splitLevel } from "@/utils/level.utils";
 import { ArtifactGear } from "../ArtifactGear";
-import { Team } from "../Team";
 import { isValidInput } from "../utils/isValidInput";
 import { Weapon } from "../Weapon";
 import { AttackBonusControl } from "./AttackBonusControl";
 import { AttributeControl } from "./AttributeControl";
-import { BonusCalc } from "./BonusCalc";
-import { PenaltyCalc } from "./PenaltyCalc";
 
-type CharacterStateOptions = {
+type CharacterConfigOptions = {
   defaultLevel?: Level;
   defaultNAs?: number;
   defaultES?: number;
@@ -64,16 +58,19 @@ export type ReceivedAttackBonus = AttackBonus & {
   effectSrc: BonusSpec;
 };
 
-export type CharacterCreateOptions = Partial<CharacterStateData> & {
+export type CharacterCreateOptions = Partial<RawCharacterState> & {
   atfGear?: ArtifactGear;
   levelBonuses?: Map<string, LevelBonus>;
   attrCtrl?: AttributeControl;
   attkBonusCtrl?: AttackBonusControl;
-  team?: Team;
 };
 
 export type CharacterCloneOptions = CharacterCreateOptions & {
   weapon?: Weapon;
+};
+
+export type CharacterInitCalcOptions = {
+  resonances?: AutoRsnElmtType[];
 };
 
 export class Character implements TeamMember, Clonable<Character> {
@@ -99,13 +96,8 @@ export class Character implements TeamMember, Clonable<Character> {
     public levelBonuses: Map<string, LevelBonus>,
     public attrCtrl: AttributeControl,
     public attkBonusCtrl: AttackBonusControl,
-    public team: Team,
   ) {
     this.isTraveler = data.name.slice(-8) === "Traveler";
-  }
-
-  joinTeam(team: Team) {
-    this.team = team;
   }
 
   // ===== GETTERS =====
@@ -122,7 +114,8 @@ export class Character implements TeamMember, Clonable<Character> {
     });
 
     // TODO remove team.extraTalentLv
-    return extraLvByCons + totalLvBonus + this.team.extraTalentLv.get(talentType);
+    return extraLvByCons + totalLvBonus;
+    //  + this.team.extraTalentLv.get(talentType);
   }
 
   finalTalentLv(talent: LevelableTalentType) {
@@ -161,10 +154,11 @@ export class Character implements TeamMember, Clonable<Character> {
 
   // ===== CALCULATION =====
 
-  initCalculation() {
+  // TODO replace options with team
+  initCalculation(options: CharacterInitCalcOptions = {}) {
     this.levelBonuses.clear();
     this.attkBonusCtrl.clear();
-    this.attrCtrl.init(this);
+    this.attrCtrl.init(this, options);
     return this;
   }
 
@@ -191,13 +185,14 @@ export class Character implements TeamMember, Clonable<Character> {
       return false;
     }
 
-    if (condition.checkMixed) {
-      const mixedCount = this.team.getMixedCount(this.data.vision);
+    // TODO remove
+    // if (condition.checkMixed) {
+    //   const mixedCount = this.team.getMixedCount(this.data.vision);
 
-      if (!isPassedComparison(mixedCount, 3, "MIN")) {
-        return false;
-      }
-    }
+    //   if (!isPassedComparison(mixedCount, 3, "MIN")) {
+    //     return false;
+    //   }
+    // }
 
     if (condition.checkAny) {
       const anyInvalid = condition.checkAny.some(
@@ -216,21 +211,21 @@ export class Character implements TeamMember, Clonable<Character> {
     return true;
   }
 
-  performBonus(config: BonusCoreSpec, tools: Partial<BonusPerformTools>) {
-    return new BonusCalc(this, this.team, tools).makeBonus(config);
-  }
+  // performBonus(config: BonusCoreSpec, tools: Partial<BonusPerformTools>) {
+  //   return new BonusCalc(this, this.team, tools).makeBonus(config);
+  // }
 
-  performPenalty(config: PenaltyCoreSpec, inputs?: number[]) {
-    return new PenaltyCalc(this, this.team, inputs).makePenalty(config);
-  }
+  // performPenalty(config: PenaltyCoreSpec, inputs?: number[]) {
+  //   return new PenaltyCalc(this, this.team, inputs).makePenalty(config);
+  // }
 
-  parseBuffDesc(spec: EffectToParseDesc, inputs?: number[]) {
-    return new BonusCalc(this, this.team, { inputs }).parseAbilityDesc(spec);
-  }
+  // parseBuffDesc(spec: EffectToParseDesc, inputs?: number[]) {
+  //   return new BonusCalc(this, this.team, { inputs }).parseAbilityDesc(spec);
+  // }
 
-  parseDebuffDesc(spec: EffectToParseDesc, inputs?: number[]) {
-    return new PenaltyCalc(this, this.team, inputs).parseAbilityDesc(spec);
-  }
+  // parseDebuffDesc(spec: EffectToParseDesc, inputs?: number[]) {
+  //   return new PenaltyCalc(this, this.team, inputs).parseAbilityDesc(spec);
+  // }
 
   // ===== RECEIVE BONUSES =====
 
@@ -340,7 +335,6 @@ export class Character implements TeamMember, Clonable<Character> {
       atfGear = this.atfGear,
       attrCtrl = this.attrCtrl,
       attkBonusCtrl = this.attkBonusCtrl,
-      team = this.team,
       levelBonuses = this.levelBonuses,
     } = options;
 
@@ -369,7 +363,6 @@ export class Character implements TeamMember, Clonable<Character> {
       levelBonuses,
       attrCtrl,
       attkBonusCtrl,
-      team,
     );
   }
 
@@ -390,7 +383,6 @@ export class Character implements TeamMember, Clonable<Character> {
       Object_.clone(this.levelBonuses), // TODO fix
       this.attrCtrl.clone(),
       this.attkBonusCtrl.clone(),
-      this.team,
     );
   }
 
@@ -403,7 +395,7 @@ export class Character implements TeamMember, Clonable<Character> {
   static #DEFAULT_CONS = 0;
   static #DEFAULT_ENHANCED = false;
 
-  static configure(config: CharacterStateOptions) {
+  static configure(config: CharacterConfigOptions) {
     this.#DEFAULT_LEVEL = config.defaultLevel ?? this.#DEFAULT_LEVEL;
     this.#DEFAULT_NAs = config.defaultNAs ?? this.#DEFAULT_NAs;
     this.#DEFAULT_ES = config.defaultES ?? this.#DEFAULT_ES;
@@ -424,7 +416,6 @@ export class Character implements TeamMember, Clonable<Character> {
       levelBonuses = new Map<string, LevelBonus>(),
       attrCtrl = AttributeControl.create(),
       attkBonusCtrl = AttackBonusControl.create(),
-      team = new Team(),
     } = options;
 
     const { bareLv, ascension } = splitLevel(level);
@@ -445,7 +436,6 @@ export class Character implements TeamMember, Clonable<Character> {
       levelBonuses,
       attrCtrl,
       attkBonusCtrl,
-      team,
     );
   }
 

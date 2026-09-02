@@ -10,7 +10,8 @@ import type {
   SetupManager,
 } from "@/types";
 
-import { ArtifactGear, CalcSetup, Team, Weapon } from "@/models";
+import { CalcSetup } from "@/logic/calculator";
+import { ArtifactGear, Weapon } from "@/models";
 import { createCharacter, createTarget, createTeammate } from "./entity.logic";
 
 export function isDbSetup(setup: DbSetup | DbComplexSetup): setup is DbSetup {
@@ -118,7 +119,7 @@ function restoreModCtrls<T extends Restorable, K extends keyof T>(
   return newCtrls;
 }
 
-function restoreTeammate(teammate: RawTeammate, team: Team) {
+function restoreTeammate(teammate: RawTeammate) {
   const standard = createTeammate(
     {
       code: teammate.code,
@@ -127,7 +128,6 @@ function restoreTeammate(teammate: RawTeammate, team: Team) {
       artifact: teammate.artifact,
     },
     null,
-    { team },
   );
 
   restoreModCtrls(standard.buffCtrls, teammate.buffCtrls);
@@ -142,21 +142,15 @@ function restoreTeammate(teammate: RawTeammate, team: Team) {
 }
 
 export function restoreCalcSetup(data: DbSetup, weapon: Weapon, atfGear: ArtifactGear) {
-  const team = new Team();
   const main = createCharacter(data.main, null, {
     ...data.main,
     weapon,
     atfGear,
-    team,
   });
-  const teammates = data.teammates.map((teammate) => restoreTeammate(teammate, team));
+  const teammates = data.teammates.map((teammate) => restoreTeammate(teammate));
 
-  team.updateMembers([main, ...teammates]);
-
-  const setup = new CalcSetup({
-    main,
+  const setup = CalcSetup.create(data.ID, main, {
     teammates,
-    team,
     elmtEvent: data.elmtEvent,
     target: createTarget(data.target),
   });

@@ -1,13 +1,8 @@
 import { Array_ } from "ron-utils";
 
-import type { CalcSetup, Character, Target, Teammate } from "@/models";
-import type {
-  DebuffSpec,
-  ElementType,
-  PenaltyTargetsSpec,
-  ResistReductionKey,
-  TeamMember,
-} from "@/types";
+import type { Character, Target, Teammate } from "@/models";
+import type { DebuffSpec, ElementType, PenaltyTargetsSpec, ResistReductionKey } from "@/types";
+import type { CalcSetup } from "../CalcSetup";
 
 import { ELEMENT_TYPES, PHEC_ELEMENT_TYPES } from "@/constants/global";
 
@@ -58,17 +53,19 @@ export function applyDebuffs(
 
   function applyPenalty(
     label: string,
-    performer: TeamMember,
+    performer: Character | Teammate,
     effects: DebuffSpec["effects"] = [],
     inputs: number[] = [],
   ) {
+    const memberOps = team.member(performer);
+
     for (const effect of Array_.toArray(effects)) {
-      if (team.isAvailableEffect(effect) && performer.canPerformEffect(effect, inputs)) {
+      if (memberOps.canPerformEffect(effect, inputs)) {
         const targets: PenaltyTargetsSpec[] =
           effect.targets === "OWN_ELMT" ? [main.data.vision] : Array_.toArray(effect.targets);
 
         const reductionPaths = getReductionPaths(targets, inputs);
-        const penalty = performer.performPenalty(effect, inputs);
+        const penalty = memberOps.penaltyCalc(inputs).getInitialValue(effect);
 
         reductionPaths.forEach((path) => target.takeResistReduction(path, penalty, label));
       }
@@ -84,14 +81,10 @@ export function applyDebuffs(
 
   // APPLY SELF DEBUFFS
   for (const ctrl of setup.selfDebuffCtrls) {
-    const debuff = ctrl.data;
+    const { data: debuff, inputs } = ctrl;
 
-    if (
-      ctrl.activated &&
-      team.isAvailableEffect(debuff) &&
-      main.canPerformEffect(debuff, ctrl.inputs)
-    ) {
-      applyPenalty(`Self / ${debuff.src}`, main, ctrl.data.effects, ctrl.inputs);
+    if (ctrl.activated && team.member(main).canPerformEffect(debuff, inputs)) {
+      applyPenalty(`Self / ${debuff.src}`, main, debuff.effects, inputs);
     }
   }
 
@@ -99,10 +92,11 @@ export function applyDebuffs(
   for (const teammate of teammates) {
     //
     for (const ctrl of teammate.debuffCtrls) {
-      if (ctrl.activated && team.isAvailableEffect(ctrl.data)) {
-        const debuff = ctrl.data;
+      const { data: debuff, inputs } = ctrl;
+
+      if (ctrl.activated && team.member(teammate).canPerformEffect(debuff, inputs)) {
         const label = `${teammate.data.name} / ${debuff.src}`;
-        applyPenalty(label, teammate, debuff.effects, ctrl.inputs);
+        applyPenalty(label, teammate, debuff.effects, inputs);
       }
     }
   }

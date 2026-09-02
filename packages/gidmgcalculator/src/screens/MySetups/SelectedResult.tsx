@@ -3,10 +3,9 @@ import { useMemo } from "react";
 import type { ArtifactBuffCtrl, ArtifactDebuffCtrl, DbSetup } from "@/types";
 import type { SetupOverviewInfo } from "./types";
 
-import { calculateSetup } from "@/calculation/calculator";
+import { CalcSetup } from "@/logic/calculator";
 import { createTarget } from "@/logic/entity.logic";
 import { enhanceCtrls } from "@/logic/modifier.logic";
-import { CalcSetup, Team } from "@/models";
 import { $AppArtifact, $AppData } from "@/services";
 
 import { FinalResultView } from "@/components/FinalResultView";
@@ -19,8 +18,7 @@ type SelectedResultProps = {
 
 export function SelectedResult({ setup, dbSetup }: SelectedResultProps) {
   //
-  const { calcSetup, result, extraKeys } = useMemo(() => {
-    const { teammates } = setup;
+  const calcSetup = useMemo(() => {
     const { data, weapon, atfGear } = setup.main;
 
     const artBuffCtrls: ArtifactBuffCtrl[] = [];
@@ -45,11 +43,7 @@ export function SelectedResult({ setup, dbSetup }: SelectedResultProps) {
       }
     }
 
-    const team = new Team([setup.main, ...teammates]);
-
-    const calcSetup = new CalcSetup({
-      ID: dbSetup.ID,
-      main: setup.main,
+    const calcSetup = CalcSetup.create(dbSetup.ID, setup.main, {
       selfBuffCtrls: enhanceCtrls(dbSetup.selfBuffCtrls, data.buffs),
       selfDebuffCtrls: enhanceCtrls(dbSetup.selfDebuffCtrls, data.debuffs),
       wpBuffCtrls: enhanceCtrls(dbSetup.wpBuffCtrls, weapon.data.buffs),
@@ -57,7 +51,6 @@ export function SelectedResult({ setup, dbSetup }: SelectedResultProps) {
       artDebuffCtrls,
       teamBuffCtrls: enhanceCtrls(dbSetup.teamBuffCtrls, $AppData.teamBuffs),
       teammates: setup.teammates,
-      team,
       rsnBuffCtrls: dbSetup.rsnBuffCtrls,
       rsnDebuffCtrls: dbSetup.rsnDebuffCtrls,
       elmtEvent: dbSetup.elmtEvent,
@@ -66,16 +59,7 @@ export function SelectedResult({ setup, dbSetup }: SelectedResultProps) {
       target: createTarget(dbSetup.target),
     });
 
-    const { main, result, target: calcTarget } = calculateSetup(calcSetup);
-
-    calcSetup.main = main;
-    calcSetup.target = calcTarget;
-
-    return {
-      calcSetup,
-      result,
-      extraKeys: calcSetup.calcItems.map((item) => item.name),
-    };
+    return calcSetup.calculate();
   }, [setup]);
 
   return (
@@ -84,7 +68,11 @@ export function SelectedResult({ setup, dbSetup }: SelectedResultProps) {
         <p className="text-sm text-center truncate">{setup.name}</p>
       </div>
       <div className="mt-2 grow hide-scrollbar">
-        <FinalResultView character={calcSetup.main} finalResult={result} extraKeys={extraKeys} />
+        <FinalResultView
+          character={calcSetup.main}
+          finalResult={calcSetup.result}
+          extraKeys={calcSetup.calcItems.map((item) => item.name)}
+        />
       </div>
 
       <SetupModals setupName={setup.name} setup={calcSetup} />

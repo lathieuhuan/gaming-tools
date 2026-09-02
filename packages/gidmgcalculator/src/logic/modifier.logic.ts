@@ -1,6 +1,6 @@
 import { Array_ } from "ron-utils";
 
-import type { CalcSetup, Teammate } from "@/models";
+import type { Teammate } from "@/models";
 import type {
   AbilityBuffCtrl,
   AbilityDebuffCtrl,
@@ -22,6 +22,7 @@ import type {
   TeamBuffCtrl,
   WeaponBuffCtrl,
 } from "@/types";
+import type { CalcSetup } from "./calculator";
 
 import { DEFAULT_STELLAR_VORTEX_LV } from "@/constants";
 import { $AppArtifact, $AppData } from "@/services";
@@ -81,9 +82,9 @@ export function createModCtrl(forSelf: boolean) {
   };
 }
 
-// TODO check to remove
+// TODO remove with old CalcSetup
 export function createTeamBuffCtrls(setup: CalcSetup): TeamBuffCtrl[] {
-  const { team, artBuffCtrls = [] } = setup;
+  const { team, teammates, artBuffCtrls = [] } = setup;
 
   // Find available team buff ids
 
@@ -97,7 +98,7 @@ export function createTeamBuffCtrls(setup: CalcSetup): TeamBuffCtrl[] {
     data.teamBuffId && teamBuffIds.add(data.teamBuffId);
   }
 
-  for (const teammate of setup.teammates) {
+  for (const teammate of teammates) {
     const { buffCtrls = [] } = teammate.artifact || {};
 
     for (const { data } of buffCtrls) {
@@ -149,19 +150,7 @@ export function createMainArtifactBuffCtrls(sets: ArtifactGearSet[]): ArtifactBu
   const ctrls: ArtifactBuffCtrl[] = [];
 
   for (const set of sets) {
-    const { buffs = [] } = set.data;
-
-    for (const buff of buffs) {
-      const { bonusLv = 1 } = buff;
-
-      if (buff.affect !== "TEAMMATE" && set.bonusLv >= bonusLv) {
-        ctrls.push({
-          code: set.data.code,
-          setData: set.data,
-          ...createModCtrl(true)(buff),
-        });
-      }
-    }
+    ctrls.push(...createArtifactBuffCtrls(set.data, true, set.bonusLv));
   }
 
   return ctrls;

@@ -1,11 +1,11 @@
+import type { Character } from "@/models/Character";
 import type {
   BonusAttributeScalingSpec,
   InputStackSpec,
   TalentLevelIncrementBaseSpec,
 } from "@/types";
-import type { Character } from "./Character";
 
-import { AbstractBonusCalc } from "../AbstractBonusCalc";
+import { AbstractBonusCalc } from "./AbstractBonusCalc";
 
 export class BonusCalc extends AbstractBonusCalc<Character> {
   protected getBasedOn(config: BonusAttributeScalingSpec) {

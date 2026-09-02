@@ -17,10 +17,10 @@ import type {
   TalentLevelIncrementSpec,
   TeamMember,
 } from "@/types";
-import type { Team } from "./Team";
+import type { Team } from "../Team";
 
+import { Character } from "@/models";
 import { wrapText } from "@/utils/descriptionParsers/utils";
-import { Character } from "./Character";
 
 type AbilityBuff = CharacterBuff | CharacterDebuff;
 
@@ -41,7 +41,7 @@ type Stacks = {
   isMax: boolean;
 };
 
-export abstract class AbstractEffectValueCalc<TPerformer extends TeamMember = TeamMember> {
+export abstract class AbstractEffectCalc<TPerformer extends TeamMember = TeamMember> {
   protected teammateElmtCount: ElementCount;
 
   constructor(
@@ -70,11 +70,8 @@ export abstract class AbstractEffectValueCalc<TPerformer extends TeamMember = Te
     return this.itemAt(index, this.inputs, defaultValue);
   }
 
-  protected isPerformableEffect(condition?: EffectPerformableConditionSpecs) {
-    return (
-      this.team.isAvailableEffect(condition) &&
-      this.performer.canPerformEffect(condition, this.inputs)
-    );
+  protected isEffectPerformable(condition?: EffectPerformableConditionSpecs) {
+    return this.team.member(this.performer).canPerformEffect(condition, this.inputs);
   }
 
   // MAIN LOGIC
@@ -87,7 +84,7 @@ export abstract class AbstractEffectValueCalc<TPerformer extends TeamMember = Te
     let result = 0;
 
     for (const extra of Array_.toArray(extras)) {
-      if (this.isPerformableEffect(extra)) {
+      if (this.isEffectPerformable(extra)) {
         result += extra.value;
       }
     }
@@ -199,7 +196,7 @@ export abstract class AbstractEffectValueCalc<TPerformer extends TeamMember = Te
         break;
       }
       case "MIX": {
-        stacks = this.team["getMixedCount"](performer.data.vision);
+        stacks = this.team.getMixedCount(performer.data.vision);
         break;
       }
       default:
@@ -207,9 +204,9 @@ export abstract class AbstractEffectValueCalc<TPerformer extends TeamMember = Te
     }
 
     if (spec.capacity) {
-      const capacityExtra = spec.capacity.extra;
+      const extraSpec = spec.capacity.extra;
       const capacity =
-        spec.capacity.value + (this.isPerformableEffect(capacityExtra) ? capacityExtra.value : 0);
+        spec.capacity.value + (this.isEffectPerformable(extraSpec) ? extraSpec.value : 0);
 
       stacks = Math.max(capacity - stacks, 0);
     }
@@ -224,7 +221,7 @@ export abstract class AbstractEffectValueCalc<TPerformer extends TeamMember = Te
       stacks -= spec.baseline;
     }
 
-    if (spec.extra && this.isPerformableEffect(spec.extra)) {
+    if (spec.extra && this.isEffectPerformable(spec.extra)) {
       stacks += spec.extra.value;
     }
 

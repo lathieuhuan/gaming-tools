@@ -1,4 +1,4 @@
-import type { CalcSetup } from "@/models";
+import type { CalcSetup } from "@/logic/calculator";
 import type { AttackElement, ElementType, ModifierCtrlState } from "@/types";
 
 import { EXPORTED_SETUP_VERSION } from "@/constants/config";

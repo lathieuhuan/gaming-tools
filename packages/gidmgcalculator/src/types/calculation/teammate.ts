@@ -1,4 +1,3 @@
-import type { Team } from "@/models";
 import type { AppArtifact, ArtifactBuff } from "../app-artifact";
 import type { AppCharacter } from "../app-character";
 import type { AppWeapon } from "../app-weapon";
@@ -9,12 +8,7 @@ import type {
   ModifierCtrl,
   WeaponBuffCtrl,
 } from "../modifier-controls";
-import type {
-  BonusCoreSpec,
-  EffectPerformableConditionSpecs,
-  PenaltyCoreSpec,
-} from "../modifier-specs";
-import type { BareBonus, BonusPerformTools } from "./bonus";
+import type { EffectPerformableConditionSpecs } from "../modifier-specs";
 
 // ========== TEAM ==========
 
@@ -22,10 +16,10 @@ export type TeamMember = {
   code: number;
   enhanced: boolean;
   data: AppCharacter;
-  joinTeam(team: Team): void;
+  // joinTeam(team: Team): void;
   canPerformEffect(condition?: EffectPerformableConditionSpecs, inputs?: number[]): boolean;
-  performBonus(config: BonusCoreSpec, tools: Partial<BonusPerformTools>): BareBonus;
-  performPenalty(config: PenaltyCoreSpec, inputs?: number[]): number;
+  // performBonus(config: BonusCoreSpec, tools: Partial<BonusPerformTools>): BareBonus;
+  // performPenalty(config: PenaltyCoreSpec, inputs?: number[]): number;
 };
 
 // ========== TEAMMATE ==========

@@ -16,15 +16,7 @@ import type {
   TeammateWeapon,
 } from "@/types";
 
-import {
-  Artifact,
-  Character,
-  CharacterCreateOptions,
-  Target,
-  Team,
-  Teammate,
-  Weapon,
-} from "@/models";
+import { Artifact, Character, CharacterCreateOptions, Target, Teammate, Weapon } from "@/models";
 import { $AppArtifact, $AppCharacter, $AppData, $AppWeapon } from "@/services";
 import {
   createAbilityBuffCtrls,
@@ -102,14 +94,9 @@ export function createCharacter(
   return Character.create(data, weapon, { ...raw, ...options });
 }
 
-type CreateTeammateOptions = {
-  team?: Team;
-};
-
 export function createTeammate(
   raw: PartiallyRequiredOnly<RawTeammate, "code">,
   data?: AppCharacter | null,
-  options: CreateTeammateOptions = {},
 ) {
   data ??= $AppCharacter.get(raw.code);
 
@@ -163,7 +150,6 @@ export function createTeammate(
     buffCtrls,
     debuffCtrls,
     artifact,
-    team: options.team,
   });
 }
 

@@ -4,6 +4,7 @@ import type { UserdbState } from "@Store/userdbSlice";
 import type { SetupOverviewInfo } from "../types";
 
 import { ARTIFACT_TYPES } from "@/constants/global";
+import { CalcSetup } from "@/logic/calculator";
 import {
   createArtifact,
   createCharacter,
@@ -16,7 +17,7 @@ import {
   createAbilityDebuffCtrls,
   createWeaponBuffCtrls,
 } from "@/logic/modifier.logic";
-import { Artifact, ArtifactGear, CalcSetup, Team } from "@/models";
+import { Artifact, ArtifactGear } from "@/models";
 import { IdStore } from "@/utils/IdStore";
 
 export function createSetupForTeammate(
@@ -66,8 +67,6 @@ export function createSetupForTeammate(
 
   // Place old main into the teammate's slot
 
-  const team = new Team();
-
   const { main } = setup;
   const mainWeapon = main.weapon;
 
@@ -85,15 +84,9 @@ export function createSetupForTeammate(
       },
     },
     main.data,
-    { team },
   );
 
-  team.updateMembers([newMain, ...teammates]);
-
-  return new CalcSetup({
-    ID: idStore.gen(),
-    main: newMain,
-    team,
+  return CalcSetup.create(idStore.gen(), newMain, {
     teammates,
     target: createTarget(dbSetup.target),
   });

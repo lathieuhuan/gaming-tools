@@ -1,5 +1,9 @@
+import type {
+  CalcResultAttackItem,
+  CalcResultOtherItem,
+  CalcResultReactionItem,
+} from "@/calculation/types";
 import type { LevelableTalentType } from "@/types";
-import type { CalcResultAttackItem, CalcResultOtherItem, CalcResultReactionItem } from "../types";
 
 export type CalcResultTalentItem = CalcResultAttackItem | CalcResultOtherItem;
 

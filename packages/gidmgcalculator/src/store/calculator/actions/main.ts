@@ -1,46 +1,31 @@
-import { Object_ } from "ron-utils";
-
+import type { Artifact, Target, Weapon } from "@/models";
 import type {
   ArtifactSubStat,
   ArtifactType,
   ElementalEvent,
   RawArtifactState,
-  RawCharacter,
+  RawCharacterState,
   RawWeaponState,
 } from "@/types";
 
-import { createWeaponBuffCtrls } from "@/logic/modifier.logic";
-import { Artifact, ArtifactCloneOptions, ArtifactGear, Target, Team, Weapon } from "@/models";
 import { useSettingsStore } from "@Store/settings";
 import { useCalcStore } from "../calculatorStore";
-import { selectSetup } from "../selectors";
 import { onActiveSetup } from "../utils";
 
 // ===== CHARACTER =====
 
-export const updateMain = (data: Partial<RawCharacter>, setupIds?: number[]) => {
+export const updateMain = (data: Partial<RawCharacterState>, setupIds?: number[]) => {
   const { separateCharInfo } = useSettingsStore.getState();
-
-  const ids =
-    setupIds ||
-    (separateCharInfo
-      ? [useCalcStore.getState().activeId]
-      : useCalcStore.getState().setupManagers.map(({ ID }) => ID));
 
   useCalcStore.setState((state) => {
     const { setupsById } = state;
 
-    for (const setupId of ids) {
+    setupIds ||= separateCharInfo ? [state.activeId] : state.setupManagers.map(({ ID }) => ID);
+
+    for (const setupId of setupIds) {
       const setup = setupsById[setupId];
-      const main = setup.main;
-      const prevEnhanced = main.enhanced;
 
-      setup.main = main.clone(data);
-
-      if (data.enhanced !== undefined && data.enhanced !== prevEnhanced) {
-        setup.team = new Team([setup.main, ...setup.teammates]);
-      }
-
+      setup.updateMainState(data);
       setupsById[setupId] = setup.calculate();
     }
   });
@@ -51,8 +36,7 @@ export const updateMain = (data: Partial<RawCharacter>, setupIds?: number[]) => 
 export const switchMainWeapon = (weapon: Weapon) => {
   useCalcStore.setState(
     onActiveSetup((setup) => {
-      setup.main.weapon = weapon.clone();
-      setup.wpBuffCtrls = createWeaponBuffCtrls(weapon.data, true);
+      setup.switchMainWeapon(weapon);
     }),
   );
 };
@@ -60,9 +44,7 @@ export const switchMainWeapon = (weapon: Weapon) => {
 export const updateMainWeapon = (data: Partial<RawWeaponState>) => {
   useCalcStore.setState(
     onActiveSetup((setup) => {
-      const { main } = setup;
-
-      main.weapon = main.weapon.clone(data);
+      setup.updateMainWeapon(data);
     }),
   );
 };
@@ -70,61 +52,25 @@ export const updateMainWeapon = (data: Partial<RawWeaponState>) => {
 // ===== ARTIFACT =====
 
 export const setArtifactPiece = (artifact: Artifact, shouldKeepStats = false) => {
-  const setup = selectSetup(useCalcStore.getState());
-
   useCalcStore.setState(
-    onActiveSetup(() => {
-      const pieces = { ...setup.main.atfGear.pieces };
-      const oldPiece = pieces[artifact.type];
-      const cloneOptions: ArtifactCloneOptions =
-        shouldKeepStats && oldPiece
-          ? {
-              type: oldPiece.type,
-              rarity: artifact.rarity,
-              level: oldPiece.level,
-              mainStatType: oldPiece.mainStatType,
-              subStats: oldPiece.subStats,
-            }
-          : {};
-
-      pieces[artifact.type] = artifact.clone(cloneOptions);
-
-      setup.setArtifactGear(ArtifactGear.create(pieces));
+    onActiveSetup((setup) => {
+      setup.setArtifactPiece(artifact, shouldKeepStats);
     }),
   );
 };
 
 export const removeArtifactPiece = (type: ArtifactType) => {
-  const setup = selectSetup(useCalcStore.getState());
-
   useCalcStore.setState(
-    onActiveSetup(() => {
-      const pieces = {
-        ...setup.main.atfGear.pieces,
-        [type]: undefined,
-      };
-
-      setup.setArtifactGear(ArtifactGear.create(pieces));
+    onActiveSetup((setup) => {
+      setup.removeArtifactPiece(type);
     }),
   );
 };
 
 export const updateArtifactPiece = (type: ArtifactType, newState: Partial<RawArtifactState>) => {
-  const setup = selectSetup(useCalcStore.getState());
-
   useCalcStore.setState(
-    onActiveSetup(() => {
-      const { pieces } = setup.main.atfGear;
-      const piece = pieces[type];
-
-      if (piece === undefined) {
-        return false;
-      }
-
-      setup.main.atfGear = ArtifactGear.create({
-        ...pieces,
-        [type]: piece.clone(newState),
-      });
+    onActiveSetup((setup) => {
+      setup.updateArtifactPiece(type, newState);
     }),
   );
 };
@@ -134,23 +80,9 @@ export const updateArtifactPieceSubStat = (
   index: number,
   data: Partial<ArtifactSubStat>,
 ) => {
-  const setup = selectSetup(useCalcStore.getState());
-
   useCalcStore.setState(
-    onActiveSetup(() => {
-      const { pieces } = setup.main.atfGear;
-      const piece = pieces[type];
-
-      if (piece === undefined) {
-        return false;
-      }
-
-      piece.updateSubStat(index, data);
-
-      setup.main.atfGear = ArtifactGear.create({
-        ...pieces,
-        [type]: piece.clone(),
-      });
+    onActiveSetup((setup) => {
+      setup.updateArtifactPieceSubStat(type, index, data);
     }),
   );
 };
@@ -160,10 +92,7 @@ export const copyArtifacts = (sourceId: number) => {
 
   useCalcStore.setState(
     onActiveSetup((setup) => {
-      setup.main.atfGear = sourceSetup.main.atfGear.deepClone();
-      setup.artBuffCtrls = Object_.clone(sourceSetup.artBuffCtrls);
-      setup.artDebuffCtrls = Object_.clone(sourceSetup.artDebuffCtrls);
-      setup.updateTeamBuffCtrls();
+      setup.copyArtifacts(sourceSetup);
     }),
   );
 };
@@ -173,10 +102,7 @@ export const copyArtifacts = (sourceId: number) => {
 export const updateElementalEvent = (data: Partial<ElementalEvent>) => {
   useCalcStore.setState(
     onActiveSetup((setup) => {
-      setup.elmtEvent = {
-        ...setup.elmtEvent,
-        ...data,
-      };
+      setup.updateElementalEvent(data);
     }),
   );
 };

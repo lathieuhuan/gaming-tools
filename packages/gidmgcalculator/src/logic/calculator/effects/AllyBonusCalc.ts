@@ -4,9 +4,9 @@ import type {
   TalentLevelIncrementBaseSpec,
 } from "@/types";
 
-import { AbstractBonusCalc } from "../AbstractBonusCalc";
+import { AbstractBonusCalc } from "./AbstractBonusCalc";
 
-export class BonusCalc extends AbstractBonusCalc {
+export class AllyBonusCalc extends AbstractBonusCalc {
   protected getBasedOn(config: BonusAttributeScalingSpec) {
     const { field, altIndex, baseline = 0, isDynamic = true, max } = this.parseBasedOn(config);
     let basedOnValue = this.getInput(altIndex);

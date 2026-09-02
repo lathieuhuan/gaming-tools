@@ -1,7 +1,8 @@
 import { Fragment } from "react";
 import { EmptyFallback } from "rond";
 
-import type { CalcSetup, Character } from "@/models";
+import type { CalcSetup } from "@/logic/calculator";
+import type { Character } from "@/models";
 import type { AttackReaction, CustomBuffCtrl, ElementalEvent, ElementType } from "@/types";
 
 import { useTranslation } from "@/hooks";

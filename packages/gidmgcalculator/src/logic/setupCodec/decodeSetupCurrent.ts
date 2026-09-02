@@ -29,6 +29,7 @@ import {
   LEVELS,
   WEAPON_TYPES,
 } from "@/constants/global";
+import { CalcSetup } from "@/logic/calculator";
 import {
   createArtifact,
   createCharacter,
@@ -37,7 +38,7 @@ import {
   createWeapon,
 } from "@/logic/entity.logic";
 import { enhanceCtrls } from "@/logic/modifier.logic";
-import { Artifact, ArtifactGear, CalcSetup, Team, Teammate } from "@/models";
+import { Artifact, ArtifactGear, Teammate } from "@/models";
 import { $AppArtifact, $AppCharacter, $AppData } from "@/services";
 import { isManualRsnElmt } from "@/utils/element.utils";
 import { IdStore } from "@/utils/IdStore";
@@ -111,7 +112,6 @@ export function decodeSetupCurrent(code: string): DecodeResult {
   };
 
   const idStore = new IdStore();
-  const team = new Team();
 
   // ===== MAIN =====
 
@@ -189,7 +189,6 @@ export function decodeSetupCurrent(code: string): DecodeResult {
     {
       weapon,
       atfGear,
-      team,
     },
   );
 
@@ -286,7 +285,6 @@ export function decodeSetupCurrent(code: string): DecodeResult {
           artifact,
         },
         null,
-        { team },
       );
     } catch (e) {
       console.error(e);
@@ -299,8 +297,6 @@ export function decodeSetupCurrent(code: string): DecodeResult {
     decodeTeammate(teammateStr2),
     decodeTeammate(teammateStr3),
   ]);
-
-  team.updateMembers([main, ...teammates]);
 
   // ===== ELEMENTAL EVENT =====
 
@@ -465,17 +461,14 @@ export function decodeSetupCurrent(code: string): DecodeResult {
   }
 
   const importInfo: SetupImportData = {
-    ID: idStore.gen(),
     name: "Imported setup",
-    params: new CalcSetup({
-      main,
+    params: CalcSetup.create(idStore.gen(), main, {
       selfBuffCtrls: enhanceCtrls(splitModCtrls(selfBcStrs, 1), mainData.buffs),
       selfDebuffCtrls: enhanceCtrls(splitModCtrls(selfDcStrs, 1), mainData.debuffs),
       wpBuffCtrls: enhanceCtrls(splitModCtrls(wpBcStrs, 1), weapon.data.buffs),
       artBuffCtrls,
       artDebuffCtrls,
       teammates,
-      team,
       rsnBuffCtrls: decodeResonance(rsnBcStrs),
       rsnDebuffCtrls: decodeResonance(rsnDcStrs),
       teamBuffCtrls,

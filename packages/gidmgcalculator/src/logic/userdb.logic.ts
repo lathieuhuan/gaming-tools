@@ -3,7 +3,7 @@ import { Array_ } from "ron-utils";
 import type { DbCharacter, RawArtifact, RawWeapon, WeaponType } from "@/types";
 
 import { createArtifact, createCharacter, createWeapon } from "@/logic/entity.logic";
-import { ArtifactGear, Team } from "@/models";
+import { ArtifactGear } from "@/models";
 import { $AppCharacter } from "@/services";
 import { IdStore } from "@/utils/IdStore";
 
@@ -36,7 +36,6 @@ export function makeCharacterCalcFromDb(
   dbWeapons: RawWeapon[],
   dbArtifacts: RawArtifact[],
   data = $AppCharacter.get(character.code),
-  team?: Team,
 ) {
   const { weaponID, artifactIDs } = character;
   const weapon = parseDbWeapon(weaponID, dbWeapons, data.weaponType);
@@ -45,6 +44,5 @@ export function makeCharacterCalcFromDb(
   return createCharacter(character, data, {
     weapon,
     atfGear,
-    team,
   });
 }

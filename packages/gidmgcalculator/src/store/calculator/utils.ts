@@ -1,16 +1,21 @@
 import type { WritableDraft } from "immer/src/internal.js";
 
-import type { CalcSetup } from "@/models";
-import type { ElementType, ModifierCtrlState, SetupManager, ResonanceModCtrl } from "@/types";
+import type { CalcSetup } from "@/logic/calculator";
+import type { ElementType, ModifierCtrlState, ResonanceModCtrl, SetupManager } from "@/types";
 import type { CalculatorState } from "./types";
 
-export function onActiveSetup(callback: (setup: WritableDraft<CalcSetup>) => boolean | void) {
+export function onActiveSetup(
+  callback: (
+    setup: WritableDraft<CalcSetup>,
+    state: WritableDraft<CalculatorState>,
+  ) => boolean | void,
+) {
   return (state: WritableDraft<CalculatorState>) => {
     const { activeId, setupsById } = state;
     const setup = setupsById[activeId];
 
     if (setup) {
-      const shouldCalculate = callback(setup) ?? true;
+      const shouldCalculate = callback(setup, state) ?? true;
 
       if (shouldCalculate) {
         state.setupsById[activeId] = setup.calculate();
@@ -57,7 +62,7 @@ export function getCopyName(originalName: string, setupManagers: SetupManager[])
 export function toggleModCtrl<T extends ModifierCtrlState>(
   ctrls: T[],
   ctrlId: number,
-  extraCheck?: (ctrl: T) => boolean
+  extraCheck?: (ctrl: T) => boolean,
 ): T[] {
   return ctrls.map((ctrl) => {
     if (ctrl.id === ctrlId && (!extraCheck || extraCheck(ctrl))) {
@@ -76,7 +81,7 @@ export function updateModCtrlInputs<T extends ModifierCtrlState>(
   ctrlId: number,
   inputIndex: number,
   value: number,
-  extraCheck?: (ctrl: T) => boolean
+  extraCheck?: (ctrl: T) => boolean,
 ) {
   return ctrls.map((ctrl) => {
     if (ctrl.id === ctrlId && (!extraCheck || extraCheck(ctrl))) {
@@ -95,7 +100,7 @@ export function updateModCtrlInputs<T extends ModifierCtrlState>(
 
 export function toggleRsnModCtrl(ctrls: ResonanceModCtrl[], type: ElementType) {
   return ctrls.map((ctrl) =>
-    ctrl.element === type ? { ...ctrl, activated: !ctrl.activated } : ctrl
+    ctrl.element === type ? { ...ctrl, activated: !ctrl.activated } : ctrl,
   );
 }
 
@@ -103,7 +108,7 @@ export function updateRsnModCtrlInputs(
   ctrls: ResonanceModCtrl[],
   type: ElementType,
   inputIndex: number,
-  value: number
+  value: number,
 ) {
   return ctrls.map((ctrl) => {
     if (ctrl.element === type) {

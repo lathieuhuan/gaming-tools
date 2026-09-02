@@ -1,5 +1,7 @@
 import type {
   AutoRsnElmtType,
+  BonusPerformTools,
+  EffectPerformableConditionSpecs,
   ElementCount,
   ElementType,
   TalentType,
@@ -11,8 +13,17 @@ import type {
 import { CountMap, Object_ } from "ron-utils";
 
 import { PHEC_ELEMENT_TYPES } from "@/constants";
+import { Character } from "@/models";
+import { isPassedComparison } from "@/utils/effect.utils";
 import { isAutoRsnElmt } from "@/utils/element.utils";
-import { isPassedComparison } from "./utils/isPassedComparison";
+import {
+  AbstractBonusCalc,
+  AbstractPenaltyCalc,
+  AllyBonusCalc,
+  AllyPenaltyCalc,
+  BonusCalc,
+  PenaltyCalc,
+} from "./effects";
 
 export class Team<TMember extends TeamMember = TeamMember> {
   members: TMember[] = [];
@@ -20,26 +31,23 @@ export class Team<TMember extends TeamMember = TeamMember> {
   moonsignLv: number = 0;
   witchRiteLv: number = 0;
   elmtCount: ElementCount = new CountMap([], { min: 0 });
+  // TODO check if reasonable
   extraTalentLv: CountMap<TalentType> = new CountMap();
 
   constructor(members: TMember[] = []) {
-    const newMembers = this.filterMembers(members);
-
-    this.updateMembers(newMembers);
+    this.updateMembers(this.filterMembers(members));
   }
 
-  protected filterMembers(members: TMember[]) {
-    const existCodes = new Set<number>();
+  private filterMembers(members: TMember[]) {
     const newMembers: TMember[] = [];
 
     for (const member of members) {
-      if (member && !existCodes.has(member.code)) {
-        existCodes.add(member.code);
+      if (newMembers.every((m) => m.code !== member.code)) {
         newMembers.push(member);
       }
     }
 
-    return newMembers.length > 4 ? newMembers.slice(-4) : newMembers;
+    return newMembers.slice(-4);
   }
 
   updateMembers(members: TMember[]) {
@@ -47,7 +55,7 @@ export class Team<TMember extends TeamMember = TeamMember> {
       return;
     }
 
-    const elmtCount: ElementCount = new CountMap([], { min: 0 });
+    const elmtCount: ElementCount = new CountMap();
     let moonsignLv = 0;
     let witchRiteLv = 0;
 
@@ -68,8 +76,6 @@ export class Team<TMember extends TeamMember = TeamMember> {
         // More future enhance types
       }
     }
-
-    members.forEach((member) => member.joinTeam(this));
 
     this.members = members;
     this.elmtCount = elmtCount;
@@ -116,7 +122,7 @@ export class Team<TMember extends TeamMember = TeamMember> {
     return this.members.find((member) => member.data.name === name);
   }
 
-  checkTeamElmt(condition: TeamElementConditionSpecs) {
+  private checkTeamElmt(condition: TeamElementConditionSpecs) {
     const { elmtCount } = this;
     const { teamOnlyElmts, teamEachElmtCount, teamElmtTotalCount, teamTotalElmtCount, varkaPHEC } =
       condition;
@@ -172,7 +178,7 @@ export class Team<TMember extends TeamMember = TeamMember> {
     return true;
   }
 
-  checkTeamProps(condition: TeamMilestoneConditionSpec) {
+  private checkTeamProps(condition: TeamMilestoneConditionSpec) {
     let input = 0;
     const {
       type,
@@ -196,7 +202,7 @@ export class Team<TMember extends TeamMember = TeamMember> {
     return true;
   }
 
-  isAvailableEffect(condition?: TeamConditionSpecs) {
+  private isAvailableEffect(condition?: TeamConditionSpecs, performer?: TeamMember) {
     if (!condition) {
       return true;
     }
@@ -204,8 +210,17 @@ export class Team<TMember extends TeamMember = TeamMember> {
     if (!this.checkTeamElmt(condition)) {
       return false;
     }
+
     if (condition.checkTeamMs && !this.checkTeamProps(condition.checkTeamMs)) {
       return false;
+    }
+
+    if (condition.checkMixed && performer) {
+      const mixedCount = this.getMixedCount(performer.data.vision);
+
+      if (!isPassedComparison(mixedCount, 3, "MIN")) {
+        return false;
+      }
     }
 
     return true;
@@ -232,4 +247,30 @@ export class Team<TMember extends TeamMember = TeamMember> {
       return total + (isEligible ? 1 : 0);
     }, 0);
   }
+
+  member(member: TeamMember): MemberOps {
+    return {
+      canPerformEffect: (condition, inputs) => {
+        return (
+          this.isAvailableEffect(condition, member) && member.canPerformEffect(condition, inputs)
+        );
+      },
+      bonusCalc: (tools) => {
+        return member instanceof Character
+          ? new BonusCalc(member, this, tools)
+          : new AllyBonusCalc(member, this, tools);
+      },
+      penaltyCalc: (inputs) => {
+        return member instanceof Character
+          ? new PenaltyCalc(member, this, inputs)
+          : new AllyPenaltyCalc(member, this, inputs);
+      },
+    };
+  }
 }
+
+export type MemberOps = {
+  canPerformEffect(condition?: EffectPerformableConditionSpecs, inputs?: number[]): boolean;
+  bonusCalc(tools?: Partial<BonusPerformTools>): AbstractBonusCalc;
+  penaltyCalc(inputs?: number[]): AbstractPenaltyCalc;
+};

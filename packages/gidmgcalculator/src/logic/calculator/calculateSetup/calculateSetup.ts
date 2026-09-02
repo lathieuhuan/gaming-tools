@@ -1,36 +1,38 @@
-import type { CalcSetup } from "@/models";
+import type { CalcResultAttackItem } from "@/calculation/types";
 import type { AttackElement } from "@/types";
-import type { CalcResultAttackItem } from "../types";
-import type { CalcResult } from "./types";
+import type { CalcSetup } from "../CalcSetup";
+import type { CalcResult } from "../types";
 
+import { makeAttackItemCalc } from "@/calculation/core/makeAttackItemCalc";
+import { makeOtherItemCalc } from "@/calculation/core/makeOtherItemCalc";
+import { makeReactionCalc } from "@/calculation/core/makeReactionCalc";
+import { makeTalentCalc } from "@/calculation/core/makeTalentCalc";
+import { ResultRecorder } from "@/calculation/core/ResultRecorder";
 import {
   ATTACK_PATTERNS,
   LUNAR_REACTIONS,
   STELLAR_REACTIONS,
   TRANSFORMATIVE_REACTIONS,
 } from "@/constants/global";
-import { makeAttackItemCalc } from "../core/makeAttackItemCalc";
-import { makeOtherItemCalc } from "../core/makeOtherItemCalc";
-import { makeReactionCalc } from "../core/makeReactionCalc";
-import { makeTalentCalc } from "../core/makeTalentCalc";
-import { ResultRecorder } from "../core/ResultRecorder";
+import { createExtraCalcItems } from "../createExtraCalcItems";
+import { getTalentDefaultValues } from "../getTalentDefaultValues";
 import { applyBuffs } from "./applyBuffs";
 import { applyDebuffs } from "./applyDebuffs";
 import { getAttackAlters } from "./getAttackAlters";
-import { getTalentDefaultValues } from "./getTalentDefaultValues";
 
-type CalculateSetupOptions = {
+export type CalculateSetupOptions = {
   shouldLog?: boolean;
   resonatedElmts?: AttackElement[];
 };
 
 export function calculateSetup(setup: CalcSetup, options: CalculateSetupOptions = {}) {
-  const { main, teammates, calcItems, target } = setup;
+  const { main, teammates, team, target } = setup;
+  const calcItems = createExtraCalcItems(setup);
 
   const { calcList } = main.data;
   const { elmtEvent } = setup;
 
-  main.initCalculation();
+  main.initCalculation({ resonances: team.resonances });
   target.initCalculation();
 
   applyBuffs(main, teammates, setup, options);
@@ -204,6 +206,7 @@ export function calculateSetup(setup: CalcSetup, options: CalculateSetupOptions 
     }
   });
 
+  setup.calcItems = calcItems;
   setup.result = result;
 
   return setup;

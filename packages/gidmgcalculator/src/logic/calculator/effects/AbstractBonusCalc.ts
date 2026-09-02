@@ -10,13 +10,13 @@ import type {
   ExtraBonusSpec,
   TeamMember,
 } from "@/types";
-import { Team } from "./Team";
+import type { Team } from "../Team";
 
-import { AbstractEffectValueCalc, EffectToGetInitialValue } from "./AbstractEffectValueCalc";
+import { AbstractEffectCalc, EffectToGetInitialValue } from "./AbstractEffectCalc";
 
 export abstract class AbstractBonusCalc<
   TPerformer extends TeamMember = TeamMember,
-> extends AbstractEffectValueCalc<TPerformer> {
+> extends AbstractEffectCalc<TPerformer> {
   //
   protected basedOnStatic = false;
   protected refi = 0;
@@ -24,7 +24,7 @@ export abstract class AbstractBonusCalc<
   constructor(
     protected performer: TPerformer,
     protected team: Team,
-    { inputs = [], refi = 0, basedOnStatic = false }: Partial<BonusPerformTools>,
+    { inputs = [], refi = 0, basedOnStatic = false }: Partial<BonusPerformTools> = {},
   ) {
     super(performer, team, inputs);
 
@@ -90,7 +90,7 @@ export abstract class AbstractBonusCalc<
     if (typeof spec === "number") {
       bonus.value += this.scaleRefi(spec);
     } //
-    else if (spec && this.isPerformableEffect(spec)) {
+    else if (spec && this.isEffectPerformable(spec)) {
       const extra = this.makeBonus(spec);
 
       if (extra) {
@@ -130,7 +130,7 @@ export abstract class AbstractBonusCalc<
 
     if (stacks && stacksBonus) {
       for (const spec of Array_.toArray(stacksBonus)) {
-        if (this.isPerformableEffect(spec)) {
+        if (this.isEffectPerformable(spec)) {
           bonus.value += this.scaleRefi(this.getStacksBonus(spec, stacks));
         }
       }

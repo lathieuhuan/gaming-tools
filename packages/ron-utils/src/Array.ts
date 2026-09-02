@@ -29,8 +29,9 @@ export class Array_ {
 
     for (const obj of target) {
       const key = keyFn(obj);
+      const sourceObj = sourceMap.get(key);
 
-      if (sourceMap.has(key)) {
+      if (sourceObj !== undefined) {
         syncedMap.set(key, obj);
       }
     }

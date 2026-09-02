@@ -2,8 +2,8 @@ import { useEffect, useRef, useState } from "react";
 import { FaLongArrowAltUp } from "react-icons/fa";
 import { Select, clsx, useScreenWatcher } from "rond";
 
-import type { CalcResult } from "@/calculation/calculator";
 import type { CalcAspect, CalcResultItemValue } from "@/calculation/types";
+import type { CalcResult } from "@/logic/calculator";
 
 import {
   FinalResultLayout,

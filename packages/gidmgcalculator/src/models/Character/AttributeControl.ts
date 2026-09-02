@@ -1,7 +1,7 @@
 import { CountMap, round } from "ron-utils";
 
 import type { AllAttributes, AttributeBonus, AttributeStat, BaseAttributeStat } from "@/types";
-import type { Character } from "./Character";
+import type { Character, CharacterInitCalcOptions } from "./Character";
 
 import { ATTRIBUTE_STAT_TYPES } from "@/constants";
 import { baseStatToCoreStat, isBaseStat, isCoreStat } from "@/utils/stat.utils";
@@ -77,7 +77,8 @@ export class AttributeControl {
     this._add(key, "base", value, label);
   }
 
-  init(character: Character) {
+  init(character: Character, options: CharacterInitCalcOptions = {}) {
+    const { resonances = [] } = options;
     const { data } = character;
 
     this.clear();
@@ -161,7 +162,7 @@ export class AttributeControl {
     }
 
     // ===== Resonances =====
-    for (const resonance of character.team.resonances) {
+    for (const resonance of resonances) {
       if (resonance in AUTO_RESONANCE_STATS) {
         const { key, value } = AUTO_RESONANCE_STATS[resonance];
 

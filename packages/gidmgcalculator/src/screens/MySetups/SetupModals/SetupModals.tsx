@@ -1,6 +1,6 @@
 import { ConfirmModal, Modal } from "rond";
 
-import type { CalcSetup } from "@/models";
+import type { CalcSetup } from "@/logic/calculator";
 
 import { useDispatch } from "@Store/hooks";
 import { updateUI, useUIStore } from "@Store/ui";

@@ -1,10 +1,10 @@
 import type { EffectMaxSpec, PenaltyCoreSpec, TeamMember } from "@/types";
 
-import { AbstractEffectValueCalc, EffectToGetInitialValue } from "./AbstractEffectValueCalc";
+import { AbstractEffectCalc, EffectToGetInitialValue } from "./AbstractEffectCalc";
 
 export abstract class AbstractPenaltyCalc<
-  TPerformer extends TeamMember = TeamMember
-> extends AbstractEffectValueCalc<TPerformer> {
+  TPerformer extends TeamMember = TeamMember,
+> extends AbstractEffectCalc<TPerformer> {
   //
   getInitialValue(effect: EffectToGetInitialValue) {
     const config = effect.value;
@@ -38,7 +38,7 @@ export abstract class AbstractPenaltyCalc<
     if (typeof preExtra === "number") {
       result += preExtra;
     } //
-    else if (preExtra && this.isPerformableEffect(preExtra)) {
+    else if (preExtra && this.isEffectPerformable(preExtra)) {
       result += this.makePenalty(preExtra);
     }
 
@@ -51,7 +51,7 @@ export abstract class AbstractPenaltyCalc<
       result = Math.min(result, this.getMax(debuff.max));
     }
 
-    if (stacks && stacksBonus && this.isPerformableEffect(stacksBonus)) {
+    if (stacks && stacksBonus && this.isEffectPerformable(stacksBonus)) {
       result += this.getStacksBonus(stacksBonus, stacks);
     }
 

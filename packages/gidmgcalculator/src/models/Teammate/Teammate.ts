@@ -4,37 +4,24 @@ import type {
   AbilityBuffCtrl,
   AbilityDebuffCtrl,
   AppCharacter,
-  BareBonus,
-  BonusCoreSpec,
-  BonusPerformTools,
   EffectPerformableConditionSpecs,
-  PenaltyCoreSpec,
   TeammateArtifact,
   TeammateData,
   TeammateWeapon,
   TeamMember,
   WeaponBuffCtrl,
 } from "@/types";
-import type { EffectToParseDesc } from "../AbstractEffectValueCalc";
 import type { Clonable } from "../interfaces";
 
 import { createAbilityBuffCtrls, createAbilityDebuffCtrls } from "@/logic/modifier.logic";
-import { Team } from "../Team";
 import { isPassedComparison } from "../utils/isPassedComparison";
 import { isValidInput } from "../utils/isValidInput";
-import { BonusCalc } from "./BonusCalc";
-import { PenaltyCalc } from "./PenaltyCalc";
 
 export type TeammateConstructOptions = {
   enhanced?: boolean;
   buffCtrls?: AbilityBuffCtrl[];
   debuffCtrls?: AbilityDebuffCtrl[];
   artifact?: TeammateArtifact;
-  team?: Team;
-};
-
-type CloneOptions = {
-  team?: Team;
 };
 
 export class Teammate implements TeammateData, TeamMember, Clonable<Teammate> {
@@ -44,8 +31,6 @@ export class Teammate implements TeammateData, TeamMember, Clonable<Teammate> {
   debuffCtrls: AbilityDebuffCtrl[];
   weapon: TeammateWeapon;
   artifact?: TeammateArtifact;
-
-  team: Team;
 
   static #DEFAULT_ENHANCED = false;
 
@@ -64,7 +49,6 @@ export class Teammate implements TeammateData, TeamMember, Clonable<Teammate> {
       buffCtrls = createAbilityBuffCtrls(data, false),
       debuffCtrls = createAbilityDebuffCtrls(data, false),
       artifact,
-      team = new Team(),
     } = options;
 
     this.code = code;
@@ -73,11 +57,6 @@ export class Teammate implements TeammateData, TeamMember, Clonable<Teammate> {
     this.debuffCtrls = debuffCtrls;
     this.weapon = weapon;
     this.artifact = artifact;
-    this.team = team;
-  }
-
-  joinTeam(team: Team) {
-    this.team = team;
   }
 
   // ===== SETTERS =====
@@ -123,37 +102,34 @@ export class Teammate implements TeammateData, TeamMember, Clonable<Teammate> {
     return true;
   }
 
-  performBonus(
-    config: BonusCoreSpec,
-    { inputs = [], refi = 0, basedOnStatic = false }: Partial<BonusPerformTools>,
-  ): BareBonus {
-    return new BonusCalc(this, this.team, { inputs, refi, basedOnStatic }).makeBonus(config);
-  }
+  // performBonus(
+  //   config: BonusCoreSpec,
+  //   { inputs = [], refi = 0, basedOnStatic = false }: Partial<BonusPerformTools>,
+  // ): BareBonus {
+  //   return new BonusCalc(this, this.team, { inputs, refi, basedOnStatic }).makeBonus(config);
+  // }
 
-  performPenalty(config: PenaltyCoreSpec, inputs?: number[]) {
-    return new PenaltyCalc(this, this.team, inputs).makePenalty(config);
-  }
+  // performPenalty(config: PenaltyCoreSpec, inputs?: number[]) {
+  //   return new PenaltyCalc(this, this.team, inputs).makePenalty(config);
+  // }
 
-  clone(options: CloneOptions = {}) {
-    const { team = this.team } = options;
-
+  clone() {
     return new Teammate(this.code, this.data, this.weapon, {
       ...this,
       buffCtrls: Object_.clone(this.buffCtrls),
       debuffCtrls: Object_.clone(this.debuffCtrls),
       weapon: Object_.clone(this.weapon),
       artifact: Object_.clone(this.artifact),
-      team,
     });
   }
 
   // ===== DESCRIPTION =====
 
-  parseBuffDesc(spec: EffectToParseDesc, inputs?: number[]) {
-    return new BonusCalc(this, this.team, { inputs }).parseAbilityDesc(spec);
-  }
+  // parseBuffDesc(spec: EffectToParseDesc, inputs?: number[]) {
+  //   return new BonusCalc(this, this.team, { inputs }).parseAbilityDesc(spec);
+  // }
 
-  parseDebuffDesc(spec: EffectToParseDesc, inputs?: number[]) {
-    return new PenaltyCalc(this, this.team, inputs).parseAbilityDesc(spec);
-  }
+  // parseDebuffDesc(spec: EffectToParseDesc, inputs?: number[]) {
+  //   return new PenaltyCalc(this, this.team, inputs).parseAbilityDesc(spec);
+  // }
 }

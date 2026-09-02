@@ -3,7 +3,7 @@ import { Array_, Object_ } from "ron-utils";
 import type { ArtifactType, SetupManager } from "@/types";
 import type { WritableDraft } from "immer/src/internal.js";
 
-import { CalcSetup } from "@/models";
+import { CalcSetup } from "@/logic/calculator";
 import { useCalcStore } from "../calculatorStore";
 import { getCopyName, onActiveSetup } from "../utils";
 
@@ -59,7 +59,7 @@ export const duplicateSetup = (sourceId: number) => {
         name: setupName || "New Setup",
         type: "original",
       });
-      setupsById[setupID] = setupsById[sourceId].clone({ ID: setupID }).calculate();
+      setupsById[setupID] = setupsById[sourceId].clone({ ID: setupID });
 
       if (comparedIds.includes(sourceId)) {
         state.comparedIds.push(setupID);
@@ -152,9 +152,7 @@ export const updateMultiSetups = (changes: MultiSetupChange[], newStandardId: nu
             type: "original",
           });
 
-          const newSetup = new CalcSetup({
-            ID: change.ID,
-            main: setupsById[activeId].main.deepClone(),
+          const newSetup = CalcSetup.create(change.ID, setupsById[activeId].main.deepClone(), {
             target,
           });
 

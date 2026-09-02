@@ -62,7 +62,7 @@ export type RawItem = RawWeapon | RawArtifact;
 
 // ========== CHARACTER ==========
 
-export type CharacterStateData = {
+export type RawCharacterState = {
   level: Level;
   NAs: number;
   ES: number;
@@ -71,7 +71,7 @@ export type CharacterStateData = {
   enhanced: boolean;
 };
 
-export type RawCharacter = CharacterStateData & {
+export type RawCharacter = RawCharacterState & {
   code: number;
 };
 
