@@ -11,7 +11,6 @@ import type {
   TeamMember,
   WeaponBuffCtrl,
 } from "@/types";
-import type { Clonable } from "./interfaces";
 
 import { createAbilityBuffCtrls, createAbilityDebuffCtrls } from "@/logic/modifier.logic";
 import { isPassedComparison } from "./utils/isPassedComparison";
@@ -24,7 +23,7 @@ export type TeammateConstructOptions = {
   artifact?: TeammateArtifact;
 };
 
-export class Teammate implements TeammateData, TeamMember, Clonable<Teammate> {
+export class Teammate implements TeammateData, TeamMember {
   code: number;
   enhanced: boolean;
   buffCtrls: AbilityBuffCtrl[];

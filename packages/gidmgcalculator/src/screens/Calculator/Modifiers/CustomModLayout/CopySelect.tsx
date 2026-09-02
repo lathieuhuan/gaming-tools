@@ -1,7 +1,7 @@
 import { Object_ } from "ron-utils";
 
 import { useShallowCalcStore } from "@Store/calculator";
-import { updateSetupModCtrls } from "@Store/calculator/actions";
+import { updateSetup } from "@Store/calculator/actions";
 
 import { CopySection } from "@/screens/Calculator/components/CopySection";
 
@@ -31,7 +31,7 @@ export function CopySelect({ type }: CopySelectProps) {
   }
 
   const handleCopy = (option: CopyOption) => {
-    updateSetupModCtrls((setup) => {
+    updateSetup((setup) => {
       switch (type) {
         case "customBuffCtrls":
           setup.customBuffCtrls = setupsById[option.value]?.customBuffCtrls || [];

@@ -153,11 +153,11 @@ export class CalcSetupCore {
   }
 
   copyArtifacts(setup: CalcSetupCore) {
-    setup.main.atfGear = setup.main.atfGear.deepClone();
-    setup.artBuffCtrls = Object_.clone(setup.artBuffCtrls);
-    setup.artDebuffCtrls = Object_.clone(setup.artDebuffCtrls); // TODO check
-    syncArtifactDebuffCtrls(setup);
-    syncTeamBuffCtrls(setup);
+    this.main.atfGear = setup.main.atfGear.deepClone();
+    this.artBuffCtrls = Object_.clone(setup.artBuffCtrls);
+    this.artDebuffCtrls = Object_.clone(setup.artDebuffCtrls); // TODO check
+    syncArtifactDebuffCtrls(this);
+    syncTeamBuffCtrls(this);
   }
 
   // ===== TEAMMATES =====

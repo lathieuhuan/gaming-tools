@@ -5,7 +5,7 @@ import type { ControlGroup } from "../types";
 import { ResonanceBuffItem } from "@/components/ModifierItems";
 import { AutoResonanceBuffs } from "@/components/ModifierLists";
 import { useCalcStore } from "@Store/calculator";
-import { updateSetupModCtrls } from "@Store/calculator/actions";
+import { updateSetup } from "@Store/calculator/actions";
 import { selectSetup } from "@Store/calculator/selectors";
 import { toggleRsnModCtrl, updateRsnModCtrlInputs } from "@Store/calculator/utils";
 
@@ -19,7 +19,7 @@ export function useResonanceCtrlGroup(team: Team): ControlGroup {
   }
 
   const handleToggle = (ctrl: ResonanceModCtrl) => {
-    updateSetupModCtrls((setup) => {
+    updateSetup((setup) => {
       setup.rsnBuffCtrls = toggleRsnModCtrl(rsnBuffCtrls, ctrl.element);
     });
   };
@@ -28,7 +28,7 @@ export function useResonanceCtrlGroup(team: Team): ControlGroup {
     (ctrl: ResonanceModCtrl) => (currentInput: number, inputIndex: number) => {
       const input = currentInput === 1 ? 0 : 1;
 
-      updateSetupModCtrls((setup) => {
+      updateSetup((setup) => {
         setup.rsnBuffCtrls = updateRsnModCtrlInputs(rsnBuffCtrls, ctrl.element, inputIndex, input);
       });
     };

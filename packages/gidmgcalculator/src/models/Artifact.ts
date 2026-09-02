@@ -8,7 +8,6 @@ import type {
   EquipmentRelation,
   RawArtifact,
 } from "@/types";
-import type { Clonable } from "./interfaces";
 
 type ArtifactCreateOptions = Partial<
   Pick<
@@ -24,7 +23,7 @@ export type ArtifactCloneOptions = Partial<
   >
 >;
 
-export class Artifact implements Clonable<Artifact> {
+export class Artifact {
   owner?: number;
   setupIDs?: number[];
 

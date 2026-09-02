@@ -2,7 +2,7 @@ import type { CustomDebuffCtrl } from "@/types";
 
 import { useTranslation } from "@/hooks";
 import { useCalcStore } from "@Store/calculator";
-import { updateSetupModCtrls } from "@Store/calculator/actions";
+import { updateSetup } from "@Store/calculator/actions";
 import { selectSetup } from "@Store/calculator/selectors";
 
 import { CopySelect, CustomModLayout, ModItemRenderConfig } from "../CustomModLayout";
@@ -23,7 +23,7 @@ export function DebuffCustom() {
   });
 
   const handleUpdateCtrls = (newCtrls: CustomDebuffCtrl[]) => {
-    updateSetupModCtrls((setup) => {
+    updateSetup((setup) => {
       setup.customDebuffCtrls = newCtrls;
     });
   };

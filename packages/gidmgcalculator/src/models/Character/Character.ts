@@ -19,7 +19,6 @@ import type {
   RawCharacterState,
   TeamMember,
 } from "@/types";
-import type { Clonable } from "../interfaces";
 
 import { isPassedComparison } from "../utils/isPassedComparison";
 
@@ -74,7 +73,7 @@ export type CharacterInitCalcOptions = {
   resonances?: AutoRsnElmtType[];
 };
 
-export class Character implements TeamMember, Clonable<Character> {
+export class Character implements TeamMember {
   readonly isTraveler: boolean;
 
   calculated = false;

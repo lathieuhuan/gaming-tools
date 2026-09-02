@@ -4,7 +4,7 @@ import type { Teammate } from "@/models";
 import type { ArtifactBuffCtrl, TeammateArtifactBuffCtrl } from "@/types";
 
 import { useShallowCalcStore } from "@Store/calculator";
-import { updateSetup, updateSetupModCtrls } from "@Store/calculator/actions";
+import { updateSetup } from "@Store/calculator/actions";
 import { selectSetup } from "@Store/calculator/selectors";
 import { toggleModCtrl, updateModCtrlInputs } from "@Store/calculator/utils";
 
@@ -16,7 +16,7 @@ export default function BuffArtifact() {
   });
 
   const handleUpdateSelfCtrls = (newCtrls: ArtifactBuffCtrl[]) => {
-    updateSetupModCtrls((setup) => {
+    updateSetup((setup) => {
       setup.artBuffCtrls = newCtrls;
     });
   };

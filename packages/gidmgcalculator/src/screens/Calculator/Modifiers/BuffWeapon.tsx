@@ -2,7 +2,7 @@ import type { Teammate } from "@/models";
 import type { WeaponBuffCtrl } from "@/types";
 
 import { useShallowCalcStore } from "@Store/calculator";
-import { updateSetup, updateSetupModCtrls } from "@Store/calculator/actions";
+import { updateSetup } from "@Store/calculator/actions";
 import { selectSetup } from "@Store/calculator/selectors";
 import { toggleModCtrl, updateModCtrlInputs } from "@Store/calculator/utils";
 
@@ -20,7 +20,7 @@ export default function BuffWeapon() {
   });
 
   const handleUpdateSelfCtrls = (newCtrls: WeaponBuffCtrl[]) => {
-    updateSetupModCtrls((setup) => {
+    updateSetup((setup) => {
       setup.wpBuffCtrls = newCtrls;
     });
   };

@@ -1,7 +1,6 @@
 import { Object_ } from "ron-utils";
 
 import type { AppWeapon, EquipmentRelation, Level, RawWeapon, WeaponType } from "@/types";
-import type { Clonable } from "./interfaces";
 
 import { LEVELS } from "@/constants";
 import { parseLevel } from "@/utils/level.utils";
@@ -10,7 +9,7 @@ type WeaponCreateOptions = Partial<Pick<RawWeapon, "level" | "refi" | "owner" | 
 
 type WeaponCloneOptions = Partial<Pick<RawWeapon, "ID" | "level" | "refi" | "owner" | "setupIDs">>;
 
-export class Weapon implements Clonable<Weapon> {
+export class Weapon {
   owner?: number;
   setupIDs?: number[];
 

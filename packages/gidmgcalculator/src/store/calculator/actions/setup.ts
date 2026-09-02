@@ -1,40 +1,10 @@
 import { Array_, Object_ } from "ron-utils";
 
 import type { ArtifactType, SetupManager } from "@/types";
-import type { WritableDraft } from "immer/src/internal.js";
-import type { CalculatorState } from "../types";
 
 import { CalcSetup } from "@/logic/calculator";
 import { useCalcStore } from "../calculatorStore";
 import { getCopyName } from "../utils";
-
-/**
- * @param id Default activeId
- */
-export const updateSetup = (
-  callback: (
-    setup: WritableDraft<CalcSetup>,
-    state: WritableDraft<CalculatorState>,
-  ) => boolean | void,
-  id?: number,
-) => {
-  useCalcStore.setState((state) => {
-    const setupId = id ?? state.activeId;
-    const setup = state.setupsById[setupId];
-
-    if (setup) {
-      const shouldCalculate = callback(setup, state) ?? true;
-
-      if (shouldCalculate) {
-        state.setupsById[setupId] = setup.calculate();
-      }
-    } else {
-      console.error(`Setup with id ${setupId} not found`);
-    }
-  });
-};
-
-export const updateSetupModCtrls = updateSetup;
 
 export const updateSetupAfterSave = (
   setupId: number,
@@ -82,8 +52,7 @@ export const duplicateSetup = (sourceId: number) => {
         name: setupName || "New Setup",
         type: "original",
       });
-      // TODO check
-      setupsById[setupID] = setupsById[sourceId].clone({ ID: setupID });
+      setupsById[setupID] = setupsById[sourceId].deepClone(setupID);
 
       if (comparedIds.includes(sourceId)) {
         state.comparedIds.push(setupID);
@@ -165,7 +134,7 @@ export const updateMultiSetups = (changes: MultiSetupChange[], newStandardId: nu
               name: newSetupName,
               type: "original",
             });
-            setupsById[change.ID] = setupsById[originId].clone({ ID: change.ID });
+            setupsById[change.ID] = setupsById[originId].deepClone(change.ID);
           }
           break;
         }
@@ -176,8 +145,9 @@ export const updateMultiSetups = (changes: MultiSetupChange[], newStandardId: nu
             type: "original",
           });
 
-          // TODO check logic
-          const newSetup = CalcSetup.create(change.ID, setupsById[activeId].main.deepClone(), {
+          const activeMainClone = setupsById[activeId].main.deepClone();
+
+          const newSetup = CalcSetup.create(change.ID, activeMainClone, {
             target,
           });
 

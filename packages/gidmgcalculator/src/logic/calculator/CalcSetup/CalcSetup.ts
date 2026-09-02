@@ -41,7 +41,6 @@ export class CalcSetup extends CalcSetupCore {
     return calculateSetup(this, options);
   }
 
-  // TODO check
   clone(options: { ID?: number } = {}) {
     const { ID = this.ID } = options;
 
@@ -51,6 +50,32 @@ export class CalcSetup extends CalcSetupCore {
       this.teammates,
       this.team,
       this.target,
+      this.selfBuffCtrls,
+      this.selfDebuffCtrls,
+      this.wpBuffCtrls,
+      this.artBuffCtrls,
+      this.artDebuffCtrls,
+      this.teamBuffCtrls,
+      this.rsnBuffCtrls,
+      this.rsnDebuffCtrls,
+      this.elmtEvent,
+      this.customBuffCtrls,
+      this.customDebuffCtrls,
+      this.result,
+    );
+  }
+
+  deepClone(ID: number) {
+    const main = this.main.clone();
+    const teammates = this.teammates.map((teammate) => teammate.clone());
+    const team = new Team([main, ...teammates]);
+
+    return new CalcSetup(
+      ID,
+      main,
+      teammates,
+      team,
+      this.target.clone(),
       this.selfBuffCtrls,
       this.selfDebuffCtrls,
       this.wpBuffCtrls,

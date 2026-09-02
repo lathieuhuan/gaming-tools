@@ -4,7 +4,7 @@ import type { ControlGroup } from "../types";
 import { $AppData } from "@/services";
 import { parseDescription } from "@/utils/descriptionParsers";
 import { useCalcStore } from "@Store/calculator";
-import { updateSetupModCtrls } from "@Store/calculator/actions";
+import { updateSetup } from "@Store/calculator/actions";
 import { selectSetup } from "@Store/calculator/selectors";
 import { toggleModCtrl, updateModCtrlInputs } from "@Store/calculator/utils";
 
@@ -30,13 +30,13 @@ export function useTeamBuffCtrlGroup(): ControlGroup {
 
   if (reorderedCtrls.length) {
     const handleToggle = (ctrl: TeamBuffCtrl) => () => {
-      updateSetupModCtrls((setup) => {
+      updateSetup((setup) => {
         setup.teamBuffCtrls = toggleModCtrl(teamBuffCtrls, ctrl.id);
       });
     };
 
     const handleUpdateInput = (ctrl: TeamBuffCtrl) => (value: number, inputIndex: number) => {
-      updateSetupModCtrls((setup) => {
+      updateSetup((setup) => {
         setup.teamBuffCtrls = updateModCtrlInputs(teamBuffCtrls, ctrl.id, inputIndex, value);
       });
     };
