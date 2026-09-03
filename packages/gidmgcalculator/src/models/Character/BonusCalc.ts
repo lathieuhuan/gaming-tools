@@ -9,8 +9,12 @@ import { AbstractBonusCalc } from "../AbstractBonusCalc";
 
 export class BonusCalc extends AbstractBonusCalc<Character> {
   protected getBasedOn(config: BonusAttributeScalingSpec) {
-    const { field, baseline = 0, isDynamic = true } = this.parseBasedOn(config);
-    const basedOnValue = this.performer.allAttrsCtrl.getTotal(field, this.basedOnFixed);
+    const { field, baseline = 0, isDynamic = true, max } = this.parseBasedOn(config);
+    let basedOnValue = this.performer.allAttrsCtrl.getTotal(field, this.basedOnFixed);
+
+    if (max) {
+      basedOnValue = Math.min(basedOnValue, max);
+    }
 
     return {
       field,

@@ -1,7 +1,8 @@
 import type { CSSProperties, MouseEvent } from "react";
-import { clsx, ButtonGroup, ButtonGroupItem } from "rond";
+import { cn, ButtonGroup, ButtonGroupItem } from "rond";
 
 import type { Artifact } from "@/models";
+
 import { OwnerLabel } from "../OwnerLabel";
 import { ArtifactView, type ArtifactViewProps } from "./ArtifactView";
 
@@ -26,7 +27,7 @@ export type ArtifactCardProps<T extends Artifact = Artifact> = Omit<
 
 export function ArtifactCard<T extends Artifact = Artifact>({
   wrapperCls = "",
-  className = "",
+  className,
   style,
   artifact,
   actions,
@@ -36,9 +37,9 @@ export function ArtifactCard<T extends Artifact = Artifact>({
   ...viewProps
 }: ArtifactCardProps<T>) {
   return (
-    <div className={"flex flex-col " + wrapperCls}>
+    <div className={cn("flex flex-col", wrapperCls)}>
       <div
-        className={clsx(
+        className={cn(
           "grow hide-scrollbar bg-dark-1 flex flex-col",
           withGutter && "p-4 rounded-lg",
           className
@@ -63,8 +64,7 @@ export function ArtifactCard<T extends Artifact = Artifact>({
         ) : null}
       </div>
 
-      {/* TODO find a solution when we don't need to serialize the artifact */}
-      {withOwnerLabel ? <OwnerLabel className="mt-3" item={artifact?.serialize()} /> : null}
+      {withOwnerLabel ? <OwnerLabel className="mt-3" item={artifact} /> : null}
     </div>
   );
 }

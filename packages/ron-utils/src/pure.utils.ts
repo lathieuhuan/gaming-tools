@@ -12,7 +12,10 @@ const numberFormat = new Intl.NumberFormat("en-EN");
 
 export const formatNumber = (n: number) => numberFormat.format(n);
 
-export const round = (n: number, precision = 1) => {
+/**
+ * @param precision - default 0
+ */
+export const round = (n: number, precision = 0) => {
   const multiplier = 10 ** precision;
   return Math.round(n * multiplier) / multiplier;
 };

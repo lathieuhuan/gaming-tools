@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Button, EntitySelectTemplate, Modal, SwitchNode } from "rond";
+import { Button, EntitySelectTemplate, Match, Modal } from "rond";
 
 import type { Artifact } from "@/models";
 
@@ -56,18 +56,13 @@ export function LoadoutStashCore({ onSelect, onClose }: LoadoutStashProps) {
           </div>
 
           <div className="pt-3 grow flex space-x-2 hide-scrollbar">
-            <div
-              className="grow hide-scrollbar"
-              style={{
-                minWidth: "18rem",
-              }}
-            >
-              <SwitchNode
+            <div className="min-w-72 grow hide-scrollbar">
+              <Match
                 value={selectedType}
                 cases={[
                   {
                     value: "EQUIPPED",
-                    element: (
+                    render: (
                       <EquippedSetStash
                         keyword={keyword}
                         onSelectArtifact={handleSelectArtifact}

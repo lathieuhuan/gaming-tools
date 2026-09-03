@@ -1,12 +1,12 @@
 import { FaUnlink, FaWrench } from "react-icons/fa";
 import { Modal } from "rond";
 
-import { useUIStore, updateUI } from "@Store/ui";
+import { updateUI, useUIStore } from "@Store/ui";
 
 // Component
-import { markYellow } from "@/components/Span";
-import FirstCombine from "./FirstCombine";
+import { HighlightText } from "@/components/Text";
 import CombineMore from "./CombineMore";
+import FirstCombine from "./FirstCombine";
 
 export function MySetupsModals() {
   const modalType = useUIStore((state) => state.mySetupsModalType);
@@ -26,18 +26,18 @@ export function MySetupsModals() {
       >
         <ul className="pl-4 pr-2 list-disc space-y-1 contains-inline-svg">
           <li>
-            {markYellow("Update setups")}: When you press <FaWrench /> on a saved setup, you're
+            <HighlightText>Update setups</HighlightText>: When you press <FaWrench /> on a saved setup, you're
             pushing a <span className="text-danger-2">copy</span> of it to the Calculator, so don't
             forget to save the modified copy if you want to apply the changes to that setup.
           </li>
           <li>
-            {markYellow("Teammate details")} on a setup can be viewed when you press a teammate
+            <HighlightText>Teammate details</HighlightText> on a setup can be viewed when you press a teammate
             icon. Here you can build a setup for that teammate based on the main setup. Party
             members and Target will be the same. Some modifiers will remain activated and keep their
             inputs.
           </li>
           <li>
-            {markYellow("Complex Setup")} is the result of combining setups of the same 4 party
+            <HighlightText>Complex Setup</HighlightText> is the result of combining setups of the same 4 party
             members. You can break this complex into individual setups again by pressing the{" "}
             <FaUnlink /> before its name. Now at teammate details you can switch to that setup.
           </li>

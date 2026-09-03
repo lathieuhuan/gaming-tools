@@ -2,7 +2,7 @@ import type { AllAttributes, AllAttributeStat, AttributeStat } from "@/types";
 import type { Member } from "./Member";
 
 import { baseStatToCoreStat, isBaseStat, isCoreStat } from "@/logic/stat.logic";
-import TypeCounter from "@/utils/TypeCounter";
+import { CountMap } from "ron-utils";
 
 const ASC_MULT_BY_ASC = [0, 38 / 182, 65 / 182, 101 / 182, 128 / 182, 155 / 182, 1];
 
@@ -19,8 +19,8 @@ export class AttributeControl {
   finals: AllAttributes;
 
   constructor() {
-    this.attrs = new TypeCounter<AllAttributeStat>({}, { allowNegative: true });
-    this.finals = new TypeCounter<AllAttributeStat>({}, { allowNegative: true });
+    this.attrs = new CountMap<AllAttributeStat>();
+    this.finals = new CountMap<AllAttributeStat>();
   }
 
   private _add(stat: AllAttributeStat, value: number, label = "Character base stat") {
@@ -92,11 +92,11 @@ export class AttributeControl {
     }
 
     // ===== Artifacts =====
-    member.atfGear.attributes.forEach((stat, value) => {
+    for (const [stat, value] of member.atfGear.attributes.entries()) {
       const validStat: AttributeStat = isBaseStat(stat) ? baseStatToCoreStat(stat) : stat;
 
       this._add(validStat, value, "Artifact stat");
-    });
+    }
 
     return this.attrs;
   }

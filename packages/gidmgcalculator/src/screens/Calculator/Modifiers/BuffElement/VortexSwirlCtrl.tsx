@@ -33,7 +33,7 @@ export function StellarVortexCtrl({ vortexLv }: StellarVortexCtrlProps) {
       inputConfigs={[
         {
           type: "TEXT",
-          label: "Level",
+          label: "Swirls triggered",
           max: 3,
         },
       ]}

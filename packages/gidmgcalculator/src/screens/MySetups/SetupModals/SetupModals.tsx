@@ -23,7 +23,7 @@ export function SetupModals({ setupName, setup }: SetupModalsProps) {
   const dispatch = useDispatch();
   const modalType = useUIStore((state) => state.mySetupsModalType);
 
-  const { weapon, atfGear, allAttrsCtrl } = setup.main;
+  const { weapon, atfGear, allAttrsCtrl, attkBonusCtrl } = setup.main;
 
   const closeModal = () => {
     updateUI({ mySetupsModalType: "" });
@@ -70,15 +70,19 @@ export function SetupModals({ setupName, setup }: SetupModalsProps) {
         onClose={closeModal}
       >
         <div className="flex space-x-1 hide-scrollbar">
-          {atfGear.pieces.list().map((piece) => {
+          {atfGear.slots((slot) => {
+            if (!slot.isFilled) {
+              return null;
+            }
+
             return (
               <ArtifactCard
-                key={piece.type}
+                key={slot.type}
                 wrapperCls="shrink-0"
                 className="w-60"
                 withGutter={false}
                 withOwnerLabel
-                artifact={piece}
+                artifact={slot.piece}
               />
             );
           })}
@@ -94,9 +98,9 @@ export function SetupModals({ setupName, setup }: SetupModalsProps) {
       >
         <div className="h-full flex hide-scrollbar gap-8">
           <div className="w-76 flex flex-col shrink-0">
-            <p className="text-lg text-center font-semibold">Final Attributes</p>
+            <p className="text-lg text-center font-semibold">Attributes</p>
             <div className="mt-1 custom-scrollbar">
-              <AttributeTable attributes={allAttrsCtrl.finals} />
+              <AttributeTable attributes={allAttrsCtrl.finals} attkBonusCtrl={attkBonusCtrl} />
             </div>
           </div>
 
@@ -110,7 +114,7 @@ export function SetupModals({ setupName, setup }: SetupModalsProps) {
           <div className="w-72 flex flex-col shrink-0">
             <p className="text-lg text-center font-semibold">Set bonus</p>
             <div className="grow custom-scrollbar">
-              <SetBonusesView noTitle sets={atfGear.sets} />
+              <SetBonusesView hideTitle sets={atfGear.sets} />
             </div>
           </div>
         </div>

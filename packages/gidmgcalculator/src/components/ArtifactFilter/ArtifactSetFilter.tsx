@@ -1,6 +1,6 @@
 import { clsx } from "rond";
 
-import type { ArtifactFilterSet } from "../types";
+import type { ArtifactFilterSet } from "./types";
 
 import { FilterTemplate, type FilterTemplateProps } from "@/components/FilterTemplate";
 import { GenshinImage } from "@/components/GenshinImage";

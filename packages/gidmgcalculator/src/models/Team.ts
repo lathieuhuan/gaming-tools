@@ -2,16 +2,16 @@ import type {
   AutoRsnElmtType,
   ElementCount,
   ElementType,
-  TeamMember,
   TalentType,
   TeamConditionSpecs,
   TeamElementConditionSpecs,
+  TeamMember,
   TeamMilestoneConditionSpec,
 } from "@/types";
+import { CountMap, Object_ } from "ron-utils";
 
 import { PHEC_ELEMENT_TYPES } from "@/constants";
 import { isAutoRsnElmt } from "@/logic/element.logic";
-import TypeCounter from "@/utils/TypeCounter";
 import { isPassedComparison } from "./utils/isPassedComparison";
 
 export class Team<TMember extends TeamMember = TeamMember> {
@@ -19,8 +19,8 @@ export class Team<TMember extends TeamMember = TeamMember> {
   resonances: AutoRsnElmtType[] = [];
   moonsignLv: number = 0;
   witchRiteLv: number = 0;
-  elmtCount: ElementCount = new TypeCounter();
-  extraTalentLv: TypeCounter<TalentType> = new TypeCounter();
+  elmtCount: ElementCount = new CountMap([], { min: 0 });
+  extraTalentLv: CountMap<TalentType> = new CountMap();
 
   constructor(members: TMember[] = []) {
     const newMembers = this.filterMembers(members);
@@ -47,7 +47,7 @@ export class Team<TMember extends TeamMember = TeamMember> {
       return;
     }
 
-    const elmtCount: ElementCount = new TypeCounter();
+    const elmtCount: ElementCount = new CountMap([], { min: 0 });
     let moonsignLv = 0;
     let witchRiteLv = 0;
 
@@ -80,7 +80,7 @@ export class Team<TMember extends TeamMember = TeamMember> {
 
     const resonances: AutoRsnElmtType[] = [];
 
-    elmtCount.forEach((elmt, count) => {
+    elmtCount.forEach((count, elmt) => {
       if (isAutoRsnElmt(elmt) && count >= 2) {
         resonances.push(elmt);
       }
@@ -90,7 +90,7 @@ export class Team<TMember extends TeamMember = TeamMember> {
 
     // ===== Extra Talent LV =====
 
-    const extraTalentLv = new TypeCounter<TalentType>();
+    const extraTalentLv = new CountMap<TalentType>();
 
     if (this.getMember("Tartaglia")) {
       extraTalentLv.add("NAs");
@@ -123,15 +123,17 @@ export class Team<TMember extends TeamMember = TeamMember> {
 
     if (
       teamOnlyElmts &&
-      elmtCount.keys.some((elementType) => !teamOnlyElmts.includes(elementType))
+      Array.from(elmtCount.keys()).some((elementType) => !teamOnlyElmts.includes(elementType))
     ) {
       return false;
     }
 
     if (teamEachElmtCount) {
-      const requiredEntries = new TypeCounter(teamEachElmtCount).entries;
+      const lackRequiredElmt = Object_.entries(teamEachElmtCount).some(
+        ([type, value]) => value !== undefined && elmtCount.get(type) < value,
+      );
 
-      if (requiredEntries.some(([type, value]) => elmtCount.get(type) < value)) {
+      if (lackRequiredElmt) {
         return false;
       }
     }
@@ -151,7 +153,7 @@ export class Team<TMember extends TeamMember = TeamMember> {
         if (!isPassedComparison(elmtCount.get(elements), value, comparison)) {
           return false;
         }
-      } else if (!isPassedComparison(elmtCount.keys.length, value, comparison)) {
+      } else if (!isPassedComparison(elmtCount.size, value, comparison)) {
         return false;
       }
     }

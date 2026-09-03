@@ -1,11 +1,19 @@
-import { FaBalanceScaleLeft, FaChevronDown, FaCopy, FaSave, FaSyncAlt, FaShareAlt, FaInfoCircle } from "react-icons/fa";
-import { SiTarget } from "react-icons/si";
-import { MdMoreVert } from "react-icons/md";
-import { IoDocumentText } from "react-icons/io5";
 import { BiImport } from "react-icons/bi";
+import {
+  FaBalanceScaleLeft,
+  FaChevronDown,
+  FaCopy,
+  FaInfoCircle,
+  FaSave,
+  FaShareAlt,
+  FaSyncAlt,
+} from "react-icons/fa";
+import { IoDocumentText } from "react-icons/io5";
+import { MdMoreVert } from "react-icons/md";
+import { SiTarget } from "react-icons/si";
 import { TrashCanSvg } from "rond";
 
-import { markGreen, markYellow } from "@/components/Span";
+import { HighlightText, PositiveText } from "@/components/Text";
 
 const LIST_DECIMAL_CLS = "mt-1 pl-4 list-decimal space-y-1";
 const LIST_ALPHABET_CLS = "mt-1 pl-4 list-[upper-alpha] space-y-1";
@@ -29,33 +37,37 @@ export function CalculatorGuide() {
       <p>The Calculator contains 4 columns, from left to right they are:</p>
       <ul className={LIST_DECIMAL_CLS}>
         <li>
-          {markGreen("Character Overview")}
+          <PositiveText>Character Overview</PositiveText>
           <ul className={LIST_ALPHABET_CLS}>
             <li>
-              {markGreen("General information")}:
+              <PositiveText>General information</PositiveText>:
               <ul className={LIST_DISC_CLS}>
                 <li>
                   Change character: pressing <FaSyncAlt /> or the character's avatar.
                 </li>
                 <li>
-                  Change character's level and constellation: select in the respective dropdown <FaChevronDown />.
+                  Change character's level and constellation: select in the respective dropdown{" "}
+                  <FaChevronDown />.
                 </li>
                 <li>
-                  Toggle character's enhanced state (if available): press the label beside the character's rarity. For
-                  example {markYellow("Hexerei")}.
+                  Toggle character's enhanced state (if available): press the label beside the
+                  character's rarity. For example <HighlightText>Hexerei</HighlightText>.
                 </li>
               </ul>
             </li>
             <li>
-              {markGreen("Attributes")}: hover or press (mobile) the HP/ATK/DEF rows to see the breakdown of their
-              values: base + bonus.
+              <PositiveText>Attributes</PositiveText>: hover or press (mobile) the HP/ATK/DEF rows
+              to see the breakdown of their values: base + bonus.
             </li>
             <li>
-              {markGreen("Weapon")}: change weapon level and refinement via their respective dropdown <FaChevronDown />.
+              <PositiveText>Weapon</PositiveText>: change weapon level and refinement via their
+              respective dropdown <FaChevronDown />.
             </li>
-            <li>{markGreen("Artifacts")}: see the attributes summary and set bonuses.</li>
             <li>
-              {markGreen("Constellation")}:
+              <PositiveText>Artifacts</PositiveText>: see the attributes summary and set bonuses.
+            </li>
+            <li>
+              <PositiveText>Constellation</PositiveText>:
               <ul className={LIST_DISC_CLS}>
                 <li>Change constellation level by pressing their icons.</li>
                 <li>
@@ -64,7 +76,7 @@ export function CalculatorGuide() {
               </ul>
             </li>
             <li>
-              {markGreen("Talents")}:
+              <PositiveText>Talents</PositiveText>:
               <ul className={LIST_DISC_CLS}>
                 <li>
                   Change talent levels via dropdown selects <FaChevronDown />.
@@ -78,38 +90,43 @@ export function CalculatorGuide() {
         </li>
 
         <li>
-          {markGreen("Modifiers Manager")}.
+          <PositiveText>Modifiers Manager</PositiveText>.
           <ul className={LIST_DISC_CLS}>
             <li>
-              Modifiers are {markYellow("Buffs")} applied to the character and {markYellow("Debuffs")} applied to the
-              target coming from various sources such as teammates, weapons, artifacts...
+              Modifiers are <HighlightText>Buffs</HighlightText> applied to the character and{" "}
+              <HighlightText>Debuffs</HighlightText> applied to the target coming from various
+              sources such as teammates, weapons, artifacts...
             </li>
             <li>
-              Every modifier that needs a condition to trigger will have a control in the Modifers Manager which helps
-              you activate / deactivate and adjust the modifier.
+              Every modifier that needs a condition to trigger will have a control in the Modifers
+              Manager which helps you activate / deactivate and adjust the modifier.
             </li>
             <li>
-              For example, as teammate Rosaria can give CRIT Rate bonus based on her CRIT Rate when using Elemental
-              Burst. In Modifier Manager, go to Buffs/Party, look for Rosaria's section and you will see a checkbox to
-              toggle this buff and an input to enter her CRIT Rate for calculation.
+              For example, as teammate Rosaria can give CRIT Rate bonus based on her CRIT Rate when
+              using Elemental Burst. In Modifier Manager, go to Buffs/Party, look for Rosaria's
+              section and you will see a checkbox to toggle this buff and an input to enter her CRIT
+              Rate for calculation.
             </li>
             <li>
-              For the modifier control to appear its source need to be present, e.g. you need to add a catalyst-wielding
-              teammate and give them Thrilling Tales of Dragon Slayers to have its buff control available.
+              For the modifier control to appear its source need to be present, e.g. you need to add
+              a catalyst-wielding teammate and give them Thrilling Tales of Dragon Slayers to have
+              its buff control available.
             </li>
           </ul>
         </li>
         <li>
-          {markGreen("Setups Manager")}. Here you can
+          <PositiveText>Setups Manager</PositiveText>. Here you can
           <ul className={LIST_DISC_CLS}>
             <li>
-              Make changes to {markYellow("Teammates")}, {markYellow("Weapon")}, {markYellow("Artifacts")}, and{" "}
-              {markYellow("Target")}. Press the item / character icons to switch them. Press 2 icons at the bottom right
-              corner to select items from your data <i>(see User Data guide section below)</i>.
+              Make changes to <HighlightText>Teammates</HighlightText>,{" "}
+              <HighlightText>Weapon</HighlightText>, <HighlightText>Artifacts</HighlightText>, and{" "}
+              <HighlightText>Target</HighlightText>. Press the item / character icons to switch
+              them. Press 2 icons at the bottom right corner to select items from your data{" "}
+              <i>(see User Data guide section below)</i>.
             </li>
             <li>
-              Switch setups and perform quick actions to setups, or open the full manager with <IoDocumentText /> and do
-              the management there. Icons meaning:
+              Switch setups and perform quick actions to setups, or open the full manager with{" "}
+              <IoDocumentText /> and do the management there. Icons meaning:
               <ul className="mt-1 pl-4 space-y-1">
                 {quickActions.map((action, i) => {
                   return (
@@ -122,19 +139,24 @@ export function CalculatorGuide() {
               </ul>
             </li>
             <li>
-              You can {markYellow("import a setup")} in 2 ways: (1) Open the full manager, choose <BiImport /> Import
-              then paste the code, choose Proceed. (2) Follow the link which contains the code.
+              You can <HighlightText>import a setup</HighlightText> in 2 ways: (1) Open the full
+              manager, choose <BiImport /> Import then paste the code, choose Proceed. (2) Follow
+              the link which contains the code.
             </li>
           </ul>
         </li>
         <li>
-          {markGreen("Calculation Results")}. With the menu <MdMoreVert className="text-xl" /> you can
+          <PositiveText>Calculation Results</PositiveText>. With the menu{" "}
+          <MdMoreVert className="text-xl" /> you can
           <ul className={LIST_DISC_CLS}>
             <li>
-              Call the {markYellow("Tracker")} to inspect the calculation details: what buffs and debuffs are used,
-              their values, sources...
+              Call the <HighlightText>Tracker</HighlightText> to inspect the calculation details:
+              what buffs and debuffs are used, their values, sources...
             </li>
-            <li>Expand the results for better view when comparing many setups (not available on small devices).</li>
+            <li>
+              Expand the results for better view when comparing many setups (not available on small
+              devices).
+            </li>
           </ul>
         </li>
       </ul>

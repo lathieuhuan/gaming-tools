@@ -1,4 +1,5 @@
 import { Fragment } from "react";
+import { EmptyFallback } from "rond";
 
 import type { CalcSetup, Character } from "@/models";
 import type { AttackReaction, CustomBuffCtrl, ElementalEvent, ElementType } from "@/types";
@@ -11,7 +12,6 @@ import { suffixOf, toCustomBuffLabel } from "@/utils/pure.utils";
 import { GenshinModifierView } from "@/components/GenshinModifierView";
 import { QuickenBuffItem, ResonanceBuffItem, VapMeltBuffItem } from "@/components/ModifierItems";
 import { AutoResonanceBuffs, ModifierContainer } from "@/components/ModifierLists";
-import { WithEmptyMessage } from "@/components/WithEmptyMessage";
 
 type TeamBuffsProps = {
   setup: CalcSetup;
@@ -63,7 +63,7 @@ export function TeamBuffs({ setup }: TeamBuffsProps) {
   }
 
   return (
-    <WithEmptyMessage message="No buffs found">
+    <EmptyFallback message="No buffs found">
       {content.map((item, index) => {
         return (
           <Fragment key={index}>
@@ -72,7 +72,7 @@ export function TeamBuffs({ setup }: TeamBuffsProps) {
           </Fragment>
         );
       })}
-    </WithEmptyMessage>
+    </EmptyFallback>
   );
 }
 
@@ -170,7 +170,7 @@ export function ElementBuffs({ character, elmtEvent }: ElementBuffsProps) {
   }
 
   return (
-    <WithEmptyMessage className="space-y-2" message="No buffs found">
+    <EmptyFallback className="space-y-2" message="No buffs found">
       {content.map((item, index) => {
         return (
           <Fragment key={index}>
@@ -179,7 +179,7 @@ export function ElementBuffs({ character, elmtEvent }: ElementBuffsProps) {
           </Fragment>
         );
       })}
-    </WithEmptyMessage>
+    </EmptyFallback>
   );
 }
 

@@ -1,10 +1,9 @@
 import { Badge, clsx, VersatileSelect } from "rond";
 
-import type { Artifact } from "@/models";
 import type { ArtifactSubStat, AttributeStat } from "@/types";
 
 import { useTranslation } from "@/hooks";
-import { $AppArtifact } from "@/services";
+import { Artifact } from "@/models";
 import { suffixOf } from "@/utils/pure.utils";
 
 // Component
@@ -12,7 +11,7 @@ import { GenshinImage } from "../GenshinImage";
 import { ArtifactLevelSelect } from "./ArtifactLevelSelect";
 import { ArtifactSubstatsControl } from "./ArtifactSubstatsControl";
 
-export interface ArtifactViewProps<T extends Artifact> {
+export type ArtifactViewProps<T extends Artifact> = {
   mutable?: boolean;
   className?: string;
   artifact?: T;
@@ -20,7 +19,8 @@ export interface ArtifactViewProps<T extends Artifact> {
   onEnhance?: (level: number, artifact: T) => void;
   onChangeMainStatType?: (type: AttributeStat, artifact: T) => void;
   onChangeSubStat?: (index: number, changes: Partial<ArtifactSubStat>, artifact: T) => void;
-}
+};
+
 export function ArtifactView<T extends Artifact>({
   className,
   artifact,
@@ -33,7 +33,7 @@ export function ArtifactView<T extends Artifact>({
   const { t } = useTranslation();
   if (!artifact) return null;
 
-  const appArtifact = $AppArtifact.get(artifact);
+  const { name, beta } = artifact.data;
   const { rarity = 5, mainStatType } = artifact;
   const mainStatTypeOptions = artifact.state.possibleMainStatTypes.map((type) => ({
     label: t(type),
@@ -47,7 +47,7 @@ export function ArtifactView<T extends Artifact>({
           className="mr-auto pl-4 pr-2 py-0.5 text-lg font-semibold text-black truncate"
           onDoubleClick={() => console.info(artifact)}
         >
-          {appArtifact?.name}
+          {name}
         </p>
         {headerAction}
       </div>
@@ -63,15 +63,15 @@ export function ArtifactView<T extends Artifact>({
 
         <div className={`bg-gradient-${rarity} relative rounded-lg shrink-0`}>
           <GenshinImage
-            src={appArtifact?.icon}
-            alt={appArtifact?.name}
+            src={artifact.icon}
+            alt={name}
             className="p-2"
             imgType="artifact"
             width={104}
             height={104}
             fallbackCls="p-2"
           />
-          <Badge active={appArtifact?.beta} className="absolute bottom-0 right-0">
+          <Badge active={beta} className="absolute bottom-0 right-0">
             BETA
           </Badge>
         </div>
@@ -94,7 +94,7 @@ export function ArtifactView<T extends Artifact>({
         <p
           className={clsx(
             `text-rarity-${rarity} text-2xl leading-7 font-bold`,
-            mutable ? "pl-6" : "pl-2"
+            mutable ? "pl-6" : "pl-2",
           )}
         >
           {artifact.mainStatValue}

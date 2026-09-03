@@ -19,79 +19,67 @@ export type EquipmentDisplayProps = Pick<ItemThumbProps, "muted" | "compact" | "
   fillable?: boolean;
   selectedType?: EquipmentType;
   onClickItem?: (type: EquipmentType) => void;
-  onClickEmptyAtfSlot?: (type: ArtifactType) => void;
+  onFillAtfSlot?: (type: ArtifactType) => void;
 };
 
 export function EquipmentDisplay(props: EquipmentDisplayProps) {
   const { weapon, atfGear, selectedType, muted, showOwner, fillable, compact } = props;
   const EmptyWrap: keyof JSX.IntrinsicElements = fillable ? "button" : "div";
 
-  const renderWeapon = (className?: string, imgCls?: string) => {
-    return (
-      <ItemThumbnail
-        className={className}
-        imgCls={imgCls}
-        muted={muted}
-        compact={compact}
-        showOwner={showOwner}
-        title={weapon.data.name}
-        item={{
-          icon: weapon.data.icon,
-          rarity: weapon.data.rarity,
-          level: weapon.level,
-          refi: weapon.refi,
-        }}
-      />
-    );
-  };
-
-  const renderArtifact = (artifact: Artifact, className?: string, imgCls?: string) => {
-    return (
-      <ItemThumbnail
-        className={className}
-        imgCls={imgCls}
-        title={artifact.data.name}
-        muted={muted}
-        compact={compact}
-        showOwner={showOwner}
-        item={{
-          icon: artifact.data[artifact.type].icon,
-          rarity: artifact.rarity,
-          level: artifact.level,
-        }}
-      />
-    );
-  };
-
   return (
     <div className={clsx("flex flex-wrap", props.className)} style={props.style}>
       <div className="p-1.5 w-1/3">
-        {muted ? (
-          renderWeapon()
-        ) : (
-          <ItemCase
-            selected={selectedType === "weapon"}
-            onClick={() => props.onClickItem?.("weapon")}
-          >
-            {renderWeapon}
-          </ItemCase>
-        )}
+        <ItemCase
+          muted={muted}
+          selected={selectedType === "weapon"}
+          onClick={() => props.onClickItem?.("weapon")}
+        >
+          {(className, imgCls) => (
+            <ItemThumbnail
+              className={className}
+              imgCls={imgCls}
+              title={weapon.data.name}
+              muted={muted}
+              compact={compact}
+              showOwner={showOwner}
+              item={{
+                icon: weapon.data.icon,
+                rarity: weapon.data.rarity,
+                level: weapon.level,
+                refi: weapon.refi,
+              }}
+            />
+          )}
+        </ItemCase>
       </div>
 
       {atfGear.slots((slot) => {
         if (slot.isFilled) {
+          const artifact = slot.piece;
+
           return (
             <div key={slot.type} className="p-1.5 w-1/3">
-              {muted ? (
-                renderArtifact(slot.piece)
-              ) : (
-                <ItemCase
-                  selected={selectedType === slot.type}
-                  onClick={() => props.onClickItem?.(slot.type)}
-                >
-                  {(className, imgCls) => renderArtifact(slot.piece, className, imgCls)}
-                </ItemCase>
-              )}
+              <ItemCase
+                muted={muted}
+                selected={selectedType === slot.type}
+                onClick={() => props.onClickItem?.(slot.type)}
+              >
+                {(className, imgCls) => (
+                  <ItemThumbnail
+                    className={className}
+                    imgCls={imgCls}
+                    title={artifact.data.name}
+                    muted={muted}
+                    compact={compact}
+                    showOwner={showOwner}
+                    item={{
+                      icon: artifact.data[artifact.type].icon,
+                      rarity: artifact.rarity,
+                      level: artifact.level,
+                    }}
+                  />
+                )}
+              </ItemCase>
             </div>
           );
         }
@@ -101,9 +89,9 @@ export function EquipmentDisplay(props: EquipmentDisplayProps) {
             <EmptyWrap
               className={clsx(
                 "p-4 w-full h-full flex-center rounded bg-dark-3",
-                fillable && "glow-on-hover"
+                fillable && "glow-on-hover",
               )}
-              onClick={fillable ? () => props.onClickEmptyAtfSlot?.(slot.type) : undefined}
+              onClick={fillable ? () => props.onFillAtfSlot?.(slot.type) : undefined}
             >
               <GenshinImage className="w-full" src={Artifact.iconOf(slot.type)} />
             </EmptyWrap>

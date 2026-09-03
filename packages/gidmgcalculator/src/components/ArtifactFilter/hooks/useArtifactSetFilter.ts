@@ -5,16 +5,16 @@ import type { ArtifactFilterSet } from "../types";
 
 import { $AppArtifact } from "@/services";
 
-type Config = {
+type Options = {
   artifactType?: ArtifactType;
 };
 
 export function useArtifactSetFilter<T extends RawArtifact = RawArtifact>(
   artifacts: T[],
   selectedCodes: number[],
-  config?: Config
+  options?: Options
 ) {
-  const { artifactType = "flower" } = config || {};
+  const { artifactType = "flower" } = options || {};
 
   const initialSets = useMemo(() => {
     const countMap = new Map<number, ArtifactFilterSet>();

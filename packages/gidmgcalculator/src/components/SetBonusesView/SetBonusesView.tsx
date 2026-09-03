@@ -1,52 +1,52 @@
 import { Array_ } from "ron-utils";
+import { EmptyFallback } from "rond";
 
 import type { ArtifactGearSet } from "@/types";
 import { parseArtifactDesc } from "@/utils/descriptionParsers";
 
-interface SetBonusesViewProps {
+type SetBonusesViewProps = {
   sets: ArtifactGearSet[];
-  noTitle?: boolean;
-}
-export function SetBonusesView({ sets, noTitle }: SetBonusesViewProps) {
+  hideTitle?: boolean;
+};
+
+export function SetBonusesView({ sets, hideTitle }: SetBonusesViewProps) {
   return (
     <div>
-      {!noTitle && <p className="text-lg leading-relaxed text-heading font-semibold">Set bonus</p>}
+      <p className="text-lg leading-relaxed text-heading font-semibold" hidden={hideTitle}>
+        Set bonus
+      </p>
 
-      {sets.length > 0 ? (
-        <div className="space-y-2">
-          {sets.map((set, index) => {
-            const content = [];
-            const { name, descriptions, setBonuses } = set.data;
+      <EmptyFallback className="space-y-2" message="No set bonus">
+        {sets.map((set, index) => {
+          const content: React.ReactNode[] = [];
+          const { name, descriptions, setBonuses } = set.data;
 
-            for (let i = 0; i <= set.bonusLv; i++) {
-              const { description = i } = setBonuses?.[i] || {};
-              const parsedDescription = Array_.toArray(description).reduce((acc, index) => {
-                if (descriptions[index]) {
-                  const parsedText = parseArtifactDesc(descriptions[index]);
-                  return `${acc} ${parsedText}`;
-                }
-                return acc;
-              }, "");
+          for (let i = 0; i <= set.bonusLv; i++) {
+            const { description = i } = setBonuses?.[i] || {};
+            const parsedDescription = Array_.toArray(description).reduce((acc, index) => {
+              if (descriptions[index]) {
+                const parsedText = parseArtifactDesc(descriptions[index]);
+                return `${acc} ${parsedText}`;
+              }
+              return acc;
+            }, "");
 
-              content.push(
-                <li key={i}>
-                  <span className="font-semibold">{i * 2 + 2}-Piece Set:</span>{" "}
-                  <span dangerouslySetInnerHTML={{ __html: parsedDescription }} />
-                </li>
-              );
-            }
-
-            return (
-              <div key={index} className="mt-1">
-                <p className="text-lg leading-relaxed font-medium text-heading">{name}</p>
-                <ul className="pl-6 list-disc space-y-1">{content}</ul>
-              </div>
+            content.push(
+              <li key={i}>
+                <span className="font-semibold">{i * 2 + 2}-Piece Set:</span>{" "}
+                <span dangerouslySetInnerHTML={{ __html: parsedDescription }} />
+              </li>,
             );
-          })}
-        </div>
-      ) : (
-        <p className="text-light-hint font-medium">No set bonus</p>
-      )}
+          }
+
+          return (
+            <div key={index} className="mt-1">
+              <p className="text-lg leading-relaxed font-medium text-heading">{name}</p>
+              <ul className="pl-6 list-disc space-y-1">{content}</ul>
+            </div>
+          );
+        })}
+      </EmptyFallback>
     </div>
   );
 }

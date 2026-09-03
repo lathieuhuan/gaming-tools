@@ -1,25 +1,15 @@
 import { memo } from "react";
 import { Badge, clsx } from "rond";
 
-import type { ElementType } from "@/types";
+import type { AppEntityOptionModel } from "./types";
 
 import { ElementIcon } from "@/components/ElementIcon";
 import { GenshinImage } from "@/components/GenshinImage";
 
-export type AppEntityOptionModel = {
-  code: number;
-  beta?: boolean;
-  name: string;
-  icon: string;
-  rarity?: number;
-  vision?: ElementType;
-  cons?: number;
-};
-
 type AppEntityOptionProps = {
   className?: string;
   imgCls?: string;
-  visible: boolean;
+  viewed: boolean;
   item: AppEntityOptionModel;
   selectedAmount?: number;
 };
@@ -27,7 +17,7 @@ type AppEntityOptionProps = {
 const AppEntityOptionCore = ({
   className,
   imgCls,
-  visible,
+  viewed,
   item,
   selectedAmount,
 }: AppEntityOptionProps) => {
@@ -41,15 +31,14 @@ const AppEntityOptionCore = ({
         className={clsx(
           "overflow-hidden relative rounded-t-lg",
           item.rarity && `bg-gradient-${item.rarity}`,
-          item.vision ? "pt-4" : "p-1"
+          item.vision ? "pt-4" : "p-1",
         )}
       >
         <div
-          className={`aspect-square transition-opacity duration-400 ${
-            visible ? "opacity-100" : "opacity-0"
-          }`}
+          data-viewed={viewed}
+          className="aspect-square transition-opacity duration-400 opacity-0 data-[viewed=true]:opacity-100"
         >
-          {visible && (
+          {viewed && (
             <GenshinImage className={imgCls} src={item.icon} imgType="unknown" fallbackCls="p-4" />
           )}
         </div>
@@ -62,11 +51,11 @@ const AppEntityOptionCore = ({
         {item.name}
       </p>
 
-      {item.vision && visible && (
+      {item.vision && viewed && (
         <div
           className={clsx(
             "absolute -top-1 -right-1 p-1 flex-center rounded-full bg-black shadow-popup",
-            item.cons !== undefined && "flex rounded-2xl pl-1.5"
+            item.cons !== undefined && "flex rounded-2xl pl-1.5",
           )}
         >
           {item.cons !== undefined && (
@@ -80,5 +69,5 @@ const AppEntityOptionCore = ({
 };
 
 export const AppEntityOption = memo(AppEntityOptionCore, (prev, next) => {
-  return prev.visible === next.visible && prev.selectedAmount === next.selectedAmount;
+  return prev.viewed === next.viewed && prev.selectedAmount === next.selectedAmount;
 });

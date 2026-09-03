@@ -42,7 +42,7 @@ function getDefaultInitValue(type: ModInputType) {
 function createModCtrlInputs(
   inputConfigs: ModInputSpec[] = [],
   forSelf = true,
-  useMaxValue = false
+  useMaxValue = false,
 ) {
   const undesiredFor = forSelf ? "FOR_TEAM" : "FOR_SELF";
   const inputs: number[] = [];
@@ -110,7 +110,7 @@ export function createTeamBuffCtrls(setup: CalcSetup): TeamBuffCtrl[] {
   return Array_.filterMap(
     $AppData.teamBuffs,
     (buff) => teamBuffIds.has(buff.id),
-    createModCtrl(false)
+    createModCtrl(false),
   );
 }
 
@@ -132,14 +132,14 @@ export function createAbilityBuffCtrls(data: AppCharacter, forSelf: boolean): Ab
 
 export function createAbilityDebuffCtrls(
   data: AppCharacter,
-  forSelf: boolean
+  forSelf: boolean,
 ): AbilityDebuffCtrl[] {
   return data.debuffs?.map(createModCtrl(forSelf)) || [];
 }
 
 export function createWeaponBuffCtrls(
   weapon: AppWeapon | undefined,
-  forSelf: boolean
+  forSelf: boolean,
 ): WeaponBuffCtrl[] {
   const { buffs = [] } = weapon || {};
   return Array_.filterMap(buffs, filterFor(forSelf), createModCtrl(forSelf));
@@ -170,7 +170,7 @@ export function createMainArtifactBuffCtrls(sets: ArtifactGearSet[]): ArtifactBu
 export function createArtifactBuffCtrls(
   artifact: AppArtifact | undefined,
   forSelf: boolean,
-  maxBonusLv = 1
+  maxBonusLv = 1,
 ): ArtifactBuffCtrl[] {
   if (artifact?.buffs) {
     return Array_.filterMap(
@@ -180,7 +180,7 @@ export function createArtifactBuffCtrls(
         setData: artifact,
         code: artifact.code,
         ...createModCtrl(true)(buff),
-      })
+      }),
     );
   }
 
@@ -235,7 +235,7 @@ export function createRsnModCtrls(team: Team) {
   const buffCtrls: ResonanceModCtrl[] = [];
   const debuffCtrls: ResonanceModCtrl[] = [];
 
-  team.elmtCount.forEach((element, count) => {
+  team.elmtCount.forEach((count, element) => {
     if (isManualRsnElmt(element) && count >= 2) {
       const ctrl: ResonanceModCtrl = {
         element,
@@ -268,7 +268,7 @@ export function createElementalEvent(): ElementalEvent {
     infuseReaction: null,
     reaction: null,
     absorbReaction: null,
-    absorption: null, 
+    absorption: null,
     polestarProc: false,
     polestarCount: 0,
     vortexLv: DEFAULT_STELLAR_VORTEX_LV,
@@ -279,7 +279,7 @@ export function enhanceCtrls<T extends ModifierBaseSpec, TExtra extends object =
   ctrls: ModifierCtrlState[],
   mods?: T[],
   extraProps: TExtra = {} as TExtra,
-  extraCheck: (ctrl: ModifierCtrlState, mod: T) => boolean = () => true
+  extraCheck: (ctrl: ModifierCtrlState, mod: T) => boolean = () => true,
 ) {
   if (mods) {
     return ctrls.reduce<(ModifierCtrl<T> & TExtra)[]>((result, ctrl) => {

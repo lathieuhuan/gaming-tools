@@ -53,7 +53,7 @@ export function PanelGears(props: PanelGearsProps) {
         {...props}
         detailType={detail.type}
         onClickDetail={onClickDetail}
-        onClickEmptyAtfSlot={(type) => {
+        onFillAtfSlot={(type) => {
           actions.requestSwitchArtifact({ isFilled: false, type });
         }}
       />

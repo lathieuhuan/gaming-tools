@@ -4,10 +4,10 @@ export function useChildListObserver<T extends HTMLElement = HTMLDivElement>(opt
   onNodesAdded?: (addedList: NodeList) => void;
   onNodesRemoved?: (removedList: NodeList) => void;
 }) {
-  const mutateObsCont = useRef<T>(null);
+  const containerRef = useRef<T>(null);
 
   useEffect(() => {
-    if (mutateObsCont.current) {
+    if (containerRef.current) {
       const mutationObserver = new MutationObserver((records) => {
         for (const record of records) {
           options.onNodesAdded?.(record.addedNodes);
@@ -15,11 +15,11 @@ export function useChildListObserver<T extends HTMLElement = HTMLDivElement>(opt
         }
       });
 
-      mutationObserver.observe(mutateObsCont.current, { childList: true });
+      mutationObserver.observe(containerRef.current, { childList: true });
 
       return () => mutationObserver.disconnect();
     }
   }, []);
 
-  return { observedAreaRef: mutateObsCont };
+  return { observedAreaRef: containerRef };
 }

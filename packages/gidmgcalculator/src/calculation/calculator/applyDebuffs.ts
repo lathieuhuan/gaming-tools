@@ -15,7 +15,7 @@ export function applyDebuffs(
   main: Character,
   teammates: Teammate[],
   setup: CalcSetup,
-  target: TargetCalc
+  target: TargetCalc,
 ) {
   const { team } = setup;
 
@@ -41,7 +41,7 @@ export function applyDebuffs(
           const elmts: ElementType[] = [...PHEC_ELEMENT_TYPES];
           const { elmtCount } = team;
 
-          elmtCount.forEach((elmt) => {
+          elmtCount.forEach((_, elmt) => {
             if (elmts.includes(elmt)) paths.add(elmt);
           });
 
@@ -60,7 +60,7 @@ export function applyDebuffs(
     label: string,
     performer: TeamMember,
     effects: DebuffSpec["effects"] = [],
-    inputs: number[] = []
+    inputs: number[] = [],
   ) {
     for (const effect of Array_.toArray(effects)) {
       if (team.isAvailableEffect(effect) && performer.canPerformEffect(effect, inputs)) {

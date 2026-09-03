@@ -95,7 +95,7 @@ export function EntitySelectTemplate({
       placeholder="Search..."
       disabled={filterOn}
       value={keyword}
-      onChange={setKeyword}
+      onChange={setKeyword} // TODO debounce
     />
   );
 

@@ -1,8 +1,15 @@
-import { ReactNode, useLayoutEffect, useRef, useState } from "react";
-import { clsx, ItemCase, useIntersectionObserver, type EntitySelectRenderArgs } from "rond";
+import { ReactNode, useEffect, useLayoutEffect, useRef, useState } from "react";
+import {
+  clsx,
+  ItemCase,
+  ObservedItem,
+  useIntersectionObserver,
+  type EntitySelectRenderArgs,
+} from "rond";
 
-import { filterSortOptions } from "./_utils";
-import { AppEntityOption, AppEntityOptionModel } from "./AppEntityOption";
+import { AppEntityOption } from "./AppEntityOption";
+import { filterSortOptions } from "./filterSortOptions";
+import type { AppEntityOptionModel } from "./types";
 
 /** false if this pick is invalid */
 type Return = boolean | void;
@@ -12,7 +19,6 @@ export type OptionValidity = Return | Promise<Return>;
 export type AfterSelectAppEntity = (itemCode: number, quantity?: number) => void;
 
 export type AppEntityOptionsProps<T> = {
-  className?: string;
   data: T[];
   initialActiveCode?: number;
   hiddenCodes?: Set<number>;
@@ -24,19 +30,18 @@ export type AppEntityOptionsProps<T> = {
   /** Remember to handle case shouldHideSelected */
   renderOptionConfig?: (
     afterSelect: AfterSelectAppEntity,
-    body: HTMLDivElement | null
+    body: HTMLDivElement | null,
   ) => ReactNode;
   onChange?: (entity: T | undefined, isConfigStep: boolean) => OptionValidity;
   onClose: () => void;
 };
 
 export function AppEntityOptions<T extends AppEntityOptionModel = AppEntityOptionModel>({
-  className = "",
   data,
   shouldHideSelected,
   emptyText = "No data",
   hasConfigStep,
-  initialActiveCode = -1,
+  initialActiveCode,
   hiddenCodes,
   renderOptionConfig,
   onChange,
@@ -53,27 +58,30 @@ export function AppEntityOptions<T extends AppEntityOptionModel = AppEntityOptio
   const [pickedCodes, setPickedCodes] = useState(new Set<number>());
   // for highlight
   const [activeCode, setActiveCode] = useState(initialActiveCode);
-  const [empty, setEmpty] = useState(false);
   const [overflow, setOverflow] = useState(true);
 
-  const { observedAreaRef, visibleMap, itemUtils } = useIntersectionObserver();
+  const { container } = useIntersectionObserver();
 
-  useLayoutEffect(() => {
+  const isItemVisible = (item: ObservedItem<HTMLDivElement>) => {
+    return item.viewed && !item.element.hidden;
+  };
+
+  useEffect(() => {
     const handleEnter = (e: KeyboardEvent) => {
+      const inputEl = inputRef?.current;
+
       if (
         e.key === "Enter" &&
-        inputRef?.current &&
-        document.activeElement === inputRef.current &&
-        inputRef.current.value.length
+        inputEl &&
+        inputEl === document.activeElement &&
+        inputEl.value.length
       ) {
-        for (const item of itemUtils.queryAll()) {
-          if (item.isVisible()) {
-            const code = item.getId();
-            const foundItem = code ? data.find((entity) => entity.code === +code) : undefined;
+        const firstVisibleItem = container.getAllItems().find(isItemVisible);
+        const dataItem =
+          firstVisibleItem && data.find((entity) => firstVisibleItem.is(entity.code));
 
-            if (foundItem) void selectOption(foundItem);
-            return;
-          }
+        if (dataItem) {
+          void selectOption(dataItem);
         }
       }
     };
@@ -81,7 +89,7 @@ export function AppEntityOptions<T extends AppEntityOptionModel = AppEntityOptio
     document.addEventListener("keydown", handleEnter);
 
     if (initialActiveCode) {
-      itemUtils.queryById(initialActiveCode)?.element.scrollIntoView();
+      container.getItemById(initialActiveCode)?.element.scrollIntoView();
     }
 
     return () => {
@@ -90,24 +98,22 @@ export function AppEntityOptions<T extends AppEntityOptionModel = AppEntityOptio
   }, []);
 
   useLayoutEffect(() => {
-    // check if no item visible
-    const visibleItems = itemUtils.queryAll().filter((item) => item.isVisible());
+    const noItemVisible = !container.getAllItems().some(isItemVisible);
 
-    setEmpty(!visibleItems.length);
-
-    if (!visibleItems.length && hasConfigStep) {
+    if (noItemVisible && hasConfigStep) {
       void onChange?.(undefined, true);
       setActiveCode(0);
     }
 
     // check if container overflow to add padding right
-    const itemContainer = bodyRef.current?.querySelector(".item-container");
-    const { parentElement } = itemContainer || {};
+    const observerEl = container.ref.current;
+    const observerHeight = observerEl?.clientHeight;
+    const containerHeight = observerEl?.firstElementChild?.clientHeight;
+
     const newOverflow = Boolean(
-      itemContainer?.clientHeight &&
-        parentElement?.clientHeight &&
-        itemContainer.clientHeight > parentElement.clientHeight
+      containerHeight && observerHeight && containerHeight > observerHeight,
     );
+
     if (newOverflow !== overflow) {
       setOverflow(newOverflow);
     }
@@ -159,37 +165,34 @@ export function AppEntityOptions<T extends AppEntityOptionModel = AppEntityOptio
   ];
 
   return (
-    <div ref={bodyRef} className={"h-full flex custom-scrollbar gap-4 scroll-smooth " + className}>
+    <div ref={bodyRef} className="h-full flex custom-scrollbar gap-4 scroll-smooth">
       <div
-        ref={observedAreaRef}
+        ref={container.ref}
         className={clsx(
           "h-full w-full shrink-0 md:w-auto md:shrink md:min-w-100 xm:min-w-0 grow custom-scrollbar",
           overflow && "xm:pr-2",
-          searchOn && "pt-8"
+          searchOn && "pt-8",
         )}
       >
-        <div className="item-container flex flex-wrap">
+        <div className="flex flex-wrap peer">
           {options.map((option) => {
             return (
               <div
                 key={option.key}
-                {...itemUtils.getProps(option.key, [
-                  "grow-0 p-2 relative",
-                  itemWidthCls,
-                  option.hidden && "hidden",
-                ])}
+                className={clsx("grow-0 p-2 relative", itemWidthCls)}
+                hidden={option.hidden}
+                {...container.itemAttributes(option.key)}
               >
                 <ItemCase
                   selected={option.key === activeCode}
                   onClick={() => void selectOption(option.data)}
-                  // onDoubleClick={() => onDoubleClickPickerItem(item)}
                 >
                   {(className, imgCls) => (
                     <AppEntityOption
                       className={className}
                       imgCls={imgCls}
-                      visible={visibleMap[option.key]}
                       item={option.data}
+                      viewed={container.isItemViewed(option.key)}
                       selectedAmount={itemCounts[option.key] || 0}
                     />
                   )}
@@ -199,7 +202,9 @@ export function AppEntityOptions<T extends AppEntityOptionModel = AppEntityOptio
           })}
         </div>
 
-        {empty && <p className="py-4 text-light-hint text-lg text-center">{emptyText}</p>}
+        <p className="py-4 text-light-hint text-lg text-center peer-has-[>:not([hidden])]:hidden">
+          {emptyText}
+        </p>
       </div>
 
       {hasConfigStep && (

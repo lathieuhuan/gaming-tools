@@ -41,6 +41,7 @@ export default defineConfig([
       "@typescript-eslint/no-unsafe-call": "warn",
       "@typescript-eslint/no-unsafe-return": "warn",
       "@typescript-eslint/no-unsafe-function-type": "off",
+      "@typescript-eslint/no-ban-types": "off",
       "prefer-const": "warn",
       "react-hooks/exhaustive-deps": "off",
       "react-refresh/only-export-components": "warn",

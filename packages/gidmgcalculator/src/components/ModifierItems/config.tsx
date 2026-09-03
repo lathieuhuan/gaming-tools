@@ -1,11 +1,11 @@
-import { markGreen } from "../Span";
+import { PositiveText } from "@/components/Text";
 
 export const SUPERCONDUCT_DEBUFF_CONFIG = {
   heading: "Superconduct",
   description: (
     <>
-      Reduces the {markGreen("Physical RES")} of enemies by {markGreen("40%", "bold")} for 12
-      seconds.
+      Reduces the <PositiveText>Physical RES</PositiveText> of enemies by{" "}
+      <PositiveText bold>40%</PositiveText> for 12 seconds.
     </>
   ),
 };

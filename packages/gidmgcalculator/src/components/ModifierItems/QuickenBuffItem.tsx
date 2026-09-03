@@ -2,7 +2,7 @@ import type { Character } from "@/models";
 import type { ElementType, QuickenReaction } from "@/types";
 
 import { GenshinModifierView, type GenshinModifierViewProps } from "../GenshinModifierView";
-import { markGreen } from "../Span";
+import { PositiveText } from "@/components/Text";
 
 type QuickenBuffItemProps = Pick<GenshinModifierViewProps, "mutable" | "checked" | "onToggle"> & {
   reaction: QuickenReaction;
@@ -27,7 +27,7 @@ export function QuickenBuffItem({ reaction, element, character, ...rest }: Quick
       description={
         <>
           Increase base <span className={`text-${element} capitalize`}>{element} DMG</span> by{" "}
-          {markGreen(bonusValue, "bold")}.
+          <PositiveText bold>{bonusValue}</PositiveText>.
         </>
       }
     />

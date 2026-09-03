@@ -6,19 +6,17 @@ import { updateUI } from "@Store/ui";
 import { addUserDatabase } from "@Store/userdbSlice";
 import { DynamicStoreContext } from "./context";
 
-import { SettingsHydrationGuard } from "./SettingsHydrationGuard";
-
 type StoreConfig = ReturnType<typeof setupStore>;
 
 type DynamicStoreProviderProps = {
   children: (config: StoreConfig) => ReactElement;
 };
 
-function DynamicStoreControl(props: DynamicStoreProviderProps) {
+export function DynamicStoreProvider(props: DynamicStoreProviderProps) {
   const [config, setConfig] = useState(() =>
     setupStore({
       persistUserData: useSettingsStore.getState().persistUserData,
-    })
+    }),
   );
 
   useLayoutEffect(() => {
@@ -41,7 +39,7 @@ function DynamicStoreControl(props: DynamicStoreProviderProps) {
             weapons: userdb.userWps,
             artifacts: userdb.userArts,
             setups: userdb.userSetups,
-          })
+          }),
         );
       }
 
@@ -54,13 +52,5 @@ function DynamicStoreControl(props: DynamicStoreProviderProps) {
     <DynamicStoreContext.Provider value={config}>
       {props.children(config)}
     </DynamicStoreContext.Provider>
-  );
-}
-
-export function DynamicStoreProvider(props: DynamicStoreProviderProps) {
-  return (
-    <SettingsHydrationGuard>
-      <DynamicStoreControl {...props} />
-    </SettingsHydrationGuard>
   );
 }

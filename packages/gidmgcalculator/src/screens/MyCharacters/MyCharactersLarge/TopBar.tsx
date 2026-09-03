@@ -15,18 +15,19 @@ export function TopBar() {
   const activeChar = useSelector(selectActiveCharacter);
   const modalCtrl = useMyCharactersModalCtrl();
 
-  const { observedAreaRef: intersectObsArea, visibleMap, itemUtils } = useIntersectionObserver();
+  const { container, observe, unobserve } = useIntersectionObserver();
+
   const { observedAreaRef: listObsArea } = useChildListObserver({
     onNodesAdded(addedNodes) {
-      addedNodes.forEach((node) => itemUtils.observe(node as Element));
+      addedNodes.forEach((node) => observe(node as Element));
     },
     onNodesRemoved(removedNodes) {
-      removedNodes.forEach((node) => itemUtils.observe(node as Element));
+      removedNodes.forEach((node) => unobserve(node as Element));
     },
   });
 
   const scrollList = (code: number) => {
-    itemUtils.queryById(code)?.element.scrollIntoView();
+    container.getItemById(code)?.element.scrollIntoView();
   };
 
   useEffect(() => {
@@ -36,16 +37,16 @@ export function TopBar() {
 
       const delta = Math.max(-1, Math.min(1, wheelDelta));
 
-      if (intersectObsArea.current) {
-        intersectObsArea.current.scrollLeft -= delta * 50;
+      if (container.ref.current) {
+        container.ref.current.scrollLeft -= delta * 50;
       }
       e.preventDefault();
     };
 
-    intersectObsArea.current?.addEventListener("wheel", scrollHorizontally);
+    container.ref.current?.addEventListener("wheel", scrollHorizontally);
 
     return () => {
-      intersectObsArea.current?.removeEventListener("wheel", scrollHorizontally);
+      container.ref.current?.removeEventListener("wheel", scrollHorizontally);
     };
   }, []);
 
@@ -67,35 +68,33 @@ export function TopBar() {
           </div>
         ) : null}
 
-        <div ref={intersectObsArea} className="mt-2 w-full h-20 hide-scrollbar">
+        <div ref={container.ref} className="mt-2 w-full h-20 hide-scrollbar">
           <div ref={listObsArea} className="flex">
             {characters.map(({ code }) => {
               const appCharacter = $AppCharacter.get(code);
               if (!appCharacter) return null;
-              const visible = visibleMap[code];
+              const viewed = container.isItemViewed(code);
 
               return (
                 <div
                   key={code}
                   data-selected={code === activeChar}
-                  {...itemUtils.getProps(
-                    code,
-                    "mx-1 border-b-3 border-transparent cursor-pointer group/cell data-[selected=true]/cell:border-link"
-                  )}
+                  className="mx-1 border-b-3 border-transparent cursor-pointer group/cell data-[selected=true]:border-link"
                   onClick={() => dispatch(viewDbCharacter(code))}
+                  {...container.itemAttributes(code)}
                 >
                   <div
                     className={clsx(
                       "size-15 min-w-15 rounded-circle border-3 border-light-1/30 bg-black/30",
                       "group-data-[selected=true]/cell:border-link group-data-[selected=true]/cell:bg-link",
-                      appCharacter.sideIcon ? "m-2" : "m-1 overflow-hidden"
+                      appCharacter.sideIcon ? "m-2" : "m-1 overflow-hidden",
                     )}
                   >
                     <div
-                      data-visible={visible}
-                      className="w-ful h-full transition-opacity duration-400 opacity-0 data-[visible=true]:opacity-100"
+                      data-viewed={viewed}
+                      className="w-full h-full transition-opacity duration-400 opacity-0 data-[viewed=true]:opacity-100"
                     >
-                      {visible && (
+                      {viewed && (
                         <GenshinImage
                           src={appCharacter.sideIcon || appCharacter.icon}
                           alt="icon"

@@ -1,7 +1,7 @@
 import { ReactNode } from "react";
 import { EntitySelectTemplate, type DrawerProps } from "rond";
 
-import { AppEntityOptionModel } from "./AppEntityOption";
+import type { AppEntityOptionModel } from "./types";
 import { AppEntityOptions, type AppEntityOptionsProps } from "./AppEntityOptions";
 
 export type AppEntitySelectProps<T extends AppEntityOptionModel = AppEntityOptionModel> =

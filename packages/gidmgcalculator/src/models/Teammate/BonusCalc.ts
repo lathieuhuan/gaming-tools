@@ -1,11 +1,19 @@
-import type { BonusAttributeScalingSpec, InputStackSpec, TalentLevelIncrementBaseSpec } from "@/types";
+import type {
+  BonusAttributeScalingSpec,
+  InputStackSpec,
+  TalentLevelIncrementBaseSpec,
+} from "@/types";
 
 import { AbstractBonusCalc } from "../AbstractBonusCalc";
 
 export class BonusCalc extends AbstractBonusCalc {
   protected getBasedOn(config: BonusAttributeScalingSpec) {
-    const { field, altIndex, baseline = 0, isDynamic = true } = this.parseBasedOn(config);
-    const basedOnValue = this.getInput(altIndex);
+    const { field, altIndex, baseline = 0, isDynamic = true, max } = this.parseBasedOn(config);
+    let basedOnValue = this.getInput(altIndex);
+
+    if (max) {
+      basedOnValue = Math.min(basedOnValue, max);
+    }
 
     return {
       field,

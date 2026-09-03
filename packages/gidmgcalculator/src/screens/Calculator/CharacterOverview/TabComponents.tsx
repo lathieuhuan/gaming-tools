@@ -1,6 +1,7 @@
 import { CarouselSpace, Tabs } from "rond";
+import { useState } from "react";
 
-import { useCalcStore } from "@Store/calculator";
+import { useCalcStore, useShallowCalcStore } from "@Store/calculator";
 import { updateMain, updateMainWeapon } from "@Store/calculator/actions";
 import { selectActiveMain, selectSetup } from "@Store/calculator/selectors";
 
@@ -8,14 +9,19 @@ import { ConstellationList, TalentList } from "@/components/AbilityLists";
 import { AttributeTable } from "@/components/AttributeTable";
 import { SetBonusesView } from "@/components/SetBonusesView";
 import { WeaponView } from "@/components/WeaponCard";
-import { useState } from "react";
 
 export function AttributesTab() {
-  const allAttrs = useCalcStore((state) => selectActiveMain(state).allAttrsCtrl.finals);
+  const { allAttrs, attkBonusCtrl } = useShallowCalcStore((state) => {
+    const { allAttrsCtrl, attkBonusCtrl } = selectActiveMain(state);
+    return {
+      allAttrs: allAttrsCtrl.finals,
+      attkBonusCtrl,
+    };
+  });
 
   return (
     <div className="h-full custom-scrollbar">
-      <AttributeTable attributes={allAttrs} />
+      <AttributeTable attributes={allAttrs} attkBonusCtrl={attkBonusCtrl} />
     </div>
   );
 }
@@ -47,8 +53,9 @@ export function ArtifactsTab() {
   return (
     <div className="h-full flex flex-col">
       <Tabs
-        level={2}
-        options={[
+        size="md"
+        variant="primary"
+        items={[
           { value: 0, label: "Details" },
           { value: 1, label: "Set Bonus" },
         ]}
@@ -61,7 +68,7 @@ export function ArtifactsTab() {
           <AttributeTableTab />
         </div>
         <div className="h-full hide-scrollbar">
-          <SetBonusesView sets={atfGear.sets} noTitle />
+          <SetBonusesView hideTitle sets={atfGear.sets} />
         </div>
       </CarouselSpace>
     </div>

@@ -1,18 +1,15 @@
 import { useQuery } from "@tanstack/react-query";
-import { useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 import { FaCaretDown } from "react-icons/fa";
-import { Array_, round } from "ron-utils";
-import { CloseButton, LoadingSpin, StatsTable, Tabs, VersatileSelect } from "rond";
+import { CloseButton, clsx, LoadingSpin, StatsTable, VersatileSelect } from "rond";
 
-import type { AppCharacter, TalentType } from "@/types";
+import type { AppCharacter } from "@/types";
 
-import { getTalentDefaultValues } from "@/calculation/calculator/getTalentDefaultValues";
-import { ATTACK_PATTERNS } from "@/constants/global";
 import { useTranslation } from "@/hooks";
-import { Character } from "@/models";
 import { fetchTalentDescriptions } from "@/services/app-data";
 import { genSequentialOptions } from "@/utils/pure.utils";
 import { NORMAL_ATTACK_ICONS } from "./config";
+import { useDetailedTalents } from "./useDetailedTalents";
 
 // Component
 import { HintText } from "@/components/Text";
@@ -68,7 +65,7 @@ export function TalentDetail({
     }
   }, [isPassiveTalent]);
 
-  const talents = useMemo(() => processTalents(character, talentLevel, t), [talentLevel]);
+  const talents = useDetailedTalents(character, talentLevel, t);
 
   const talent = talents[detailIndex];
   const levelable = talent?.type !== "altSprint";
@@ -128,22 +125,25 @@ export function TalentDetail({
         />
 
         <p className={`text-lg font-semibold text-${vision} text-center`}>{talent.name}</p>
-        <Tabs
-          className="my-2"
-          options={[
-            {
-              value: "description",
-              label: "Talent Info",
-            },
-            {
-              value: "attributes",
-              label: "Skill Attributes",
-              disabled: isPassiveTalent,
-            },
-          ]}
-          value={tab}
-          onChange={setTab}
-        />
+        <div className="w-full flex rounded-full overflow-hidden divide-x-2 divide-dark-3">
+          <Tab
+            data-slot="tab-option"
+            data-value="description"
+            active={tab === "description"}
+            onClick={() => setTab("description")}
+          >
+            Talent Info
+          </Tab>
+          <Tab
+            data-slot="tab-option"
+            data-value="attributes"
+            active={tab === "attributes"}
+            disabled={isPassiveTalent}
+            onClick={() => setTab("attributes")}
+          >
+            Skill Attributes
+          </Tab>
+        </div>
 
         {tab === "attributes" ? (
           <div>
@@ -199,107 +199,19 @@ export function TalentDetail({
   );
 }
 
-type ProcessedStat = {
-  name: string;
-  value: string | number;
-};
-
-type ProcessedTalentType = TalentType | "A1" | "A4" | "utility";
-
-type ProcessedTalent = {
-  name: string;
-  label?: string;
-  type: ProcessedTalentType;
-  stats: ProcessedStat[];
-};
-
-function processTalents(
-  character: AppCharacter,
-  level: number,
-  translate: (word: string) => string,
-): ProcessedTalent[] {
-  const { NAs, ES, EB, altSprint } = character.activeTalents;
-
-  const result: ProcessedTalent[] = [
-    { name: NAs.name, type: "NAs", label: translate("NAs"), stats: [] },
-    { name: ES.name, type: "ES", label: translate("ES"), stats: [] },
-    { name: EB.name, type: "EB", label: translate("EB"), stats: [] },
-  ];
-
-  for (const attPatt of ATTACK_PATTERNS) {
-    const default_ = getTalentDefaultValues(character, attPatt);
-    const resultKey = attPatt === "ES" || attPatt === "EB" ? attPatt : "NAs";
-    const talent = result.find((item) => item.type === resultKey);
-    if (!talent) continue;
-
-    for (const stat of character.calcList[attPatt]) {
-      const factors = Array_.toArray(stat.factor);
-      const { flatFactor } = stat;
-      const factorStrings = [];
-
-      if (factors.some((factor) => typeof factor !== "number" && factor.scale === 0)) {
-        continue;
-      }
-
-      for (const factor of factors) {
-        const {
-          root,
-          scale = default_.scale,
-          basedOn = default_.basedOn,
-        } = typeof factor === "number" ? { root: factor } : factor;
-
-        if (scale && root) {
-          let string = round(root * Character.getTalentMult(scale, level), 2) + "%";
-
-          if (basedOn) {
-            string += ` ${translate(basedOn)}`;
-          }
-
-          factorStrings.push(string);
-        }
-      }
-
-      if (flatFactor) {
-        const { root, scale = default_.flatFactorScale } =
-          typeof flatFactor === "number" ? { root: flatFactor } : flatFactor;
-
-        factorStrings.push(Math.round(root * (scale ? Character.getTalentMult(scale, level) : 1)));
-      }
-
-      talent.stats.push({
-        name: stat.name,
-        value: factorStrings.join(" + "),
-      });
-    }
-  }
-
-  result[2].stats.push({
-    name: "Energy cost",
-    value: character.EBcost,
-  });
-
-  if (altSprint) {
-    result.push({
-      name: altSprint.name,
-      type: "altSprint",
-      label: translate("altSprint"),
-      stats: [],
-    });
-  }
-
-  const passiveTypes = ["A1", "A4", "utility"] as const;
-  const passiveLabels = ["Ascension 1", "Ascension 4", "Utility"];
-
-  result.push(
-    ...character.passiveTalents.map<ProcessedTalent>((talent, i) => {
-      return {
-        name: talent.name,
-        type: passiveTypes[i],
-        label: passiveLabels[i],
-        stats: [],
-      };
-    }),
+function Tab({
+  className,
+  active,
+  ...restProps
+}: React.ComponentProps<"button"> & { active: boolean }) {
+  return (
+    <button
+      type="button"
+      className={clsx(
+        "w-1/2 py-0.5 text-black font-bold flex-center disabled:opacity-disabled",
+        active ? "bg-heading" : "bg-light-1 glow-on-hover",
+      )}
+      {...restProps}
+    />
   );
-
-  return result;
 }

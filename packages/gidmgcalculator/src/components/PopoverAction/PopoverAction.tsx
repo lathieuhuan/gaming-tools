@@ -1,35 +1,30 @@
-import { cloneElement, useState } from "react";
-import { isFunction } from "ron-utils";
+import { useState } from "react";
 import { Popover, PopoverProps, useClickOutside } from "rond";
 
 type PopoverActionProps = Omit<PopoverProps, "children" | "active" | "content"> & {
-  content: React.ReactNode | ((close: () => void) => React.ReactNode);
-  children: React.ReactElement;
+  content: React.ReactNode | ((props: { handleClose: () => void }) => React.ReactNode);
+  children: (props: { onClick: (e: React.MouseEvent<HTMLElement>) => void }) => React.ReactElement;
 };
 
 export function PopoverAction({ content, children, ...popoverProps }: PopoverActionProps) {
   const [active, setActive] = useState(false);
   const popoverRef = useClickOutside<HTMLDivElement>(() => setActive(false));
 
-  const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleClick = (e: React.MouseEvent<HTMLElement>) => {
     e.stopPropagation();
     setActive(!active);
-
-    const { onClick } = children.props;
-
-    if (isFunction<React.MouseEventHandler>(onClick)) {
-      onClick(e);
-    }
   };
 
   return (
     <div className="relative">
-      {cloneElement(children, {
-        onClick: handleClick,
-      })}
+      {children({ onClick: handleClick })}
 
       <Popover ref={popoverRef} active={active} {...popoverProps}>
-        {typeof content === "function" ? content(() => setActive(false)) : content}
+        {typeof content === "function"
+          ? content({
+              handleClose: () => setActive(false),
+            })
+          : content}
       </Popover>
     </div>
   );

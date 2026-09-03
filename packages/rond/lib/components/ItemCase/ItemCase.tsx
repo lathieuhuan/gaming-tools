@@ -1,8 +1,9 @@
-import type { ClassValue } from "clsx";
 import { cn } from "@lib/utils";
+import type { ClassValue } from "clsx";
+
 import "./ItemCase.styles.scss";
 
-export type ItemCaseProps = Omit<React.HTMLAttributes<HTMLDivElement>, "children"> & {
+export type ItemCaseProps = Omit<React.ComponentProps<"div">, "children"> & {
   className?: ClassValue;
   selected?: boolean;
   muted?: boolean;
