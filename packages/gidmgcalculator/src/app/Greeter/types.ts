@@ -1,6 +1,6 @@
 import type { Update } from "@/services";
 
-export type AppMetadata = {
+export type AppGeneralData = {
   version: string;
   updates: Update[];
   supporters: string[];

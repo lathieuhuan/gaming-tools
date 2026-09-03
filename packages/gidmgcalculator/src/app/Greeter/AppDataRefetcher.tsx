@@ -4,7 +4,7 @@ import { Button } from "rond";
 
 import { useTimer } from "@/hooks/useTimer";
 
-type MetadataRefetcherProps = {
+type AppDataRefetcherProps = {
   className?: string;
   cooldown?: number;
   isLoading: boolean;
@@ -13,14 +13,14 @@ type MetadataRefetcherProps = {
   onRefetch: () => void;
 };
 
-export function MetadataRefetcher({
+export function AppDataRefetcher({
   className = "",
   cooldown = 10,
   isLoading,
   isError,
   error = "Failed to fetch App Data.",
   onRefetch,
-}: MetadataRefetcherProps) {
+}: AppDataRefetcherProps) {
   const { seconds, start } = useTimer();
 
   useEffect(() => {

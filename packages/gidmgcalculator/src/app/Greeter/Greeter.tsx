@@ -2,21 +2,21 @@ import { useLayoutEffect, useState } from "react";
 import { FaDiscord } from "react-icons/fa";
 import { Button, clsx, Modal, Skeleton } from "rond";
 
-import type { AppMetadata } from "./types";
+import type { AppGeneralData } from "./types";
 
 import { useSettingsStore } from "@Store/settings";
 import { updateUI, useUIStore } from "@Store/ui";
 import { $Greeter } from "./logic/GreeterService";
 
 // Components
+import { AppDataRefetcher } from "./AppDataRefetcher";
 import { Introduction } from "./Introduction";
-import { MetadataRefetcher } from "./MetadataRefetcher";
 
 type State = {
   status: "loading" | "success" | "error";
   error?: string;
   cooldown?: number;
-  metadata?: AppMetadata;
+  data?: AppGeneralData;
 };
 
 export const Greeter = () => {
@@ -46,7 +46,7 @@ export const Greeter = () => {
     } else {
       setState({
         status: "success",
-        metadata: $Greeter.metadata,
+        data: $Greeter.data,
       });
       updateUI({ appReady: true });
     }
@@ -89,7 +89,7 @@ export const Greeter = () => {
             patchCls: "text-base",
             skeletonCls: "h-4",
           };
-    const version = state.metadata?.version;
+    const version = state.data?.version;
 
     return (
       <h1 className={clsx("text-heading text-center font-bold relative", config.cls)}>
@@ -120,7 +120,7 @@ export const Greeter = () => {
             {renderIntroTitle("small")}
           </div>
 
-          <MetadataRefetcher
+          <AppDataRefetcher
             className="my-2"
             isLoading={isLoading}
             isError={state.status === "error"}
@@ -145,7 +145,7 @@ export const Greeter = () => {
       closable={state.status === "success"}
       onClose={() => updateUI({ appModalType: "" })}
     >
-      <Introduction className="grow" metadata={state.metadata} loading={isLoading} />
+      <Introduction className="grow" data={state.data} loading={isLoading} />
 
       <div className="mt-4 flex justify-end">
         <a href="https://discord.gg/gRxYCHqAAC" target="_blank">

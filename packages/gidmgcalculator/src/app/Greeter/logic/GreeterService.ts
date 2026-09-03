@@ -1,6 +1,6 @@
 import { assertIsError, delay } from "ron-utils";
 
-import type { AppMetadata } from "../types";
+import type { AppGeneralData } from "../types";
 
 import { MINIMUM_SYSTEM_VERSION } from "@/constants/config";
 import { $AppData, AllData } from "@/services";
@@ -22,7 +22,7 @@ class GreeterService {
   private lastVersionCheckTime = new TimeStore("lastVersionCheckTime");
   private isFetchedAllData = false;
 
-  metadata: AppMetadata = {
+  data: AppGeneralData = {
     version: "",
     updates: [],
     supporters: [],
@@ -34,15 +34,15 @@ class GreeterService {
     this.allDataChannel.onRequest = () => {
       if (this.isFetchedAllData) {
         this.allDataChannel.response({
-          ...this.metadata,
+          ...this.data,
           ...$AppData.getAll(),
         });
       }
     };
 
-    this.allDataChannel.onResponse = (metadata) => {
-      if (!this.isFetchedAllData && this.isValidDataVersion(metadata.version)) {
-        this.populateData(metadata);
+    this.allDataChannel.onResponse = (data) => {
+      if (!this.isFetchedAllData && this.isValidDataVersion(data.version)) {
+        this.populateData(data);
       }
     };
   }
@@ -68,7 +68,7 @@ class GreeterService {
 
   populateData(data: AllData) {
     this.isFetchedAllData = true;
-    this.metadata = {
+    this.data = {
       version: data.version,
       updates: data.updates,
       supporters: data.supporters,
