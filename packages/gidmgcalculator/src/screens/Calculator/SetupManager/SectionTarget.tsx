@@ -5,7 +5,7 @@ import { Button, InputNumber, VersatileSelect } from "rond";
 import { MAX_TARGET_LEVEL } from "@/constants/config";
 import { $AppData } from "@/services";
 import { useCalcStore } from "@Store/calculator";
-import { updateTarget } from "@Store/calculator/actions";
+import { setTarget } from "@Store/calculator/actions";
 
 import { Section } from "./components/Section";
 
@@ -18,8 +18,15 @@ export function SectionTarget({ onMinimize, onEdit }: SectionTargetProps) {
   const target = useCalcStore((state) => state.target);
   const { title, names, variant, statuses } = $AppData.getTargetInfo(target);
 
+  const handleChangeLevel = (level: number) => {
+    setTarget(target.update({ level }));
+  };
+
   return (
-    <Section className="px-4 py-3 bg-dark-1 cursor-default relative">
+    <Section
+      className="px-4 py-3 bg-dark-1 cursor-default relative"
+      onDoubleClick={() => console.info(target)}
+    >
       <div className="absolute top-2 bottom-0 right-2 flex flex-col text-xl text-light-hint">
         <Button
           icon={<FaMinus className="text-lg" />}
@@ -62,7 +69,7 @@ export function SectionTarget({ onMinimize, onEdit }: SectionTargetProps) {
             className="w-14 font-semibold"
             value={target.level}
             max={MAX_TARGET_LEVEL}
-            onChange={(value) => updateTarget({ level: value })}
+            onChange={handleChangeLevel}
           />
         </label>
       </div>

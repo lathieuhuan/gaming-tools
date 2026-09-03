@@ -1,35 +1,35 @@
 import { round } from "ron-utils";
 import { clsx } from "rond";
 
-import type { AllAttributesControl } from "@/models/Character";
+import type { AttributeControl } from "@/models/Character";
 
 import { ATTRIBUTE_STAT_TYPES, CORE_STAT_TYPES } from "@/constants/global";
 import { useTranslation } from "@/hooks";
-import { suffixOf } from "@/utils/pure.utils";
+import { suffixOf } from "@/utils/ui.utils";
 import { useCalcStore } from "@Store/calculator";
 import { selectSetup } from "@Store/calculator/selectors";
 
-import { Heading, Container, Item, List } from "./components/ResourceLayout";
+import { Container, Heading, Item, List } from "./components/ResourceLayout";
 
 type AttributeTrackerProps = {
   listClassName?: string;
-  allAttrsCtrl: AllAttributesControl;
+  attrCtrl: AttributeControl;
 };
 
-export function AttributeTracker({ listClassName, allAttrsCtrl }: AttributeTrackerProps) {
+export function AttributeTracker({ listClassName, attrCtrl }: AttributeTrackerProps) {
   const { t } = useTranslation();
-  const allAttrs = useCalcStore((state) => selectSetup(state).main.allAttrsCtrl.finals);
+  const finalAttrs = useCalcStore((state) => selectSetup(state).main.finalAttrs);
 
   return (
     <div className={clsx("pl-2 pt-2 pr-4", listClassName)}>
       {CORE_STAT_TYPES.map((statType) => {
-        const logs = allAttrsCtrl.getLogs(statType);
-        const logs_ = allAttrsCtrl.getLogs(`${statType}_`);
-        const base = allAttrsCtrl.getBase(statType);
+        const logs = attrCtrl.logsOf(statType);
+        const logs_ = attrCtrl.logsOf(`${statType}_`);
+        const base = attrCtrl.base(statType);
 
         return (
           <div key={statType} className="break-inside-avoid">
-            <Heading label={t(statType)} value={Math.round(allAttrs.get(statType))} />
+            <Heading label={t(statType)} value={Math.round(finalAttrs.get(statType))} />
 
             <Container>
               {logs.map((log, index) => (
@@ -50,14 +50,11 @@ export function AttributeTracker({ listClassName, allAttrsCtrl }: AttributeTrack
 
       {ATTRIBUTE_STAT_TYPES.slice(6).map((statType) => {
         const percent = suffixOf(statType);
-        const logs = allAttrsCtrl.getLogs(statType);
+        const logs = attrCtrl.logsOf(statType);
 
         return (
           <div key={statType} className="break-inside-avoid">
-            <Heading
-              label={t(statType)}
-              value={round(allAttrsCtrl.getTotal(statType), 2) + percent}
-            />
+            <Heading label={t(statType)} value={round(attrCtrl.total(statType), 2) + percent} />
             <List records={logs} calcFn={(value) => round(value, 1) + percent} />
           </div>
         );

@@ -1,4 +1,5 @@
-import type { Character, Team } from "@/models";
+import type { MemberOps, Team } from "@/logic/calculator";
+import type { Character } from "@/models";
 import type { AbilityBuffCtrl, AbilityDebuffCtrl } from "@/types";
 import type { ModifierHanlders } from "./types";
 
@@ -13,23 +14,32 @@ type SelfModsViewProps<T extends AbilityBuffCtrl | AbilityDebuffCtrl> = {
   getHanlders?: (ctrl: T) => ModifierHanlders;
 };
 
-type RenderDescFn<T> = (ctrl: T) => string;
-
 function getSelfModifierElmts<T extends AbilityBuffCtrl | AbilityDebuffCtrl>(
-  props: SelfModsViewProps<T>,
-  renderDesc: RenderDescFn<T>
+  props: Pick<SelfModsViewProps<T>, "mutable" | "modCtrls" | "getHanlders">,
+  ops: MemberOps,
+  type: "buff" | "debuff",
 ) {
-  //
   return props.modCtrls.map((ctrl) => {
     const modifier = ctrl.data;
 
-    if (props.team.isAvailableEffect(modifier) && props.character.canPerformEffect(modifier)) {
+    if (ops.canPerformEffect(modifier)) {
+      let description = "";
+
+      switch (type) {
+        case "buff":
+          description = ops.bonusCalc({ inputs: ctrl.inputs }).parseAbilityDesc(ctrl.data);
+          break;
+        case "debuff":
+          description = ops.penaltyCalc(ctrl.inputs).parseAbilityDesc(ctrl.data);
+          break;
+      }
+
       return (
         <GenshinModifierView
           key={ctrl.id}
           mutable={props.mutable}
           heading={modifier.src}
-          description={renderDesc(ctrl)}
+          description={description}
           checked={ctrl.activated}
           inputs={ctrl.inputs}
           inputConfigs={modifier.inputConfigs?.filter((config) => config.for !== "FOR_TEAM")}
@@ -46,39 +56,35 @@ export function SelfBuffsView(props: SelfModsViewProps<AbilityBuffCtrl>) {
   const { character, team } = props;
   const { innateBuffs = [] } = character.data;
 
-  const renderDesc: RenderDescFn<AbilityBuffCtrl> = (ctrl) => {
-    return character.parseBuffDesc(ctrl.data, ctrl.inputs);
-  };
+  const mainOps = team.member(character);
 
   return (
     <ModifierContainer type="buffs" mutable={props.mutable}>
       {innateBuffs.map((buff, index) => {
-        if (team.isAvailableEffect(buff) && character.canPerformEffect(buff)) {
+        if (mainOps.canPerformEffect(buff)) {
           return (
             <GenshinModifierView
               key={"innate-" + index}
               mutable={false}
               heading={buff.src}
-              description={character.parseBuffDesc(buff)}
+              description={mainOps.bonusCalc().parseAbilityDesc(buff)}
             />
           );
         }
 
         return null;
       })}
-      {getSelfModifierElmts(props, renderDesc)}
+      {getSelfModifierElmts(props, mainOps, "buff")}
     </ModifierContainer>
   );
 }
 
 export function SelfDebuffsView(props: SelfModsViewProps<AbilityDebuffCtrl>) {
-  const renderDesc: RenderDescFn<AbilityDebuffCtrl> = (ctrl) => {
-    return props.character.parseDebuffDesc(ctrl.data, ctrl.inputs);
-  };
+  const mainOps = props.team.member(props.character);
 
   return (
     <ModifierContainer type="debuffs" mutable={props.mutable}>
-      {getSelfModifierElmts(props, renderDesc)}
+      {getSelfModifierElmts(props, mainOps, "debuff")}
     </ModifierContainer>
   );
 }

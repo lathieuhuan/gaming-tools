@@ -5,8 +5,8 @@ import { ConfirmModal, LoadingSpin, Modal, type PartiallyRequired, notification 
 import type { SetupImportData } from "@/types";
 
 import { MAX_CALC_SETUPS, SCREEN_PATH } from "@/constants/config";
-import { CalcSetup } from "@/models";
 import { useRouter } from "@/lib/router";
+import { CalcSetup } from "@/logic/calculator";
 import { useShallowCalcStore } from "@Store/calculator";
 import { importSetup, initSession } from "@Store/calculator/actions";
 import { isTourFinished } from "@Store/tours";
@@ -91,7 +91,7 @@ export function ImportCenter({ params, onFinish, ...manageInfo }: ImportCenterPr
         addImportedSetup({
           overwriteChar: false,
           overwriteTarget: false,
-        })
+        }),
       );
       return;
     }
@@ -115,10 +115,9 @@ export function ImportCenter({ params, onFinish, ...manageInfo }: ImportCenterPr
   };
 
   const startNewSession = () => {
-    const calcSetup = new CalcSetup({
-      ...params,
-      ID: manageInfo.ID,
-    });
+    const id = manageInfo.ID ?? Date.now();
+    const calcSetup = CalcSetup.create(id, params.main, params);
+
     const { teammates } = calcSetup;
     const { enhanceType } = calcSetup.main.data;
 

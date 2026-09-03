@@ -1,9 +1,9 @@
 import { useRef } from "react";
 import { cn, InputNumber, VersatileSelect } from "rond";
 
-import type { ArtifactSubStat, AttributeStat } from "@/types";
 import { useTranslation } from "@/hooks";
-import { suffixOf } from "@/utils/pure.utils";
+import type { ArtifactSubStat, AttributeStat } from "@/types";
+import { suffixOf } from "@/utils/ui.utils";
 
 // Constant
 import { ARTIFACT_SUBSTAT_TYPES } from "@/constants/global";

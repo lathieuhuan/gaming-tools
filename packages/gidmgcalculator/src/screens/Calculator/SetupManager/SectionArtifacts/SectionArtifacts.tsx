@@ -3,14 +3,15 @@ import { FaToolbox } from "react-icons/fa";
 import { GiAnvil } from "react-icons/gi";
 import { Button, clsx, CollapseSpace, notification, PouchSvg } from "rond";
 
+import type { CalcSetupActions } from "@/logic/calculator";
 import type { ArtifactType } from "@/types";
 
 import { ARTIFACT_TYPES } from "@/constants/global";
 import { createArtifact } from "@/logic/entity.logic";
-import { Artifact } from "@/models";
-import IdStore from "@/utils/IdStore";
+import { Artifact, ArtifactGear } from "@/models";
+import { IdStore } from "@/utils/IdStore";
 import { useCalcStore } from "@Store/calculator";
-import { setArtifactPiece } from "@Store/calculator/actions";
+import { updateSetup } from "@Store/calculator/actions";
 import { selectActiveMain } from "@Store/calculator/selectors";
 import { useSettingsStore } from "@Store/settings";
 
@@ -52,7 +53,7 @@ export function SectionArtifacts() {
   });
 
   const { pieces } = atfGear;
-  const activePiece = activeArtifactType ? pieces.get(activeArtifactType) : undefined;
+  const activePiece = activeArtifactType ? pieces[activeArtifactType] : undefined;
 
   const closeModal = () => setModalType("");
 
@@ -70,9 +71,15 @@ export function SectionArtifacts() {
     }
   }, [!activePiece]);
 
+  const setArtifactPiece: CalcSetupActions["setArtifactPiece"] = (artifact, shouldKeepStats) => {
+    updateSetup((setup) => {
+      setup.setArtifactPiece(artifact, shouldKeepStats);
+    });
+  };
+
   const handleClickTab = (type: ArtifactType) => {
     // there's already an artifact at tabIndex (or activePiece !== null after this excution)
-    if (pieces.has(type)) {
+    if (pieces[type] !== undefined) {
       // if click on the activeTab close it, otherwise change tab
       setActiveArtifactType(activeArtifactType === type ? undefined : type);
     } else {
@@ -90,9 +97,10 @@ export function SectionArtifacts() {
   };
 
   const handleSelectLoadout: LoadoutStashProps["onSelect"] = (pieces) => {
-    for (const piece of pieces) {
-      setArtifactPiece(piece);
-    }
+    updateSetup((setup) => {
+      setup.setArtifactGear(ArtifactGear.create(pieces.map((piece) => piece.clone())));
+    });
+
     closeModal();
   };
 
@@ -202,12 +210,12 @@ export function SectionArtifacts() {
 
   return (
     <Section id={SECTION_ID} className="py-3 bg-dark-1">
-      {Array.from(pieces).length === 0 && <CopySelect />}
+      {atfGear.list().length === 0 && <CopySelect />}
 
       <div className="flex">
         {ARTIFACT_TYPES.map((type) => {
-          const piece = pieces.get(type);
-          const icon = piece?.data?.[type].icon || Artifact.iconOf(type);
+          const piece = pieces[type];
+          const icon = piece?.icon || Artifact.iconOf(type);
 
           return (
             <div

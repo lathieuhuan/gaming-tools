@@ -30,7 +30,7 @@ export function ItemSaver({ children }: { children: ReactNode }) {
         }
 
         const sameWeapons = store.select((state) =>
-          state.userdb.userWps.filter((userWeapon) => isSameWeapon(userWeapon, weapon))
+          state.userdb.userWps.filter((userWeapon) => isSameWeapon(userWeapon, weapon)),
         );
 
         setSavingSteps([
@@ -46,7 +46,7 @@ export function ItemSaver({ children }: { children: ReactNode }) {
         break;
       }
       default: {
-        const artifact = atfGear.pieces.get(type);
+        const artifact = atfGear.pieces[type];
 
         if (!artifact) {
           return;
@@ -60,7 +60,7 @@ export function ItemSaver({ children }: { children: ReactNode }) {
         }
 
         const sameArtifacts = store.select((state) =>
-          state.userdb.userArts.filter((userAtf) => isSameArtifact(userAtf, artifact))
+          state.userdb.userArts.filter((userAtf) => isSameArtifact(userAtf, artifact)),
         );
 
         setSavingSteps([

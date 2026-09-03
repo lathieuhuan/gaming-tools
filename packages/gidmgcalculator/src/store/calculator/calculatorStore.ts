@@ -4,7 +4,7 @@ import { useShallow } from "zustand/shallow";
 
 import type { CalculatorState } from "./types";
 
-import { createTarget } from "@/logic/entity.logic";
+import { Target } from "@/models";
 
 export const initialState: CalculatorState = {
   activeId: 0,
@@ -12,7 +12,7 @@ export const initialState: CalculatorState = {
   comparedIds: [],
   setupManagers: [],
   setupsById: {},
-  target: createTarget({ code: 0 }),
+  target: Target.default(),
 };
 
 export const useCalcStore = create<CalculatorState>()(immer(() => initialState));

@@ -1,8 +1,8 @@
 import type { Character } from "@/models";
 import type { ElementType, QuickenReaction } from "@/types";
 
-import { GenshinModifierView, type GenshinModifierViewProps } from "../GenshinModifierView";
 import { PositiveText } from "@/components/Text";
+import { GenshinModifierView, type GenshinModifierViewProps } from "../GenshinModifierView";
 
 type QuickenBuffItemProps = Pick<GenshinModifierViewProps, "mutable" | "checked" | "onToggle"> & {
   reaction: QuickenReaction;
@@ -11,7 +11,7 @@ type QuickenBuffItemProps = Pick<GenshinModifierViewProps, "mutable" | "checked"
 };
 
 export function QuickenBuffItem({ reaction, element, character, ...rest }: QuickenBuffItemProps) {
-  const bonusValue = character.getQuickenBuffDamage(reaction);
+  const bonusValue = character.quickenDamageBonus(reaction);
 
   return (
     <GenshinModifierView

@@ -2,7 +2,7 @@ import type { CustomDebuffCtrl } from "@/types";
 
 import { useTranslation } from "@/hooks";
 import { useCalcStore } from "@Store/calculator";
-import { updateActiveSetup } from "@Store/calculator/actions";
+import { updateSetup } from "@Store/calculator/actions";
 import { selectSetup } from "@Store/calculator/selectors";
 
 import { CopySelect, CustomModLayout, ModItemRenderConfig } from "../CustomModLayout";
@@ -23,7 +23,7 @@ export function DebuffCustom() {
   });
 
   const handleUpdateCtrls = (newCtrls: CustomDebuffCtrl[]) => {
-    updateActiveSetup((setup) => {
+    updateSetup((setup) => {
       setup.customDebuffCtrls = newCtrls;
     });
   };
@@ -48,7 +48,7 @@ export function DebuffCustom() {
       }}
       onValueChange={(value, index) => {
         handleUpdateCtrls(
-          customDebuffCtrls.map((ctrl, i) => (i === index ? { ...ctrl, value } : ctrl))
+          customDebuffCtrls.map((ctrl, i) => (i === index ? { ...ctrl, value } : ctrl)),
         );
       }}
       onRemoveItem={(ctrlIndex) => {

@@ -5,19 +5,15 @@ import type { SetupOverviewInfo } from "../types";
 import { createTeammate } from "@/logic/entity.logic";
 import { isDbSetup } from "@/logic/setup.logic";
 import { makeCharacterCalcFromDb } from "@/logic/userdb.logic";
-import { Team } from "@/models/Team";
 
 function toSetupOverview(setup: DbSetup, userDb: UserdbState): SetupOverviewInfo["setup"] {
   const { userWps, userArts } = userDb;
 
   const main = makeCharacterCalcFromDb(setup.main, userWps, userArts);
-  const team = new Team();
 
   const teammates = setup.teammates.map((teammate) => {
-    return createTeammate(teammate, null, { team });
+    return createTeammate(teammate);
   });
-
-  team.updateMembers([main, ...teammates]);
 
   return {
     ID: setup.ID,
@@ -30,7 +26,7 @@ function toSetupOverview(setup: DbSetup, userDb: UserdbState): SetupOverviewInfo
 
 export function setupToOverviewInfo(
   setup: DbSetup | DbComplexSetup,
-  userDb: UserdbState
+  userDb: UserdbState,
 ): SetupOverviewInfo | null {
   if (isDbSetup(setup)) {
     return setup.type === "original"

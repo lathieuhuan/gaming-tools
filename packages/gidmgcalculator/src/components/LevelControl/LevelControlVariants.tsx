@@ -1,6 +1,7 @@
+import { DESCENDING_LEVEL_CAPS } from "@/constants/global";
 import { LevelControl, LevelControlProps } from "./LevelControl";
 
-type CharacterLevelControlProps = Omit<LevelControlProps, "levelCaps">;
+type CharacterLevelControlProps = Omit<LevelControlProps, "allLevelCaps">;
 
 export function CharacterLevelControl(props: CharacterLevelControlProps) {
   return (
@@ -11,18 +12,18 @@ export function CharacterLevelControl(props: CharacterLevelControlProps) {
       }}
       {...props}
       className={["min-w-22", props.className]}
-      levelCaps={[100, 95, 90, 80, 70, 60, 50, 40, 20]}
+      allLevelCaps={DESCENDING_LEVEL_CAPS}
     />
   );
 }
 
-type WeaponLevelControlProps = Omit<LevelControlProps, "levelCaps"> & {
+type WeaponLevelControlProps = Omit<LevelControlProps, "allLevelCaps"> & {
   rarity?: number;
 };
 
 export function WeaponLevelControl(props: WeaponLevelControlProps) {
   const { rarity = 5 } = props;
-  const lvCaps = rarity < 3 ? [70, 60, 50, 40, 20] : [90, 80, 70, 60, 50, 40, 20];
+  const allLevelCaps = rarity < 3 ? [70, 60, 50, 40, 20] : [90, 80, 70, 60, 50, 40, 20];
 
   return (
     <LevelControl
@@ -32,7 +33,7 @@ export function WeaponLevelControl(props: WeaponLevelControlProps) {
       }}
       {...props}
       className={["min-w-18.5", props.className]}
-      levelCaps={lvCaps}
+      allLevelCaps={allLevelCaps}
     />
   );
 }

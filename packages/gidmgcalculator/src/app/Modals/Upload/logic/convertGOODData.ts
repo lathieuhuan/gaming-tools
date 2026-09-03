@@ -9,10 +9,10 @@ import {
   convertGOODCharacter,
   convertGOODWeapon,
   findGOODCharacter,
-} from "@/logic/converGOOD.logic";
+} from "@/logic/convertGOOD.logic";
 import { createWeapon } from "@/logic/entity.logic";
 import { $AppCharacter } from "@/services";
-import IdStore from "@/utils/IdStore";
+import { IdStore } from "@/utils/IdStore";
 
 type GOODData = {
   characters?: GOODCharacter[];
@@ -50,7 +50,7 @@ export function convertGOODData(data: GOODData) {
       continue;
     }
 
-    artifact.relation.set("owner", owner?.code);
+    artifact.owner = owner?.code;
     result.artifacts.push(artifact.serialize());
 
     if (owner) {
@@ -70,7 +70,8 @@ export function convertGOODData(data: GOODData) {
       continue;
     }
 
-    weapon.relation.set("owner", owner?.code);
+    weapon.owner = owner?.code;
+
     result.weapons.push(weapon.serialize());
 
     if (owner) {

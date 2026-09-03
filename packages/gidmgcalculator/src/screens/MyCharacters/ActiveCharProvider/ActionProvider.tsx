@@ -89,7 +89,7 @@ export function ActionProvider({ character, children }: ActionProviderProps) {
               targetOwner: selectedWeapon.owner,
               currentId: weapon.ID,
               currentOwner: character.code,
-            })
+            }),
           );
         }}
         onClose={closeModal}
@@ -106,7 +106,7 @@ export function ActionProvider({ character, children }: ActionProviderProps) {
             return;
           }
 
-          const currentPiece = atfGear?.pieces.get(switchedSlot.type);
+          const currentPiece = atfGear?.pieces[switchedSlot.type];
 
           dispatch(
             switchArtifact({
@@ -114,7 +114,7 @@ export function ActionProvider({ character, children }: ActionProviderProps) {
               targetOwner: selectedArtifact.owner,
               currentId: currentPiece?.ID,
               currentOwner: character.code,
-            })
+            }),
           );
         }}
         onClose={closeModal}

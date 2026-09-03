@@ -6,7 +6,7 @@ import type { Character } from "@/models";
 import type { ElementType, LevelableTalentType } from "@/types";
 
 import { LEVELABLE_TALENT_TYPES } from "@/constants/global";
-import { genSequentialOptions } from "@/utils/pure.utils";
+import { genSequentialOptions } from "@/utils/ui.utils";
 import { NORMAL_ATTACK_ICONS } from "./config";
 
 // Component
@@ -51,7 +51,7 @@ export function TalentList({
           const talent = activeTalents[talentType];
           if (!talent) return null;
 
-          const extraLevel = character.getTotalXtraTalentLv(talentType);
+          const extraLevel = character.totalExtraTalentLv(talentType);
           const imageSrc =
             talentType === "NAs" ? NORMAL_ATTACK_ICONS[`${weaponType}_${vision}`] : talent.image;
 

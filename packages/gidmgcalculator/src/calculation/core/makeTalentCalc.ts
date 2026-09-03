@@ -1,6 +1,6 @@
 import { Array_, toMult } from "ron-utils";
 
-import type { TargetCalc } from "@/models";
+import type { Target } from "@/models";
 import type {
   AttackBonusKey,
   AttackElement,
@@ -21,22 +21,22 @@ import type {
 } from "../types";
 import type { ResultRecorder } from "./ResultRecorder";
 
-import { limitCRate } from "@/logic/stat.logic";
 import { Character } from "@/models";
+import { limitCRate } from "@/utils/stat.utils";
 import { LUNAR_ATTACK_COEFFICIENT, LUNAR_ATTACK_ELEMENT } from "../constants";
 import { makeAttackItemCalc } from "./makeAttackItemCalc";
 import { makeOtherItemCalc } from "./makeOtherItemCalc";
 
 export function makeTalentCalc(
   performer: Character,
-  target: TargetCalc,
+  target: Target,
   talentType: LevelableTalentType | null,
   default_: CalcItemDefaultValues,
   alterConfig: AttackAlter = {},
 ) {
   const { attkBonusCtrl } = performer;
   const { vision, weaponType } = performer.data;
-  const level = talentType ? performer.getFinalTalentLv(talentType) : 0;
+  const level = talentType ? performer.finalTalentLv(talentType) : 0;
 
   function parseFactor(factor: CalcItemFactor) {
     const {
@@ -137,9 +137,8 @@ export function makeTalentCalc(
     const { getBonus, calculate } = makeAttackItemCalc(performer, target, {
       attElmt,
       attPatt,
-      reaction,
+      reaction: item.noU ? null : reaction,
       itemId: item.id,
-      noU: item.noU,
     });
 
     const bases = getBases(item, getBonus("mult_"), recorder);

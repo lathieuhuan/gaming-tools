@@ -1,6 +1,6 @@
 import { Array_ } from "ron-utils";
 
-import type { GOODCharacterConvertReturn } from "@/logic/converGOOD.logic";
+import type { GOODCharacterConvertReturn } from "@/logic/convertGOOD.logic";
 import type { Weapon } from "@/models";
 import type { GenshinUserBuild } from "@/services/enka";
 import type { ArtifactType, DbCharacter, RawArtifact, RawWeapon } from "@/types";
@@ -12,7 +12,7 @@ import { isSameArtifact } from "../logic";
 
 export const getCharacterSavingStep = (
   character: GOODCharacterConvertReturn,
-  userChars: DbCharacter[]
+  userChars: DbCharacter[],
 ): CharacterSavingStep => {
   const existedCharacter = userChars.find((userChar) => userChar.code === character.basic.code);
 
@@ -25,7 +25,7 @@ export const getCharacterSavingStep = (
 
 export const getWeaponSavingStep = (
   weapon: GenshinUserBuild["weapon"],
-  userWps: RawWeapon[]
+  userWps: RawWeapon[],
 ): WeaponSavingStep => {
   let currentWeapon: Weapon | undefined;
 
@@ -48,7 +48,7 @@ export const getWeaponSavingStep = (
 
 export const getArtifactSavingStep = (
   atfGear: GenshinUserBuild["atfGear"],
-  dbArtifacts: RawArtifact[]
+  dbArtifacts: RawArtifact[],
 ): ArtifactSavingStep[] => {
   const configByType = atfGear
     .list()

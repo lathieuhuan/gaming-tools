@@ -7,11 +7,11 @@ import type {
 } from "../types";
 
 import { useStore } from "@/lib/dynamic-store";
-import IdStore from "@/utils/IdStore";
+import { IdStore } from "@/utils/IdStore";
 import { useDispatch } from "@Store/hooks";
 import {
-  addDbCharacter,
   addDbArtifact,
+  addDbCharacter,
   addDbWeapon,
   updateDbArtifact,
   updateDbCharacter,
@@ -25,7 +25,7 @@ export function useSaveOutputHandler() {
   const handleCharacterSaveOutput = (
     output: CharacterSaveOutput,
     weaponID: number,
-    artifactIDs: number[]
+    artifactIDs: number[],
   ) => {
     switch (output.action) {
       case "CREATE":
@@ -34,7 +34,7 @@ export function useSaveOutputHandler() {
             ...output.character,
             weaponID,
             artifactIDs,
-          })
+          }),
         );
         return;
       case "UPDATE":
@@ -43,7 +43,7 @@ export function useSaveOutputHandler() {
             ...output.character,
             weaponID,
             artifactIDs,
-          })
+          }),
         );
         return;
       case "NONE":
@@ -52,7 +52,7 @@ export function useSaveOutputHandler() {
             code: output.character.code,
             weaponID,
             artifactIDs,
-          })
+          }),
         );
         return;
     }
@@ -62,7 +62,7 @@ export function useSaveOutputHandler() {
     output: WeaponSaveOutput,
     owner: number,
     idStore: IdStore,
-    currentWeaponID?: number
+    currentWeaponID?: number,
   ) => {
     switch (output.action) {
       case "CREATE": {
@@ -73,7 +73,7 @@ export function useSaveOutputHandler() {
             ...output.weapon,
             ID: weaponId,
             owner,
-          })
+          }),
         );
 
         if (currentWeaponID) {
@@ -81,7 +81,7 @@ export function useSaveOutputHandler() {
             updateDbWeapon({
               ID: currentWeaponID,
               owner: undefined,
-            })
+            }),
           );
         }
 
@@ -92,7 +92,7 @@ export function useSaveOutputHandler() {
           updateDbWeapon({
             ...output.weapon,
             owner,
-          })
+          }),
         );
 
         if (currentWeaponID && currentWeaponID !== output.weapon.ID) {
@@ -100,7 +100,7 @@ export function useSaveOutputHandler() {
             updateDbWeapon({
               ID: currentWeaponID,
               owner: undefined,
-            })
+            }),
           );
         }
 
@@ -114,7 +114,7 @@ export function useSaveOutputHandler() {
     output: ArtifactSaveOutput,
     owner: number,
     idStore: IdStore,
-    currentArtifactID?: number
+    currentArtifactID?: number,
   ) => {
     switch (output.action) {
       case "CREATE": {
@@ -125,7 +125,7 @@ export function useSaveOutputHandler() {
             ...output.artifact,
             ID: artifactId,
             owner,
-          })
+          }),
         );
 
         if (currentArtifactID) {
@@ -133,7 +133,7 @@ export function useSaveOutputHandler() {
             updateDbArtifact({
               ID: currentArtifactID,
               owner: undefined,
-            })
+            }),
           );
         }
 
@@ -146,13 +146,13 @@ export function useSaveOutputHandler() {
           updateDbArtifact({
             ...output.artifact,
             owner,
-          })
+          }),
         );
 
         // TODO: improve this handler
         if (currentOwner && currentOwner !== owner) {
           const currentCharacter = store.select((state) =>
-            state.userdb.userChars.find((char) => char.code === currentOwner)
+            state.userdb.userChars.find((char) => char.code === currentOwner),
           );
           const newArtifactIDs =
             currentCharacter?.artifactIDs.filter((id) => id !== artifactID) || [];
@@ -161,7 +161,7 @@ export function useSaveOutputHandler() {
             updateDbCharacter({
               code: currentOwner,
               artifactIDs: newArtifactIDs,
-            })
+            }),
           );
         }
 
@@ -170,7 +170,7 @@ export function useSaveOutputHandler() {
             updateDbArtifact({
               ID: currentArtifactID,
               owner: undefined,
-            })
+            }),
           );
         }
 
@@ -185,7 +185,7 @@ export function useSaveOutputHandler() {
     characterOutput: CharacterSaveOutput,
     weaponOutput: WeaponSaveOutput,
     artifactsOutput: ArtifactSaveOutput[],
-    steps: SavingSteps
+    steps: SavingSteps,
   ) => {
     const [, { currentWeapon }, ...artifactSteps] = steps;
     const currentArtifactIds = artifactSteps.reduce<Partial<Record<ArtifactType, number>>>(
@@ -193,7 +193,7 @@ export function useSaveOutputHandler() {
         acc[step.data.type] = step.currentArtifact?.ID;
         return acc;
       },
-      {}
+      {},
     );
     const idStore = new IdStore();
 
@@ -201,15 +201,15 @@ export function useSaveOutputHandler() {
       weaponOutput,
       characterOutput.character.code,
       idStore,
-      currentWeapon?.ID
+      currentWeapon?.ID,
     );
     const artifactIDs = artifactsOutput.map((artifact) =>
       handleArtifactSaveOutput(
         artifact,
         characterOutput.character.code,
         idStore,
-        currentArtifactIds[artifact.artifact.type]
-      )
+        currentArtifactIds[artifact.artifact.type],
+      ),
     );
 
     handleCharacterSaveOutput(characterOutput, weaponID, artifactIDs);

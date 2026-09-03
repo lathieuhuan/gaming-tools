@@ -3,7 +3,6 @@ import { CollapseList, CollapseListProps } from "rond";
 
 import type { TrackerState } from "@Store/ui";
 
-import { calculateSetup } from "@/calculation/calculator";
 import { useShallowCalcStore } from "@Store/calculator";
 import { selectSetup } from "@Store/calculator/selectors";
 import { useSettingsStore } from "@Store/settings";
@@ -21,12 +20,12 @@ type TrackerCoreProps = {
 
 export function TrackerCore({ trackerState }: TrackerCoreProps) {
   const activeSetup = useShallowCalcStore(selectSetup);
-  const [state, setState] = useState<ReturnType<typeof calculateSetup>>();
+  const [state, setState] = useState<ReturnType<typeof activeSetup.calculate>>();
   const resonatedElmts = useSettingsStore((state) => state.traveler.resonatedElmts);
 
   useLayoutEffect(() => {
     if (trackerState === "open") {
-      const state = calculateSetup(activeSetup.clone(), {
+      const state = activeSetup.calculate({
         shouldLog: true,
         resonatedElmts,
       });
@@ -40,17 +39,17 @@ export function TrackerCore({ trackerState }: TrackerCoreProps) {
   }
 
   const { result, target } = state;
-  const { attkBonusCtrl, allAttrsCtrl } = state.main;
+  const { attkBonusCtrl, attrCtrl } = state.main;
   const charLv = activeSetup.main.bareLv;
   const defIgnoreAll = attkBonusCtrl.get("defIgn_", ["all"]);
-  const totalDefReduct = target.getReduction("def").value;
+  const totalDefReduct = target.resistReduction("def").value;
 
   const listClassName = "columns-1 md:columns-2 space-y-1";
 
   const collapseItems: CollapseListProps["items"] = [
     {
       heading: "Attributes",
-      body: <AttributeTracker listClassName={listClassName} allAttrsCtrl={allAttrsCtrl} />,
+      body: <AttributeTracker listClassName={listClassName} attrCtrl={attrCtrl} />,
     },
     {
       heading: "Bonuses",

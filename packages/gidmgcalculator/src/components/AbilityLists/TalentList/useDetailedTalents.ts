@@ -3,8 +3,8 @@ import { Array_, round } from "ron-utils";
 
 import type { AppCharacter, TalentType } from "@/types";
 
-import { getTalentDefaultValues } from "@/calculation/calculator/getTalentDefaultValues";
 import { ATTACK_PATTERNS } from "@/constants";
+import { getTalentDefaultValues } from "@/logic/calculator";
 import { Character } from "@/models/Character";
 
 type DetailedStat = {

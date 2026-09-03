@@ -31,8 +31,9 @@ import type {
 import { ARTIFACT_TYPES } from "@/constants/global";
 import { createCharacter, createWeapon } from "@/logic/entity.logic";
 import { isDbSetup } from "@/logic/setup.logic";
-import { Artifact, Ascendable, Weapon } from "@/models";
-import IdStore from "@/utils/IdStore";
+import { Artifact, Weapon } from "@/models";
+import { IdStore } from "@/utils/IdStore";
+import { splitLevel } from "@/utils/level.utils";
 
 export type UserdbState = {
   userChars: DbCharacter[];
@@ -83,7 +84,7 @@ export const userdbSlice = createSlice({
     addDbCharacter: (state, action: AddDbCharacterAction) => {
       const { code, weaponID, artifactIDs = [], data, ...characterState } = action.payload;
 
-      const character = createCharacter({ code }, data, { state: characterState });
+      const character = createCharacter({ code }, data, characterState);
 
       const foundIndex = state.userChars.findIndex((char) => char.code === code);
       const dbCharacter: DbCharacter = {
@@ -293,8 +294,8 @@ export const userdbSlice = createSlice({
           break;
         case "level":
           state.userWps.sort((a, b) => {
-            const { bareLv: lvA, ascension: ascA } = Ascendable.splitLevel(a.level);
-            const { bareLv: lvB, ascension: ascB } = Ascendable.splitLevel(b.level);
+            const { bareLv: lvA, ascension: ascA } = splitLevel(a.level);
+            const { bareLv: lvB, ascension: ascB } = splitLevel(b.level);
 
             if (lvA !== lvB) {
               return isAsc ? lvA - lvB : lvB - lvA;

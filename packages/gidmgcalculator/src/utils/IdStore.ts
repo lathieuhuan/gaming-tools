@@ -1,4 +1,4 @@
-export default class IdStore {
+export class IdStore {
   private id: number;
 
   get latest() {

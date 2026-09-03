@@ -2,7 +2,7 @@ import type { Teammate } from "@/models";
 import type { WeaponBuffCtrl } from "@/types";
 
 import { useShallowCalcStore } from "@Store/calculator";
-import { updateActiveSetup, updateTeammateWeapon } from "@Store/calculator/actions";
+import { updateSetup } from "@Store/calculator/actions";
 import { selectSetup } from "@Store/calculator/selectors";
 import { toggleModCtrl, updateModCtrlInputs } from "@Store/calculator/utils";
 
@@ -20,14 +20,16 @@ export default function BuffWeapon() {
   });
 
   const handleUpdateSelfCtrls = (newCtrls: WeaponBuffCtrl[]) => {
-    updateActiveSetup((setup) => {
+    updateSetup((setup) => {
       setup.wpBuffCtrls = newCtrls;
     });
   };
 
   const handleUpdateTeammateCtrls = (teammate: Teammate, newCtrls: WeaponBuffCtrl[]) => {
-    updateTeammateWeapon(teammate.data.code, {
-      buffCtrls: newCtrls,
+    updateSetup((setup) => {
+      setup.updateTeammateWeapon(teammate.data.code, {
+        buffCtrls: newCtrls,
+      });
     });
   };
 
@@ -59,7 +61,7 @@ export default function BuffWeapon() {
         const updateCtrlInput = (value: number, inputIndex: number) => {
           handleUpdateTeammateCtrls(
             teammate,
-            updateModCtrlInputs(buffCtrls, ctrl.id, inputIndex, value)
+            updateModCtrlInputs(buffCtrls, ctrl.id, inputIndex, value),
           );
         };
 

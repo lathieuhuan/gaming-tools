@@ -4,6 +4,7 @@ import type { UserdbState } from "@Store/userdbSlice";
 import type { SetupOverviewInfo } from "../types";
 
 import { ARTIFACT_TYPES } from "@/constants/global";
+import { CalcSetup } from "@/logic/calculator";
 import {
   createArtifact,
   createCharacter,
@@ -16,13 +17,13 @@ import {
   createAbilityDebuffCtrls,
   createWeaponBuffCtrls,
 } from "@/logic/modifier.logic";
-import { Artifact, ArtifactGear, CalcSetup, Team } from "@/models";
-import IdStore from "@/utils/IdStore";
+import { Artifact, ArtifactGear } from "@/models";
+import { IdStore } from "@/utils/IdStore";
 
 export function createSetupForTeammate(
   info: SetupOverviewInfo,
   teammateIndex: number,
-  { userChars, userWps }: UserdbState
+  { userChars, userWps }: UserdbState,
 ) {
   const { setup, dbSetup } = info;
   const teammates = [...setup.teammates];
@@ -52,21 +53,19 @@ export function createSetupForTeammate(
             type,
             rarity: maxRarity,
           },
-          artifact.data
+          artifact.data,
         );
       });
     }
   }
 
   const newMain = createCharacter(teammate, teammate.data, {
-    state: Array_.findByCode(userChars, teammate.code),
+    ...Array_.findByCode(userChars, teammate.code),
     weapon: createWeapon(weaponBasic),
-    atfGear: new ArtifactGear(artifacts),
+    atfGear: ArtifactGear.create(artifacts),
   });
 
   // Place old main into the teammate's slot
-
-  const team = new Team();
 
   const { main } = setup;
   const mainWeapon = main.weapon;
@@ -85,15 +84,9 @@ export function createSetupForTeammate(
       },
     },
     main.data,
-    { team }
   );
 
-  team.updateMembers([newMain, ...teammates]);
-
-  return new CalcSetup({
-    ID: idStore.gen(),
-    main: newMain,
-    team,
+  return CalcSetup.create(idStore.gen(), newMain, {
     teammates,
     target: createTarget(dbSetup.target),
   });

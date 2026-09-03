@@ -39,6 +39,8 @@ export type TeamMilestoneConditionSpec =
 
 export type TeamConditionSpecs = TeamElementConditionSpecs & {
   checkTeamMs?: TeamMilestoneConditionSpec;
+  /** Special for Chain Breaker (bow) */
+  checkMixed?: boolean;
 };
 
 // ===== Performer Condition =====
@@ -58,8 +60,6 @@ type SelfMilestoneConditionSpec =
 export type EffectPerformerConditionSpecs = {
   grantedAt?: SelfMilestoneConditionSpec;
   beEnhanced?: boolean;
-  /** Special for Chain Breaker (bow) */
-  checkMixed?: boolean;
 };
 
 // ===== Input Condition =====

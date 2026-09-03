@@ -3,7 +3,7 @@ import { Object_ } from "ron-utils";
 import { Rarity } from "rond";
 
 import type { Artifact } from "@/models";
-import type { ArtifactStateData } from "@/types";
+import type { RawArtifactState } from "@/types";
 
 import {
   ArtifactCard,
@@ -22,7 +22,7 @@ type ArtifactConfigProps = {
   mainActionLabel?: string;
   moreButtons?: ArtifactCardAction[];
   onRarityChange?: (rarity: number) => void;
-  onConfigUpdate?: (properties: Partial<ArtifactStateData>) => void;
+  onConfigUpdate?: (properties: Partial<RawArtifactState>) => void;
   onSelect?: (config: Artifact) => void;
 };
 

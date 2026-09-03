@@ -2,32 +2,32 @@ import type { AppCharacter } from "@/types";
 
 import { SCREEN_PATH } from "@/constants";
 import { router } from "@/lib/router";
+import { CalcSetup } from "@/logic/calculator";
 import { createCharacter, createTeammate } from "@/logic/entity.logic";
-import { CalcSetup } from "@/models";
 import { $AppCharacter } from "@/services";
 import { initSession } from "@Store/calculator/actions";
 
 export function prepEnhanceTour() {
   const characters = $AppCharacter.getAll();
-  let main: AppCharacter | undefined = undefined;
-  let teammate: AppCharacter | undefined = undefined;
+  let appMain: AppCharacter | undefined = undefined;
+  let appTeammate: AppCharacter | undefined = undefined;
 
   for (const character of characters) {
-    if (main) {
-      if (character.enhanceType === main.enhanceType) {
-        teammate = character;
+    if (appMain) {
+      if (character.enhanceType === appMain.enhanceType) {
+        appTeammate = character;
         break;
       }
     } else if (character.enhanceType) {
-      main = character;
+      appMain = character;
     }
   }
 
-  if (!main || !teammate) return;
+  if (!appMain || !appTeammate) return;
 
-  const calcSetup = new CalcSetup({
-    main: createCharacter({ code: main.code }, main),
-    teammates: [createTeammate({ code: teammate.code }, teammate)],
+  const main = createCharacter({ code: appMain.code }, appMain);
+  const calcSetup = CalcSetup.create(Date.now(), main, {
+    teammates: [createTeammate({ code: appTeammate.code }, appTeammate)],
   });
 
   initSession({

@@ -69,7 +69,7 @@ function SetupViewCore({ setup, complexSetup, onEditSetup, onCalcTeammateSetup }
         switchShownSetupInComplex({
           complexID: complexSetup.ID,
           shownID: shownId,
-        })
+        }),
       );
       closeTeammateDetail();
     }
@@ -128,9 +128,9 @@ function SetupViewCore({ setup, complexSetup, onEditSetup, onCalcTeammateSetup }
               </div>
 
               <p>
-                Talents: <span className={mainColorText}>{main.getFinalTalentLv("NAs")}</span> /{" "}
-                <span className={mainColorText}>{main.getFinalTalentLv("ES")}</span> /{" "}
-                <span className={mainColorText}>{main.getFinalTalentLv("EB")}</span>
+                Talents: <span className={mainColorText}>{main.finalTalentLv("NAs")}</span> /{" "}
+                <span className={mainColorText}>{main.finalTalentLv("ES")}</span> /{" "}
+                <span className={mainColorText}>{main.finalTalentLv("EB")}</span>
               </p>
 
               {main.enhanced && <EnhanceTag className="mt-1" mutable={false} character={main} />}

@@ -5,7 +5,7 @@ import type { AttackBonusControl } from "@/models/Character";
 import type { TalentCalcItemBonusId } from "@/types";
 
 import { useTranslation } from "@/hooks";
-import { suffixOf } from "@/utils/pure.utils";
+import { suffixOf } from "@/utils/ui.utils";
 
 import { PositiveText } from "@/components/Text";
 import { Part, Parts } from "./ResultParts";
@@ -25,7 +25,7 @@ type RecordExclusivesProps = {
 export function RecordExclusives({ id, attkBonusCtrl }: RecordExclusivesProps) {
   const { t } = useTranslation();
 
-  const exclusiveBonuses = attkBonusCtrl.collectExclusiveBonuses(id);
+  const exclusiveBonuses = attkBonusCtrl.exclusiveGroups(id);
 
   if (exclusiveBonuses.length === 0) {
     return null;

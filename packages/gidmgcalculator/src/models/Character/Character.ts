@@ -1,169 +1,113 @@
-import { Object_ } from "ron-utils";
+import { CountMap } from "ron-utils";
 
 import type {
+  AllAttributes,
   AllAttributeStat,
   AmplifyingReaction,
   AppCharacter,
   AttackBonus,
   AttackElement,
   AttributeBonus,
-  BonusCoreSpec,
-  BonusPerformTools,
   BonusSpec,
-  CharacterStateData,
   EffectPerformableConditionSpecs,
   EffectReceiverConditionSpecs,
   Level,
   LevelableTalentType,
-  PenaltyCoreSpec,
   QuickenReaction,
   RawCharacter,
+  RawCharacterState,
   TeamMember,
 } from "@/types";
-import type { EffectToParseDesc } from "../AbstractEffectValueCalc";
-import type { Clonable } from "../interfaces";
 
-import { FlatGetters } from "@/decorators/FlatGetters.decorator";
-import { isPassedComparison } from "../utils/isPassedComparison";
-
+import { Team } from "@/logic/calculator";
+import { isPassedComparison, isValidInput } from "@/utils/effect.utils";
+import { splitLevel } from "@/utils/level.utils";
 import { ArtifactGear } from "../ArtifactGear";
-import { Team } from "../Team";
-import { isValidInput } from "../utils/isValidInput";
 import { Weapon } from "../Weapon";
-import { AllAttributesControl } from "./AllAttributesControl";
 import { AttackBonusControl } from "./AttackBonusControl";
-import { BonusCalc } from "./BonusCalc";
-import { CharacterState } from "./CharacterState";
-import { PenaltyCalc } from "./PenaltyCalc";
+import { AttributeControl } from "./AttributeControl";
 
-type BonusMonoRecord = {
-  trackId: string;
-  targetId: string;
-};
-
-type LevelBonus = {
-  id: string;
-  talent: LevelableTalentType;
-  value: number;
-};
-
-export type ReceivedAttributeBonus = Omit<AttributeBonus, "toStat"> & {
-  toStat: AttributeBonus["toStat"] | "OWN_ELMT";
-  effectSrc: BonusSpec;
-};
-
-export type ReceivedAttackBonus = AttackBonus & {
-  effectSrc: BonusSpec;
-};
-
-export type CharacterConstructOptions = {
-  state?: Partial<CharacterStateData>;
+export type CharacterCreateOptions = Partial<RawCharacterState> & {
   atfGear?: ArtifactGear;
-  levelBonuses?: Map<string, LevelBonus>;
-  allAttrsCtrl?: AllAttributesControl;
+  tllvBonusCtrl?: Map<string, LevelBonus>;
+  attrCtrl?: AttributeControl;
   attkBonusCtrl?: AttackBonusControl;
-  team?: Team;
 };
 
-export type CharacterCloneOptions = CharacterConstructOptions & {
+export type CharacterCloneOptions = CharacterCreateOptions & {
   weapon?: Weapon;
 };
 
-@FlatGetters("state", ["level", "NAs", "ES", "EB", "cons", "enhanced", "bareLv", "ascension"])
-export class Character implements TeamMember, Clonable<Character> {
-  readonly code: number;
+type CharacterInitCalcOptions = {
+  team?: Team;
+};
+
+export class Character implements TeamMember {
   readonly isTraveler: boolean;
-  readonly state: CharacterState;
 
-  weapon: Weapon;
-  atfGear: ArtifactGear;
+  private monoRecords: NonNullable<BonusMonoRecord>[] = [];
+  private calculated = false;
 
-  levelBonuses: Map<string, LevelBonus>;
-  allAttrsCtrl: AllAttributesControl;
-  attkBonusCtrl: AttackBonusControl;
-
-  team: Team;
-
-  declare readonly level: Level;
-  declare readonly NAs: number;
-  declare readonly ES: number;
-  declare readonly EB: number;
-  declare readonly cons: number;
-  declare readonly enhanced: boolean;
-  declare readonly bareLv: number;
-  declare readonly ascension: number;
-
-  get baseRxnDamage() {
-    return BASE_REACTION_DAMAGE[this.state.bareLv] ?? 0;
+  get baseReactionDMG() {
+    return BASE_REACTION_DAMAGE[this.bareLv] ?? 0;
   }
 
-  constructor(
-    code: number,
-    public data: AppCharacter,
-    weapon: Weapon,
-    options: CharacterConstructOptions,
+  private constructor(
+    public readonly code: number,
+    public readonly level: Level,
+    public readonly NAs: number,
+    public readonly ES: number,
+    public readonly EB: number,
+    public readonly cons: number,
+    public readonly enhanced: boolean,
+    public readonly bareLv: number,
+    public readonly ascension: number,
+    public readonly data: AppCharacter,
+    public weapon: Weapon,
+    public atfGear: ArtifactGear,
+    public attrCtrl: AttributeControl,
+    public tllvBonusCtrl: Map<string, LevelBonus>,
+    public attkBonusCtrl: AttackBonusControl,
+    public finalAttrs: AllAttributes = new CountMap([], { min: -Infinity }),
   ) {
-    const {
-      atfGear = new ArtifactGear(),
-      levelBonuses = new Map(),
-      allAttrsCtrl = new AllAttributesControl(),
-      attkBonusCtrl = new AttackBonusControl(),
-      team = new Team(),
-    } = options;
-
-    this.code = code;
-    this.state = new CharacterState(options.state);
     this.isTraveler = data.name.slice(-8) === "Traveler";
-
-    this.weapon = weapon;
-    this.atfGear = atfGear;
-
-    this.levelBonuses = levelBonuses;
-    this.allAttrsCtrl = allAttrsCtrl;
-    this.attkBonusCtrl = attkBonusCtrl;
-    this.team = team;
-  }
-
-  joinTeam(team: Team) {
-    this.team = team;
   }
 
   // ===== GETTERS =====
 
-  getTotalXtraTalentLv(talentType: LevelableTalentType): number {
+  totalExtraTalentLv(talentType: LevelableTalentType): number {
     const requiredConsLv = this.data.talentLvBonus?.[talentType];
     const extraLvByCons = requiredConsLv !== undefined && this.cons >= requiredConsLv ? 3 : 0;
     let totalLvBonus = 0;
 
-    this.levelBonuses.forEach((bonus) => {
+    this.tllvBonusCtrl.forEach((bonus) => {
       if (bonus.talent === talentType) {
         totalLvBonus += bonus.value;
       }
     });
 
-    // TODO remove team.extraTalentLv
-    return extraLvByCons + totalLvBonus + this.team.extraTalentLv.get(talentType);
+    return extraLvByCons + totalLvBonus;
   }
 
-  getFinalTalentLv(talent: LevelableTalentType) {
-    return this[talent] + this.getTotalXtraTalentLv(talent);
+  finalTalentLv(talent: LevelableTalentType) {
+    return this[talent] + this.totalExtraTalentLv(talent);
   }
 
-  getQuickenBuffDamage(reaction: QuickenReaction) {
-    const pctBonus = this.attkBonusCtrl.get("pct_", [reaction]);
+  quickenDamageBonus(reaction: QuickenReaction) {
+    const pctBonus = this.attkBonusCtrl.get("pct_", reaction);
 
     switch (reaction) {
       case "aggravate":
-        return Math.round(this.baseRxnDamage * 1.15 * (1 + pctBonus / 100));
+        return Math.round(this.baseReactionDMG * 1.15 * (1 + pctBonus / 100));
       case "spread":
-        return Math.round(this.baseRxnDamage * 1.25 * (1 + pctBonus / 100));
+        return Math.round(this.baseReactionDMG * 1.25 * (1 + pctBonus / 100));
       default:
-        return 1;
+        return 0;
     }
   }
 
-  getAmplifyingMult(reaction: AmplifyingReaction, attElmt: AttackElement) {
-    const pctBonus = this.attkBonusCtrl.get("pct_", [reaction]);
+  amplifyingReactionMult(reaction: AmplifyingReaction, attElmt: AttackElement) {
+    const pctBonus = this.attkBonusCtrl.get("pct_", reaction);
 
     switch (reaction) {
       case "melt":
@@ -176,19 +120,44 @@ export class Character implements TeamMember, Clonable<Character> {
   }
 
   getAttr(key: AllAttributeStat) {
-    return this.allAttrsCtrl.finals.get(key);
+    if (!this.calculated) {
+      console.error("Character has not been calculated!");
+    }
+    return this.finalAttrs.get(key);
   }
 
   // ===== CALCULATION =====
 
-  initCalculation() {
-    this.levelBonuses.clear();
-    this.allAttrsCtrl.init(this);
-    this.attkBonusCtrl = new AttackBonusControl();
+  initCalculation(options: CharacterInitCalcOptions = {}) {
+    const { team } = options;
+
+    this.tllvBonusCtrl.clear();
+
+    team?.extraTalentLv.forEach((bonus, talentType) => {
+      const id = `team/${talentType}`;
+
+      this.tllvBonusCtrl.set(id, {
+        id,
+        talent: talentType,
+        value: bonus,
+      });
+    });
+
+    this.attkBonusCtrl.clear();
+    this.attrCtrl.init(this, team?.resonances);
+    this.finalAttrs = new CountMap([], { min: -Infinity });
+    this.monoRecords = [];
+    this.calculated = false;
     return this;
   }
 
-  // ===== PERFORM EFFECTS =====
+  finalizeCalculation() {
+    this.finalAttrs = this.attrCtrl.finalize();
+    this.calculated = true;
+    return this;
+  }
+
+  // ===== EFFECTS =====
 
   canPerformEffect(condition?: EffectPerformableConditionSpecs, inputs: number[] = []): boolean {
     if (!condition) {
@@ -211,14 +180,6 @@ export class Character implements TeamMember, Clonable<Character> {
       return false;
     }
 
-    if (condition.checkMixed) {
-      const mixedCount = this.team.getMixedCount(this.data.vision);
-
-      if (!isPassedComparison(mixedCount, 3, "MIN")) {
-        return false;
-      }
-    }
-
     if (condition.checkAny) {
       const anyInvalid = condition.checkAny.some(
         (condition) => !this.canPerformEffect(condition, inputs),
@@ -235,24 +196,6 @@ export class Character implements TeamMember, Clonable<Character> {
 
     return true;
   }
-
-  performBonus(config: BonusCoreSpec, tools: Partial<BonusPerformTools>) {
-    return new BonusCalc(this, this.team, tools).makeBonus(config);
-  }
-
-  performPenalty(config: PenaltyCoreSpec, inputs?: number[]) {
-    return new PenaltyCalc(this, this.team, inputs).makePenalty(config);
-  }
-
-  parseBuffDesc(spec: EffectToParseDesc, inputs?: number[]) {
-    return new BonusCalc(this, this.team, { inputs }).parseAbilityDesc(spec);
-  }
-
-  parseDebuffDesc(spec: EffectToParseDesc, inputs?: number[]) {
-    return new PenaltyCalc(this, this.team, inputs).parseAbilityDesc(spec);
-  }
-
-  // ===== RECEIVE BONUSES =====
 
   canReceiveEffect(condition: EffectReceiverConditionSpecs) {
     const { data } = this;
@@ -291,9 +234,7 @@ export class Character implements TeamMember, Clonable<Character> {
     return true;
   }
 
-  private monoRecords: NonNullable<BonusMonoRecord>[] = [];
-
-  private isRecordedBonus(trackId: string, targetId: string) {
+  private isBonusRecorded(trackId: string, targetId: string) {
     const recorded = this.monoRecords.some((savedRecord) => {
       return trackId === savedRecord.trackId && targetId === savedRecord.targetId;
     });
@@ -311,10 +252,10 @@ export class Character implements TeamMember, Clonable<Character> {
     if (this.canReceiveEffect(bonus.effectSrc)) {
       const { monoId } = bonus.effectSrc;
       const toStat = bonus.toStat === "OWN_ELMT" ? this.data.vision : bonus.toStat;
-      const notRecorded = !monoId || !this.isRecordedBonus(monoId, toStat);
+      const notRecorded = !monoId || !this.isBonusRecorded(monoId, toStat);
 
       if (notRecorded) {
-        this.allAttrsCtrl.applyBonus({
+        this.attrCtrl.addBonus({
           ...bonus,
           toStat,
         });
@@ -330,7 +271,7 @@ export class Character implements TeamMember, Clonable<Character> {
     if (this.canReceiveEffect(bonus.effectSrc)) {
       const { monoId } = bonus.effectSrc;
       const notRecorded =
-        !monoId || !this.isRecordedBonus(monoId, `${bonus.toType}/${bonus.toKey}`);
+        !monoId || !this.isBonusRecorded(monoId, `${bonus.toType}/${bonus.toKey}`);
 
       if (notRecorded) {
         this.attkBonusCtrl.add(bonus);
@@ -342,12 +283,6 @@ export class Character implements TeamMember, Clonable<Character> {
     return false;
   }
 
-  // receiveTalentLevelBonus(bonus: ReceivedTalentBonus) {
-  //   if (this.canReceiveEffect(bonus.effectSrc)) {
-  //     const {  } = bonus
-  //   }
-  // }
-
   //
 
   serialize(): RawCharacter {
@@ -357,39 +292,121 @@ export class Character implements TeamMember, Clonable<Character> {
   clone(options: CharacterCloneOptions = {}) {
     const {
       weapon = this.weapon,
-      state = this.state,
+      level = this.level,
+      NAs = this.NAs,
+      ES = this.ES,
+      EB = this.EB,
+      cons = this.cons,
+      enhanced = this.enhanced,
       atfGear = this.atfGear,
-      allAttrsCtrl = this.allAttrsCtrl,
+      attrCtrl = this.attrCtrl,
       attkBonusCtrl = this.attkBonusCtrl,
-      team = this.team,
-      levelBonuses = this.levelBonuses,
+      tllvBonusCtrl = this.tllvBonusCtrl,
     } = options;
 
-    return new Character(this.code, this.data, weapon, {
-      state,
+    let { bareLv = this.bareLv, ascension = this.ascension } = this;
+
+    if (level !== this.level) {
+      const derived = splitLevel(level);
+
+      bareLv = derived.bareLv;
+      ascension = derived.ascension;
+    }
+
+    return new Character(
+      this.code,
+      level,
+      NAs,
+      ES,
+      EB,
+      cons,
+      enhanced,
+      bareLv,
+      ascension,
+      this.data,
+      weapon,
       atfGear,
-      allAttrsCtrl,
+      attrCtrl,
+      tllvBonusCtrl,
       attkBonusCtrl,
-      team,
-      levelBonuses,
-    });
+    );
   }
 
   deepClone() {
-    return new Character(this.code, this.data, this.weapon.clone(), {
-      state: this.state,
-      atfGear: this.atfGear.deepClone(),
-      levelBonuses: Object_.clone(this.levelBonuses),
-      allAttrsCtrl: this.allAttrsCtrl.clone(),
-      attkBonusCtrl: this.attkBonusCtrl.clone(),
-      team: this.team,
-    });
+    return new Character(
+      this.code,
+      this.level,
+      this.NAs,
+      this.ES,
+      this.EB,
+      this.cons,
+      this.enhanced,
+      this.bareLv,
+      this.ascension,
+      this.data,
+      this.weapon.clone(),
+      this.atfGear.deepClone(),
+      this.attrCtrl.clone(),
+      new Map(this.tllvBonusCtrl),
+      this.attkBonusCtrl.clone(),
+    );
   }
 
   // ===== STATIC =====
 
+  static #DEFAULT_LEVEL: Level = "1/20";
+  static #DEFAULT_NAs = 0;
+  static #DEFAULT_ES = 0;
+  static #DEFAULT_EB = 0;
+  static #DEFAULT_CONS = 0;
+  static #DEFAULT_ENHANCED = false;
+
+  static configure(config: CharacterConfigOptions) {
+    this.#DEFAULT_LEVEL = config.defaultLevel ?? this.#DEFAULT_LEVEL;
+    this.#DEFAULT_NAs = config.defaultNAs ?? this.#DEFAULT_NAs;
+    this.#DEFAULT_ES = config.defaultES ?? this.#DEFAULT_ES;
+    this.#DEFAULT_EB = config.defaultEB ?? this.#DEFAULT_EB;
+    this.#DEFAULT_CONS = config.defaultCons ?? this.#DEFAULT_CONS;
+    this.#DEFAULT_ENHANCED = config.defaultEnhanced ?? this.#DEFAULT_ENHANCED;
+  }
+
+  static create(data: AppCharacter, weapon: Weapon, options: CharacterCreateOptions) {
+    const {
+      level = this.#DEFAULT_LEVEL,
+      NAs = this.#DEFAULT_NAs,
+      ES = this.#DEFAULT_ES,
+      EB = this.#DEFAULT_EB,
+      cons = this.#DEFAULT_CONS,
+      enhanced = this.#DEFAULT_ENHANCED,
+      atfGear = ArtifactGear.create(),
+      tllvBonusCtrl = new Map<string, LevelBonus>(),
+      attrCtrl = AttributeControl.create(),
+      attkBonusCtrl = AttackBonusControl.create(),
+    } = options;
+
+    const { bareLv, ascension } = splitLevel(level);
+
+    return new Character(
+      data.code,
+      level,
+      NAs,
+      ES,
+      EB,
+      cons,
+      enhanced,
+      bareLv,
+      ascension,
+      data,
+      weapon,
+      atfGear,
+      attrCtrl,
+      tllvBonusCtrl,
+      attkBonusCtrl,
+    );
+  }
+
   static getTalentMult(scale: number, talentLv: number) {
-    return scale ? (TALENT_LV_MULTIPLIERS[scale]?.[talentLv] ?? 0) : 1;
+    return scale === 0 ? 1 : (TALENT_LV_MULTIPLIERS[scale]?.[talentLv] ?? 0);
   }
 
   static serialize(character: RawCharacter): RawCharacter {
@@ -404,6 +421,35 @@ export class Character implements TeamMember, Clonable<Character> {
     };
   }
 }
+
+type CharacterConfigOptions = {
+  defaultLevel?: Level;
+  defaultNAs?: number;
+  defaultES?: number;
+  defaultEB?: number;
+  defaultCons?: number;
+  defaultEnhanced?: boolean;
+};
+
+type BonusMonoRecord = {
+  trackId: string;
+  targetId: string;
+};
+
+type LevelBonus = {
+  id: string;
+  talent: LevelableTalentType;
+  value: number;
+};
+
+type ReceivedAttributeBonus = Omit<AttributeBonus, "toStat"> & {
+  toStat: AttributeBonus["toStat"] | "OWN_ELMT";
+  effectSrc: BonusSpec;
+};
+
+type ReceivedAttackBonus = AttackBonus & {
+  effectSrc: BonusSpec;
+};
 
 const BASE_REACTION_DAMAGE: Record<number, number> = {
   1: 17.17,

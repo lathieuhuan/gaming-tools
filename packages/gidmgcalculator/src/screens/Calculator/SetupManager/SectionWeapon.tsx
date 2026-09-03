@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { Badge, Button, PouchSvg, VersatileSelect } from "rond";
 
-import { $AppWeapon } from "@/services";
-import { genSequentialOptions } from "@/utils/pure.utils";
+import type { CalcSetupActions } from "@/logic/calculator";
+
+import { genSequentialOptions } from "@/utils/ui.utils";
 import { useCalcStore } from "@Store/calculator";
-import { switchMainWeapon, updateMainWeapon } from "@Store/calculator/actions";
+import { updateSetup } from "@Store/calculator/actions";
 import { selectActiveMain } from "@Store/calculator/selectors";
 
 import { GenshinImage } from "@/components/GenshinImage";
@@ -19,12 +20,20 @@ export function SectionWeapon() {
   const weapon = useCalcStore((state) => selectActiveMain(state).weapon);
   const [modalType, setModalType] = useState<ModalType>("");
 
-  const { beta, name = "", icon = "", rarity = 5 } = $AppWeapon.get(weapon.code) || {};
+  const { beta, name = "", icon = "", rarity = 5 } = weapon.data;
 
   const closeModal = () => setModalType("");
 
-  const handleForgeWeapon: WeaponForgeProps["onForgeWeapon"] = (weapon) => {
-    switchMainWeapon(weapon);
+  const handleForge: WeaponForgeProps["onForgeWeapon"] = (weapon) => {
+    updateSetup((setup) => {
+      setup.switchMainWeapon(weapon);
+    });
+  };
+
+  const handleUpdate: CalcSetupActions["updateMainWeapon"] = (data) => {
+    updateSetup((setup) => {
+      setup.updateMainWeapon(data);
+    });
   };
 
   return (
@@ -51,7 +60,7 @@ export function SectionWeapon() {
             className={`text-rarity-${rarity} font-medium`}
             rarity={rarity}
             value={weapon.level}
-            onChange={(level) => updateMainWeapon({ level })}
+            onChange={(level) => handleUpdate({ level })}
           />
         </div>
 
@@ -66,7 +75,7 @@ export function SectionWeapon() {
               disabled={name === ""}
               options={genSequentialOptions(5)}
               value={weapon.refi}
-              onChange={(refi) => updateMainWeapon({ refi })}
+              onChange={(refi) => handleUpdate({ refi })}
             />
           </div>
         )}
@@ -83,7 +92,7 @@ export function SectionWeapon() {
       <WeaponForge
         active={modalType === "MAKE_NEW_WEAPON"}
         forcedType={weapon.type}
-        onForgeWeapon={handleForgeWeapon}
+        onForgeWeapon={handleForge}
         onClose={closeModal}
       />
 
@@ -91,7 +100,7 @@ export function SectionWeapon() {
         active={modalType === "SELECT_USER_WEAPON"}
         weaponType={weapon.type}
         buttonText="Select"
-        onClickButton={updateMainWeapon}
+        onClickButton={handleUpdate}
         onClose={closeModal}
       />
     </Section>

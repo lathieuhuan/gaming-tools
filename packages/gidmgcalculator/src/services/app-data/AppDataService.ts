@@ -1,6 +1,6 @@
 import { Array_ } from "ron-utils";
 
-import type { AppMonster, TeamBuffSpec, TargetData } from "@/types";
+import type { AppMonster, TargetData, TeamBuffSpec } from "@/types";
 import type { AllData } from "./types";
 
 import { $AppArtifact } from "./AppArtifactService";
@@ -12,6 +12,8 @@ import { API_URL } from "./url";
 class AppDataService {
   teamBuffs: TeamBuffSpec[] = [];
   monsters: AppMonster[] = [];
+
+  MS_ASCENDANT_BUFF_ID = 1;
 
   async fetchAllData() {
     return await customFetch<AllData>(API_URL.allData());

@@ -3,7 +3,7 @@ import { Object_ } from "ron-utils";
 import type { AbilityBuffCtrl } from "@/types";
 
 import { useShallowCalcStore } from "@Store/calculator";
-import { updateActiveSetup } from "@Store/calculator/actions";
+import { updateSetup } from "@Store/calculator/actions";
 import { selectSetup } from "@Store/calculator/selectors";
 import { toggleModCtrl, updateModCtrlInputs } from "@Store/calculator/utils";
 
@@ -11,11 +11,11 @@ import { SelfBuffsView } from "@/components/ModifierLists";
 
 export default function BuffSelf() {
   const { main, team, selfBuffCtrls } = useShallowCalcStore((state) =>
-    Object_.extract(selectSetup(state), ["main", "team", "selfBuffCtrls"])
+    Object_.extract(selectSetup(state), ["main", "team", "selfBuffCtrls"]),
   );
 
   const handleUpdateCtrls = (newCtrls: AbilityBuffCtrl[]) => {
-    updateActiveSetup((setup) => {
+    updateSetup((setup) => {
       setup.selfBuffCtrls = newCtrls;
     });
   };

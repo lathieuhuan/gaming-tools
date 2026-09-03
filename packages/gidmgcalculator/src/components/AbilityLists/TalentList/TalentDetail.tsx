@@ -7,7 +7,7 @@ import type { AppCharacter } from "@/types";
 
 import { useTranslation } from "@/hooks";
 import { fetchTalentDescriptions } from "@/services/app-data";
-import { genSequentialOptions } from "@/utils/pure.utils";
+import { genSequentialOptions } from "@/utils/ui.utils";
 import { NORMAL_ATTACK_ICONS } from "./config";
 import { useDetailedTalents } from "./useDetailedTalents";
 

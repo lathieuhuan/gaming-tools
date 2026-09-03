@@ -7,7 +7,7 @@ import type { Level } from "@/types";
 import { useTranslation } from "@/hooks";
 import { parseWeaponDesc } from "@/utils/descriptionParsers";
 import { wrapText } from "@/utils/descriptionParsers/utils";
-import { genSequentialOptions, suffixOf } from "@/utils/pure.utils";
+import { genSequentialOptions, suffixOf } from "@/utils/ui.utils";
 
 // Component
 import { GenshinImage } from "../GenshinImage";

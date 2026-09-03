@@ -3,15 +3,15 @@ import { ModifierView } from "rond";
 import type { ModInputSpec } from "@/types";
 import type { ModifierViewInputConfig, ModifierViewProps } from "rond";
 
-import { genSequentialOptions } from "@/utils/pure.utils";
+import { genSequentialOptions } from "@/utils/ui.utils";
 import {
-  OPTION_CRYO,
-  OPTION_HYDRO,
-  OPTION_ELECTRO,
-  OPTION_PYRO,
-  OPTION_DENDRO,
   OPTION_ANEMO,
+  OPTION_CRYO,
+  OPTION_DENDRO,
+  OPTION_ELECTRO,
   OPTION_GEO,
+  OPTION_HYDRO,
+  OPTION_PYRO,
 } from "./_constants";
 
 const genOptions = (config: ModInputSpec) => {

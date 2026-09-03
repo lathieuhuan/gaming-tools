@@ -1,6 +1,6 @@
 import { Array_ } from "ron-utils";
 
-import type { CalcSetup, Team, Teammate } from "@/models";
+import type { Teammate } from "@/models";
 import type {
   AbilityBuffCtrl,
   AbilityDebuffCtrl,
@@ -11,6 +11,7 @@ import type {
   ArtifactDebuffCtrl,
   ArtifactGearSet,
   ElementalEvent,
+  ElementCount,
   ModAffectType,
   ModifierBaseSpec,
   ModifierCtrl,
@@ -18,15 +19,12 @@ import type {
   ModInputSpec,
   ModInputType,
   ResonanceModCtrl,
-  TeamBuffCtrl,
   WeaponBuffCtrl,
 } from "@/types";
 
 import { DEFAULT_STELLAR_VORTEX_LV } from "@/constants";
-import { $AppArtifact, $AppData } from "@/services";
-import { isManualRsnElmt } from "./element.logic";
-
-export const MS_ASCENDANT_BUFF_ID = 1;
+import { $AppArtifact } from "@/services";
+import { isManualRsnElmt } from "@/utils/element.utils";
 
 function getDefaultInitValue(type: ModInputType) {
   switch (type) {
@@ -82,38 +80,6 @@ export function createModCtrl(forSelf: boolean) {
   };
 }
 
-export function createTeamBuffCtrls(setup: CalcSetup): TeamBuffCtrl[] {
-  const { team, artBuffCtrls = [] } = setup;
-
-  // Find available team buff ids
-
-  const teamBuffIds = new Set<number>();
-
-  if (team.moonsignLv >= 2) {
-    teamBuffIds.add(MS_ASCENDANT_BUFF_ID);
-  }
-
-  for (const { data } of artBuffCtrls) {
-    data.teamBuffId && teamBuffIds.add(data.teamBuffId);
-  }
-
-  for (const teammate of setup.teammates) {
-    const { buffCtrls = [] } = teammate.artifact || {};
-
-    for (const { data } of buffCtrls) {
-      data.teamBuffId && teamBuffIds.add(data.teamBuffId);
-    }
-  }
-
-  // Turn ids into ctrls based on $AppData.teamBuffs
-
-  return Array_.filterMap(
-    $AppData.teamBuffs,
-    (buff) => teamBuffIds.has(buff.id),
-    createModCtrl(false),
-  );
-}
-
 type RefModifier = ModifierBaseSpec & {
   affect?: ModAffectType;
 };
@@ -149,19 +115,7 @@ export function createMainArtifactBuffCtrls(sets: ArtifactGearSet[]): ArtifactBu
   const ctrls: ArtifactBuffCtrl[] = [];
 
   for (const set of sets) {
-    const { buffs = [] } = set.data;
-
-    for (const buff of buffs) {
-      const { bonusLv = 1 } = buff;
-
-      if (buff.affect !== "TEAMMATE" && set.bonusLv >= bonusLv) {
-        ctrls.push({
-          code: set.data.code,
-          setData: set.data,
-          ...createModCtrl(true)(buff),
-        });
-      }
-    }
+    ctrls.push(...createArtifactBuffCtrls(set.data, true, set.bonusLv));
   }
 
   return ctrls;
@@ -231,11 +185,11 @@ export function createArtifactDebuffCtrls(sets: ArtifactGearSet[], teammates: Te
   return ctrls;
 }
 
-export function createRsnModCtrls(team: Team) {
+export function createRsnModCtrls(elmtCount: ElementCount) {
   const buffCtrls: ResonanceModCtrl[] = [];
   const debuffCtrls: ResonanceModCtrl[] = [];
 
-  team.elmtCount.forEach((count, element) => {
+  elmtCount.forEach((count, element) => {
     if (isManualRsnElmt(element) && count >= 2) {
       const ctrl: ResonanceModCtrl = {
         element,

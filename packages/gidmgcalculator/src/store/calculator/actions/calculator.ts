@@ -1,14 +1,19 @@
 import { Array_ } from "ron-utils";
 
-import type { AppCharacter, BasicSetupType, DbCharacter, SetupManager } from "@/types";
+import type {
+  AppCharacter,
+  BasicSetupType,
+  DbCharacter,
+  SetupImportParams,
+  SetupManager,
+} from "@/types";
 import type { UserdbState } from "@Store/userdbSlice";
 import type { CalculatorState } from "../types";
 
+import { CalcSetup } from "@/logic/calculator";
 import { createCharacter, createWeapon } from "@/logic/entity.logic";
 import { parseDbArtifacts } from "@/logic/userdb.logic";
-import { CalcSetup, CalcSetupConstructData } from "@/models";
-import { $AppCharacter } from "@/services";
-import IdStore from "@/utils/IdStore";
+import { IdStore } from "@/utils/IdStore";
 import { updateSettings } from "@Store/settings";
 import { isTourFinished } from "@Store/tours";
 import { updateUI } from "@Store/ui";
@@ -22,7 +27,7 @@ type InitSessionPayload = {
 
 export const initSession = (payload: InitSessionPayload) => {
   const { name = "Setup 1", type = "original", calcSetup } = payload;
-  const { ID, main, teammates } = calcSetup;
+  const { ID } = calcSetup;
 
   useCalcStore.setState({
     ...initialState,
@@ -38,7 +43,7 @@ export const initSession = (payload: InitSessionPayload) => {
 };
 
 export const updateCalculator = (
-  data: Partial<Pick<CalculatorState, "activeId" | "standardId" | "comparedIds">>
+  data: Partial<Pick<CalculatorState, "activeId" | "standardId" | "comparedIds">>,
 ) => {
   useCalcStore.setState((state) => {
     state.activeId = data.activeId ?? state.activeId;
@@ -47,7 +52,7 @@ export const updateCalculator = (
   });
 };
 
-export const applySettingsToCalculator = (unifyCharacters: boolean, travelerChanged: boolean) => {
+export const applySettingsToCalculator = (unifyMains: boolean, travelerChanged: boolean) => {
   useCalcStore.setState((state) => {
     const { setupsById } = state;
     const activeMain = setupsById[state.activeId]?.main;
@@ -56,13 +61,13 @@ export const applySettingsToCalculator = (unifyCharacters: boolean, travelerChan
       return;
     }
 
-    const shouldRecalculateAll = travelerChanged && $AppCharacter.checkIsTraveler(activeMain);
+    const shouldRecalculateAll = travelerChanged && activeMain.isTraveler;
 
     for (const [id, setup] of Object.entries(setupsById)) {
-      if (unifyCharacters) {
+      if (unifyMains) {
         setup.main = activeMain;
       }
-      if (unifyCharacters || shouldRecalculateAll) {
+      if (unifyMains || shouldRecalculateAll) {
         setupsById[id] = setup.calculate();
       }
     }
@@ -75,10 +80,10 @@ type ImportSetupOptions = {
 };
 
 export const importSetup = (
-  params: CalcSetupConstructData,
+  params: SetupImportParams,
   /** ID in manageInfo is prioritized over params.ID */
   manageInfo: Partial<SetupManager> = {},
-  options: ImportSetupOptions = {}
+  options: ImportSetupOptions = {},
 ) => {
   const { overwriteChar = false, overwriteTarget = false } = options;
   const { type = "original", name = "New setup" } = manageInfo;
@@ -109,10 +114,7 @@ export const importSetup = (
     }
 
     const setupId = manageInfo.ID ?? params.ID ?? Date.now();
-    const newSetup = new CalcSetup({
-      ...params,
-      ID: setupId,
-    });
+    const newSetup = CalcSetup.create(setupId, params.main, params);
 
     state.setupManagers.push({ ID: setupId, name, type });
     state.setupsById[setupId] = newSetup.calculate();
@@ -125,9 +127,9 @@ export function initSessionWithCharacter({
   data,
   userDb,
 }: {
-  character?: DbCharacter,
-  data: AppCharacter,
-  userDb: UserdbState
+  character?: DbCharacter;
+  data: AppCharacter;
+  userDb: UserdbState;
 }) {
   const { weaponID, artifactIDs } = character ?? {};
   const { userWps, userArts } = userDb;
@@ -142,15 +144,12 @@ export function initSessionWithCharacter({
   const atfGear = parseDbArtifacts(artifactIDs, userArts);
 
   const main = createCharacter({ code: data.code }, data, {
-    state: character,
+    ...character,
     weapon,
     atfGear,
   });
 
-  const calcSetup = new CalcSetup({
-    ID: idStore.gen(),
-    main,
-  });
+  const calcSetup = CalcSetup.create(idStore.gen(), main);
 
   initSession({
     calcSetup,

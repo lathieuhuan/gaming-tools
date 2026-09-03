@@ -17,12 +17,12 @@ type UseLayoutPropsReturn = Pick<
 
 export function useLayoutProps(comparedIds: number[]): UseLayoutPropsReturn {
   const { setupManagers, setupsById, standardId } = useShallowCalcStore((state) =>
-    Object_.extract(state, ["setupManagers", "setupsById", "standardId"])
+    Object_.extract(state, ["setupManagers", "setupsById", "standardId"]),
   );
 
   const standardWeapon = setupsById[standardId].main.weapon.code;
   const showWeaponCalc = comparedIds.some(
-    (id) => setupsById[id].main.weapon.code !== standardWeapon
+    (id) => setupsById[id].main.weapon.code !== standardWeapon,
   );
   const setupIds = [standardId].concat(comparedIds.filter((id) => id !== standardId));
 
@@ -31,7 +31,7 @@ export function useLayoutProps(comparedIds: number[]): UseLayoutPropsReturn {
   for (const talentType of TALENT_TYPES) {
     if (talentType === "altSprint") continue;
 
-    const levels = setupIds.map((id) => setupsById[id].main.getFinalTalentLv(talentType));
+    const levels = setupIds.map((id) => setupsById[id].main.finalTalentLv(talentType));
 
     talent[talentType] = {
       areSame: new Set(levels).size === 1,

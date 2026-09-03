@@ -4,7 +4,7 @@ import type { ArtifactSubStat, AttributeStat } from "@/types";
 
 import { useTranslation } from "@/hooks";
 import { Artifact } from "@/models";
-import { suffixOf } from "@/utils/pure.utils";
+import { suffixOf } from "@/utils/ui.utils";
 
 // Component
 import { GenshinImage } from "../GenshinImage";
@@ -35,7 +35,7 @@ export function ArtifactView<T extends Artifact>({
 
   const { name, beta } = artifact.data;
   const { rarity = 5, mainStatType } = artifact;
-  const mainStatTypeOptions = artifact.state.possibleMainStatTypes.map((type) => ({
+  const mainStatTypeOptions = Artifact.allMainStatTypesOf(artifact.type).map((type) => ({
     label: t(type),
     value: type,
   }));

@@ -1,6 +1,6 @@
 import { toMult } from "ron-utils";
 
-import type { Character, TargetCalc } from "@/models";
+import type { Character, Target } from "@/models";
 import type {
   ActualAttackElement,
   AttackBonusKey,
@@ -13,9 +13,9 @@ import type {
 import type { CalcResultReactionItem } from "../types";
 import type { ResultRecorder } from "./ResultRecorder";
 
-import { limitCRate } from "@/logic/stat.logic";
+import { GetAttackBonusPaths } from "@/models/Character";
+import { limitCRate } from "@/utils/stat.utils";
 import { LUNAR_ATTACK_ELEMENT, LUNAR_REACTION_COEFFICIENT } from "../constants";
-import { GetBonusPaths } from "@/models/Character";
 
 const TRANSFORMATIVE_REACTION_CONFIG: Record<
   TransformativeReaction,
@@ -32,19 +32,19 @@ const TRANSFORMATIVE_REACTION_CONFIG: Record<
   shattered: { mult: 3, attElmt: "phys" },
 };
 
-export function makeReactionCalc(performer: Character, target: TargetCalc) {
-  const { attkBonusCtrl, baseRxnDamage } = performer;
+export function makeReactionCalc(performer: Character, target: Target) {
+  const { attkBonusCtrl, baseReactionDMG } = performer;
 
   function calcLunarReaction(
     reaction: LunarReaction,
     recorder: ResultRecorder,
   ): CalcResultReactionItem {
-    const getBonus = (key: AttackBonusKey, paths: GetBonusPaths = []) => {
+    const getBonus = (key: AttackBonusKey, paths: GetAttackBonusPaths = []) => {
       return attkBonusCtrl.get(key, [reaction, ...paths]);
     };
 
     const mult = LUNAR_REACTION_COEFFICIENT[reaction];
-    const baseValue = baseRxnDamage * mult;
+    const baseValue = baseReactionDMG * mult;
     const rxnBaseMult = toMult(getBonus("rxnBaseMult_"));
     const bonusMult = 1 + getBonus("pct_") / 100;
     const elvMult = toMult(getBonus("elvMult_"));
@@ -88,12 +88,12 @@ export function makeReactionCalc(performer: Character, target: TargetCalc) {
     vortexLv: number,
     recorder: ResultRecorder,
   ): CalcResultReactionItem {
-    const getBonus = (key: AttackBonusKey, paths: GetBonusPaths = []) => {
+    const getBonus = (key: AttackBonusKey, paths: GetAttackBonusPaths = []) => {
       return attkBonusCtrl.get(key, ["stellarSwirl", ...paths]);
     };
 
     const mult = reaction === "stellarSwirl" ? 0.75 : vortexLv === 3 ? 3 : 2;
-    const baseValue = baseRxnDamage * mult;
+    const baseValue = baseReactionDMG * mult;
     const rxnBaseMult = toMult(getBonus("rxnBaseMult_"));
     const bonusMult = toMult(getBonus("pct_"));
     const elvMult = toMult(getBonus("elvMult_"));
@@ -139,7 +139,7 @@ export function makeReactionCalc(performer: Character, target: TargetCalc) {
     recorder: ResultRecorder,
     elmtEvent?: ElementalEvent,
   ): CalcResultReactionItem {
-    const paths: GetBonusPaths = [reaction];
+    const paths: GetAttackBonusPaths = [reaction];
 
     function getBonus(key: AttackBonusKey) {
       return attkBonusCtrl.get(key, paths);
@@ -160,7 +160,7 @@ export function makeReactionCalc(performer: Character, target: TargetCalc) {
         paths.push(`swirl.${elmtEvent.absorption}`);
 
         if (absorbReaction === "melt" || absorbReaction === "vaporize") {
-          rxnMult = performer.getAmplifyingMult(absorbReaction, attElmt);
+          rxnMult = performer.amplifyingReactionMult(absorbReaction, attElmt);
         }
       } else {
         attElmt = "anemo";
@@ -170,7 +170,7 @@ export function makeReactionCalc(performer: Character, target: TargetCalc) {
       resMult = target.resistMults[config.attElmt];
     }
 
-    const baseValue = baseRxnDamage * config.mult;
+    const baseValue = baseReactionDMG * config.mult;
     const bonusMult = 1 + getBonus("pct_") / 100;
     const flat = getBonus("flat");
     const base = (baseValue * bonusMult + flat) * rxnMult * resMult;

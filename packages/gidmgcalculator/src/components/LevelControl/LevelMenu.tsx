@@ -1,5 +1,5 @@
+import { validCapsOfLevel } from "@/utils/level.utils";
 import { ClassValue, clsx, cn } from "rond";
-import { Ascendable } from "@/models";
 
 export type LevelMenuProps = {
   classNames?: {
@@ -8,26 +8,26 @@ export type LevelMenuProps = {
   };
   level?: number;
   levelCap?: number;
-  levelCaps?: number[];
+  allLevelCaps?: number[];
   onSelectLevel?: (level: number) => void;
   onSelectLevelCap?: (levelCap: number) => void;
 };
 
 export function LevelMenu({
   classNames = {},
-  level: levelProp = 1,
-  levelCap: levelCapProp,
-  levelCaps = [],
+  level = 1,
+  levelCap,
+  allLevelCaps = [],
   onSelectLevel,
   onSelectLevelCap,
 }: LevelMenuProps) {
-  const lvOptions = levelCaps.concat(1);
-  const selectedLv = lvOptions.includes(levelProp) ? levelProp : undefined;
-  const lvCapOptions = Ascendable.getPossibleLvCaps(levelProp, levelCaps);
+  const lvOptions = allLevelCaps.concat(1);
+  const selectedLv = lvOptions.includes(level) ? level : undefined;
+  const lvCapOptions = validCapsOfLevel(level, allLevelCaps);
 
-  const handleSelectLv = (level: number) => {
-    if (level !== levelProp) {
-      onSelectLevel?.(level);
+  const handleSelectLv = (newLevel: number) => {
+    if (newLevel !== level) {
+      onSelectLevel?.(newLevel);
     }
   };
 
@@ -35,45 +35,45 @@ export function LevelMenu({
     <div
       className={cn(
         "h-fit flex bg-light-2 text-black text-base rounded-sm overflow-clip",
-        classNames.root
+        classNames.root,
       )}
     >
       <div className="grow custom-scrollbar border-r border-black/40 cursor-default">
-        {lvOptions.map((level, index) => (
+        {lvOptions.map((lvOption, index) => (
           <div
             key={index}
             className={clsx(
               "min-h-7 pr-2 flex items-center justify-end",
-              level === selectedLv ? "bg-primary-1" : "hover:bg-light-4"
+              lvOption === selectedLv ? "bg-primary-1" : "hover:bg-light-4",
             )}
             onClick={(e) => {
               e.stopPropagation();
-              handleSelectLv(level);
+              handleSelectLv(lvOption);
             }}
           >
-            <span>{level}</span>
+            <span>{lvOption}</span>
           </div>
         ))}
       </div>
 
       <div className={cn("shrink-0 custom-scrollbar cursor-default", classNames.capColumn)}>
-        {lvCapOptions.map((lvCap, index) => {
-          const selected = lvCap === levelCapProp;
+        {lvCapOptions.map((lvCapOption, index) => {
+          const selected = lvCapOption === levelCap;
 
           return (
             <div
               key={index}
               className={clsx(
                 "min-h-7 pr-2 flex items-center justify-end",
-                selected ? "bg-primary-1" : "hover:bg-light-4"
+                selected ? "bg-primary-1" : "hover:bg-light-4",
               )}
               onClick={() => {
                 if (!selected) {
-                  onSelectLevelCap?.(lvCap);
+                  onSelectLevelCap?.(lvCapOption);
                 }
               }}
             >
-              <span>{lvCap}</span>
+              <span>{lvCapOption}</span>
             </div>
           );
         })}

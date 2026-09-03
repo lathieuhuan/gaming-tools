@@ -3,8 +3,8 @@ import { round } from "ron-utils";
 import type { Character } from "@/models";
 import type { AmplifyingReaction, ElementType } from "@/types";
 
-import { GenshinModifierView, type GenshinModifierViewProps } from "../GenshinModifierView";
 import { PositiveText } from "@/components/Text";
+import { GenshinModifierView, type GenshinModifierViewProps } from "../GenshinModifierView";
 
 type VapMeltBuffItemProps = Pick<GenshinModifierViewProps, "mutable" | "checked" | "onToggle"> & {
   reaction: AmplifyingReaction;
@@ -13,7 +13,7 @@ type VapMeltBuffItemProps = Pick<GenshinModifierViewProps, "mutable" | "checked"
 };
 
 export function VapMeltBuffItem({ reaction, element, character, ...rest }: VapMeltBuffItemProps) {
-  const mult = character.getAmplifyingMult(reaction, element);
+  const mult = character.amplifyingReactionMult(reaction, element);
 
   return (
     <GenshinModifierView

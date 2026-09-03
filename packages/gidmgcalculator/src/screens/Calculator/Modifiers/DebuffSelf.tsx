@@ -3,7 +3,7 @@ import { Object_ } from "ron-utils";
 import type { AbilityDebuffCtrl } from "@/types";
 
 import { useShallowCalcStore } from "@Store/calculator";
-import { updateActiveSetup } from "@Store/calculator/actions";
+import { updateSetup } from "@Store/calculator/actions";
 import { selectSetup } from "@Store/calculator/selectors";
 import { toggleModCtrl, updateModCtrlInputs } from "@Store/calculator/utils";
 
@@ -15,7 +15,7 @@ export default function DebuffSelf() {
   });
 
   const handleUpdateCtrls = (newCtrls: AbilityDebuffCtrl[]) => {
-    updateActiveSetup((setup) => {
+    updateSetup((setup) => {
       setup.selfDebuffCtrls = newCtrls;
     });
   };

@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 
-import type { CalcSetup } from "@/models";
+import type { CalcSetup } from "@/logic/calculator";
 import { encodeSetup } from "@/logic/setupCodec";
 import { PorterLayout } from "./PorterLayout";
 
@@ -49,7 +49,7 @@ export const SetupExporter = ({ setupName, calcSetup, onClose }: SetupExporterPr
               .writeText(`${window.location.origin}?importCode=${encodedData}`)
               .then(
                 () => setStatus("SUCCESS"),
-                () => setStatus("NOT_SUPPORT")
+                () => setStatus("NOT_SUPPORT"),
               );
           },
         },
@@ -60,7 +60,7 @@ export const SetupExporter = ({ setupName, calcSetup, onClose }: SetupExporterPr
           onClick: () => {
             navigator.clipboard.writeText(encodedData).then(
               () => setStatus("SUCCESS"),
-              () => setStatus("NOT_SUPPORT")
+              () => setStatus("NOT_SUPPORT"),
             );
           },
         },

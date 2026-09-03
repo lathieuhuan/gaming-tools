@@ -1,41 +1,23 @@
-import { Array_, Object_ } from "ron-utils";
 import type { PartiallyRequiredOnly } from "rond";
 
 import type {
+  AbilityBuffCtrl,
+  AbilityDebuffCtrl,
   AppArtifact,
   AppCharacter,
   AppMonster,
   AppWeapon,
-  ArtifactKey,
-  ArtifactStateData,
-  CharacterStateData,
-  EquipmentRelationData,
-  AbilityBuffCtrl,
-  AbilityDebuffCtrl,
-  RawTarget,
-  MonsterInputChanges,
   RawArtifact,
   RawCharacter,
+  RawTarget,
   RawTeammate,
   RawWeapon,
   TeammateArtifact,
-  TeammateArtifactBuffCtrl,
   TeammateWeapon,
-  WeaponStateData,
 } from "@/types";
 
-import { ATTACK_ELEMENTS } from "@/constants/global";
-import {
-  Artifact,
-  Character,
-  CharacterConstructOptions,
-  Target,
-  Team,
-  Teammate,
-  Weapon,
-} from "@/models";
+import { Artifact, Character, CharacterCreateOptions, Target, Teammate, Weapon } from "@/models";
 import { $AppArtifact, $AppCharacter, $AppData, $AppWeapon } from "@/services";
-import { useSettingsStore } from "@Store/settings";
 import {
   createAbilityBuffCtrls,
   createAbilityDebuffCtrls,
@@ -45,55 +27,43 @@ import {
 
 // ========== ARTIFACT ==========
 
-export type CreateArtifactOptions = {
-  newState?: Partial<ArtifactStateData>;
-  newRelation?: Partial<EquipmentRelationData>;
-};
+export type CreateArtifactOptions = Partial<
+  Pick<
+    RawArtifact,
+    "type" | "rarity" | "level" | "mainStatType" | "subStats" | "owner" | "setupIDs"
+  >
+>;
 
 export function createArtifact(
-  raw: PartiallyRequiredOnly<RawArtifact, keyof ArtifactKey>,
+  raw: PartiallyRequiredOnly<RawArtifact, "code">,
   data?: AppArtifact | null,
-  options: CreateArtifactOptions = {}
+  options: CreateArtifactOptions = {},
 ) {
-  const state: Partial<ArtifactStateData> = {
-    ...raw,
-    ...options.newState,
-  };
-  const relation: Partial<EquipmentRelationData> = {
-    ...raw,
-    ...options.newRelation,
-  };
+  const { ID = Date.now(), code } = raw;
 
-  data ??= $AppArtifact.getSet(raw.code)!;
+  if (data == null || data.code !== code) {
+    data = $AppArtifact.getSet(code)!;
+  }
 
-  return new Artifact(raw, data, { state, relation });
+  return Artifact.create(ID, data, { ...raw, ...options });
 }
 
 // ========== WEAPON ==========
 
-export type CreateWeaponOptions = {
-  newState?: Partial<WeaponStateData>;
-  newRelation?: Partial<EquipmentRelationData>;
-};
+export type CreateWeaponOptions = Partial<Pick<RawWeapon, "level" | "refi" | "owner" | "setupIDs">>;
 
 export function createWeapon(
   raw: PartiallyRequiredOnly<RawWeapon, "type">,
   data?: AppWeapon | null,
-  options: CreateWeaponOptions = {}
+  options: CreateWeaponOptions = {},
 ) {
   const { ID = Date.now(), type, code = Weapon.DEFAULT_CODE[type] } = raw;
-  const state: Partial<WeaponStateData> = {
-    ...raw,
-    ...options.newState,
-  };
-  const relation: Partial<EquipmentRelationData> = {
-    ...raw,
-    ...options.newRelation,
-  };
 
-  data ??= $AppWeapon.get(code)!;
+  if (data == null || data.code !== code) {
+    data = $AppWeapon.get(code)!;
+  }
 
-  return new Weapon({ ID, type, code }, data, { state, relation });
+  return Weapon.create(ID, type, data, { ...raw, ...options });
 }
 
 // ========== ITEMS ==========
@@ -104,37 +74,29 @@ export function isWeapon(item: RawWeapon | RawArtifact): item is RawWeapon {
 
 // ========== CHARACTER ==========
 
-export type CreateCharacterOptions = CharacterConstructOptions & {
+export type CreateCharacterOptions = CharacterCreateOptions & {
   weapon?: Weapon;
 };
 
 export function createCharacter(
   raw: PartiallyRequiredOnly<RawCharacter, "code">,
   data?: AppCharacter | null,
-  options: CreateCharacterOptions = {}
+  options: CreateCharacterOptions = {},
 ) {
-  data ??= $AppCharacter.get(raw.code);
+  const { code } = raw;
+
+  if (data == null || data.code !== code) {
+    data = $AppCharacter.get(code)!;
+  }
 
   const { weapon = createWeapon({ type: data.weaponType }) } = options;
-  const state: Partial<CharacterStateData> = {
-    ...raw,
-    ...options.state,
-  };
 
-  return new Character(raw.code, data, weapon, {
-    ...options,
-    state,
-  });
+  return Character.create(data, weapon, { ...raw, ...options });
 }
-
-type CreateTeammateOptions = {
-  team?: Team;
-};
 
 export function createTeammate(
   raw: PartiallyRequiredOnly<RawTeammate, "code">,
   data?: AppCharacter | null,
-  options: CreateTeammateOptions = {}
 ) {
   data ??= $AppCharacter.get(raw.code);
 
@@ -188,7 +150,6 @@ export function createTeammate(
     buffCtrls,
     debuffCtrls,
     artifact,
-    team: options.team,
   });
 }
 
@@ -196,110 +157,26 @@ export function createTeammate(
 
 export type CreateTargetParams = PartiallyRequiredOnly<RawTarget, "code">;
 
-export const createTargetBasic = (params: CreateTargetParams): RawTarget => {
-  const {
-    level = useSettingsStore.getState().targetLevel,
-    resistances = {
-      pyro: 10,
-      hydro: 10,
-      electro: 10,
-      cryo: 10,
-      geo: 10,
-      anemo: 10,
-      dendro: 10,
-      phys: 10,
-    },
-  } = params;
+export const createTarget = (codeOrRaw: number | RawTarget = 0, data?: AppMonster) => {
+  const code = typeof codeOrRaw === "number" ? codeOrRaw : codeOrRaw.code;
 
-  return { ...params, level, resistances: { ...resistances } };
-};
+  if (code === 0) {
+    const target = Target.default();
 
-export const createTarget = (
-  params: CreateTargetParams,
-  data: AppMonster = params.code === 0 ? Target.DEFAULT_MONSTER : $AppData.getMonster(params)!
-) => {
-  const basic = createTargetBasic(params);
-
-  if (data.code === 0) {
-    // Custom target
-    return new Target(basic, data);
-  }
-
-  // Target is preset monster, update resistances based on target's inputs and monster data
-
-  const { variantType, inputs = [] } = basic;
-  const resistances = { ...basic.resistances };
-  const { resistance, variant } = data;
-  const { base, ...otherResistances } = resistance;
-  const inputConfigs = data.inputConfigs ? Array_.toArray(data.inputConfigs) : [];
-
-  for (const atkElmt of ATTACK_ELEMENTS) {
-    resistances[atkElmt] = otherResistances[atkElmt] ?? base;
-  }
-
-  if (variantType && variant?.change) {
-    resistances[variantType] += variant.change;
-  }
-
-  const updateAsChanges = (changes: MonsterInputChanges) => {
-    for (const [key, value = 0] of Object_.entries(changes)) {
-      switch (key) {
-        case "base":
-          for (const attElmt of ATTACK_ELEMENTS) {
-            resistances[attElmt] += value;
-          }
-          break;
-        case "variant":
-          if (variantType) {
-            resistances[variantType] += value;
-          }
-          break;
-        default:
-          resistances[key] += value;
-      }
-    }
-  };
-
-  for (let index = 0; index < inputs.length; index++) {
-    const config = inputConfigs[index];
-
-    if (!config) {
-      continue;
+    if (typeof codeOrRaw === "object") {
+      target.updateResistances(codeOrRaw.resistances);
     }
 
-    const input = inputs[index];
-    const { type = "CHECK" } = config;
-
-    switch (type) {
-      case "CHECK":
-        if (input && config.changes) {
-          updateAsChanges(config.changes);
-        }
-        break;
-      case "SELECT": {
-        if (input === -1 || !config.options) {
-          continue;
-        }
-
-        const option = config.options[input];
-
-        if (typeof option === "string") {
-          if (config.optionChange) {
-            resistances[option] += config.optionChange;
-          }
-        } else {
-          updateAsChanges(option.changes);
-        }
-        break;
-      }
-    }
+    return target;
   }
 
-  return new Target(
-    {
-      ...basic,
-      resistances,
-    },
-    data
-  );
+  if (data == null || data.code !== code) {
+    data = $AppData.getMonster({ code })!;
+  }
+
+  if (typeof codeOrRaw === "number") {
+    return Target.create(data);
+  }
+
+  return Target.fromRaw(codeOrRaw, data);
 };

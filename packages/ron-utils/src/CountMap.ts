@@ -5,6 +5,9 @@ export type CountMapOptions = {
 export class CountMap<K extends PropertyKey = string> extends Map<K, number> {
   private readonly min: number;
 
+  /**
+   * @param options Default `min` is 0
+   */
   constructor(iterable?: Iterable<readonly [K, number]> | null, options?: CountMapOptions);
   constructor(entries?: readonly (readonly [K, number])[] | null, options?: CountMapOptions);
   constructor(
@@ -13,7 +16,7 @@ export class CountMap<K extends PropertyKey = string> extends Map<K, number> {
   ) {
     super();
 
-    const { min = -Infinity } = options;
+    const { min = 0 } = options;
 
     this.min = min;
 

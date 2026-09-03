@@ -29,7 +29,7 @@ import {
   LEVELS,
   WEAPON_TYPES,
 } from "@/constants/global";
-import { isManualRsnElmt } from "@/logic/element.logic";
+import { CalcSetup } from "@/logic/calculator";
 import {
   createArtifact,
   createCharacter,
@@ -38,9 +38,10 @@ import {
   createWeapon,
 } from "@/logic/entity.logic";
 import { enhanceCtrls } from "@/logic/modifier.logic";
-import { Artifact, ArtifactGear, CalcSetup, Target, Team, Teammate } from "@/models";
+import { Artifact, ArtifactGear, Teammate } from "@/models";
 import { $AppArtifact, $AppCharacter, $AppData } from "@/services";
-import IdStore from "@/utils/IdStore";
+import { isManualRsnElmt } from "@/utils/element.utils";
+import { IdStore } from "@/utils/IdStore";
 import { CUSTOM_BUFF_CATEGORIES, DECODE_ERROR_MSG, DIVIDER } from "./config";
 
 export function decodeSetupPrevious(code: string): DecodeResult {
@@ -111,7 +112,6 @@ export function decodeSetupPrevious(code: string): DecodeResult {
   };
 
   const idStore = new IdStore();
-  const team = new Team();
 
   // ===== MAIN =====
 
@@ -167,15 +167,13 @@ export function decodeSetupPrevious(code: string): DecodeResult {
     }
   };
 
-  const atfGear = new ArtifactGear(
-    Array_.truthify([
-      decodeArtifact(flowerStr, "flower"),
-      decodeArtifact(plumeStr, "plume"),
-      decodeArtifact(sandsStr, "sands"),
-      decodeArtifact(gobletStr, "goblet"),
-      decodeArtifact(circletStr, "circlet"),
-    ]),
-  );
+  const atfGear = ArtifactGear.create([
+    decodeArtifact(flowerStr, "flower"),
+    decodeArtifact(plumeStr, "plume"),
+    decodeArtifact(sandsStr, "sands"),
+    decodeArtifact(gobletStr, "goblet"),
+    decodeArtifact(circletStr, "circlet"),
+  ]);
 
   const main = createCharacter(
     {
@@ -191,7 +189,6 @@ export function decodeSetupPrevious(code: string): DecodeResult {
     {
       weapon,
       atfGear,
-      team,
     },
   );
 
@@ -288,7 +285,6 @@ export function decodeSetupPrevious(code: string): DecodeResult {
           artifact,
         },
         null,
-        { team },
       );
     } catch (e) {
       console.error(e);
@@ -301,8 +297,6 @@ export function decodeSetupPrevious(code: string): DecodeResult {
     decodeTeammate(teammateStr2),
     decodeTeammate(teammateStr3),
   ]);
-
-  team.updateMembers([main, ...teammates]);
 
   // ===== ELEMENTAL EVENT =====
 
@@ -416,10 +410,10 @@ export function decodeSetupPrevious(code: string): DecodeResult {
   const [tgCode, tgLevel, tgVariant, tgInputs, tgResistances] = split(targetStr, 1);
   const targetData = $AppData.getMonster({ code: +tgCode });
 
-  let target: Target | undefined;
+  let target: ReturnType<typeof createTarget> | undefined;
 
   if (targetData) {
-    target = new Target(
+    target = createTarget(
       {
         code: parseNumber(tgCode, "Target Code"),
         level: parseNumber(tgLevel, "Target Level"),
@@ -453,21 +447,18 @@ export function decodeSetupPrevious(code: string): DecodeResult {
       }
     }
   } else {
-    target = createTarget({ code: 0 });
+    target = createTarget();
   }
 
   const importInfo: SetupImportData = {
-    ID: idStore.gen(),
     name: "Imported setup",
-    params: new CalcSetup({
-      main,
+    params: CalcSetup.create(idStore.gen(), main, {
       selfBuffCtrls: enhanceCtrls(splitModCtrls(selfBcStrs, 1), mainData.buffs),
       selfDebuffCtrls: enhanceCtrls(splitModCtrls(selfDcStrs, 1), mainData.debuffs),
       wpBuffCtrls: enhanceCtrls(splitModCtrls(wpBcStrs, 1), weapon.data.buffs),
       artBuffCtrls,
       artDebuffCtrls,
       teammates,
-      team,
       rsnBuffCtrls: decodeResonance(rsnBcStrs),
       rsnDebuffCtrls: decodeResonance(rsnDcStrs),
       teamBuffCtrls,

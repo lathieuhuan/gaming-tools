@@ -65,7 +65,7 @@ export class Container<
   /** Create new instance, no mutation */
   update = (viewedMap: ViewMap) => {
     return new Container<ObservedArea, ObservedElement>(viewedMap, this.ref);
-  }
+  };
 }
 
 export class ObservedItem<ObservedElement extends HTMLElement = HTMLDivElement> {

@@ -1,22 +1,15 @@
 import { Array_, Object_ } from "ron-utils";
 
 import type { ArtifactType, SetupManager } from "@/types";
-import type { WritableDraft } from "immer/src/internal.js";
 
-import { CalcSetup } from "@/models";
+import { CalcSetup } from "@/logic/calculator";
 import { useCalcStore } from "../calculatorStore";
-import { getCopyName, onActiveSetup } from "../utils";
-
-export const updateActiveSetup = (
-  callback: (setup: WritableDraft<CalcSetup>) => boolean | void
-) => {
-  useCalcStore.setState(onActiveSetup(callback));
-};
+import { getCopyName } from "../utils";
 
 export const updateSetupAfterSave = (
   setupId: number,
   weaponId: number,
-  newPieceIds: Partial<Record<ArtifactType, number>>
+  newPieceIds: Partial<Record<ArtifactType, number>>,
 ) => {
   useCalcStore.setState((state) => {
     const setup = state.setupsById[setupId];
@@ -28,16 +21,16 @@ export const updateSetupAfterSave = (
     const { main } = setup;
     const { pieces } = setup.main.atfGear;
 
-    main.weapon = main.weapon.clone({ key: { ID: weaponId } });
+    main.weapon = main.weapon.clone({ ID: weaponId });
 
     for (const [type, id] of Object_.entries(newPieceIds)) {
-      const piece = pieces.get(type);
+      const piece = pieces[type];
 
-      if (!piece || !id) {
+      if (piece === undefined || id === undefined) {
         continue;
       }
 
-      pieces.set(type, piece?.clone({ key: { ID: id } }));
+      pieces[type] = piece.clone({ ID: id });
     }
   });
 };
@@ -59,7 +52,7 @@ export const duplicateSetup = (sourceId: number) => {
         name: setupName || "New Setup",
         type: "original",
       });
-      setupsById[setupID] = setupsById[sourceId].clone({ ID: setupID }).calculate();
+      setupsById[setupID] = setupsById[sourceId].deepClone(setupID);
 
       if (comparedIds.includes(sourceId)) {
         state.comparedIds.push(setupID);
@@ -99,9 +92,11 @@ export type MultiSetupChange = SetupManager & {
 
 export const updateMultiSetups = (changes: MultiSetupChange[], newStandardId: number) => {
   useCalcStore.setState((state) => {
-    const { setupManagers, setupsById, activeId, target } = state;
+    const { setupManagers, setupsById, activeId } = state;
     const removedIds: number[] = [];
     const tempManagers: SetupManager[] = [];
+
+    const target = state.target.clone();
 
     // Reset comparedIds before repopulate with changes
     state.comparedIds = [];
@@ -139,7 +134,7 @@ export const updateMultiSetups = (changes: MultiSetupChange[], newStandardId: nu
               name: newSetupName,
               type: "original",
             });
-            setupsById[change.ID] = setupsById[originId].clone({ ID: change.ID });
+            setupsById[change.ID] = setupsById[originId].deepClone(change.ID);
           }
           break;
         }
@@ -150,9 +145,9 @@ export const updateMultiSetups = (changes: MultiSetupChange[], newStandardId: nu
             type: "original",
           });
 
-          const newSetup = new CalcSetup({
-            ID: change.ID,
-            main: setupsById[activeId].main.deepClone(),
+          const activeMainClone = setupsById[activeId].main.deepClone();
+
+          const newSetup = CalcSetup.create(change.ID, activeMainClone, {
             target,
           });
 

@@ -1,9 +1,9 @@
 import { useMemo, useState } from "react";
 
-import type { RawArtifact, AttributeStat } from "@/types";
+import type { AttributeStat, RawArtifact } from "@/types";
 import type { ArtifactFilterCondition } from "../types";
 
-import { ArtifactState } from "@/models";
+import { Artifact } from "@/models";
 import { DEFAULT_ARTIFACT_FILTER } from "../constants";
 
 export function useArtifactFilter<T extends RawArtifact = RawArtifact>(
@@ -65,7 +65,7 @@ function filterArtifacts<T extends RawArtifact = RawArtifact>(
 
     result.sort((a, b) => {
       if (shouldFilterMainstat) {
-        const mainstatCompare = ArtifactState.mainStatValueOf(b) - ArtifactState.mainStatValueOf(a);
+        const mainstatCompare = Artifact.mainStatValueOf(b) - Artifact.mainStatValueOf(a);
 
         if (mainstatCompare) return mainstatCompare;
       }

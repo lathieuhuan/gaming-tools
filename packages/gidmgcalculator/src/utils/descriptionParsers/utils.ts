@@ -13,6 +13,7 @@ const typeToCls: Record<string, string> = {
   pyro: "text-pyro",
 };
 
+// TODO move
 export const wrapText = (text: string | number, type = "") => {
   return `<span class="${typeToCls[type] || ""}">${text}</span>`;
 };

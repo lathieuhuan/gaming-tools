@@ -1,7 +1,7 @@
 import { Object_ } from "ron-utils";
 
 import { useShallowCalcStore } from "@Store/calculator";
-import { updateActiveSetup } from "@Store/calculator/actions";
+import { updateSetup } from "@Store/calculator/actions";
 
 import { CopySection } from "@/screens/Calculator/components/CopySection";
 
@@ -16,7 +16,7 @@ type CopySelectProps = {
 
 export function CopySelect({ type }: CopySelectProps) {
   const { setupManagers, setupsById } = useShallowCalcStore((state) =>
-    Object_.extract(state, ["setupManagers", "setupsById"])
+    Object_.extract(state, ["setupManagers", "setupsById"]),
   );
 
   const copyOptions: CopyOption[] = [];
@@ -31,7 +31,7 @@ export function CopySelect({ type }: CopySelectProps) {
   }
 
   const handleCopy = (option: CopyOption) => {
-    updateActiveSetup((setup) => {
+    updateSetup((setup) => {
       switch (type) {
         case "customBuffCtrls":
           setup.customBuffCtrls = setupsById[option.value]?.customBuffCtrls || [];
@@ -39,6 +39,8 @@ export function CopySelect({ type }: CopySelectProps) {
         case "customDebuffCtrls":
           setup.customDebuffCtrls = setupsById[option.value]?.customDebuffCtrls || [];
           break;
+        default:
+          return false;
       }
     });
   };

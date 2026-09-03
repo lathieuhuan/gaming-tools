@@ -1,3 +1,4 @@
+import { Target } from "@/models";
 import { MonsterInputConfig } from "@/types";
 import { Checkbox, VersatileSelect } from "rond";
 
@@ -8,7 +9,7 @@ type InputControlProps = {
 };
 
 export function InputControl({ config, input, onChange }: InputControlProps) {
-  const { type: configType = "CHECK" } = config;
+  const { type: configType = Target.DEFAULT_INPUT_SPEC_TYPE } = config;
 
   switch (configType) {
     case "CHECK": {

@@ -44,7 +44,7 @@ export function GearsDetail({ detailType, showCloseBtn, onClose }: GearsDetailPr
     };
 
     if (
-      (isArtifactType(detailType) && !atfGear.pieces.get(detailType)) ||
+      (isArtifactType(detailType) && !atfGear.pieces[detailType]) ||
       (detailType === "setBonus" && !atfGear.sets.length)
     ) {
       onClose();
@@ -100,7 +100,7 @@ export function GearsDetail({ detailType, showCloseBtn, onClose }: GearsDetailPr
       return null;
 
     default: {
-      const activeArtifact = atfGear.pieces.get(detailType);
+      const activeArtifact = atfGear.pieces[detailType];
 
       if (!activeArtifact) {
         return null;
@@ -120,7 +120,7 @@ export function GearsDetail({ detailType, showCloseBtn, onClose }: GearsDetailPr
               updateDbArtifact({
                 ID: activeArtifact.ID,
                 mainStatType: type,
-              })
+              }),
             );
           }}
           onChangeSubStat={(subStatIndex, changes) => {

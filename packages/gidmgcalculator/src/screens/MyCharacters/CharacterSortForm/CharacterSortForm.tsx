@@ -5,9 +5,9 @@ import { CarouselSpace, Popover } from "rond";
 
 import type { CharacterToBeSorted } from "./types";
 
-import { Ascendable } from "@/models";
-import { $AppCharacter } from "@/services";
 import { useStoreSnapshot } from "@/lib/dynamic-store";
+import { $AppCharacter } from "@/services";
+import { splitLevel } from "@/utils/level.utils";
 import { useDispatch } from "@Store/hooks";
 import { selectDbCharacters, sortDbCharacters } from "@Store/userdbSlice";
 
@@ -21,7 +21,7 @@ const selectCharacterToBeSorted = createSelector(selectDbCharacters, (userChars)
       data: $AppCharacter.get(character.code),
       index,
     };
-  })
+  }),
 );
 
 type CharacterSortFormProps = {
@@ -50,8 +50,8 @@ export function CharacterSortForm({ id, onClose }: CharacterSortFormProps) {
       const newList = [...prev];
 
       return newList.sort((a, b) => {
-        const { bareLv: lvA, ascension: ascA } = Ascendable.splitLevel(a.level);
-        const { bareLv: lvB, ascension: ascB } = Ascendable.splitLevel(b.level);
+        const { bareLv: lvA, ascension: ascA } = splitLevel(a.level);
+        const { bareLv: lvB, ascension: ascB } = splitLevel(b.level);
 
         return lvA !== lvB ? lvB - lvA : ascA - ascB;
       });

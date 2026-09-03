@@ -1,4 +1,4 @@
-import type { CalcResult } from "@/calculation/calculator";
+import type { CalcResult } from "@/logic/calculator";
 
 import { useTranslation } from "@/hooks";
 import { attackCalcItemSubtitleParts, displayValues } from "./utils";

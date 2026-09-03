@@ -5,7 +5,13 @@ import type { CustomBuffCtrl, CustomBuffCtrlCategory, CustomBuffCtrlType } from 
 
 import { CUSTOM_BUFF_CTRL_SPECS } from "@/constants/global";
 import { useTranslation } from "@/hooks";
-import { suffixOf, toCustomBuffLabel } from "@/utils/pure.utils";
+import { suffixOf, toCustomBuffLabel } from "@/utils/ui.utils";
+
+function typesByCategory(category: CustomBuffCtrlCategory) {
+  const { types } = CUSTOM_BUFF_CTRL_SPECS[category];
+  // new reaction types must be added at the end but we want to show them at the beginning
+  return category === "rxnBonus" ? types.toReversed() : types;
+}
 
 type BuffCtrlFormProps = {
   id: string;
@@ -21,12 +27,6 @@ export function BuffCtrlForm({ id, onSubmit }: BuffCtrlFormProps) {
     type: CUSTOM_BUFF_CTRL_SPECS.totalAttr.types[0],
     value: 0,
   });
-
-  const typesByCategory = (category: CustomBuffCtrlCategory) => {
-    const { types } = CUSTOM_BUFF_CTRL_SPECS[category];
-    // new reaction types must be added at the end but we want to show them at the beginning
-    return category === "rxnBonus" ? types.toReversed() : types;
-  };
 
   const categorySpec = CUSTOM_BUFF_CTRL_SPECS[config.category];
   const sign = suffixOf(config.subType || config.type);

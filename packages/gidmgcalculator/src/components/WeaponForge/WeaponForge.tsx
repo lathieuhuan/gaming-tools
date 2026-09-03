@@ -50,7 +50,7 @@ function WeaponSmith({ forcedType, onForgeWeapon, onClose, ...templateProps }: W
       : {
           types: ["bow"],
           rarities: [4, 5],
-        }
+        },
   );
 
   const weaponOptions = useMemo(() => {
@@ -71,7 +71,7 @@ function WeaponSmith({ forcedType, onForgeWeapon, onClose, ...templateProps }: W
   const [selectReady, setSelectReady] = useState(!!forcedType);
   const [weaponConfig, setWeaponConfig] = useState<Weapon>();
   const [hiddenCodes, setHiddenCodes] = useState(
-    new Set(forcedType ? [] : weaponOptions.map((weapon) => weapon.code))
+    new Set(forcedType ? [] : weaponOptions.map((weapon) => weapon.code)),
   );
 
   const handleConfirmFilter = (filter: WeaponFilterState) => {
@@ -95,7 +95,7 @@ function WeaponSmith({ forcedType, onForgeWeapon, onClose, ...templateProps }: W
 
   const handleSelectChange: AppEntitySelectProps<WeaponOption>["onChange"] = (
     mold,
-    isConfigStep
+    isConfigStep,
   ) => {
     if (mold) {
       const weapon = createWeapon(mold, mold.data);
@@ -145,10 +145,10 @@ function WeaponSmith({ forcedType, onForgeWeapon, onClose, ...templateProps }: W
             mutable
             weapon={weaponConfig}
             refine={(refi, config) => {
-              setWeaponConfig(config.clone({ state: { refi } }));
+              setWeaponConfig(config.clone({ refi }));
             }}
             upgrade={(level, config) => {
-              setWeaponConfig(config.clone({ state: { level } }));
+              setWeaponConfig(config.clone({ level }));
             }}
             actions={[
               {

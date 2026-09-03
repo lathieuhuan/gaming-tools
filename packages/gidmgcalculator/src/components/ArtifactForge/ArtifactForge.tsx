@@ -2,11 +2,11 @@ import { useMemo, useState } from "react";
 import { FaInfoCircle } from "react-icons/fa";
 import { ButtonGroup, FancyBackSvg, Modal, useValues } from "rond";
 
-import type { AppArtifact, ArtifactType, ArtifactStateData } from "@/types";
 import type { Artifact } from "@/models";
+import type { AppArtifact, ArtifactType, RawArtifactState } from "@/types";
 
-import { $AppArtifact } from "@/services";
 import { createArtifact } from "@/logic/entity.logic";
+import { $AppArtifact } from "@/services";
 
 // Component
 import {
@@ -60,8 +60,8 @@ const ArtifactSmith = ({
 
   const updateConfig = (
     changesOrUpdater:
-      | Partial<ArtifactStateData>
-      | ((prevConfig: Artifact) => Partial<ArtifactStateData>)
+      | Partial<RawArtifactState>
+      | ((prevConfig: Artifact) => Partial<RawArtifactState>),
   ) => {
     if (!artifactConfig) {
       return;
@@ -70,7 +70,7 @@ const ArtifactSmith = ({
     const newState =
       typeof changesOrUpdater === "function" ? changesOrUpdater(artifactConfig) : changesOrUpdater;
 
-    setArtifactConfig(artifactConfig.clone({ state: newState }));
+    setArtifactConfig(artifactConfig.clone(newState));
   };
 
   const {
@@ -91,7 +91,7 @@ const ArtifactSmith = ({
 
     if (forFeature === "TEAMMATE_MODIFIERS") {
       artifacts = artifacts.filter(
-        (set) => set.buffs?.some((buff) => buff.affect !== "SELF") || set.debuffs?.length
+        (set) => set.buffs?.some((buff) => buff.affect !== "SELF") || set.debuffs?.length,
       );
     }
 
@@ -108,16 +108,6 @@ const ArtifactSmith = ({
     });
   }, []);
 
-  const forgeArtifact = (artifact: Artifact) => {
-    const clone = artifact.clone({
-      key: {
-        ID: Date.now(),
-      },
-    });
-
-    onForgeArtifact(clone);
-  };
-
   const handleRarityChange = (rarity: number) => {
     updateConfig((prevConfig) => {
       return {
@@ -129,7 +119,7 @@ const ArtifactSmith = ({
 
   const handleSelectOption: AppEntitySelectProps<ArtifactOption>["onChange"] = (
     mold,
-    isConfigStep
+    isConfigStep,
   ) => {
     if (!mold) {
       setArtifactConfig(undefined);
@@ -139,13 +129,12 @@ const ArtifactSmith = ({
     if (isConfigStep) {
       const artifact = createArtifact(
         {
-          ID: Date.now(),
+          ...artifactConfig,
           code: mold.code,
-          ...artifactConfig?.state,
           rarity: mold.rarity,
           type: forcedType || artifactTypes[0],
         },
-        mold.data
+        mold.data,
       );
 
       setArtifactConfig(artifact);
@@ -160,10 +149,10 @@ const ArtifactSmith = ({
         rarity: mold.rarity,
         type: artifactTypes[0],
       },
-      mold.data
+      mold.data,
     );
 
-    forgeArtifact(artifact);
+    onForgeArtifact(artifact);
   };
 
   const getBackAction = (selectBody: HTMLDivElement | null) => ({
@@ -176,7 +165,7 @@ const ArtifactSmith = ({
 
   const renderBatchConfigNode = (
     afterSelect: AfterSelectAppEntity,
-    selectBody: HTMLDivElement | null
+    selectBody: HTMLDivElement | null,
   ) => {
     if (!batchForging || !artifactConfig) return;
     const artifactSet = $AppArtifact.getSet(artifactConfig.code);
@@ -270,7 +259,7 @@ const ArtifactSmith = ({
             onRarityChange={handleRarityChange}
             onConfigUpdate={updateConfig}
             onSelect={(config) => {
-              forgeArtifact(config);
+              onForgeArtifact(config.clone({ ID: Date.now() }));
               afterSelect(config.code);
             }}
           />

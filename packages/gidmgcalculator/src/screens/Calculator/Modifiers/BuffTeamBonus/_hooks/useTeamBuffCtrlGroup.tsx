@@ -1,10 +1,10 @@
 import type { TeamBuffCtrl } from "@/types";
 import type { ControlGroup } from "../types";
 
-import { MS_ASCENDANT_BUFF_ID } from "@/logic/modifier.logic";
+import { $AppData } from "@/services";
 import { parseDescription } from "@/utils/descriptionParsers";
 import { useCalcStore } from "@Store/calculator";
-import { updateActiveSetup } from "@Store/calculator/actions";
+import { updateSetup } from "@Store/calculator/actions";
 import { selectSetup } from "@Store/calculator/selectors";
 import { toggleModCtrl, updateModCtrlInputs } from "@Store/calculator/utils";
 
@@ -14,7 +14,7 @@ function reorderCtrls(teamBuffCtrls: TeamBuffCtrl[] = []) {
   let ascendantCtrl: TeamBuffCtrl | undefined;
 
   const otherCtrls = teamBuffCtrls.filter((ctrl) => {
-    if (ctrl.data.id === MS_ASCENDANT_BUFF_ID) {
+    if (ctrl.data.id === $AppData.MS_ASCENDANT_BUFF_ID) {
       ascendantCtrl = ctrl;
       return false;
     }
@@ -30,13 +30,13 @@ export function useTeamBuffCtrlGroup(): ControlGroup {
 
   if (reorderedCtrls.length) {
     const handleToggle = (ctrl: TeamBuffCtrl) => () => {
-      updateActiveSetup((setup) => {
+      updateSetup((setup) => {
         setup.teamBuffCtrls = toggleModCtrl(teamBuffCtrls, ctrl.id);
       });
     };
 
     const handleUpdateInput = (ctrl: TeamBuffCtrl) => (value: number, inputIndex: number) => {
-      updateActiveSetup((setup) => {
+      updateSetup((setup) => {
         setup.teamBuffCtrls = updateModCtrlInputs(teamBuffCtrls, ctrl.id, inputIndex, value);
       });
     };

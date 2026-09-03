@@ -60,7 +60,7 @@ const ArtifactInventoryCore = ({
   });
 
   const currentPiece = selectedArtifact?.type
-    ? currentAtfGear?.pieces.get(selectedArtifact.type)
+    ? currentAtfGear?.pieces[selectedArtifact.type]
     : undefined;
 
   const onChangeItem: InventoryRackProps<RawArtifact>["onChangeItem"] = (item) => {

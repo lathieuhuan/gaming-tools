@@ -1,12 +1,13 @@
 import isEqual from "react-fast-compare";
 import { Array_, Object_ } from "ron-utils";
+import { ExactOmit } from "rond";
 
-import type { CalcSetup } from "@/models";
+import type { CalcSetup } from "@/logic/calculator";
 import type { AppThunk } from "./store";
 
 import { isDbSetup, toDbSetup } from "@/logic/setup.logic";
 import { Weapon } from "@/models";
-import { ArtifactKey, ArtifactStateData, ArtifactType } from "@/types";
+import { ArtifactType, RawArtifact } from "@/types";
 import { updateSetupAfterSave } from "./calculator/actions";
 import { updateUI } from "./ui";
 import {
@@ -91,7 +92,7 @@ export function saveSetupThunk(setup: CalcSetup, name: string): AppThunk {
     const atfList = atfGear.list();
     const artifactIDs = atfList.map((piece) => piece.ID);
     const newPieceIds: Partial<Record<ArtifactType, number>> = {};
-    const atfPieceCoreKeys: (keyof ArtifactKey | keyof ArtifactStateData)[] = [
+    const atfPieceCoreKeys: (keyof ExactOmit<RawArtifact, "setupIDs" | "owner">)[] = [
       "ID",
       "code",
       "type",

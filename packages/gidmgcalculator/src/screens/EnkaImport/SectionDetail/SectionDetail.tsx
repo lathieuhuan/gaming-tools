@@ -37,14 +37,15 @@ export function SectionDetail({ className }: SectionDetailProps) {
       const $character = createCharacter(character.basic, character.data, {
         weapon,
         atfGear,
-      });
-      const allAttrs = $character.initCalculation().allAttrsCtrl.finalize();
+      })
+        .initCalculation()
+        .finalizeCalculation();
 
       extraTitle = "Attributes";
       content = (
         <AttributeTable
           className="max-h-full hide-scrollbar border-2 border-dark-3 rounded"
-          attributes={allAttrs}
+          attributes={$character.finalAttrs}
         />
       );
       break;
@@ -67,12 +68,10 @@ export function SectionDetail({ className }: SectionDetailProps) {
       break;
 
     default: {
-      const artifact = atfGear.pieces.get(detailType);
-
       extraTitle = t(detailType);
       content = (
         <ArtifactCard
-          artifact={artifact}
+          artifact={atfGear.pieces[detailType]}
           actions={[
             {
               children: "Save",

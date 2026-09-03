@@ -1,7 +1,7 @@
 import { Object_ } from "ron-utils";
 import { CollapseList } from "rond";
 
-import type { CalcSetup } from "@/models";
+import type { CalcSetup } from "@/logic/calculator";
 
 import { useTranslation } from "@/hooks";
 import { $AppData } from "@/services";

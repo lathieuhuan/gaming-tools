@@ -1,17 +1,12 @@
 import { useState } from "react";
 
-import type { Teammate } from "@/models";
+import type { Artifact, Teammate } from "@/models";
 import type { AppCharacter } from "@/types";
 
 import { ENHANCE_TOUR_SITE_ID } from "@/constants";
-import {
-  changeTeammateArtifact,
-  changeTeammateWeapon,
-  toggleTeammateEnhance,
-  updateTeammateWeapon,
-} from "@Store/calculator/actions";
+import { updateSetup } from "@Store/calculator/actions";
 
-import { ArtifactForge, type ArtifactForgeProps } from "@/components/ArtifactForge";
+import { ArtifactForge } from "@/components/ArtifactForge";
 import { EnhanceTag } from "@/components/EnhanceTag";
 import { TeammateItems } from "@/components/TeammateItems";
 import { WeaponForge, type WeaponForgeProps } from "@/components/WeaponForge";
@@ -26,24 +21,28 @@ export function TeammateDetail({ teammate, info }: TeammateDetailProps) {
   const { data } = teammate;
   const elmtText = `text-${data.vision}`;
 
-  const handleWeaponRefinementChange = (refi: number) => {
-    updateTeammateWeapon(data.code, { refi });
+  const handleChangeWeaponRefinement = (refi: number) => {
+    updateSetup((setup) => {
+      setup.updateTeammateWeapon(data.code, { refi });
+    });
   };
 
-  const handleArtifactRemove = () => {
-    changeTeammateArtifact(data.code, undefined);
+  const changeArtifact = (artifact: Artifact | undefined) => {
+    updateSetup((setup) => {
+      setup.changeTeammateArtifact(data.code, artifact);
+    });
   };
 
-  const handleWeaponChange: WeaponForgeProps["onForgeWeapon"] = (weapon) => {
-    changeTeammateWeapon(data.code, weapon);
+  const handleForgeWeapon: WeaponForgeProps["onForgeWeapon"] = (weapon) => {
+    updateSetup((setup) => {
+      setup.changeTeammateWeapon(data.code, weapon);
+    });
   };
 
-  const handleArtifactChange: ArtifactForgeProps["onForgeArtifact"] = (artifact) => {
-    changeTeammateArtifact(data.code, artifact);
-  };
-
-  const handleEnhanceToggle = () => {
-    toggleTeammateEnhance(data.code);
+  const handleToggleEnhance = () => {
+    updateSetup((setup) => {
+      setup.toggleTeammateEnhance(data.code);
+    });
   };
 
   return (
@@ -59,7 +58,7 @@ export function TeammateDetail({ teammate, info }: TeammateDetailProps) {
               id={ENHANCE_TOUR_SITE_ID.subEnhance(teammate.code)}
               mutable={true}
               character={teammate}
-              onToggle={handleEnhanceToggle}
+              onToggle={handleToggleEnhance}
             />
           </div>
 
@@ -67,9 +66,9 @@ export function TeammateDetail({ teammate, info }: TeammateDetailProps) {
             mutable
             teammate={teammate}
             onClickWeapon={() => setModalType("WEAPON")}
-            onChangeWeaponRefinement={handleWeaponRefinementChange}
+            onChangeWeaponRefinement={handleChangeWeaponRefinement}
             onClickArtifact={() => setModalType("ARTIFACT")}
-            onClickRemoveArtifact={handleArtifactRemove}
+            onClickRemoveArtifact={() => changeArtifact(undefined)}
           />
         </div>
       </div>
@@ -77,7 +76,7 @@ export function TeammateDetail({ teammate, info }: TeammateDetailProps) {
       <WeaponForge
         active={modalType === "WEAPON"}
         forcedType={info.weaponType}
-        onForgeWeapon={handleWeaponChange}
+        onForgeWeapon={handleForgeWeapon}
         onClose={() => setModalType(null)}
       />
 
@@ -85,7 +84,7 @@ export function TeammateDetail({ teammate, info }: TeammateDetailProps) {
         active={modalType === "ARTIFACT"}
         forcedType="flower"
         forFeature="TEAMMATE_MODIFIERS"
-        onForgeArtifact={handleArtifactChange}
+        onForgeArtifact={changeArtifact}
         onClose={() => setModalType(null)}
       />
     </>

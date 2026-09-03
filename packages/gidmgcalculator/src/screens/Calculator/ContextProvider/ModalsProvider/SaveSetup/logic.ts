@@ -1,6 +1,6 @@
 import { Array_ } from "ron-utils";
 
-import type { CalcSetup } from "@/models";
+import type { CalcSetup } from "@/logic/calculator";
 import type { DbComplexSetup, DbSetup } from "@/types";
 import type { UserdbState } from "@Store/userdbSlice";
 

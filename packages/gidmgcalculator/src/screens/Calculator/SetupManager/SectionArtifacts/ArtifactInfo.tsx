@@ -4,15 +4,12 @@ import { Button, PouchSvg, TrashCanSvg, VersatileSelect } from "rond";
 
 import { useTranslation } from "@/hooks";
 import { Artifact } from "@/models";
-import { suffixOf } from "@/utils/pure.utils";
-import {
-  removeArtifactPiece,
-  updateArtifactPiece,
-  updateArtifactPieceSubStat,
-} from "@Store/calculator/actions";
+import { suffixOf } from "@/utils/ui.utils";
+import { updateSetup } from "@Store/calculator/actions";
 
 // Component
 import { ArtifactLevelSelect, ArtifactSubstatsControl } from "@/components/ArtifactCard";
+import { CalcSetupActions } from "@/logic/calculator";
 import { SaveConfirmModal } from "./SaveConfirmModal";
 
 export type ArtifactSourceType = "LOADOUT" | "INVENTORY" | "FORGE";
@@ -29,7 +26,7 @@ export function ArtifactInfo({ artifact, onRemove, onRequestChange }: ArtifactIn
 
   const { rarity = 5, mainStatType } = artifact;
 
-  const mainStatOptions = artifact.state.possibleMainStatTypes.map((type) => ({
+  const mainStatOptions = Artifact.allMainStatTypesOf(artifact.type).map((type) => ({
     label: t(type),
     value: type,
   }));
@@ -38,8 +35,27 @@ export function ArtifactInfo({ artifact, onRemove, onRequestChange }: ArtifactIn
     setIsSaving(false);
   };
 
+  const updateArtifactPiece: CalcSetupActions["updateArtifactPiece"] = (type, newState) => {
+    updateSetup((setup) => {
+      setup.updateArtifactPiece(type, newState);
+    });
+  };
+
+  const updateArtifactPieceSubStat: CalcSetupActions["updateArtifactPieceSubStat"] = (
+    type,
+    index,
+    data,
+  ) => {
+    updateSetup((setup) => {
+      setup.updateArtifactPieceSubStat(type, index, data);
+    });
+  };
+
   const handleRemove = () => {
-    removeArtifactPiece(artifact.type);
+    updateSetup((setup) => {
+      setup.removeArtifactPiece(artifact.type);
+    });
+
     onRemove?.();
   };
 
@@ -65,9 +81,7 @@ export function ArtifactInfo({ artifact, onRemove, onRequestChange }: ArtifactIn
               arrowAt="start"
               options={mainStatOptions}
               value={mainStatType}
-              onChange={(mainStatType) =>
-                updateArtifactPiece(artifact.type, { mainStatType })
-              }
+              onChange={(mainStatType) => updateArtifactPiece(artifact.type, { mainStatType })}
             />
           )}
           <p className={`pl-6 text-xlp leading-7 text-rarity-${rarity} font-bold`}>
