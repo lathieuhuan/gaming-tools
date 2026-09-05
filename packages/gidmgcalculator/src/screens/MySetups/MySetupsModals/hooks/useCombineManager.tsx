@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { clsx } from "rond";
 
+import { getAppCharacter } from "@/services/app-data";
 import type { DbSetup } from "@/types";
-import { $AppCharacter } from "@/services";
 
 import { CharacterPortrait } from "@/components/CharacterPortrait";
 
@@ -52,7 +52,7 @@ export function useCombineManager({ options, limit }: UseCombineManagerArgs) {
             className={clsx(
               "p-4 rounded-lg bg-dark-1 flex flex-col md:flex-row",
               !picked && !notFull && "opacity-50",
-              picked && "shadow-bonus"
+              picked && "shadow-bonus",
             )}
             style={{ boxShadow: picked ? "0 0 5px 1px var(--tw-shadow-color) inset" : undefined }}
             onClick={() => onClickOption(ID, picked)}
@@ -65,11 +65,11 @@ export function useCombineManager({ options, limit }: UseCombineManagerArgs) {
               <CharacterPortrait
                 className="shadow-hightlight-2 shadow-light-1"
                 size="small"
-                info={$AppCharacter.get(setup.main.code)}
+                info={getAppCharacter(setup.main.code)}
               />
               {setup.teammates.map((teammate, j) => {
                 return (
-                  <CharacterPortrait key={j} size="small" info={$AppCharacter.get(teammate.code)} />
+                  <CharacterPortrait key={j} size="small" info={getAppCharacter(teammate.code)} />
                 );
               })}
             </div>

@@ -4,13 +4,13 @@ import { immer } from "zustand/middleware/immer";
 
 import type { AppSettingsState } from "./types";
 
-import { $AppCharacter } from "@/services";
+import { DEFAULT_TRAVELER } from "@/constants/settings";
 
 // KEEP THIS STORE CLEAN OF OTHER STORES AND LOGIC
 // IT SHOULD ONLY USE SERVICES AND PURE UTILS
 
 const initialState: AppSettingsState = {
-  traveler: $AppCharacter.DEFAULT_TRAVELER,
+  traveler: DEFAULT_TRAVELER,
   persistUserData: false,
   isTabLayout: true,
   separateCharInfo: false,

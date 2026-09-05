@@ -1,9 +1,9 @@
-import { Update } from "@/services";
+import type { AppUpdate } from "@/services/app-data";
 import domPurify from "dompurify";
 
 type UpdateListProps = {
   className?: string;
-  updates: Update[];
+  updates: AppUpdate[];
 };
 
 export const UpdateList = ({ className, updates }: UpdateListProps) => {

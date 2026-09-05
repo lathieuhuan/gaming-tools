@@ -4,7 +4,7 @@ import type { DbCharacter, RawArtifact, RawWeapon, WeaponType } from "@/types";
 
 import { createArtifact, createCharacter, createWeapon } from "@/logic/entity.logic";
 import { ArtifactGear } from "@/models";
-import { $AppCharacter } from "@/services";
+import { getAppCharacter } from "@/services/app-data";
 import { IdStore } from "@/utils/IdStore";
 
 export function parseDbWeapon(
@@ -35,7 +35,7 @@ export function makeCharacterCalcFromDb(
   character: DbCharacter,
   dbWeapons: RawWeapon[],
   dbArtifacts: RawArtifact[],
-  data = $AppCharacter.get(character.code),
+  data = getAppCharacter(character.code),
 ) {
   const { weaponID, artifactIDs } = character;
   const weapon = parseDbWeapon(weaponID, dbWeapons, data.weaponType);

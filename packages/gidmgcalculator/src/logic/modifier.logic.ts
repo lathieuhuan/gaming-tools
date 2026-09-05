@@ -23,7 +23,7 @@ import type {
 } from "@/types";
 
 import { DEFAULT_STELLAR_VORTEX_LV } from "@/constants";
-import { $AppArtifact } from "@/services";
+import { getAppArtifact } from "@/services/app-data";
 import { isManualRsnElmt } from "@/utils/element.utils";
 
 function getDefaultInitValue(type: ModInputType) {
@@ -143,8 +143,9 @@ export function createArtifactBuffCtrls(
 
 export function createArtifactDebuffCtrls(sets: ArtifactGearSet[], teammates: Teammate[]) {
   const ctrls: ArtifactDebuffCtrl[] = [];
-  const vvArtifact = $AppArtifact.vvArtifact;
-  const deepwoodArtifact = $AppArtifact.deepwoodArtifact;
+  // TODO improve
+  const vvArtifact = getAppArtifact(15);
+  const deepwoodArtifact = getAppArtifact(33);
   const usedCodeSet = new Set<number>();
 
   const [firstSet] = sets;
@@ -161,24 +162,24 @@ export function createArtifactDebuffCtrls(sets: ArtifactGearSet[], teammates: Te
     }
   }
 
-  if (vvArtifact?.debuff && usedCodeSet.has(vvArtifact.data.code)) {
+  if (vvArtifact?.debuffs && usedCodeSet.has(vvArtifact.code)) {
     ctrls.push({
       id: 0,
-      code: vvArtifact.data.code,
+      code: vvArtifact.code,
       activated: false,
       inputs: [0],
-      setData: vvArtifact.data,
-      data: vvArtifact.debuff,
+      setData: vvArtifact,
+      data: vvArtifact.debuffs[0],
     });
   }
 
-  if (deepwoodArtifact?.debuff && usedCodeSet.has(deepwoodArtifact.data.code)) {
+  if (deepwoodArtifact?.debuffs && usedCodeSet.has(deepwoodArtifact.code)) {
     ctrls.push({
       id: 0,
-      code: deepwoodArtifact.data.code,
+      code: deepwoodArtifact.code,
       activated: false,
-      setData: deepwoodArtifact.data,
-      data: deepwoodArtifact.debuff,
+      setData: deepwoodArtifact,
+      data: deepwoodArtifact.debuffs[0],
     });
   }
 

@@ -17,7 +17,7 @@ import type {
 } from "@/types";
 
 import { Artifact, Character, CharacterCreateOptions, Target, Teammate, Weapon } from "@/models";
-import { $AppArtifact, $AppCharacter, $AppData, $AppWeapon } from "@/services";
+import { getAppArtifact, getAppCharacter, getAppWeapon, getMonster } from "@/services/app-data";
 import {
   createAbilityBuffCtrls,
   createAbilityDebuffCtrls,
@@ -42,7 +42,7 @@ export function createArtifact(
   const { ID = Date.now(), code } = raw;
 
   if (data == null || data.code !== code) {
-    data = $AppArtifact.getSet(code)!;
+    data = getAppArtifact(code)!;
   }
 
   return Artifact.create(ID, data, { ...raw, ...options });
@@ -60,7 +60,7 @@ export function createWeapon(
   const { ID = Date.now(), type, code = Weapon.DEFAULT_CODE[type] } = raw;
 
   if (data == null || data.code !== code) {
-    data = $AppWeapon.get(code)!;
+    data = getAppWeapon(code)!;
   }
 
   return Weapon.create(ID, type, data, { ...raw, ...options });
@@ -86,7 +86,7 @@ export function createCharacter(
   const { code } = raw;
 
   if (data == null || data.code !== code) {
-    data = $AppCharacter.get(code)!;
+    data = getAppCharacter(code)!;
   }
 
   const { weapon = createWeapon({ type: data.weaponType }) } = options;
@@ -98,12 +98,12 @@ export function createTeammate(
   raw: PartiallyRequiredOnly<RawTeammate, "code">,
   data?: AppCharacter | null,
 ) {
-  data ??= $AppCharacter.get(raw.code);
+  data ??= getAppCharacter(raw.code);
 
   let weapon: TeammateWeapon;
 
   if (raw.weapon) {
-    const appWeapon = $AppWeapon.get(raw.weapon.code)!;
+    const appWeapon = getAppWeapon(raw.weapon.code)!;
     const { buffCtrls } = raw.weapon;
 
     weapon = {
@@ -121,7 +121,7 @@ export function createTeammate(
       type: data.weaponType,
       refi: 1,
       buffCtrls: [],
-      data: $AppWeapon.get(code)!,
+      data: getAppWeapon(code)!,
     };
   }
 
@@ -136,7 +136,7 @@ export function createTeammate(
   let artifact: TeammateArtifact | undefined;
 
   if (raw.artifact) {
-    const appArtifact = $AppArtifact.getSet(raw.artifact.code)!;
+    const appArtifact = getAppArtifact(raw.artifact.code)!;
 
     artifact = {
       code: raw.artifact.code,
@@ -171,7 +171,7 @@ export const createTarget = (codeOrRaw: number | RawTarget = 0, data?: AppMonste
   }
 
   if (data == null || data.code !== code) {
-    data = $AppData.getMonster({ code })!;
+    data = getMonster({ code })!;
   }
 
   if (typeof codeOrRaw === "number") {

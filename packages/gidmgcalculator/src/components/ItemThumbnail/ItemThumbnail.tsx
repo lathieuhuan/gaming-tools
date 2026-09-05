@@ -1,7 +1,8 @@
 import { clsx } from "rond";
 
-import { $AppCharacter } from "@/services";
+import { getAppCharacter } from "@/services/app-data";
 import type { Level } from "@/types";
+
 import { GenshinImage } from "../GenshinImage";
 
 export type ItemThumbProps = {
@@ -31,7 +32,7 @@ export function ItemThumbnail(props: ItemThumbProps) {
       : `Lv. ${typeof item.level === "string" ? item.level.split("/")[0] : item.level}`;
 
   const renderSideIcon = (owner: number) => {
-    const { icon = "", sideIcon } = $AppCharacter.get(owner) || {};
+    const { icon = "", sideIcon } = getAppCharacter(owner) || {};
     return (
       <div
         className={clsx(

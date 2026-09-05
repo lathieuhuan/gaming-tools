@@ -1,61 +1,28 @@
-import { useLayoutEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { useLayoutEffect } from "react";
 import { FaDiscord } from "react-icons/fa";
 import { Button, clsx, Modal, Skeleton } from "rond";
 
-import type { AppGeneralData } from "./types";
-
+import { appDataQueryOptions } from "@/services/app-data";
 import { useSettingsStore } from "@Store/settings";
 import { updateUI, useUIStore } from "@Store/ui";
-import { $Greeter } from "./logic/GreeterService";
 
 // Components
 import { AppDataRefetcher } from "./AppDataRefetcher";
 import { Introduction } from "./Introduction";
 
-type State = {
-  status: "loading" | "success" | "error";
-  error?: string;
-  cooldown?: number;
-  data?: AppGeneralData;
-};
-
 export const Greeter = () => {
   const appModalType = useUIStore((state) => state.appModalType);
+  const { data, isLoading, isSuccess, isError, error, refetch } = useQuery(appDataQueryOptions);
 
-  const [state, setState] = useState<State>({
-    status: "loading",
-  });
-
-  const isLoading = state.status === "loading";
-
-  const getMetadata = async () => {
-    if (state.status !== "loading") {
-      setState({
-        status: "loading",
-      });
-    }
-
-    const error = await $Greeter.getAllData();
-
-    if (error) {
-      setState({
-        status: "error",
-        error: error.message,
-        cooldown: error.cooldown,
-      });
-    } else {
-      setState({
-        status: "success",
-        data: $Greeter.data,
-      });
+  useLayoutEffect(() => {
+    if (isSuccess) {
       updateUI({ appReady: true });
     }
-  };
+  }, [isSuccess]);
 
   useLayoutEffect(() => {
     updateUI({ appModalType: "INTRO" });
-
-    void getMetadata();
 
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
       const { askBeforeUnload } = useSettingsStore.getState();
@@ -69,8 +36,8 @@ export const Greeter = () => {
     window.addEventListener("beforeunload", handleBeforeUnload, { capture: true });
 
     return () => {
-      $Greeter.endShift();
       window.removeEventListener("beforeunload", handleBeforeUnload, { capture: true });
+      // close shared data channel if this component can be unmounted
     };
   }, []);
 
@@ -89,7 +56,7 @@ export const Greeter = () => {
             patchCls: "text-base",
             skeletonCls: "h-4",
           };
-    const version = state.data?.version;
+    const version = data?.version;
 
     return (
       <h1 className={clsx("text-heading text-center font-bold relative", config.cls)}>
@@ -123,10 +90,10 @@ export const Greeter = () => {
           <AppDataRefetcher
             className="my-2"
             isLoading={isLoading}
-            isError={state.status === "error"}
-            error={state.error}
-            cooldown={state.cooldown}
-            onRefetch={() => void getMetadata()}
+            isError={isError}
+            error={error?.message}
+            cooldown={error?.data.cooldown}
+            onRefetch={() => void refetch()}
           />
 
           {/* <div className="mb-1 text-center text-light-1 text-base font-normal">
@@ -142,10 +109,10 @@ export const Greeter = () => {
           </div> */}
         </>
       }
-      closable={state.status === "success"}
+      closable={isSuccess}
       onClose={() => updateUI({ appModalType: "" })}
     >
-      <Introduction className="grow" data={state.data} loading={isLoading} />
+      <Introduction className="grow" data={data} loading={isLoading} />
 
       <div className="mt-4 flex justify-end">
         <a href="https://discord.gg/gRxYCHqAAC" target="_blank">

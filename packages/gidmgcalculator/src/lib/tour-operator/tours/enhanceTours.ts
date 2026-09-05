@@ -1,7 +1,7 @@
 import type { TourStep } from "@/lib/tour-guide";
 
 import { ECalculatorModifierTab, ENHANCE_TOUR_SITE_ID, TOUR_STEP_ID } from "@/constants";
-import { $AppCharacter } from "@/services";
+import { getAppCharacters } from "@/services/app-data";
 import { nextFrame } from "@/utils/window.utils";
 import { useCalcStore } from "@Store/calculator";
 import { updateMain, updateSetup } from "@Store/calculator/actions";
@@ -78,14 +78,12 @@ export function getEnhanceTourSteps(): TourStep[] {
 
   if (!teammate) {
     // No teammate with the same enhance type => add a new one
-    teammate = $AppCharacter
-      .getAll()
-      .find(
-        (c) =>
-          c.enhanceType === main.data.enhanceType &&
-          c.code !== main.code &&
-          teammates.every((t) => t.data.code !== c.code),
-      );
+    teammate = getAppCharacters().find(
+      (c) =>
+        c.enhanceType === main.data.enhanceType &&
+        c.code !== main.code &&
+        teammates.every((t) => t.data.code !== c.code),
+    );
 
     addSlot = teammates.length;
   }

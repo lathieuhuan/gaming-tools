@@ -1,11 +1,4 @@
-import type {
-  AppArtifact,
-  AppCharacter,
-  AppMonster,
-  TeamBuffSpec,
-  AppWeapon,
-  CharacterInnateBuff,
-} from "@/types";
+import type { AppArtifact, AppCharacter, AppMonster, AppWeapon, TeamBuffSpec } from "@/types";
 
 export type AppUpdate = {
   patch: string;
@@ -13,7 +6,7 @@ export type AppUpdate = {
   content: string[];
 };
 
-export type AllData = {
+export type AppData = {
   version: string;
   characters: AppCharacter[];
   weapons: AppWeapon[];
@@ -22,27 +15,4 @@ export type AllData = {
   monsters: AppMonster[];
   updates: AppUpdate[];
   supporters: string[];
-};
-
-export type TravelerProps = {
-  name: string;
-  icon: string;
-  sideIcon: string;
-  factorsCA: number[];
-  innateBuffs: CharacterInnateBuff[];
-};
-
-type Item = {
-  description: string;
-};
-
-export type GenshinDevCharacterSuccessResponse = {
-  name: string;
-  skillTalents: Item[];
-  passiveTalents: Item[];
-  constellation: Item[];
-};
-
-export type GenshinDevErrorResponse = {
-  error: string;
 };

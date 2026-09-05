@@ -4,7 +4,8 @@ import { FaCaretRight } from "react-icons/fa";
 import { Object_ } from "ron-utils";
 import { Checkbox, clsx, CollapseSpace } from "rond";
 
-import { $AppCharacter, RESONATED_ELEMENTS } from "@/services";
+import { TRAVELER_RESONATED_ELEMENTS } from "@/constants/settings";
+import { getTravelerProps } from "@/services/app-data";
 import { ElementType, PowerupKey, TravelerConfig, TravelerKey } from "@/types";
 
 import { CharacterPortrait } from "@/components/CharacterPortrait";
@@ -41,7 +42,7 @@ export function TravelerSettings({
 
   const [selectedTraveler, setSelectedTraveler] = useState(initialConfig.selection);
   const [selectedPowerups, setSelectedPowerups] = useState(() =>
-    extractSelectedPowerups(initialConfig.powerups)
+    extractSelectedPowerups(initialConfig.powerups),
   );
   const [resonatedElmts, setResonatedElmts] = useState(() => new Set(initialConfig.resonatedElmts));
 
@@ -56,17 +57,17 @@ export function TravelerSettings({
 
   const handleAllPowerupsToggle = (activated: boolean) => {
     setSelectedPowerups(activated ? new Set(POWERUPS) : new Set());
-    setResonatedElmts(activated ? new Set(RESONATED_ELEMENTS) : new Set());
+    setResonatedElmts(activated ? new Set(TRAVELER_RESONATED_ELEMENTS) : new Set());
 
     POWERUPS.forEach((key) => onChangePowerups?.(key, activated));
-    onChangeResonatedElmts?.(activated ? Array.from(RESONATED_ELEMENTS) : []);
+    onChangeResonatedElmts?.(activated ? Array.from(TRAVELER_RESONATED_ELEMENTS) : []);
   };
 
   const handlePowerupToggle = (key: PowerupKey, activated: boolean) => {
     setSelectedPowerups(
       produce((powerups) => {
         activated ? powerups.add(key) : powerups.delete(key);
-      })
+      }),
     );
 
     onChangePowerups?.(key, activated);
@@ -82,7 +83,9 @@ export function TravelerSettings({
   };
 
   const isAllPowerupsSelected =
-    selectedPowerups.size === POWERUPS.length && resonatedElmts.size === RESONATED_ELEMENTS.length;
+    selectedPowerups.size === POWERUPS.length &&
+    resonatedElmts.size === TRAVELER_RESONATED_ELEMENTS.length;
+
   const isSomePowerupsSelected =
     !isAllPowerupsSelected && (selectedPowerups.size > 0 || resonatedElmts.size > 0);
 
@@ -139,7 +142,7 @@ export function TravelerSettings({
 
         <div className="py-2 flex gap-3">
           {TRAVELERS.map((traveler) => {
-            const info = $AppCharacter.getTravelerProps({ selection: traveler });
+            const info = getTravelerProps({ selection: traveler });
             const selected = traveler === selectedTraveler;
 
             return (
@@ -180,7 +183,7 @@ export function TravelerSettings({
             <span className="text-light-hint text-sm">(Archon Quest: True Moon)</span>
           </p>
           <div className="mt-2 grid grid-cols-4 gap-3">
-            {RESONATED_ELEMENTS.map((elmt) => (
+            {TRAVELER_RESONATED_ELEMENTS.map((elmt) => (
               <Checkbox
                 key={elmt}
                 checked={resonatedElmts.has(elmt)}

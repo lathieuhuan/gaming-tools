@@ -5,7 +5,7 @@ import type { AppWeapon, WeaponType } from "@/types";
 
 import { createWeapon } from "@/logic/entity.logic";
 import { Weapon } from "@/models";
-import { $AppWeapon } from "@/services";
+import { getAppWeapons } from "@/services/app-data";
 
 // Component
 import {
@@ -54,7 +54,7 @@ function WeaponSmith({ forcedType, onForgeWeapon, onClose, ...templateProps }: W
   );
 
   const weaponOptions = useMemo(() => {
-    const weapons = $AppWeapon.getAll();
+    const weapons = getAppWeapons();
 
     if (forcedType) {
       return weapons.reduce<WeaponOption[]>((accumulator, weapon) => {

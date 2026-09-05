@@ -1,26 +1,18 @@
 import { clsx, CollapseList, LoadingSpin, Skeleton } from "rond";
 
-import type { AppGeneralData } from "../types";
+import type { AppData } from "@/services/app-data";
 
 import { About, Credits, Notes, VersionRecap } from "./CollapsibleSections";
 import { UpdateList } from "./UpdateList";
 
 type IntroductionProps = {
   className?: string;
-  data?: AppGeneralData;
+  data?: AppData;
   loading?: boolean;
 };
 
-export const Introduction = ({
-  className,
-  data = {
-    version: "",
-    updates: [],
-    supporters: [],
-  },
-  loading,
-}: IntroductionProps) => {
-  const { updates, supporters } = data;
+export const Introduction = ({ className, data, loading }: IntroductionProps) => {
+  const { updates = [], supporters = [] } = data || {};
   const latestDate: string | undefined = updates[0]?.date;
 
   const latestDateElement = loading ? (

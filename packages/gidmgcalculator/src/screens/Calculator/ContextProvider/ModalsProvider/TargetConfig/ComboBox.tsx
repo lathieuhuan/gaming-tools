@@ -4,7 +4,7 @@ import { clsx } from "rond";
 
 import type { AppMonster } from "@/types";
 
-import { $AppData } from "@/services";
+import { getMonsters } from "@/services/app-data";
 
 const LIST_ID = "monster-list";
 
@@ -63,7 +63,7 @@ export function ComboBox({ className, targetCode, targetTitle, onSelectMonster }
         className="absolute top-full z-10 mt-1 w-full text-black bg-light-1 custom-scrollbar cursor-default hidden peer-focus-within:block"
         style={{ maxHeight: "50vh" }}
       >
-        {$AppData.getAllMonsters().map((monster) => {
+        {getMonsters().map((monster) => {
           if (
             keyword &&
             !monster.title.toLowerCase().includes(keyword) &&

@@ -1,16 +1,17 @@
-import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { FaBars, FaDonate } from "react-icons/fa";
 import { Button, LoadingSpin } from "rond";
 
 import type { ModalOption } from "./config";
 
 import { IS_DEV_ENV, SCREEN_PATH } from "@/constants/config";
-import { $AppData } from "@/services";
 import { useRouter } from "@/lib/router";
+import { appDataQueryOptions } from "@/services/app-data";
 import { updateUI, type UIState } from "@Store/ui";
 
 import { EnkaLogo } from "@/assets/icons";
 import { PopoverAction } from "@/components/PopoverAction";
+import { clearCache } from "@/services/app-data/cache";
 import { MenuOption, ModalOptions } from "./ModalOptions";
 // import { updateCache } from "@/services/enka";
 
@@ -20,7 +21,10 @@ type RightSideProps = {
 
 export function RightSide({ appReady }: RightSideProps) {
   const router = useRouter();
-  const [refetching, setRefetching] = useState(false);
+  const { isRefetching, refetch } = useQuery({
+    ...appDataQueryOptions,
+    enabled: false,
+  });
 
   const openModal = (type: UIState["appModalType"]) => () => {
     updateUI({ appModalType: type });
@@ -34,19 +38,16 @@ export function RightSide({ appReady }: RightSideProps) {
     router.navigate({ to: SCREEN_PATH.ENKA });
   };
 
-  const handleRefetch = async () => {
-    setRefetching(true);
+  const handleRefetch = () => {
+    void refetch().then(({ data }) => {
+      if (data) {
+        alert(`Refetched version: ${data.version}`);
+      } else {
+        alert(`Refetching has failed!`);
+      }
 
-    const response = await $AppData.fetchAllData();
-
-    if (response.data) {
-      $AppData.populate(response.data);
-      alert(`Refetched version: ${response.data.version}`);
-    } else {
-      alert(`Refetching has failed!`);
-    }
-
-    setRefetching(false);
+      clearCache();
+    });
   };
 
   // const handleUpdateCache = () => {
@@ -63,7 +64,7 @@ export function RightSide({ appReady }: RightSideProps) {
       {IS_DEV_ENV && (
         <Button
           shape="square"
-          icon={refetching ? <LoadingSpin size="small" className="text-black" /> : null}
+          icon={isRefetching ? <LoadingSpin size="small" className="text-black" /> : null}
           onClick={() => void handleRefetch()}
         >
           Refetch

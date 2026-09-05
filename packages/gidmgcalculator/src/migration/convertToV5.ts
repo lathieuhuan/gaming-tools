@@ -5,7 +5,7 @@ import type { ExactOmit } from "rond";
 import type { DatabaseDataV4 } from "./types/v4";
 import type { DatabaseDataV5 } from "./types/v5";
 
-import { $AppCharacter } from "@/services";
+import { getAppCharacters } from "@/services/app-data";
 
 const cache = new Map<string, AppCharacter>();
 
@@ -16,7 +16,7 @@ function getCharacter(name: string) {
     return cached;
   }
 
-  const character = $AppCharacter.characters.find((c) => c.name === name);
+  const character = getAppCharacters().find((c) => c.name === name);
 
   if (character) {
     cache.set(name, character);
@@ -25,7 +25,7 @@ function getCharacter(name: string) {
 }
 
 function convertCharacter<T extends { name: string }>(
-  character: T
+  character: T,
 ): (ExactOmit<T, "name"> & { code: number }) | undefined {
   const { name, ...rest } = character;
   const code = getCharacter(name)?.code;

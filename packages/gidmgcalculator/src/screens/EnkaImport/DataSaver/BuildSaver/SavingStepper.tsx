@@ -3,7 +3,7 @@ import { CarouselSpace, notification } from "rond";
 
 import type { SaveOutput, SavingSteps } from "./types";
 
-import { $AppCharacter } from "@/services";
+import { getAppCharacter } from "@/services/app-data";
 import { useSaveOutputHandler } from "./hooks/useSaveOutputHandler";
 
 import { SaverLayout } from "../components/SaverLayout";
@@ -38,7 +38,7 @@ export function SavingStepper({ steps, onComplete }: SavingStepperProps) {
     } = saveOutput.current;
 
     if (characterOutput && weaponOutput) {
-      const characterName = $AppCharacter.get(characterOutput.character.code)?.name;
+      const characterName = getAppCharacter(characterOutput.character.code)?.name;
 
       handleSaveOutput(characterOutput, weaponOutput, artifactsOutput, steps);
 

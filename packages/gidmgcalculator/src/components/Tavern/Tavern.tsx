@@ -3,8 +3,8 @@ import { Modal } from "rond";
 
 import type { AppCharacter, DbCharacter } from "@/types";
 
-import { $AppCharacter } from "@/services";
 import { useStoreSnapshot } from "@/lib/dynamic-store";
+import { getAppCharacter, getAppCharacters } from "@/services/app-data";
 import { selectDbCharacters } from "@Store/userdbSlice";
 
 // Component
@@ -49,7 +49,7 @@ const TavernHall = ({
 
     switch (sourceType) {
       case "app":
-        for (const data of $AppCharacter.getAll()) {
+        for (const data of getAppCharacters()) {
           const option: CharacterOption = {
             name: data.name,
             beta: data.beta,
@@ -65,7 +65,7 @@ const TavernHall = ({
         break;
       case "user":
         for (const userChar of userChars) {
-          const data = $AppCharacter.get(userChar.code);
+          const data = getAppCharacter(userChar.code);
           if (!data) continue;
 
           const option: CharacterOption = {
@@ -84,7 +84,7 @@ const TavernHall = ({
         }
         break;
       case "mixed":
-        for (const data of $AppCharacter.getAll()) {
+        for (const data of getAppCharacters()) {
           const userChar = userChars.find((char) => char.code === data.code);
           const option: CharacterOption = {
             name: data.name,

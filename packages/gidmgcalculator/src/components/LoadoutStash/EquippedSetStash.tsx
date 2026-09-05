@@ -4,7 +4,7 @@ import { Button, useIntersectionObserver } from "rond";
 
 import { createArtifact } from "@/logic/entity.logic";
 import { Artifact } from "@/models";
-import { $AppCharacter } from "@/services";
+import { getAppCharacter } from "@/services/app-data";
 import { useSelector } from "@Store/hooks";
 import { selectDbArtifacts, selectDbCharacters } from "@Store/userdbSlice";
 
@@ -48,7 +48,7 @@ export function EquippedSetStash({
         continue;
       }
 
-      const appCharacter = $AppCharacter.get(character.code);
+      const appCharacter = getAppCharacter(character.code);
 
       const option: EquippedSetOption = {
         owner: {
