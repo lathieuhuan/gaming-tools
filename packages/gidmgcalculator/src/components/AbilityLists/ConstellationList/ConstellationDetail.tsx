@@ -1,11 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
 import { CloseButton, LoadingSpin } from "rond";
 
+import { consQueryOptions } from "@/services/ability-description";
 import type { AppCharacter } from "@/types";
-import { fetchConsDescriptions } from "@/services/app-data";
 
 // Conponent
-import { PositiveText, HintText } from "@/components/Text";
+import { HintText, PositiveText } from "@/components/Text";
 import { AbilityCarousel } from "../components/AbilityCarousel";
 
 type ConstellationDetailProps = {
@@ -24,15 +24,7 @@ export function ConstellationDetail({
   const { vision, constellation } = character;
   const consInfo = constellation[consLv - 1] || {};
 
-  const {
-    isLoading,
-    isError,
-    data: descriptions,
-  } = useQuery({
-    queryKey: ["cons-description", character.code],
-    queryFn: () => fetchConsDescriptions(character.code),
-    staleTime: Infinity,
-  });
+  const { isLoading, error, data: descriptions } = useQuery(consQueryOptions(character.code));
 
   return (
     <div className="h-full flex flex-col hide-scrollbar">
@@ -51,7 +43,7 @@ export function ConstellationDetail({
       <div className="mt-3 hide-scrollbar">
         <p className={isLoading ? "py-4 flex justify-center" : "whitespace-pre-wrap"}>
           <LoadingSpin active={isLoading} />
-          {isError && <HintText>Error. Rebooting...</HintText>}
+          {error !== null && <HintText>{error.message}</HintText>}
           {descriptions?.[consLv - 1]}
         </p>
       </div>

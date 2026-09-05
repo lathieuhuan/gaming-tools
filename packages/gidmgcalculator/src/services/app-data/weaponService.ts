@@ -1,6 +1,6 @@
 import type { AppWeapon } from "@/types";
 import { weaponCache } from "./cache";
-import { getCachedAppData } from "./selector";
+import { getCachedAppData } from "./service";
 
 export function getAppWeapons(): AppWeapon[] {
   return getCachedAppData()?.weapons || [];

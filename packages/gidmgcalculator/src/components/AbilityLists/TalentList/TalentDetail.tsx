@@ -6,7 +6,7 @@ import { CloseButton, clsx, LoadingSpin, StatsTable, VersatileSelect } from "ron
 import type { AppCharacter } from "@/types";
 
 import { useTranslation } from "@/hooks";
-import { fetchTalentDescriptions } from "@/services/app-data";
+import { talentQueryOptions } from "@/services/ability-description";
 import { genSequentialOptions } from "@/utils/ui.utils";
 import { NORMAL_ATTACK_ICONS } from "./config";
 import { useDetailedTalents } from "./useDetailedTalents";
@@ -42,13 +42,11 @@ export function TalentDetail({
 
   const {
     isLoading,
-    isError,
+    error,
     data: descriptions,
   } = useQuery({
-    queryKey: ["talent-description", character.code],
-    queryFn: () => fetchTalentDescriptions(character.code),
+    ...talentQueryOptions(character.code),
     enabled: tab === "description",
-    staleTime: Infinity,
   });
 
   if (altSprint) {
@@ -186,7 +184,7 @@ export function TalentDetail({
         ) : (
           <p className={isLoading ? "py-4 flex justify-center" : "mt-4 whitespace-pre-wrap"}>
             <LoadingSpin active={isLoading} />
-            {isError && <HintText>Error. Rebooting...</HintText>}
+            {error !== null && <HintText>{error.message}</HintText>}
             {descriptions?.[detailIndex]}
           </p>
         )}

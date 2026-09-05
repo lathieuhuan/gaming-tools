@@ -1,5 +1,5 @@
 import { AppCharacter, CharacterInnateBuff, ElementType, TravelerConfig } from "@/types";
-import { getCachedAppData } from "./selector";
+import { getCachedAppData } from "./service";
 
 import { TRAVELER_RESONATED_ELEMENTS } from "@/constants/settings";
 import { characterCache } from "./cache";

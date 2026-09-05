@@ -1,6 +1,6 @@
 import type { AppArtifact } from "@/types";
 import { artifactCache } from "./cache";
-import { getCachedAppData } from "./selector";
+import { getCachedAppData } from "./service";
 
 export function getAppArtifacts(): AppArtifact[] {
   return getCachedAppData()?.artifacts || [];
