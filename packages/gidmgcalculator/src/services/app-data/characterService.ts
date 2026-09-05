@@ -99,7 +99,7 @@ function syncInnateBuffs(data: AppCharacter, buffs: CharacterInnateBuff[]) {
 
 function buildResonatedElmtsBuff(resonatedElmts: ElementType[]): CharacterInnateBuff {
   let finalDesc = resonatedElmtsBuff.description;
-  const finalEffects: CharacterInnateBuff["effects"] = [];
+  const allEffects: CharacterInnateBuff["effects"] = [];
 
   for (const elmt of TRAVELER_RESONATED_ELEMENTS) {
     const activated = resonatedElmts.includes(elmt);
@@ -107,12 +107,12 @@ function buildResonatedElmtsBuff(resonatedElmts: ElementType[]): CharacterInnate
     const decorDesc = `<span class="${activated ? "" : "opacity-50"}">• ${description}</span>`;
 
     finalDesc = `${finalDesc}<br />${decorDesc}`;
-    activated && finalEffects.push(effects);
+    activated && allEffects.push(effects);
   }
 
   return {
     src: resonatedElmtsBuff.src,
     description: finalDesc,
-    effects: finalEffects,
+    effects: allEffects,
   };
 }

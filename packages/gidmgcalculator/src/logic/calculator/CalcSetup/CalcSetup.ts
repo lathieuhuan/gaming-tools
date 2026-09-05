@@ -10,7 +10,7 @@ import {
   createRsnModCtrls,
   createWeaponBuffCtrls,
 } from "@/logic/modifier.logic";
-
+import { useSettingsStore } from "@Store/settings";
 import { Team } from "../Team";
 import { calculateSetup, CalculateSetupOptions } from "../calculateSetup";
 import { createTeamBuffCtrls } from "../createTeamBuffCtrls";
@@ -38,7 +38,11 @@ export type CreateCalcSetupOptions = Partial<
 export class CalcSetup extends CalcSetupCore {
   //
   calculate(options?: CalculateSetupOptions) {
-    return calculateSetup(this, options);
+    return calculateSetup(this, {
+      ...options,
+      // TODO find another solution
+      resonatedElmts: useSettingsStore.getState().traveler.resonatedElmts,
+    });
   }
 
   clone(options: { ID?: number } = {}) {

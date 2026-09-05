@@ -1,11 +1,11 @@
 import { useEffect } from "react";
 import { secondsToTimeString } from "ron-utils";
-import { Button } from "rond";
+import { Button, cn, type ClassValue } from "rond";
 
 import { useTimer } from "@/hooks/useTimer";
 
 type AppDataRefetcherProps = {
-  className?: string;
+  className?: ClassValue;
   cooldown?: number;
   isLoading: boolean;
   isError: boolean;
@@ -14,7 +14,7 @@ type AppDataRefetcherProps = {
 };
 
 export function AppDataRefetcher({
-  className = "",
+  className,
   cooldown = 10,
   isLoading,
   isError,
@@ -31,7 +31,7 @@ export function AppDataRefetcher({
 
   if (isLoading) {
     return (
-      <p className={"text-base text-light-1 text-center font-normal " + className}>
+      <p className={cn("text-base text-light-1 text-center font-normal", className)}>
         Loading App Data...
       </p>
     );
@@ -39,7 +39,7 @@ export function AppDataRefetcher({
 
   if (isError) {
     return (
-      <div className={"flex flex-col items-center " + className}>
+      <div className={cn("flex flex-col items-center", className)}>
         <p className="text-base text-danger-2 text-center font-normal">
           {seconds
             ? `${error} Try again after ${secondsToTimeString(seconds)}s.`
@@ -58,5 +58,6 @@ export function AppDataRefetcher({
       </div>
     );
   }
+
   return null;
 }
