@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { FaPlus, FaSortAmountUpAlt } from "react-icons/fa";
 import { Button, clsx, useChildListObserver, useIntersectionObserver } from "rond";
 
-import { $AppCharacter } from "@/services";
+import { getAppCharacter } from "@/services/app-data";
 import { useDispatch, useSelector } from "@Store/hooks";
 import { selectActiveCharacter, selectDbCharacters, viewDbCharacter } from "@Store/userdbSlice";
 import { useMyCharactersModalCtrl } from "../ContextProvider";
@@ -71,7 +71,7 @@ export function TopBar() {
         <div ref={container.ref} className="mt-2 w-full h-20 hide-scrollbar">
           <div ref={listObsArea} className="flex">
             {characters.map(({ code }) => {
-              const appCharacter = $AppCharacter.get(code);
+              const appCharacter = getAppCharacter(code);
               if (!appCharacter) return null;
               const viewed = container.isItemViewed(code);
 

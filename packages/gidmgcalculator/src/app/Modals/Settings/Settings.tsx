@@ -5,7 +5,7 @@ import { Modal } from "rond";
 import type { ElementType, TravelerConfig, TravelerKey } from "@/types";
 
 import { genAccountTravelerKey } from "@/logic/genAccountTravelerKey";
-import { $AppCharacter } from "@/services";
+import { changeTraveler } from "@/services/app-data";
 import { applySettingsToCalculator } from "@Store/calculator/actions";
 import { AppSettingsState, updateSettings, useSettingsStore } from "@Store/settings";
 
@@ -40,14 +40,14 @@ const Settings = ({ onClose }: SettingsProps) => {
 
     if (travelerChanged) {
       // changeTraveler must run before apply settings
-      $AppCharacter.changeTraveler(newTraveler);
+      changeTraveler(newTraveler);
     }
 
     updateSettings(newSettings);
 
     applySettingsToCalculator(
       currSettings.separateCharInfo && !newSettings.separateCharInfo,
-      travelerChanged
+      travelerChanged,
     );
 
     onClose();
@@ -55,7 +55,7 @@ const Settings = ({ onClose }: SettingsProps) => {
 
   const handleAppSettingChange = <TKey extends keyof AppSettingsState>(
     key: TKey,
-    value: AppSettingsState[TKey]
+    value: AppSettingsState[TKey],
   ) => {
     newSettings[key] = value;
   };

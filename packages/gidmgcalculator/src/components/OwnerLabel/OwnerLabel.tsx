@@ -3,7 +3,7 @@ import { cn, Popover } from "rond";
 
 import type { RawArtifact, RawWeapon } from "@/types";
 
-import { $AppCharacter } from "@/services";
+import { getAppCharacter } from "@/services/app-data";
 import { useItemBoundSetups } from "./useItemBoundSetups";
 
 type OwnerLabelProps = React.ComponentProps<"div"> & {
@@ -30,7 +30,7 @@ export function OwnerLabel({ className, item, ...restProps }: OwnerLabelProps) {
     return <div className={cn("h-8", classNames)} {...restProps} />;
   }
 
-  const ownerName = item.owner ? $AppCharacter.get(item.owner)?.name : undefined;
+  const ownerName = item.owner ? getAppCharacter(item.owner)?.name : undefined;
 
   return (
     <div className={cn(classNames)} {...restProps}>

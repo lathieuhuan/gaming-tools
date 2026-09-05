@@ -39,13 +39,13 @@ import {
 } from "@/logic/entity.logic";
 import { enhanceCtrls } from "@/logic/modifier.logic";
 import { Artifact, ArtifactGear, Teammate } from "@/models";
-import { $AppArtifact, $AppCharacter, $AppData } from "@/services";
+import { getAppArtifact, getAppCharacters, getMonster, getTeamBuffs } from "@/services/app-data";
 import { isManualRsnElmt } from "@/utils/element.utils";
 import { IdStore } from "@/utils/IdStore";
 import { CUSTOM_BUFF_CATEGORIES, DECODE_ERROR_MSG, DIVIDER } from "./config";
 
 export function decodeSetupCurrent(code: string): DecodeResult {
-  const characters = $AppCharacter.getAll();
+  const characters = getAppCharacters();
   const [
     version,
     mainStr,
@@ -204,7 +204,7 @@ export function decodeSetupCurrent(code: string): DecodeResult {
     for (const ctrlStr of split(ctrlStrs, 1)) {
       const [codeStr, modStrs] = split(ctrlStr, 2);
       const code = parseNumber(codeStr, desc);
-      const setData = $AppArtifact.getSet(code);
+      const setData = getAppArtifact(code);
       const ctrl = splitModCtrl(modStrs);
       const data = ctrl ? getMods(setData)?.find((buff) => buff.id === ctrl.id) : undefined;
 
@@ -359,7 +359,7 @@ export function decodeSetupCurrent(code: string): DecodeResult {
   const teamBuffCtrls: TeamBuffCtrl[] = split(teamBuffStrs, 1)
     .map((ctrl) => {
       const [id, activated, inputs] = split(ctrl, 2);
-      const data = $AppData.teamBuffs.find((buff) => buff.id === +id);
+      const data = getTeamBuffs().find((buff) => buff.id === +id);
 
       if (!data) {
         return null;
@@ -418,11 +418,11 @@ export function decodeSetupCurrent(code: string): DecodeResult {
   // ===== TARGET =====
 
   const [tgCode, tgLevel, tgVariant, tgInputs, tgResistances] = split(targetStr, 1);
-  const targetData = $AppData.getMonster({ code: +tgCode });
+  const monster = getMonster({ code: +tgCode });
 
   let target: ReturnType<typeof createTarget> | undefined;
 
-  if (targetData) {
+  if (monster) {
     target = createTarget(
       {
         code: parseNumber(tgCode, "Target Code"),
@@ -438,7 +438,7 @@ export function decodeSetupCurrent(code: string): DecodeResult {
           phys: 10,
         },
       },
-      targetData,
+      monster,
     );
 
     if (tgVariant) {

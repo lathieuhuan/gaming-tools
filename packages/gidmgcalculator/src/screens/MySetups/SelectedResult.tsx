@@ -6,7 +6,7 @@ import type { SetupOverviewInfo } from "./types";
 import { CalcSetup } from "@/logic/calculator";
 import { createTarget } from "@/logic/entity.logic";
 import { enhanceCtrls } from "@/logic/modifier.logic";
-import { $AppArtifact, $AppData } from "@/services";
+import { getAppArtifact, getTeamBuffs } from "@/services/app-data";
 
 import { FinalResultView } from "@/components/FinalResultView";
 import { SetupModals } from "./SetupModals";
@@ -35,7 +35,7 @@ export function SelectedResult({ setup, dbSetup }: SelectedResultProps) {
     const artDebuffCtrls: ArtifactDebuffCtrl[] = [];
 
     for (const ctrl of dbSetup.artDebuffCtrls) {
-      const setData = $AppArtifact.getSet(ctrl.code)!;
+      const setData = getAppArtifact(ctrl.code)!;
       const data = setData?.debuffs?.find((debuff) => debuff.id === ctrl.id);
 
       if (setData && data) {
@@ -49,7 +49,7 @@ export function SelectedResult({ setup, dbSetup }: SelectedResultProps) {
       wpBuffCtrls: enhanceCtrls(dbSetup.wpBuffCtrls, weapon.data.buffs),
       artBuffCtrls,
       artDebuffCtrls,
-      teamBuffCtrls: enhanceCtrls(dbSetup.teamBuffCtrls, $AppData.teamBuffs),
+      teamBuffCtrls: enhanceCtrls(dbSetup.teamBuffCtrls, getTeamBuffs()),
       teammates: setup.teammates,
       rsnBuffCtrls: dbSetup.rsnBuffCtrls,
       rsnDebuffCtrls: dbSetup.rsnDebuffCtrls,

@@ -2,7 +2,7 @@ import type { AriaAttributes } from "react";
 import { FaPlus } from "react-icons/fa";
 import { clsx, type ClassValue } from "rond";
 
-import { $AppCharacter } from "@/services";
+import { checkIsTraveler } from "@/services/app-data";
 import type { ElementType } from "@/types";
 
 import { GenshinImage } from "@/components/GenshinImage";
@@ -45,7 +45,7 @@ export function CharacterPortrait({
 }: CharacterPortraitProps) {
   const { code, icon, vision } = info || {};
 
-  const isTraveler = code ? $AppCharacter.checkIsTraveler({ code }) : false;
+  const isTraveler = code ? checkIsTraveler({ code }) : false;
   const withColorBg = withColorBgProp ?? isTraveler;
 
   const cls = [

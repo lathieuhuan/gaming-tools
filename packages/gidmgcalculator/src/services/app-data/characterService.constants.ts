@@ -1,16 +1,30 @@
-import type { CharacterInnateBuff, ElementType, BonusSpec } from "@/types";
+import type { BonusSpec, CharacterInnateBuff, ElementType } from "@/types";
 
-export const NO_DESCRIPTION_MSG = "[Description missing]";
+export type TravelerProps = {
+  name: string;
+  icon: string;
+  sideIcon: string;
+  factorsCA: number[];
+  innateBuffs: CharacterInnateBuff[];
+};
 
-export const RESONATED_ELEMENTS: ElementType[] = [
-  "anemo",
-  "geo",
-  "electro",
-  "dendro",
-  "hydro",
-  "pyro",
-  "cryo",
-];
+const innateBuffs: CharacterInnateBuff[] = [];
+
+export const LUMINE_PROPS: TravelerProps = {
+  name: "Lumine",
+  icon: "9/9c/Lumine_Icon",
+  sideIcon: "9/9a/Lumine_Side_Icon",
+  factorsCA: [55.9, 72.24],
+  innateBuffs,
+};
+
+export const AETHER_PROPS: TravelerProps = {
+  name: "Aether",
+  icon: "a/a5/Aether_Icon",
+  sideIcon: "0/05/Aether_Side_Icon",
+  factorsCA: [55.9, 60.72],
+  innateBuffs,
+};
 
 export const cannedKnowledgeBuff: CharacterInnateBuff = {
   src: "Canned Knowledge",
@@ -119,23 +133,3 @@ export const resonatedElmtsBuff: ResonatedElmtBuff = {
     },
   },
 };
-
-export function buildResonatedElmtsBuff(resonatedElmts: ElementType[]): CharacterInnateBuff {
-  let finalDesc = resonatedElmtsBuff.description;
-  const finalEffects: CharacterInnateBuff["effects"] = [];
-
-  for (const elmt of RESONATED_ELEMENTS) {
-    const activated = resonatedElmts.includes(elmt);
-    const { description, effects } = resonatedElmtsBuff.items[elmt];
-    const decorDesc = `<span class="${activated ? "" : "opacity-50"}">• ${description}</span>`;
-
-    finalDesc = `${finalDesc}<br />${decorDesc}`;
-    activated && finalEffects.push(effects);
-  }
-
-  return {
-    src: resonatedElmtsBuff.src,
-    description: finalDesc,
-    effects: finalEffects,
-  };
-}

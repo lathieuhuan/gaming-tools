@@ -6,7 +6,7 @@ import { CarouselSpace, Popover } from "rond";
 import type { CharacterToBeSorted } from "./types";
 
 import { useStoreSnapshot } from "@/lib/dynamic-store";
-import { $AppCharacter } from "@/services";
+import { getAppCharacter } from "@/services/app-data";
 import { splitLevel } from "@/utils/level.utils";
 import { useDispatch } from "@Store/hooks";
 import { selectDbCharacters, sortDbCharacters } from "@Store/userdbSlice";
@@ -18,7 +18,7 @@ const selectCharacterToBeSorted = createSelector(selectDbCharacters, (userChars)
   userChars.map<CharacterToBeSorted>((character, index) => {
     return {
       ...character,
-      data: $AppCharacter.get(character.code),
+      data: getAppCharacter(character.code),
       index,
     };
   }),

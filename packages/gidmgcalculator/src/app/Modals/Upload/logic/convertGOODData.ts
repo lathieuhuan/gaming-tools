@@ -11,7 +11,7 @@ import {
   findGOODCharacter,
 } from "@/logic/convertGOOD.logic";
 import { createWeapon } from "@/logic/entity.logic";
-import { $AppCharacter } from "@/services";
+import { getAppCharacter } from "@/services/app-data";
 import { IdStore } from "@/utils/IdStore";
 
 type GOODData = {
@@ -85,7 +85,7 @@ export function convertGOODData(data: GOODData) {
 
   for (const character of result.characters) {
     if (!character.weaponID) {
-      const { weaponType } = $AppCharacter.get(character.code);
+      const { weaponType } = getAppCharacter(character.code);
       const newWeapon = createWeapon({
         ID: idStore.gen(),
         type: weaponType,

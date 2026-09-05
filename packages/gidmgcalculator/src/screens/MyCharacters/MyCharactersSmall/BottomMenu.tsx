@@ -10,7 +10,7 @@ import {
 
 import type { DbCharacter } from "@/types";
 
-import { $AppCharacter } from "@/services";
+import { getAppCharacter } from "@/services/app-data";
 import { useSelector } from "@Store/hooks";
 import { selectActiveCharacter, selectDbCharacters } from "@Store/userdbSlice";
 import { useMyCharactersModalCtrl } from "../ContextProvider";
@@ -54,7 +54,7 @@ export function BottomMenu(props: BottomMenuProps) {
       <div className="grow hide-scrollbar">
         <div ref={listObsArea} className="px-4 peer">
           {userChars.map((character) => {
-            const data = $AppCharacter.get(character.code);
+            const data = getAppCharacter(character.code);
             if (!data) return null;
 
             const viewed = container.isItemViewed(data.code);

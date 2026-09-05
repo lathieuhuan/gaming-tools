@@ -4,7 +4,8 @@ import { clsx, Table } from "rond";
 import type { RawCharacter, RawTarget } from "@/types";
 
 import { useTranslation } from "@/hooks";
-import { $AppCharacter } from "@/services";
+import { getAppCharacter } from "@/services/app-data";
+
 import { OverwriteOption } from "./OverwriteOption";
 
 export type OverwriteOptionsProps = {
@@ -49,8 +50,8 @@ export function OverwriteOptions({
         object1?.[key] === undefined
           ? null
           : Array.isArray(object1[key]) && object1[key].length > 1
-          ? `${object1[key].join(", ")}`
-          : `${object1[key]}`;
+            ? `${object1[key].join(", ")}`
+            : `${object1[key]}`;
 
       const value2 = object2?.[key] === undefined ? null : `${object2[key]}`;
 
@@ -62,7 +63,7 @@ export function OverwriteOptions({
 
           {key === "code" ? (
             <Table.Td colSpan={2} style={{ textAlign: "center" }}>
-              {$AppCharacter.get(currentMain.code)?.name}
+              {getAppCharacter(currentMain.code)?.name}
             </Table.Td>
           ) : (
             <>

@@ -3,7 +3,7 @@ import { MdEdit } from "react-icons/md";
 import { Button, InputNumber, VersatileSelect } from "rond";
 
 import { MAX_TARGET_LEVEL } from "@/constants/config";
-import { $AppData } from "@/services";
+import { getTargetInfo } from "@/services/app-data";
 import { useCalcStore } from "@Store/calculator";
 import { setTarget } from "@Store/calculator/actions";
 
@@ -16,7 +16,7 @@ type SectionTargetProps = {
 
 export function SectionTarget({ onMinimize, onEdit }: SectionTargetProps) {
   const target = useCalcStore((state) => state.target);
-  const { title, names, variant, statuses } = $AppData.getTargetInfo(target);
+  const { title, names, variant, statuses } = getTargetInfo(target);
 
   const handleChangeLevel = (level: number) => {
     setTarget(target.update({ level }));

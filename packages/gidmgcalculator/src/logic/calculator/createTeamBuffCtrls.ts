@@ -3,7 +3,7 @@ import { Array_ } from "ron-utils";
 import type { TeamBuffCtrl } from "@/types";
 import type { CalcSetupCore } from "./CalcSetup/CalcSetupCore";
 
-import { $AppData } from "@/services";
+import { getTeamBuffs, MS_ASCENDANT_BUFF_ID } from "@/services/app-data";
 import { createModCtrl } from "../modifier.logic";
 
 export function createTeamBuffCtrls(setup: CalcSetupCore): TeamBuffCtrl[] {
@@ -14,7 +14,7 @@ export function createTeamBuffCtrls(setup: CalcSetupCore): TeamBuffCtrl[] {
   const teamBuffIds = new Set<number>();
 
   if (team.moonsignLv >= 2) {
-    teamBuffIds.add($AppData.MS_ASCENDANT_BUFF_ID);
+    teamBuffIds.add(MS_ASCENDANT_BUFF_ID);
   }
 
   for (const { data } of artBuffCtrls) {
@@ -29,11 +29,7 @@ export function createTeamBuffCtrls(setup: CalcSetupCore): TeamBuffCtrl[] {
     }
   }
 
-  // Turn ids into ctrls based on $AppData.teamBuffs
+  // Turn ids into ctrls based on AppTeamBuffs
 
-  return Array_.filterMap(
-    $AppData.teamBuffs,
-    (buff) => teamBuffIds.has(buff.id),
-    createModCtrl(false),
-  );
+  return Array_.filterMap(getTeamBuffs(), (buff) => teamBuffIds.has(buff.id), createModCtrl(false));
 }

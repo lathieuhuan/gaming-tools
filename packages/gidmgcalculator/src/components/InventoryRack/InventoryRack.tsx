@@ -5,7 +5,7 @@ import { cn, ItemCase, useIntersectionObserver } from "rond";
 import type { AppArtifact, AppWeapon, RawItem, RawWeapon } from "@/types";
 
 import { isWeapon } from "@/logic/entity.logic";
-import { $AppArtifact, $AppWeapon } from "@/services";
+import { getAppArtifact, getAppWeapon } from "@/services/app-data";
 
 // Component
 import { ItemThumbnail, type ItemThumbProps } from "../ItemThumbnail";
@@ -69,7 +69,7 @@ export function InventoryRack<
 
   const toItemOption = (item: T, viewed: boolean): ItemOption<T, U> => {
     if (isWeapon(item)) {
-      const data = $AppWeapon.get(item.code)!;
+      const data = getAppWeapon(item.code)!;
 
       return {
         icon: viewed ? data.icon : undefined,
@@ -82,7 +82,7 @@ export function InventoryRack<
       };
     }
 
-    const data = $AppArtifact.getSet(item.code)!;
+    const data = getAppArtifact(item.code)!;
 
     return {
       icon: viewed ? data[item.type].icon : undefined,

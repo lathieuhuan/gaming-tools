@@ -1,12 +1,14 @@
 import type { AppCharacter } from "@/types";
-import type { GenshinDevErrorResponse } from "./types";
 
 import { LEVELABLE_TALENT_TYPES } from "@/constants";
-import { $AppCharacter } from "./AppCharacterService";
 import { customFetch } from "./BaseService";
-import { NO_DESCRIPTION_MSG } from "./config";
-import { GenshinDevData, transformGenshinDevResponse } from "./transform";
+import { getAppCharacter } from "./characterService";
+import { GenshinDevData, NO_DESCRIPTION_MSG, transformGenshinDevResponse } from "./transform";
 import { GENSHIN_DEV_URL } from "./url";
+
+type GenshinDevErrorResponse = {
+  error: string;
+};
 
 const cache = {
   getTalentDescriptions: (character: AppCharacter) => {
@@ -68,7 +70,7 @@ const cache = {
 };
 
 export async function fetchTalentDescriptions(code: number): Promise<string[]> {
-  const character = $AppCharacter.get(code);
+  const character = getAppCharacter(code);
 
   if (!character) {
     throw new Error("Character not found");
@@ -99,7 +101,7 @@ export async function fetchTalentDescriptions(code: number): Promise<string[]> {
 }
 
 export async function fetchConsDescriptions(code: number): Promise<string[]> {
-  const character = $AppCharacter.get(code);
+  const character = getAppCharacter(code);
 
   if (!character) {
     throw new Error("Character not found");

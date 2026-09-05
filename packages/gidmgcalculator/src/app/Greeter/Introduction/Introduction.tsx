@@ -1,25 +1,18 @@
 import { clsx, CollapseList, LoadingSpin, Skeleton } from "rond";
 
-import type { AppMetadata } from "../types";
-import { About, Credits, Notes, VersionRecap } from "./collapsible-sections";
+import type { AppData } from "@/services/app-data";
+
+import { About, Credits, Notes, VersionRecap } from "./CollapsibleSections";
 import { UpdateList } from "./UpdateList";
 
 type IntroductionProps = {
   className?: string;
-  metadata?: AppMetadata;
+  data?: AppData;
   loading?: boolean;
 };
 
-export const Introduction = ({
-  className,
-  metadata = {
-    version: "",
-    updates: [],
-    supporters: [],
-  },
-  loading,
-}: IntroductionProps) => {
-  const { updates, supporters } = metadata;
+export const Introduction = ({ className, data, loading }: IntroductionProps) => {
+  const { updates = [], supporters = [] } = data || {};
   const latestDate: string | undefined = updates[0]?.date;
 
   const latestDateElement = loading ? (

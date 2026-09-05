@@ -6,7 +6,7 @@ import type { Artifact } from "@/models";
 import type { AppArtifact, ArtifactType, RawArtifactState } from "@/types";
 
 import { createArtifact } from "@/logic/entity.logic";
-import { $AppArtifact } from "@/services";
+import { getAppArtifact, getAppArtifacts } from "@/services/app-data";
 
 // Component
 import {
@@ -87,7 +87,7 @@ const ArtifactSmith = ({
   });
 
   const artifactOptions = useMemo(() => {
-    let artifacts = $AppArtifact.getAll();
+    let artifacts = getAppArtifacts();
 
     if (forFeature === "TEAMMATE_MODIFIERS") {
       artifacts = artifacts.filter(
@@ -168,7 +168,7 @@ const ArtifactSmith = ({
     selectBody: HTMLDivElement | null,
   ) => {
     if (!batchForging || !artifactConfig) return;
-    const artifactSet = $AppArtifact.getSet(artifactConfig.code);
+    const artifactSet = getAppArtifact(artifactConfig.code);
     if (!artifactSet) return;
 
     const onStopBatchForging = () => {

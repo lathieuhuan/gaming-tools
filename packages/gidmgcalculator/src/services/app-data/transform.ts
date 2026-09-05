@@ -1,5 +1,6 @@
 import { TalentType } from "@/types";
-import { NO_DESCRIPTION_MSG } from "./config";
+
+export const NO_DESCRIPTION_MSG = "[Description missing]";
 
 type GenshinDevResponse = {
   skillTalents?: {
@@ -25,7 +26,7 @@ export function transformGenshinDevResponse(response: GenshinDevResponse) {
 
     const constellationDescriptions = Array.from(
       { length: 6 },
-      (_, i) => constellations[i]?.description || NO_DESCRIPTION_MSG
+      (_, i) => constellations[i]?.description || NO_DESCRIPTION_MSG,
     );
 
     const getTalentDescription = (type: string | undefined) => {
@@ -42,7 +43,7 @@ export function transformGenshinDevResponse(response: GenshinDevResponse) {
     };
 
     const passiveDescriptions = passiveTalents.map(
-      (item) => item?.description || NO_DESCRIPTION_MSG
+      (item) => item?.description || NO_DESCRIPTION_MSG,
     );
 
     return {

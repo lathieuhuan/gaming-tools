@@ -8,7 +8,7 @@ import type {
 } from "@/types/GOOD";
 
 import { DESCENDING_LEVEL_CAPS, ELEMENT_TYPES, LEVELS } from "@/constants/global";
-import { $AppArtifact, $AppCharacter, $AppWeapon } from "@/services";
+import { getAppArtifacts, getAppCharacters, getAppWeapons } from "@/services/app-data";
 import { createArtifact, createWeapon } from "./entity.logic";
 
 export function toGOODKey(name: string) {
@@ -110,7 +110,7 @@ export function findGOODCharacter(key: string): AppCharacter | undefined {
     GOODName = key;
   }
 
-  return $AppCharacter.getAll().find((item) => item.name === GOODName || item.GOOD === GOODName);
+  return getAppCharacters().find((item) => item.name === GOODName || item.GOOD === GOODName);
 }
 
 export type GOODCharacterConvertReturn = {
@@ -143,7 +143,7 @@ export function convertGOODCharacter(
 }
 
 export function convertGOODWeapon(weapon: GOODWeapon, ID: number) {
-  const data = $AppWeapon.getAll().find((data) => toGOODKey(data.name) === weapon.key);
+  const data = getAppWeapons().find((data) => toGOODKey(data.name) === weapon.key);
 
   if (!data) {
     return undefined;
@@ -166,7 +166,7 @@ export function convertGOODArtifact(artifact: GOODArtifact, ID: number) {
     return undefined;
   }
 
-  const data = $AppArtifact.getAll().find((data) => toGOODKey(data.name) === artifact.setKey);
+  const data = getAppArtifacts().find((data) => toGOODKey(data.name) === artifact.setKey);
 
   if (!data) {
     return undefined;

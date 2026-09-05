@@ -4,7 +4,7 @@ import { CollapseList } from "rond";
 import type { CalcSetup } from "@/logic/calculator";
 
 import { useTranslation } from "@/hooks";
-import { $AppData } from "@/services";
+import { getTargetInfo } from "@/services/app-data";
 
 // Component
 import {
@@ -43,7 +43,7 @@ export function Modifiers({ setup }: ModifiersProps) {
   const { t } = useTranslation();
 
   const { main, target } = setup;
-  const { title, variant, statuses } = $AppData.getTargetInfo(target);
+  const { title, variant, statuses } = getTargetInfo(target);
 
   return (
     <div className="h-full px-4 flex space-x-4" onDoubleClick={() => console.info(setup)}>

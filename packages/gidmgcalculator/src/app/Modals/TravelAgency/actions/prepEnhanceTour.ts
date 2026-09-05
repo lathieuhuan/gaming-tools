@@ -4,11 +4,11 @@ import { SCREEN_PATH } from "@/constants";
 import { router } from "@/lib/router";
 import { CalcSetup } from "@/logic/calculator";
 import { createCharacter, createTeammate } from "@/logic/entity.logic";
-import { $AppCharacter } from "@/services";
+import { getAppCharacters } from "@/services/app-data";
 import { initSession } from "@Store/calculator/actions";
 
 export function prepEnhanceTour() {
-  const characters = $AppCharacter.getAll();
+  const characters = getAppCharacters();
   let appMain: AppCharacter | undefined = undefined;
   let appTeammate: AppCharacter | undefined = undefined;
 
