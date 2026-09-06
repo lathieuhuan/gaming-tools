@@ -2,18 +2,27 @@ import { useQuery } from "@tanstack/react-query";
 import { FaBars, FaDonate } from "react-icons/fa";
 import { Button, LoadingSpin } from "rond";
 
-import type { ModalOption } from "./config";
+import type { AppModalType } from "@/store/ui/types";
 
 import { IS_DEV_ENV, SCREEN_PATH } from "@/constants/config";
 import { useRouter } from "@/lib/router";
 import { appDataQueryOptions } from "@/services/app-data";
+import { clearCache } from "@/services/app-data/cache";
 import { updateUI, type UIState } from "@Store/ui";
+import { MODAL_OPTIONS } from "./config";
 
 import { EnkaLogo } from "@/assets/icons";
 import { PopoverAction } from "@/components/PopoverAction";
-import { clearCache } from "@/services/app-data/cache";
-import { MenuOption, ModalOptions } from "./ModalOptions";
+import { Menu, MenuOption } from "./Menu";
 // import { updateCache } from "@/services/enka";
+
+const ALWAYS_ENABLED_MODAL_TYPES: AppModalType[] = [
+  "INTRO",
+  "GUIDES",
+  "VERSIONS",
+  "UPLOAD",
+  "DOWNLOAD",
+];
 
 type RightSideProps = {
   appReady?: boolean;
@@ -28,10 +37,6 @@ export function RightSide({ appReady }: RightSideProps) {
 
   const openModal = (type: UIState["appModalType"]) => () => {
     updateUI({ appModalType: type });
-  };
-
-  const handleSelectModal = (option: ModalOption) => {
-    updateUI({ appModalType: option.modalType });
   };
 
   const handleSelectEnkaImport = () => {
@@ -83,28 +88,39 @@ export function RightSide({ appReady }: RightSideProps) {
         className="z-50 right-0 pt-2 pr-2"
         origin="top right"
         content={({ handleClose }) => (
-          <div className="bg-light-1 text-black rounded-md overflow-hidden shadow-common">
-            <ModalOptions
-              disabledTypes={appReady ? [] : ["DOWNLOAD", "UPLOAD", "SETTINGS"]}
-              onSelect={(option) => {
-                handleSelectModal(option);
-                handleClose();
-              }}
-            />
+          <Menu>
+            {MODAL_OPTIONS.map((option) => {
+              const { modalType } = option;
+              const disabled = !appReady && !ALWAYS_ENABLED_MODAL_TYPES.includes(modalType);
+
+              return (
+                <MenuOption
+                  key={modalType}
+                  label={option.label}
+                  icon={option.icon}
+                  disabled={disabled}
+                  onSelect={() => {
+                    updateUI({ appModalType: modalType });
+                    handleClose();
+                  }}
+                />
+              );
+            })}
+
             <MenuOption
-              icon={<EnkaLogo className="-mr-1 mb-1 text-xl shrink-0" />}
               label="Enka Import"
+              icon={<EnkaLogo className="-mx-0.5 mb-1 text-xl shrink-0" />}
               disabled={!appReady}
               onSelect={() => {
                 handleSelectEnkaImport();
                 handleClose();
               }}
             />
-          </div>
+          </Menu>
         )}
       >
         {(props) => (
-          <button className="w-8 h-8 flex-center bg-dark-3 text-xl" onClick={props.onClick}>
+          <button className="size-8 flex-center bg-dark-3 text-xl" onClick={props.onClick}>
             <FaBars />
           </button>
         )}

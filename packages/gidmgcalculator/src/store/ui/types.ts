@@ -1,9 +1,10 @@
 import type { SearchParams } from "@/lib/router";
 import type { TourKey } from "@/types";
 
-type AppModalType =
+export type AppModalType =
   | "INTRO"
   | "GUIDES"
+  | "VERSIONS"
   | "SETTINGS"
   | "UPLOAD"
   | "DOWNLOAD"

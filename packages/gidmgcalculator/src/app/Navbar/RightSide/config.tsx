@@ -1,4 +1,6 @@
-import { ReactNode } from "react";
+import type { AppModalType } from "@/store/ui/types";
+import type { ReactNode } from "react";
+
 import {
   FaCog,
   FaDownload,
@@ -8,13 +10,12 @@ import {
   FaUpload,
   FaWrench,
 } from "react-icons/fa";
-
-import type { UIState } from "@Store/ui";
+import { TbVersionsFilled } from "react-icons/tb";
 
 export type ModalOption = {
   label: string;
   icon: ReactNode;
-  modalType: UIState["appModalType"];
+  modalType: AppModalType;
 };
 
 export const MODAL_OPTIONS: ModalOption[] = [
@@ -27,6 +28,11 @@ export const MODAL_OPTIONS: ModalOption[] = [
     label: "Guides",
     icon: <FaQuestionCircle />,
     modalType: "GUIDES",
+  },
+  {
+    label: "Versions",
+    icon: <TbVersionsFilled className="-mx-0.5 text-xl" />,
+    modalType: "VERSIONS",
   },
   {
     label: "App Tours",
