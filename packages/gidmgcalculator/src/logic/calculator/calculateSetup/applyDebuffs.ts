@@ -62,7 +62,7 @@ export function applyDebuffs(setup: CalcSetup) {
           effect.targets === "OWN_ELMT" ? [main.data.vision] : Array_.toArray(effect.targets);
 
         const reductionPaths = getReductionPaths(targets, inputs);
-        const penalty = memberOps.penaltyCalc(inputs).getInitialValue(effect);
+        const penalty = memberOps.penaltyCalc(inputs).makePenalty(effect);
 
         reductionPaths.forEach((path) => target.takeResistReduction(path, penalty, label));
       }

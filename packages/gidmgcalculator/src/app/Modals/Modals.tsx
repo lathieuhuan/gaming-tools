@@ -43,7 +43,10 @@ export function Modals() {
           confirmButtonProps={{
             hidden: true,
           }}
-          cancelText="Close"
+          cancelButtonProps={{
+            size: "small",
+            children: "Close",
+          }}
           onCancel={closeModal}
         />
       </Modal.Core>

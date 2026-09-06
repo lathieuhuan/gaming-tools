@@ -3,6 +3,8 @@ import { cn, OverflowWatcher } from "rond";
 import { EXPORTED_SETUP_VERSION, LEGACY_EXPORTED_SETUP_VERSION } from "@/constants/config";
 
 export function VersionsView({ className }: { className?: string }) {
+  const divider = <div className="col-span-full h-px bg-dark-line/80" />;
+
   return (
     <div className={cn("flex flex-col gap-2", className)}>
       <div className="grid grid-cols-[5rem_1fr_1fr] gap-2 text-center text-heading font-bold uppercase">
@@ -11,7 +13,7 @@ export function VersionsView({ className }: { className?: string }) {
         <span>EOS</span>
       </div>
 
-      <div className="h-px bg-dark-line/80" />
+      {divider}
 
       <OverflowWatcher
         className="grow custom-scrollbar"
@@ -31,6 +33,7 @@ export function VersionsView({ className }: { className?: string }) {
             },
           ]}
         />
+        {divider}
         <FeatureVersionsView
           label="Download/Upload user data file"
           versions={[
@@ -54,6 +57,7 @@ export function VersionsView({ className }: { className?: string }) {
             },
           ]}
         />
+        {divider}
         <FeatureVersionsView
           label="Auto-saved user data"
           versions={[
