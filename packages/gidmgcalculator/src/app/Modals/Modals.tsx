@@ -9,8 +9,9 @@ import { Download } from "./Download";
 import { EnhanceNoticeModal } from "./EnhanceNotice";
 import { Guides } from "./Guides";
 import { SettingsModal } from "./Settings";
-import { UploadModals } from "./Upload";
 import { TravelAgencyModals } from "./TravelAgency";
+import { UploadModals } from "./Upload";
+import { VersionsView } from "./VersionsView";
 
 export function Modals() {
   const appModalType = useUIStore((state) => state.appModalType);
@@ -29,6 +30,26 @@ export function Modals() {
       >
         <Guides />
       </Modal>
+
+      <Modal.Core
+        active={appModalType === "VERSIONS"}
+        preset="small"
+        className="max-h-[90vh] p-4 bg-dark-2 flex flex-col gap-2"
+        onClose={closeModal}
+      >
+        <VersionsView className="grow overflow-y-auto" />
+        <Modal.Actions
+          justify="center"
+          confirmButtonProps={{
+            hidden: true,
+          }}
+          cancelButtonProps={{
+            size: "small",
+            children: "Close",
+          }}
+          onCancel={closeModal}
+        />
+      </Modal.Core>
 
       <SettingsModal active={appModalType === "SETTINGS"} onClose={closeModal} />
 

@@ -4,7 +4,7 @@ import { useSetupImporter } from "@/lib/setup-importer";
 import { decodeSetup } from "@/logic/setupCodec/decodeSetup";
 
 import { PorterLayout } from "@/components/SetupExporter";
-import { EXPORTED_SETUP_VERSION, LEGACY_EXPORTED_SETUP_VERSION } from "@/constants";
+import { EXPORTED_SETUP_VERSIONS } from "@/constants/config";
 
 export function SetupImportGate(props: { onClose: () => void }) {
   const setupImporter = useSetupImporter();
@@ -51,7 +51,7 @@ export function SetupImportGate(props: { onClose: () => void }) {
       }
       warning={
         <p className="text-right">
-          Supported versions: V{EXPORTED_SETUP_VERSION}, V{LEGACY_EXPORTED_SETUP_VERSION}
+          Supported versions: {EXPORTED_SETUP_VERSIONS.map((v) => `v${v}`).join(", ")}
         </p>
       }
       moreButtons={[

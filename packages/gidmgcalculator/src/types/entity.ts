@@ -100,6 +100,7 @@ export type RawTeammate = RawTeammateState & {
   };
   artifact?: TeammateArtifactState & {
     buffCtrls: ModifierCtrlState[];
+    debuffCtrls: ModifierCtrlState[];
   };
 };
 

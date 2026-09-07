@@ -8,16 +8,16 @@ import { ModifierContainer } from "./ModifierContainer";
 
 type ArtifactBuffsViewProps = {
   mutable?: boolean;
-  artBuffCtrls: ArtifactBuffCtrl[];
   teammates: Teammate[];
+  artBuffCtrls: ArtifactBuffCtrl[];
   getSelfHandlers?: (ctrl: ArtifactBuffCtrl) => ModifierHanlders;
   getTeammateHandlers?: (teammate: Teammate, ctrl: TeammateArtifactBuffCtrl) => ModifierHanlders;
 };
 
 export function ArtifactBuffsView({
   mutable,
-  artBuffCtrls,
   teammates,
+  artBuffCtrls,
   getSelfHandlers,
   getTeammateHandlers,
 }: ArtifactBuffsViewProps) {
@@ -44,17 +44,14 @@ export function ArtifactBuffsView({
       {teammates
         .map((teammate) => {
           const { artifact } = teammate;
-
-          if (!artifact) {
-            return null;
-          }
+          if (!artifact) return null;
 
           return artifact.buffCtrls.map((ctrl) => {
             const { data } = ctrl;
 
             return (
               <GenshinModifierView
-                key={`${teammate.code}-${artifact.data.code}-${ctrl.id}`}
+                key={`${teammate.code}-${ctrl.id}`}
                 mutable={mutable}
                 checked={ctrl.activated}
                 heading={`${artifact.data.name} / ${teammate.data.name}`}

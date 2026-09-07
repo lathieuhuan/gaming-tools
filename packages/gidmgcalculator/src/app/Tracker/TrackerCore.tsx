@@ -1,11 +1,11 @@
 import { useLayoutEffect, useState } from "react";
 import { CollapseList, CollapseListProps } from "rond";
 
+import type { CalcSetup } from "@/logic/calculator";
 import type { TrackerState } from "@Store/ui";
 
 import { useShallowCalcStore } from "@Store/calculator";
 import { selectSetup } from "@Store/calculator/selectors";
-import { useSettingsStore } from "@Store/settings";
 
 // Component
 import { AttributeTracker } from "./AttributeTracker";
@@ -20,19 +20,17 @@ type TrackerCoreProps = {
 
 export function TrackerCore({ trackerState }: TrackerCoreProps) {
   const activeSetup = useShallowCalcStore(selectSetup);
-  const [state, setState] = useState<ReturnType<typeof activeSetup.calculate>>();
-  const resonatedElmts = useSettingsStore((state) => state.traveler.resonatedElmts);
+  const [state, setState] = useState<CalcSetup>();
 
   useLayoutEffect(() => {
     if (trackerState === "open") {
       const state = activeSetup.calculate({
         shouldLog: true,
-        resonatedElmts,
       });
 
       setState(state);
     }
-  }, [trackerState, resonatedElmts]);
+  }, [trackerState]);
 
   if (!state) {
     return null;

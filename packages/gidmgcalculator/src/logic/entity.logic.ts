@@ -18,12 +18,7 @@ import type {
 
 import { Artifact, Character, CharacterCreateOptions, Target, Teammate, Weapon } from "@/models";
 import { getAppArtifact, getAppCharacter, getAppWeapon, getMonster } from "@/services/app-data";
-import {
-  createAbilityBuffCtrls,
-  createAbilityDebuffCtrls,
-  createWeaponBuffCtrls,
-  enhanceCtrls,
-} from "./modifier.logic";
+import { createAbilityBuffCtrls, createAbilityDebuffCtrls, enhanceCtrls } from "./modifier.logic";
 
 // ========== ARTIFACT ==========
 
@@ -98,19 +93,26 @@ export function createTeammate(
   raw: PartiallyRequiredOnly<RawTeammate, "code">,
   data?: AppCharacter | null,
 ) {
-  data ??= getAppCharacter(raw.code);
+  if (data == null || data.code !== raw.code) {
+    data = getAppCharacter(raw.code);
+  }
+
+  const buffCtrls: AbilityBuffCtrl[] = raw.buffCtrls
+    ? enhanceCtrls(raw.buffCtrls, data.buffs)
+    : createAbilityBuffCtrls(data, false);
+
+  const debuffCtrls: AbilityDebuffCtrl[] = raw.debuffCtrls
+    ? enhanceCtrls(raw.debuffCtrls, data.debuffs)
+    : createAbilityDebuffCtrls(data, false);
 
   let weapon: TeammateWeapon;
 
   if (raw.weapon) {
     const appWeapon = getAppWeapon(raw.weapon.code)!;
-    const { buffCtrls } = raw.weapon;
 
     weapon = {
       ...raw.weapon,
-      buffCtrls: buffCtrls
-        ? enhanceCtrls(buffCtrls, appWeapon.buffs)
-        : createWeaponBuffCtrls(appWeapon, false),
+      buffCtrls: enhanceCtrls(raw.weapon.buffCtrls, appWeapon.buffs),
       data: appWeapon,
     };
   } else {
@@ -125,14 +127,6 @@ export function createTeammate(
     };
   }
 
-  const buffCtrls: AbilityBuffCtrl[] = raw.buffCtrls
-    ? enhanceCtrls(raw.buffCtrls, data.buffs)
-    : createAbilityBuffCtrls(data, false);
-
-  const debuffCtrls: AbilityDebuffCtrl[] = raw.debuffCtrls
-    ? enhanceCtrls(raw.debuffCtrls, data.debuffs)
-    : createAbilityDebuffCtrls(data, false);
-
   let artifact: TeammateArtifact | undefined;
 
   if (raw.artifact) {
@@ -141,6 +135,7 @@ export function createTeammate(
     artifact = {
       code: raw.artifact.code,
       buffCtrls: enhanceCtrls(raw.artifact.buffCtrls, appArtifact.buffs),
+      debuffCtrls: enhanceCtrls(raw.artifact.debuffCtrls, appArtifact.debuffs),
       data: appArtifact,
     };
   }

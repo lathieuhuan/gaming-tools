@@ -44,7 +44,7 @@ import { isManualRsnElmt } from "@/utils/element.utils";
 import { IdStore } from "@/utils/IdStore";
 import { CUSTOM_BUFF_CATEGORIES, DECODE_ERROR_MSG, DIVIDER } from "./config";
 
-export function decodeSetupCurrent(code: string): DecodeResult {
+export function decodeSetupV5(code: string): DecodeResult {
   const characters = getAppCharacters();
   const [
     version,
@@ -260,10 +260,11 @@ export function decodeSetupCurrent(code: string): DecodeResult {
       let artifact: RawTeammate["artifact"];
 
       try {
-        const [atfCodeStr, atfBcStrs] = split(artifactStr, 2);
+        const [atfCodeStr, atfBcStrs, atfDcStrs] = split(artifactStr, 2);
         artifact = {
           code: parseNumber(atfCodeStr, "Artifact Code"),
           buffCtrls: splitModCtrls(atfBcStrs, 3),
+          debuffCtrls: splitModCtrls(atfDcStrs, 3),
         };
       } catch (e) {
         console.error(e);

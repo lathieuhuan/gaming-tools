@@ -82,7 +82,13 @@ export function Modifiers({ setup }: ModifiersProps) {
             },
             {
               heading: "Artifacts",
-              body: <ArtifactDebuffsView mutable={false} artDebuffCtrls={setup.artDebuffCtrls} />,
+              body: (
+                <ArtifactDebuffsView
+                  mutable={false}
+                  teammates={setup.teammates}
+                  artDebuffCtrls={setup.artDebuffCtrls}
+                />
+              ),
             },
             {
               heading: "Custom",

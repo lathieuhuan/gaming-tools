@@ -5,19 +5,13 @@ import type { SetupOverviewInfo } from "../types";
 
 import { ARTIFACT_TYPES } from "@/constants/global";
 import { CalcSetup } from "@/logic/calculator";
-import {
-  createArtifact,
-  createCharacter,
-  createTarget,
-  createTeammate,
-  createWeapon,
-} from "@/logic/entity.logic";
+import { createArtifact, createCharacter, createTarget, createWeapon } from "@/logic/entity.logic";
 import {
   createAbilityBuffCtrls,
   createAbilityDebuffCtrls,
   createWeaponBuffCtrls,
 } from "@/logic/modifier.logic";
-import { Artifact, ArtifactGear } from "@/models";
+import { Artifact, ArtifactGear, Teammate } from "@/models";
 import { IdStore } from "@/utils/IdStore";
 
 export function createSetupForTeammate(
@@ -70,20 +64,21 @@ export function createSetupForTeammate(
   const { main } = setup;
   const mainWeapon = main.weapon;
 
-  teammates[teammateIndex] = createTeammate(
+  teammates[teammateIndex] = new Teammate(
+    main.code,
+    main.data,
     {
-      code: main.code,
+      code: mainWeapon.code,
+      type: mainWeapon.type,
+      refi: mainWeapon.refi,
+      buffCtrls: createWeaponBuffCtrls(mainWeapon.data, false),
+      data: mainWeapon.data,
+    },
+    {
       enhanced: main.enhanced,
       buffCtrls: createAbilityBuffCtrls(main.data, false),
       debuffCtrls: createAbilityDebuffCtrls(main.data, false),
-      weapon: {
-        code: mainWeapon.code,
-        type: mainWeapon.type,
-        refi: mainWeapon.refi,
-        buffCtrls: createWeaponBuffCtrls(mainWeapon.data, false),
-      },
     },
-    main.data,
   );
 
   return CalcSetup.create(idStore.gen(), newMain, {

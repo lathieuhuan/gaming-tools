@@ -3,14 +3,12 @@ import type { AppData } from "./types";
 import { MINIMUM_SYSTEM_VERSION } from "@/constants/config";
 import { ServiceError } from "../ServiceError";
 import { getAppData } from "./getAppData";
-import { getCachedAppData } from "./selector";
+import { getCachedAppData } from "./service";
 import { AppDataChannel } from "./utils/AppDataChannel";
 import { TimeStore } from "./utils/TimeStore";
 
 const COOLDOWN_UPGRADE = 300;
 const SYSTEM_UPGRADE_MESSAGE = "The system is being upgraded.";
-
-export type AppGeneralData = Pick<AppData, "version" | "updates" | "supporters">;
 
 const dataChannel = new AppDataChannel();
 const lastVersionCheckTime = new TimeStore("lastVersionCheckTime");

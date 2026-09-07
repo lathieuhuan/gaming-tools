@@ -1,4 +1,4 @@
-import type { AppArtifact, ArtifactBuff } from "../app-artifact";
+import type { AppArtifact, ArtifactBuff, ArtifactDebuff } from "../app-artifact";
 import type { AppCharacter } from "../app-character";
 import type { AppWeapon } from "../app-weapon";
 import type { RawTeammateState, TeammateArtifactState, TeammateWeaponState } from "../entity";
@@ -31,8 +31,11 @@ export type TeammateWeapon = TeammateWeaponState & {
 
 export type TeammateArtifactBuffCtrl = ModifierCtrl<ArtifactBuff>;
 
+export type TeammateArtifactDebuffCtrl = ModifierCtrl<ArtifactDebuff>;
+
 export type TeammateArtifact = TeammateArtifactState & {
   buffCtrls: TeammateArtifactBuffCtrl[];
+  debuffCtrls: TeammateArtifactDebuffCtrl[];
   data: AppArtifact;
 };
 

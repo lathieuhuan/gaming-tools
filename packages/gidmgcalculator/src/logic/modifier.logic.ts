@@ -1,6 +1,5 @@
 import { Array_ } from "ron-utils";
 
-import type { Teammate } from "@/models";
 import type {
   AbilityBuffCtrl,
   AbilityDebuffCtrl,
@@ -22,17 +21,23 @@ import type {
   WeaponBuffCtrl,
 } from "@/types";
 
-import { DEFAULT_STELLAR_VORTEX_LV } from "@/constants";
-import { getAppArtifact } from "@/services/app-data";
+import { DEFAULT_STELLAR_VORTEX_LV } from "@/constants/global";
 import { isManualRsnElmt } from "@/utils/element.utils";
 
-function getDefaultInitValue(type: ModInputType) {
-  switch (type) {
+function getDefaultInitValue(inputType: ModInputType) {
+  switch (inputType) {
     case "LEVEL":
     case "SELECT":
     case "STACKS":
       return 1;
+    case "ANEMOABLE":
+    case "DENDROABLE":
+    case "CHECK":
+    case "ELEMENTAL":
+    case "TEXT":
+      return 0;
     default:
+      inputType satisfies never;
       return 0;
   }
 }
@@ -133,7 +138,7 @@ export function createArtifactBuffCtrls(
       (buff) => ({
         setData: artifact,
         code: artifact.code,
-        ...createModCtrl(true)(buff),
+        ...createModCtrl(forSelf)(buff),
       }),
     );
   }
@@ -141,49 +146,26 @@ export function createArtifactBuffCtrls(
   return [];
 }
 
-export function createArtifactDebuffCtrls(sets: ArtifactGearSet[], teammates: Teammate[]) {
-  const ctrls: ArtifactDebuffCtrl[] = [];
-  // TODO improve
-  const vvArtifact = getAppArtifact(15);
-  const deepwoodArtifact = getAppArtifact(33);
-  const usedCodeSet = new Set<number>();
-
-  const [firstSet] = sets;
+export function createMainArtifactDebuffCtrls(sets: ArtifactGearSet[]): ArtifactDebuffCtrl[] {
+  const firstSet = sets.at(0);
 
   if (firstSet?.bonusLv === 1) {
-    usedCodeSet.add(firstSet.data.code);
+    return createArtifactDebuffCtrls(firstSet.data, true);
   }
 
-  for (const teammate of teammates) {
-    const code = teammate.artifact?.code;
+  return [];
+}
 
-    if (code) {
-      usedCodeSet.add(code);
-    }
+export function createArtifactDebuffCtrls(artifact: AppArtifact | undefined, forSelf: boolean) {
+  if (artifact?.debuffs) {
+    return Array_.filterMap(artifact.debuffs, filterFor(forSelf), (buff) => ({
+      setData: artifact,
+      code: artifact.code,
+      ...createModCtrl(forSelf)(buff),
+    }));
   }
 
-  if (vvArtifact?.debuffs && usedCodeSet.has(vvArtifact.code)) {
-    ctrls.push({
-      id: 0,
-      code: vvArtifact.code,
-      activated: false,
-      inputs: [0],
-      setData: vvArtifact,
-      data: vvArtifact.debuffs[0],
-    });
-  }
-
-  if (deepwoodArtifact?.debuffs && usedCodeSet.has(deepwoodArtifact.code)) {
-    ctrls.push({
-      id: 0,
-      code: deepwoodArtifact.code,
-      activated: false,
-      setData: deepwoodArtifact,
-      data: deepwoodArtifact.debuffs[0],
-    });
-  }
-
-  return ctrls;
+  return [];
 }
 
 export function createRsnModCtrls(elmtCount: ElementCount) {

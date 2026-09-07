@@ -1,0 +1,479 @@
+import { Array_ } from "ron-utils";
+
+import type {
+  AppArtifact,
+  ArtifactBuff,
+  ArtifactDebuff,
+  ArtifactModCtrl,
+  ArtifactType,
+  AttackReaction,
+  CustomBuffCtrl,
+  CustomDebuffCtrl,
+  ElementalEvent,
+  ElementType,
+  ModifierCtrlState,
+  RawTeammate,
+  ResonanceModCtrl,
+  SetupImportData,
+  TeamBuffCtrl,
+} from "@/types";
+import type { DecodeResult } from "./types";
+
+import {
+  ATTACK_ELEMENTS,
+  ATTRIBUTE_STAT_TYPES,
+  BONUS_KEYS,
+  CUSTOM_BUFF_CTRL_SPECS,
+  DEFAULT_STELLAR_VORTEX_LV,
+  ELEMENT_TYPES,
+  LEVELS,
+  WEAPON_TYPES,
+} from "@/constants/global";
+import { CalcSetup } from "@/logic/calculator";
+import {
+  createArtifact,
+  createCharacter,
+  createTarget,
+  createTeammate,
+  createWeapon,
+} from "@/logic/entity.logic";
+import {
+  createArtifactDebuffCtrls,
+  createMainArtifactDebuffCtrls,
+  enhanceCtrls,
+} from "@/logic/modifier.logic";
+import { Artifact, ArtifactGear, Teammate } from "@/models";
+import { getAppArtifact, getAppCharacters, getMonster, getTeamBuffs } from "@/services/app-data";
+import { isManualRsnElmt } from "@/utils/element.utils";
+import { IdStore } from "@/utils/IdStore";
+import { CUSTOM_BUFF_CATEGORIES, DECODE_ERROR_MSG, DIVIDER } from "./config";
+
+export function decodeSetupV3(code: string): DecodeResult {
+  const characters = getAppCharacters();
+  const [
+    version,
+    mainStr,
+    weaponStr,
+    flowerStr,
+    plumeStr,
+    sandsStr,
+    gobletStr,
+    circletStr,
+    selfBcStrs,
+    selfDcStrs,
+    wpBcStrs,
+    atfBcStrs,
+    atfDcStrs,
+    teammateStr1,
+    teammateStr2,
+    teammateStr3,
+    elmtMcStr,
+    rsnBcStrs,
+    rsnDcStrs,
+    teamBuffStrs,
+    customBcStrs,
+    customDcStrs,
+    targetStr,
+  ] = code.split(DIVIDER[0]);
+
+  const parseNumber = (str: string = "", desc = "") => {
+    const num = +str;
+    if (!str || isNaN(num)) {
+      throw new Error(`Invalid number: [${str}] ${desc}`);
+    }
+    return num;
+  };
+
+  const split = (str: string | undefined, splitLv: number) => {
+    return str ? str.split(DIVIDER[splitLv]) : [];
+  };
+
+  const splitModCtrl = (str: string | undefined) => {
+    if (!str) {
+      return null;
+    }
+
+    const [id, activated, inputs] = str.split(DIVIDER.MC);
+
+    const result: ModifierCtrlState = {
+      activated: activated === "1",
+      id: parseNumber(id, "Modifier ID"),
+    };
+
+    if (inputs) {
+      result.inputs = inputs
+        .split(DIVIDER.MC_INPUTS)
+        .map((input) => parseNumber(input, "Modifier Input"));
+    }
+
+    return result;
+  };
+
+  const splitModCtrls = (jointCtrls: string | undefined, splitLv: number) => {
+    return split(jointCtrls, splitLv)
+      .map(splitModCtrl)
+      .filter((ctrl) => ctrl !== null);
+  };
+
+  const idStore = new IdStore();
+
+  // ===== MAIN =====
+
+  const [mainCode, levelIndex, cons, enhancedCode, NAs, ES, EB] = split(mainStr, 1);
+  const mainData = Array_.findByCode(characters, +mainCode);
+
+  if (!mainData) {
+    return {
+      isOk: false,
+      error: DECODE_ERROR_MSG.MAIN_NOT_FOUND,
+    };
+  }
+
+  const [wpCode, wpTypeIndex, wpLvIndex, wpRefi] = split(weaponStr, 1);
+
+  const weapon = createWeapon({
+    ID: idStore.gen(),
+    code: parseNumber(wpCode, "Main Weapon Code"),
+    level: LEVELS[parseNumber(wpLvIndex, "Main Weapon Level")],
+    type: WEAPON_TYPES[parseNumber(wpTypeIndex, "Main Weapon Type")],
+    refi: parseNumber(wpRefi, "Main Weapon Refi"),
+  });
+
+  const decodeArtifact = (str: string | undefined, artType: ArtifactType): Artifact | null => {
+    try {
+      const [atfCode, rarity, artLevel, mainStatTypeIndex, jointSubStats] = split(str, 1);
+
+      if (!atfCode) {
+        return null;
+      }
+
+      return createArtifact({
+        ID: idStore.gen(),
+        code: parseNumber(atfCode, "Main Artifact Code"),
+        type: artType,
+        rarity: parseNumber(rarity, "Artifact Rarity"),
+        level: parseNumber(artLevel, "Artifact Level"),
+        mainStatType: ATTRIBUTE_STAT_TYPES[parseNumber(mainStatTypeIndex)],
+        subStats: split(jointSubStats, 2).map((str) => {
+          const [typeStr, value] = split(str, 3);
+          const typeIndex = parseNumber(typeStr, "Artifact Sub Stat Type");
+          const type = ATTRIBUTE_STAT_TYPES[typeIndex] || ATTRIBUTE_STAT_TYPES[0];
+
+          return {
+            type,
+            value: parseNumber(value, "Artifact Sub Stat Value"),
+          };
+        }),
+      });
+    } catch (e) {
+      console.error(e);
+      return null;
+    }
+  };
+
+  const atfGear = ArtifactGear.create([
+    decodeArtifact(flowerStr, "flower"),
+    decodeArtifact(plumeStr, "plume"),
+    decodeArtifact(sandsStr, "sands"),
+    decodeArtifact(gobletStr, "goblet"),
+    decodeArtifact(circletStr, "circlet"),
+  ]);
+
+  const main = createCharacter(
+    {
+      code: mainData.code,
+      enhanced: enhancedCode === "1",
+      level: LEVELS[parseNumber(levelIndex, "Main Level")],
+      cons: parseNumber(cons, "Cons"),
+      NAs: parseNumber(NAs, "NAs"),
+      ES: parseNumber(ES, "ES"),
+      EB: parseNumber(EB, "EB"),
+    },
+    mainData,
+    {
+      weapon,
+      atfGear,
+    },
+  );
+
+  // ===== ARTIFACT BUFFS =====
+
+  const decodeArtifactModCtrls = <T extends ArtifactBuff | ArtifactDebuff>(
+    ctrlStrs: string | undefined,
+    getMods: (data: AppArtifact | undefined) => T[] | undefined,
+    desc: string,
+  ) => {
+    const artBuffCtrls: ArtifactModCtrl<T>[] = [];
+
+    for (const ctrlStr of split(ctrlStrs, 1)) {
+      const [codeStr, modStrs] = split(ctrlStr, 2);
+      const code = parseNumber(codeStr, desc);
+      const setData = getAppArtifact(code);
+      const ctrl = splitModCtrl(modStrs);
+      const data = ctrl ? getMods(setData)?.find((buff) => buff.id === ctrl.id) : undefined;
+
+      if (!setData || !data || !ctrl) {
+        continue;
+      }
+
+      artBuffCtrls.push({
+        code,
+        ...ctrl,
+        data,
+        setData,
+      });
+    }
+
+    return artBuffCtrls;
+  };
+
+  const artBuffCtrls = decodeArtifactModCtrls(
+    atfBcStrs,
+    (data) => data?.buffs,
+    "Artifact Buff Code",
+  );
+
+  const artDebuffCtrls = createMainArtifactDebuffCtrls(atfGear.sets);
+
+  // ===== TEAMMATES =====
+
+  const decodeTeammate = (tmStr: string | undefined): Teammate | null => {
+    if (!tmStr) {
+      return null;
+    }
+
+    try {
+      const [code, enhancedCode, tmBcStrs, tmDcStrs, weaponStr, artifactStr] = split(tmStr, 1);
+      const tmCode = parseNumber(code, "Teammate Code");
+
+      if (!tmCode) {
+        return null;
+      }
+
+      const [wpCode, wpTypeIndex, wpRefi, wpBcStrs] = split(weaponStr, 2);
+      const wpType = WEAPON_TYPES[parseNumber(wpTypeIndex, "Teammate Weapon Type")];
+
+      if (!wpType) {
+        return null;
+      }
+
+      let artifact: RawTeammate["artifact"];
+
+      try {
+        const [atfCodeStr, atfBcStrs] = split(artifactStr, 2);
+        const code = parseNumber(atfCodeStr, "Artifact Code");
+
+        artifact = {
+          code,
+          buffCtrls: splitModCtrls(atfBcStrs, 3),
+          debuffCtrls: createArtifactDebuffCtrls(getAppArtifact(code), false),
+        };
+      } catch (e) {
+        console.error(e);
+        artifact = undefined;
+      }
+
+      return createTeammate(
+        {
+          code: tmCode,
+          enhanced: enhancedCode === "1",
+          buffCtrls: splitModCtrls(tmBcStrs, 2),
+          debuffCtrls: splitModCtrls(tmDcStrs, 2),
+          weapon: {
+            code: parseNumber(wpCode, "Teammate Weapon Code"),
+            type: wpType,
+            refi: parseNumber(wpRefi, "Teammate Weapon Refi"),
+            buffCtrls: splitModCtrls(wpBcStrs, 3),
+          },
+          artifact,
+        },
+        null,
+      );
+    } catch (e) {
+      console.error(e);
+      return null;
+    }
+  };
+
+  const teammates = Array_.truthify([
+    decodeTeammate(teammateStr1),
+    decodeTeammate(teammateStr2),
+    decodeTeammate(teammateStr3),
+  ]);
+
+  // ===== ELEMENTAL EVENT =====
+
+  const decodeElement = (indexStr = ""): ElementType | undefined => {
+    return indexStr ? ELEMENT_TYPES[+indexStr] : undefined;
+  };
+
+  const [reaction, infusion, infuseReaction, absorption, absorbReaction, superconduct] = split(
+    elmtMcStr,
+    1,
+  );
+
+  const elmtEvent: ElementalEvent = {
+    reaction: (reaction || null) as AttackReaction,
+    infusion: decodeElement(infusion) || null,
+    infuseReaction: (infuseReaction || null) as AttackReaction,
+    absorption: decodeElement(absorption) || null,
+    absorbReaction: (absorbReaction || null) as AttackReaction,
+    superconduct: superconduct === "1",
+    polestarProc: false,
+    polestarCount: 0,
+    vortexLv: DEFAULT_STELLAR_VORTEX_LV,
+  };
+
+  // ===== RESONANCES =====
+
+  const decodeResonance = (str: string | undefined) => {
+    return split(str, 1)
+      .map((rsn) => {
+        const [elementType, activated, inputs] = split(rsn, 2);
+        const element = decodeElement(elementType);
+
+        if (!element || !isManualRsnElmt(element)) {
+          return null;
+        }
+
+        const rsnModCtrl: ResonanceModCtrl = {
+          element,
+          activated: activated === "1",
+        };
+
+        if (inputs) {
+          rsnModCtrl.inputs = inputs.split(DIVIDER.MC_INPUTS).map(Number);
+        }
+
+        return rsnModCtrl;
+      })
+      .filter((ctrl) => ctrl !== null);
+  };
+
+  // ===== TEAM BUFFS =====
+
+  const teamBuffCtrls: TeamBuffCtrl[] = split(teamBuffStrs, 1)
+    .map((ctrl) => {
+      const [id, activated, inputs] = split(ctrl, 2);
+      const data = getTeamBuffs().find((buff) => buff.id === +id);
+
+      if (!data) {
+        return null;
+      }
+
+      return {
+        id: +id,
+        activated: activated === "1",
+        inputs: inputs ? inputs.split(DIVIDER.MC_INPUTS).map(Number) : [],
+        data,
+      };
+    })
+    .filter((ctrl) => ctrl !== null);
+
+  // ===== CUSTOM MODIFIERS =====
+
+  const customBuffCtrls: CustomBuffCtrl[] = split(customBcStrs, 1).map((codes) => {
+    const [categoryIndex, typeIndex, subTypeIndex, value] = split(codes, 2);
+    const category = CUSTOM_BUFF_CATEGORIES[+categoryIndex];
+    let type: CustomBuffCtrl["type"] = "all";
+
+    switch (category) {
+      case "totalAttr":
+        type = CUSTOM_BUFF_CTRL_SPECS.totalAttr.types[+typeIndex];
+        break;
+      case "attElmtBonus":
+        type = CUSTOM_BUFF_CTRL_SPECS.attElmtBonus.types[+typeIndex];
+        break;
+      case "attPattBonus":
+        type = CUSTOM_BUFF_CTRL_SPECS.attPattBonus.types[+typeIndex];
+        break;
+      case "rxnBonus":
+        type = CUSTOM_BUFF_CTRL_SPECS.rxnBonus.types[+typeIndex];
+        break;
+    }
+
+    return {
+      category,
+      type,
+      subType: category === "totalAttr" ? undefined : BONUS_KEYS[+subTypeIndex],
+      value: +value,
+    };
+  });
+
+  const customDebuffCtrls: CustomDebuffCtrl[] = split(customDcStrs, 1).map((codes) => {
+    const [typeIndex, value] = split(codes, 2);
+    return {
+      type: ["def"].concat(ATTACK_ELEMENTS)[+typeIndex] as CustomDebuffCtrl["type"],
+      value: +value,
+    };
+  });
+
+  // ===== TARGET =====
+
+  const [tgCode, tgLevel, tgVariant, tgInputs, tgResistances] = split(targetStr, 1);
+  const monster = getMonster({ code: +tgCode });
+
+  let target: ReturnType<typeof createTarget> | undefined;
+
+  if (monster) {
+    target = createTarget(
+      {
+        code: parseNumber(tgCode, "Target Code"),
+        level: parseNumber(tgLevel, "Target Level"),
+        resistances: {
+          anemo: 10,
+          dendro: 10,
+          cryo: 10,
+          geo: 10,
+          electro: 10,
+          hydro: 10,
+          pyro: 10,
+          phys: 10,
+        },
+      },
+      monster,
+    );
+
+    if (tgVariant) {
+      target.variantType = tgVariant as ElementType;
+    }
+    if (tgInputs) {
+      target.inputs = tgInputs.split(DIVIDER[2]).map(Number);
+    }
+
+    for (const res of tgResistances.split(DIVIDER[2])) {
+      const [keyIndex, value] = res.split(DIVIDER[3]);
+      const key = ATTACK_ELEMENTS[+keyIndex];
+
+      if (key) {
+        target.resistances[key] = parseNumber(value, "Resistance Value");
+      }
+    }
+  } else {
+    target = createTarget();
+  }
+
+  const importInfo: SetupImportData = {
+    name: "Imported setup",
+    params: CalcSetup.create(idStore.gen(), main, {
+      selfBuffCtrls: enhanceCtrls(splitModCtrls(selfBcStrs, 1), mainData.buffs),
+      selfDebuffCtrls: enhanceCtrls(splitModCtrls(selfDcStrs, 1), mainData.debuffs),
+      wpBuffCtrls: enhanceCtrls(splitModCtrls(wpBcStrs, 1), weapon.data.buffs),
+      artBuffCtrls,
+      artDebuffCtrls,
+      teammates,
+      rsnBuffCtrls: decodeResonance(rsnBcStrs),
+      rsnDebuffCtrls: decodeResonance(rsnDcStrs),
+      teamBuffCtrls,
+      elmtEvent,
+      customBuffCtrls,
+      customDebuffCtrls,
+      target,
+    }),
+  };
+
+  return {
+    isOk: true,
+    importInfo,
+  };
+}

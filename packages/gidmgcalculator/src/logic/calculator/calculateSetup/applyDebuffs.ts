@@ -8,6 +8,7 @@ import { ELEMENT_TYPES, PHEC_ELEMENT_TYPES } from "@/constants/global";
 
 export function applyDebuffs(setup: CalcSetup) {
   const { main, teammates, team, target } = setup;
+  const appliedRecords = new Set<string>();
 
   target.initCalculation();
 
@@ -62,7 +63,7 @@ export function applyDebuffs(setup: CalcSetup) {
           effect.targets === "OWN_ELMT" ? [main.data.vision] : Array_.toArray(effect.targets);
 
         const reductionPaths = getReductionPaths(targets, inputs);
-        const penalty = memberOps.penaltyCalc(inputs).getInitialValue(effect);
+        const penalty = memberOps.penaltyCalc(inputs).makePenalty(effect);
 
         reductionPaths.forEach((path) => target.takeResistReduction(path, penalty, label));
       }
@@ -85,6 +86,16 @@ export function applyDebuffs(setup: CalcSetup) {
     }
   }
 
+  // APPLY ARTIFACT DEBUFFS
+  for (const ctrl of setup.artDebuffCtrls) {
+    if (ctrl.activated) {
+      const label = `${ctrl.setData.name} / 4-piece activated`;
+
+      applyPenalty(label, main, ctrl.data.effects, ctrl.inputs);
+      appliedRecords.add(`${ctrl.code}-${ctrl.id}`);
+    }
+  }
+
   // APPLY TEAMMATE DEBUFFS
   for (const teammate of teammates) {
     //
@@ -96,14 +107,16 @@ export function applyDebuffs(setup: CalcSetup) {
         applyPenalty(label, teammate, debuff.effects, inputs);
       }
     }
-  }
 
-  // APPLY ARTIFACT DEBUFFS
-  for (const ctrl of setup.artDebuffCtrls) {
-    if (ctrl.activated) {
-      const label = `${ctrl.setData.name} / 4-piece activated`;
+    if (teammate.artifact) {
+      const { debuffCtrls, data } = teammate.artifact;
+      const label = `${data.name} / 4-Piece activated`;
 
-      applyPenalty(label, main, ctrl.data.effects, ctrl.inputs);
+      for (const ctrl of debuffCtrls) {
+        if (ctrl.activated && !appliedRecords.has(`${data.code}-${ctrl.id}`)) {
+          applyPenalty(label, teammate, ctrl.data.effects, ctrl.inputs);
+        }
+      }
     }
   }
 

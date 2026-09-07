@@ -1,10 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
 import { useLayoutEffect } from "react";
 import { FaDiscord } from "react-icons/fa";
-import { Button, clsx, Modal, Skeleton } from "rond";
+import { Button, Modal, Skeleton } from "rond";
 
 import { appDataQueryOptions } from "@/services/app-data";
-import { useSettingsStore } from "@Store/settings";
 import { updateUI, useUIStore } from "@Store/ui";
 
 // Components
@@ -21,57 +20,6 @@ export const Greeter = () => {
     }
   }, [isSuccess]);
 
-  useLayoutEffect(() => {
-    updateUI({ appModalType: "INTRO" });
-
-    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
-      const { askBeforeUnload } = useSettingsStore.getState();
-
-      if (askBeforeUnload) {
-        e.preventDefault();
-        return (e.returnValue = "Are you sure you want to exit?");
-      }
-    };
-
-    window.addEventListener("beforeunload", handleBeforeUnload, { capture: true });
-
-    return () => {
-      window.removeEventListener("beforeunload", handleBeforeUnload, { capture: true });
-      // close shared data channel if this component can be unmounted
-    };
-  }, []);
-
-  const renderIntroTitle = (screen: "small" | "large") => {
-    const config =
-      screen === "small"
-        ? {
-            title: "GI DMG Calculator",
-            cls: "text-xlp md:hidden",
-            patchCls: "text-sm",
-            skeletonCls: "h-3.5",
-          }
-        : {
-            title: "Welcome to GI DMG Calculator",
-            cls: "text-2xl hidden md:block",
-            patchCls: "text-base",
-            skeletonCls: "h-4",
-          };
-    const version = data?.version;
-
-    return (
-      <h1 className={clsx("text-heading text-center font-bold relative", config.cls)}>
-        {config.title}
-        <span className={clsx("absolute top-0 left-full ml-2 text-light-hint", config.patchCls)}>
-          {isLoading ? (
-            <Skeleton className={clsx("w-14 rounded", config.skeletonCls)} />
-          ) : version ? (
-            <span>v{version}</span>
-          ) : null}
-        </span>
-      </h1>
-    );
-  };
-
   return (
     <Modal
       active={appModalType === "INTRO"}
@@ -80,11 +28,15 @@ export const Greeter = () => {
       bodyCls="pt-0 flex flex-col"
       title={
         <>
-          <div className="flex flex-col items-center">
-            {renderIntroTitle("large")}
+          <div className="text-heading">
+            <h1 className="text-center text-2xl font-bold hidden md:block">
+              Welcome to GI DMG Calculator
+            </h1>
 
-            <p className="text-xl font-semibold md:hidden">Welcome to</p>
-            {renderIntroTitle("small")}
+            <div className="flex flex-col items-center md:hidden">
+              <p className="text-xl">Welcome to</p>
+              <h1 className="text-xlp font-bold">GI DMG Calculator</h1>
+            </div>
           </div>
 
           <AppDataRefetcher
@@ -114,7 +66,13 @@ export const Greeter = () => {
     >
       <Introduction className="grow" data={data} loading={isLoading} />
 
-      <div className="mt-4 flex justify-end">
+      <div className="mt-4 flex items-end justify-between">
+        {isLoading ? (
+          <Skeleton className="w-12 h-4 rounded" />
+        ) : (
+          <span className="text-light-hint text-base leading-4">{data?.version}</span>
+        )}
+
         <a href="https://discord.gg/gRxYCHqAAC" target="_blank">
           <Button icon={<FaDiscord />}>Discord</Button>
         </a>
