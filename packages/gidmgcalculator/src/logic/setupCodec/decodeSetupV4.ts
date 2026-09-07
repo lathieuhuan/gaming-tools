@@ -37,14 +37,18 @@ import {
   createTeammate,
   createWeapon,
 } from "@/logic/entity.logic";
-import { enhanceCtrls } from "@/logic/modifier.logic";
+import {
+  createArtifactDebuffCtrls,
+  createMainArtifactDebuffCtrls,
+  enhanceCtrls,
+} from "@/logic/modifier.logic";
 import { Artifact, ArtifactGear, Teammate } from "@/models";
 import { getAppArtifact, getAppCharacters, getMonster, getTeamBuffs } from "@/services/app-data";
 import { isManualRsnElmt } from "@/utils/element.utils";
 import { IdStore } from "@/utils/IdStore";
 import { CUSTOM_BUFF_CATEGORIES, DECODE_ERROR_MSG, DIVIDER } from "./config";
 
-export function decodeSetupPrevious(code: string): DecodeResult {
+export function decodeSetupV4(code: string): DecodeResult {
   const characters = getAppCharacters();
   const [
     version,
@@ -229,11 +233,7 @@ export function decodeSetupPrevious(code: string): DecodeResult {
     "Artifact Buff Code",
   );
 
-  const artDebuffCtrls = decodeArtifactModCtrls(
-    atfDcStrs,
-    (data) => data?.debuffs,
-    "Artifact Debuff Code",
-  );
+  const artDebuffCtrls = createMainArtifactDebuffCtrls(atfGear.sets);
 
   // ===== TEAMMATES =====
 
@@ -261,9 +261,12 @@ export function decodeSetupPrevious(code: string): DecodeResult {
 
       try {
         const [atfCodeStr, atfBcStrs] = split(artifactStr, 2);
+        const code = parseNumber(atfCodeStr, "Artifact Code");
+
         artifact = {
-          code: parseNumber(atfCodeStr, "Artifact Code"),
+          code,
           buffCtrls: splitModCtrls(atfBcStrs, 3),
+          debuffCtrls: createArtifactDebuffCtrls(getAppArtifact(code), false),
         };
       } catch (e) {
         console.error(e);
@@ -304,10 +307,17 @@ export function decodeSetupPrevious(code: string): DecodeResult {
     return indexStr ? ELEMENT_TYPES[+indexStr] : undefined;
   };
 
-  const [reaction, infusion, infuseReaction, absorption, absorbReaction, superconduct] = split(
-    elmtMcStr,
-    1,
-  );
+  const [
+    reaction,
+    infusion,
+    infuseReaction,
+    absorption,
+    absorbReaction,
+    superconduct,
+    polestarProc,
+    polestarCount,
+    vortexLv,
+  ] = split(elmtMcStr, 1);
 
   const elmtEvent: ElementalEvent = {
     reaction: (reaction || null) as AttackReaction,
@@ -316,9 +326,9 @@ export function decodeSetupPrevious(code: string): DecodeResult {
     absorption: decodeElement(absorption) || null,
     absorbReaction: (absorbReaction || null) as AttackReaction,
     superconduct: superconduct === "1",
-    polestarProc: false,
-    polestarCount: 0,
-    vortexLv: DEFAULT_STELLAR_VORTEX_LV,
+    polestarProc: polestarProc === "1",
+    polestarCount: polestarCount ? parseNumber(polestarCount, "Polestar Field") : 0,
+    vortexLv: vortexLv ? parseNumber(vortexLv, "Stellar Vortex") : DEFAULT_STELLAR_VORTEX_LV,
   };
 
   // ===== RESONANCES =====
@@ -387,6 +397,9 @@ export function decodeSetupPrevious(code: string): DecodeResult {
       case "rxnBonus":
         type = CUSTOM_BUFF_CTRL_SPECS.rxnBonus.types[+typeIndex];
         break;
+      default:
+        category satisfies never;
+        break;
     }
 
     return {
@@ -447,7 +460,7 @@ export function decodeSetupPrevious(code: string): DecodeResult {
       }
     }
   } else {
-    target = createTarget();
+    target = createTarget(0);
   }
 
   const importInfo: SetupImportData = {

@@ -101,12 +101,23 @@ export class Teammate implements TeammateData, TeamMember {
   }
 
   deepClone() {
-    return new Teammate(this.code, this.data, this.weapon, {
-      ...this,
-      buffCtrls: Object_.clone(this.buffCtrls),
-      debuffCtrls: Object_.clone(this.debuffCtrls),
-      weapon: Object_.clone(this.weapon),
-      artifact: Object_.clone(this.artifact),
-    });
+    return new Teammate(
+      this.code,
+      this.data,
+      {
+        ...this.weapon,
+        buffCtrls: Object_.clone(this.weapon.buffCtrls),
+      },
+      {
+        ...this,
+        buffCtrls: Object_.clone(this.buffCtrls),
+        debuffCtrls: Object_.clone(this.debuffCtrls),
+        artifact: this.artifact && {
+          ...this.artifact,
+          buffCtrls: Object_.clone(this.artifact.buffCtrls),
+          debuffCtrls: Object_.clone(this.artifact.debuffCtrls),
+        },
+      },
+    );
   }
 }

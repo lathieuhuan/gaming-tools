@@ -11,9 +11,7 @@ function toSetupOverview(setup: DbSetup, userDb: UserdbState): SetupOverviewInfo
 
   const main = makeCharacterCalcFromDb(setup.main, userWps, userArts);
 
-  const teammates = setup.teammates.map((teammate) => {
-    return createTeammate(teammate);
-  });
+  const teammates = setup.teammates.map((teammate) => createTeammate(teammate));
 
   return {
     ID: setup.ID,

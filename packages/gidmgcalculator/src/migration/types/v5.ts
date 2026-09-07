@@ -1,6 +1,26 @@
+import type {
+  AttackReaction,
+  DbComplexSetup,
+  DbSetup,
+  ElementType,
+  ModifierCtrlState,
+  RawTeammateState,
+  TeammateArtifactState,
+  TeammateWeaponState,
+} from "@/types";
 import type { ExactOmit } from "rond";
 import type { CurrentDatabaseData } from "./current";
-import type { AttackReaction, DbComplexSetup, DbSetup, ElementType } from "@/types";
+
+type RawTeammateV6 = RawTeammateState & {
+  buffCtrls: ModifierCtrlState[];
+  debuffCtrls: ModifierCtrlState[];
+  weapon: TeammateWeaponState & {
+    buffCtrls: ModifierCtrlState[];
+  };
+  artifact?: TeammateArtifactState & {
+    buffCtrls: ModifierCtrlState[];
+  };
+};
 
 type ElementalEventV5 = {
   reaction: AttackReaction;
@@ -11,7 +31,8 @@ type ElementalEventV5 = {
   superconduct: boolean;
 };
 
-type DbSetupV5 = ExactOmit<DbSetup, "elmtEvent"> & {
+type DbSetupV5 = ExactOmit<DbSetup, "teammates" | "elmtEvent"> & {
+  teammates: RawTeammateV6[];
   elmtEvent: ElementalEventV5;
 };
 

@@ -142,7 +142,7 @@ export function SectionTeammates() {
       </div>
 
       <CollapseSpace active={selectedIndex !== null}>
-        {selectedTeammate && selectedIndex !== null && (
+        {selectedTeammate !== undefined && (
           <TeammateDetail teammate={selectedTeammate} info={selectedTeammate.data} />
         )}
       </CollapseSpace>

@@ -1,7 +1,5 @@
 import { cn, OverflowWatcher } from "rond";
 
-import { EXPORTED_SETUP_VERSION, LEGACY_EXPORTED_SETUP_VERSION } from "@/constants/config";
-
 export function VersionsView({ className }: { className?: string }) {
   const divider = <div className="col-span-full h-px bg-dark-line/80" />;
 
@@ -24,12 +22,17 @@ export function VersionsView({ className }: { className?: string }) {
           label="Exported/shared setup data"
           versions={[
             {
-              value: LEGACY_EXPORTED_SETUP_VERSION,
+              value: 3,
               eosDate: "Oct 1, 2026",
             },
             {
-              value: EXPORTED_SETUP_VERSION,
-              releaseDate: "May 29, 2026",
+              value: 4,
+              releaseDate: "May 2026",
+              eosDate: "Dec 1, 2026",
+            },
+            {
+              value: 5,
+              releaseDate: "Sep 7, 2026",
             },
           ]}
         />
@@ -54,6 +57,10 @@ export function VersionsView({ className }: { className?: string }) {
             {
               value: "6",
               releaseDate: "Jun 2026",
+            },
+            {
+              value: "7",
+              releaseDate: "Sep 7, 2026",
             },
           ]}
         />
@@ -83,6 +90,10 @@ export function VersionsView({ className }: { className?: string }) {
             {
               value: "7",
               releaseDate: "Jun 2026",
+            },
+            {
+              value: "8",
+              releaseDate: "Sep 7, 2026",
             },
           ]}
         />

@@ -4,9 +4,9 @@ import { createTarget } from "@/logic/entity.logic";
 import {
   createAbilityBuffCtrls,
   createAbilityDebuffCtrls,
-  createArtifactDebuffCtrls,
   createElementalEvent,
   createMainArtifactBuffCtrls,
+  createMainArtifactDebuffCtrls,
   createRsnModCtrls,
   createWeaponBuffCtrls,
 } from "@/logic/modifier.logic";
@@ -102,7 +102,7 @@ export class CalcSetup extends CalcSetupCore {
       wpBuffCtrls = createWeaponBuffCtrls(main.weapon.data, true),
       teammates = [],
       artBuffCtrls = createMainArtifactBuffCtrls(main.atfGear.sets),
-      artDebuffCtrls = createArtifactDebuffCtrls(main.atfGear.sets, teammates),
+      artDebuffCtrls = createMainArtifactDebuffCtrls(main.atfGear.sets),
       elmtEvent = createElementalEvent(),
       customBuffCtrls = [],
       customDebuffCtrls = [],

@@ -1,7 +1,7 @@
 import type { CalcSetup } from "@/logic/calculator";
 import type { AttackElement, ElementType, ModifierCtrlState } from "@/types";
 
-import { EXPORTED_SETUP_VERSION } from "@/constants/config";
+import { EXPORTED_SETUP_VERSIONS } from "@/constants/config";
 import {
   ATTACK_ELEMENTS,
   ATTRIBUTE_STAT_TYPES,
@@ -98,7 +98,11 @@ export function encodeSetup(calcSetup: CalcSetup) {
 
       const { enhanced, weapon, artifact } = tm;
       const artifactCode = artifact
-        ? [artifact.code, encodeModCtrls(artifact.buffCtrls, 3)].join(DIVIDER[2])
+        ? [
+            artifact.code,
+            encodeModCtrls(artifact.buffCtrls, 3),
+            encodeModCtrls(artifact.debuffCtrls, 3),
+          ].join(DIVIDER[2])
         : "";
 
       return [
@@ -181,7 +185,7 @@ export function encodeSetup(calcSetup: CalcSetup) {
     ].join(DIVIDER[1]);
 
     return [
-      `V${EXPORTED_SETUP_VERSION}`,
+      `V${EXPORTED_SETUP_VERSIONS.at(-1)}`,
       mainStr,
       weaponStr,
       ...artifactStrs,

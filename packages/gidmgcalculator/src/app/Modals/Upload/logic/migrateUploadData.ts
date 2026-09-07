@@ -5,12 +5,11 @@ import { convertToV3_1 } from "@/migration/convertToV3_1";
 import { convertToV4 } from "@/migration/convertToV4";
 import { convertToV5 } from "@/migration/convertToV5";
 import { convertToV6 } from "@/migration/convertToV6";
-
-type MigrationFn = (data: any) => any;
+import { convertToV7 } from "@/migration/convertToV7";
 
 type Migration = {
   version: number;
-  fn: MigrationFn;
+  fn: (data: any) => any;
 };
 
 const MIGRATIONS: Migration[] = [
@@ -18,6 +17,7 @@ const MIGRATIONS: Migration[] = [
   { version: 3.1, fn: convertToV4 },
   { version: 4, fn: convertToV5 },
   { version: 5, fn: convertToV6 },
+  { version: 6, fn: convertToV7 },
 ];
 
 type OldData = {

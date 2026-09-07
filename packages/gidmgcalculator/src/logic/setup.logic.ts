@@ -1,5 +1,5 @@
 import { Object_ } from "ron-utils";
-import { ExactOmit } from "rond";
+import type { ExactOmit } from "rond";
 
 import type {
   BasicSetupType,
@@ -8,14 +8,21 @@ import type {
   ModifierCtrlState,
   RawTeammate,
   SetupManager,
+  TeammateWeapon,
 } from "@/types";
 
 import { CalcSetup } from "@/logic/calculator";
 import { ArtifactGear, Weapon } from "@/models";
+import { getAppArtifact, getAppWeapon } from "@/services/app-data";
 import { createCharacter, createTarget, createTeammate } from "./entity.logic";
+import {
+  createArtifactBuffCtrls,
+  createArtifactDebuffCtrls,
+  createWeaponBuffCtrls,
+} from "./modifier.logic";
 
 export function isDbSetup(setup: DbSetup | DbComplexSetup): setup is DbSetup {
-  return ["original", "combined"].includes(setup.type);
+  return setup.type === "original" || setup.type === "combined";
 }
 
 function toDbCtrls<TCtrl extends ModifierCtrlState, TExtraKeys extends keyof TCtrl>(
@@ -75,6 +82,7 @@ export function toDbSetup(
         artifact: teammate.artifact && {
           code: teammate.artifact.code,
           buffCtrls: toDbCtrls(teammate.artifact.buffCtrls),
+          debuffCtrls: toDbCtrls(teammate.artifact.debuffCtrls),
         },
       };
     }),
@@ -108,7 +116,7 @@ function restoreModCtrls<T extends Restorable, K extends keyof T>(
     });
 
     if (newCtrl) {
-      newCtrl.activated = true;
+      newCtrl.activated = refCtrl.activated;
 
       if (refCtrl.inputs && newCtrl.inputs) {
         newCtrl.inputs = [...refCtrl.inputs];
@@ -120,22 +128,42 @@ function restoreModCtrls<T extends Restorable, K extends keyof T>(
 }
 
 function restoreTeammate(teammate: RawTeammate) {
-  const standard = createTeammate(
-    {
-      code: teammate.code,
-      enhanced: teammate.enhanced,
-      weapon: teammate.weapon,
-      artifact: teammate.artifact,
-    },
-    null,
-  );
+  const standard = createTeammate({
+    code: teammate.code,
+    enhanced: teammate.enhanced,
+  });
 
   restoreModCtrls(standard.buffCtrls, teammate.buffCtrls);
   restoreModCtrls(standard.debuffCtrls, teammate.debuffCtrls);
-  restoreModCtrls(standard.weapon.buffCtrls, teammate.weapon.buffCtrls);
 
-  if (standard.artifact && teammate.artifact) {
-    restoreModCtrls(standard.artifact.buffCtrls, teammate.artifact.buffCtrls);
+  // Restore weapon
+  const weaponData = getAppWeapon(teammate.weapon.code)!;
+
+  const weapon: TeammateWeapon = {
+    code: teammate.weapon.code,
+    type: teammate.weapon.type,
+    refi: teammate.weapon.refi,
+    buffCtrls: createWeaponBuffCtrls(weaponData, false),
+    data: weaponData,
+  };
+
+  restoreModCtrls(weapon.buffCtrls, teammate.weapon.buffCtrls);
+  standard.weapon = weapon;
+
+  // Restore artifact
+  if (teammate.artifact) {
+    const artifactData = getAppArtifact(teammate.artifact.code)!;
+
+    const artifact = {
+      code: teammate.artifact.code,
+      buffCtrls: createArtifactBuffCtrls(artifactData, false),
+      debuffCtrls: createArtifactDebuffCtrls(artifactData, false),
+      data: artifactData,
+    };
+
+    restoreModCtrls(artifact.buffCtrls, teammate.artifact.buffCtrls);
+    restoreModCtrls(artifact.debuffCtrls, teammate.artifact.debuffCtrls);
+    standard.artifact = artifact;
   }
 
   return standard;

@@ -28,12 +28,12 @@ import type { CalcResult } from "../types";
 import { createTeammate } from "@/logic/entity.logic";
 import {
   createArtifactBuffCtrls,
-  createMainArtifactBuffCtrls,
+  createArtifactDebuffCtrls,
   createWeaponBuffCtrls,
 } from "@/logic/modifier.logic";
 import { ArtifactGear } from "@/models";
 import { Team } from "../Team";
-import { syncArtifactDebuffCtrls, syncRsnModCtrls, syncTeamBuffCtrls } from "./sync";
+import { syncArtifactModCtrls, syncRsnModCtrls, syncTeamBuffCtrls } from "./sync";
 
 type TeammateUpdateData = Partial<
   Pick<TeammateData, "weapon" | "artifact" | "buffCtrls" | "debuffCtrls" | "enhanced">
@@ -89,9 +89,8 @@ export class CalcSetupCore {
 
   setArtifactGear(newAtfGear: ArtifactGear) {
     this.main.atfGear = newAtfGear;
-    this.artBuffCtrls = createMainArtifactBuffCtrls(newAtfGear.sets);
+    syncArtifactModCtrls(this);
     syncTeamBuffCtrls(this);
-    syncArtifactDebuffCtrls(this);
   }
 
   setArtifactPiece(artifact: Artifact, shouldKeepStats = false) {
@@ -155,8 +154,7 @@ export class CalcSetupCore {
   copyArtifacts(setup: CalcSetupCore) {
     this.main.atfGear = setup.main.atfGear.deepClone();
     this.artBuffCtrls = Object_.clone(setup.artBuffCtrls);
-    this.artDebuffCtrls = Object_.clone(setup.artDebuffCtrls); // TODO check
-    syncArtifactDebuffCtrls(this);
+    this.artDebuffCtrls = Object_.clone(setup.artDebuffCtrls);
     syncTeamBuffCtrls(this);
   }
 
@@ -171,7 +169,6 @@ export class CalcSetupCore {
     this.teammates = newTeammates;
     syncRsnModCtrls(this);
     syncTeamBuffCtrls(this);
-    syncArtifactDebuffCtrls(this);
   }
 
   /**
@@ -190,9 +187,6 @@ export class CalcSetupCore {
 
       return teammate;
     });
-
-    // this.team.updateMembers([this.main, ...this.teammates]);
-    syncArtifactDebuffCtrls(this);
   }
 
   updateTeammateModCtrls(
@@ -223,7 +217,6 @@ export class CalcSetupCore {
     this.teammates = newTeammates;
     syncRsnModCtrls(this);
     syncTeamBuffCtrls(this);
-    syncArtifactDebuffCtrls(this);
   }
 
   copyTeammates(setup: CalcSetupCore) {
@@ -231,9 +224,7 @@ export class CalcSetupCore {
     this.team = new Team([this.main, ...this.teammates]);
     this.rsnBuffCtrls = Object_.clone(setup.rsnBuffCtrls);
     this.rsnDebuffCtrls = Object_.clone(setup.rsnDebuffCtrls);
-    this.artDebuffCtrls = Object_.clone(setup.artDebuffCtrls); // TODO check
     syncTeamBuffCtrls(this);
-    syncArtifactDebuffCtrls(this);
   }
 
   changeTeammateWeapon(tmCode: number, weapon: Weapon) {
@@ -262,6 +253,7 @@ export class CalcSetupCore {
       artifact: artifact && {
         code: artifact.code,
         buffCtrls: createArtifactBuffCtrls(artifact.data, false),
+        debuffCtrls: createArtifactDebuffCtrls(artifact.data, false),
         data: artifact.data,
       },
     });
@@ -269,7 +261,10 @@ export class CalcSetupCore {
     syncTeamBuffCtrls(this);
   }
 
-  updateTeammateArtifact(tmCode: number, data: Partial<Pick<TeammateArtifact, "buffCtrls">>) {
+  updateTeammateArtifact(
+    tmCode: number,
+    data: Partial<Pick<TeammateArtifact, "buffCtrls" | "debuffCtrls">>,
+  ) {
     this.updateTeammate(tmCode, (teammate) => ({
       artifact: teammate.artifact && {
         ...teammate.artifact,
