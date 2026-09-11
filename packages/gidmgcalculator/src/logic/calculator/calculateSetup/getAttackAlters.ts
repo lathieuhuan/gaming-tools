@@ -1,8 +1,7 @@
 import { Array_ } from "ron-utils";
 
-import type { AttackAlter } from "@/calculation/types";
 import type { Character } from "@/models";
-import type { AttackPattern, TalentCalcItemBonusId } from "@/types";
+import type { AttackAlter, AttackPattern, TalentCalcItemBonusId } from "@/types";
 import type { CalcSetup } from "../CalcSetup";
 
 import { NORMAL_ATTACKS } from "@/constants";

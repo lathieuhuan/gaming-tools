@@ -1,5 +1,6 @@
 import { CountMap } from "ron-utils";
 
+import type { Team } from "@/logic/calculator";
 import type {
   AllAttributes,
   AllAttributeStat,
@@ -19,7 +20,6 @@ import type {
   TeamMember,
 } from "@/types";
 
-import { Team } from "@/logic/calculator";
 import { isPassedComparison, isValidInput } from "@/utils/effect.utils";
 import { splitLevel } from "@/utils/level.utils";
 import { ArtifactGear } from "../ArtifactGear";

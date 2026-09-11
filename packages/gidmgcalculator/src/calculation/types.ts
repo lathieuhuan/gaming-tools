@@ -8,9 +8,11 @@ import type {
   ElementType,
   ExclusiveAttackBonusGroup,
   SpecialAttackPattern,
-  TalentCalcItemBonusId
+  TalentCalcItemBonusId,
 } from "@/types";
 import type { ResultRecorder } from "./core/ResultRecorder";
+
+// TODO check and move to types
 
 // RESULT CALCULATION - INPUT
 
