@@ -21,6 +21,7 @@ export function AttackItemTracker({ title, item, exclusiveRecord }: AttackItemTr
 
   const baseValue = resultValue(item.results, "base");
   const cDmg = round(item.cDmg, 3);
+  const cRate = round(item.cRate, 2);
 
   const subtitle = attackCalcItemSubtitleParts(item)
     .map((part) => t(part))
@@ -29,7 +30,7 @@ export function AttackItemTracker({ title, item, exclusiveRecord }: AttackItemTr
   const factorParts = item.factors
     .map<PartSpec[]>((factor, index) => [
       {
-        sign: index ? "+" : null,
+        sign: index === 0 ? null : "+",
         label: "Talent Mult.",
         value: factor.multiplier,
         process: (value) => `${round(value, 2)}%`,
@@ -113,12 +114,12 @@ export function AttackItemTracker({ title, item, exclusiveRecord }: AttackItemTr
           <RecordCrit result={resultValue(item.results, "crit")} base={baseValue} cDmg={cDmg} />
         )}
 
-        {cDmg !== 0 && (
+        {cDmg !== 0 && cRate !== 0 && (
           <RecordAverage
             result={resultValue(item.results, "average")}
             base={baseValue}
             cDmg={cDmg}
-            cRate={item.cRate}
+            cRate={cRate}
           />
         )}
       </ul>

@@ -67,11 +67,7 @@ export function TrackerCore({ trackerState }: TrackerCoreProps) {
             targetLv={target.level}
             totalDefReduct={totalDefReduct}
           />
-          <CalcListTracker
-            className="mt-1 space-y-1"
-            data={result.NAs}
-            attkBonusCtrl={attkBonusCtrl}
-          />
+          <CalcListTracker className="mt-1 space-y-1" data={result.NAs} main={main} />
         </div>
       ),
     },
@@ -85,11 +81,7 @@ export function TrackerCore({ trackerState }: TrackerCoreProps) {
             targetLv={target.level}
             totalDefReduct={totalDefReduct}
           />
-          <CalcListTracker
-            className="mt-1 space-y-1"
-            data={result.ES}
-            attkBonusCtrl={attkBonusCtrl}
-          />
+          <CalcListTracker className="mt-1 space-y-1" data={result.ES} main={main} />
         </div>
       ),
     },
@@ -103,17 +95,13 @@ export function TrackerCore({ trackerState }: TrackerCoreProps) {
             targetLv={target.level}
             totalDefReduct={totalDefReduct}
           />
-          <CalcListTracker
-            className="mt-1 space-y-1"
-            data={result.EB}
-            attkBonusCtrl={attkBonusCtrl}
-          />
+          <CalcListTracker className="mt-1 space-y-1" data={result.EB} main={main} />
         </div>
       ),
     },
   ];
 
-  if (result.XTRA.size) {
+  if (result.EXTRA.size) {
     collapseItems.push({
       heading: "Extra",
       body: (
@@ -124,11 +112,7 @@ export function TrackerCore({ trackerState }: TrackerCoreProps) {
             targetLv={target.level}
             totalDefReduct={totalDefReduct}
           />
-          <CalcListTracker
-            className="mt-1 space-y-1"
-            data={result.XTRA}
-            attkBonusCtrl={attkBonusCtrl}
-          />
+          <CalcListTracker className="mt-1 space-y-1" data={result.EXTRA} main={main} />
         </div>
       ),
     });
@@ -136,7 +120,7 @@ export function TrackerCore({ trackerState }: TrackerCoreProps) {
 
   collapseItems.push({
     heading: "Reactions",
-    body: <CalcListTracker className="space-y-1" data={result.RXN} attkBonusCtrl={attkBonusCtrl} />,
+    body: <CalcListTracker className="space-y-1" data={result.RXN} main={main} />,
   });
 
   if (result.WP.size) {
@@ -150,11 +134,7 @@ export function TrackerCore({ trackerState }: TrackerCoreProps) {
             targetLv={target.level}
             totalDefReduct={totalDefReduct}
           />
-          <CalcListTracker
-            className="mt-1 space-y-1"
-            data={result.WP}
-            attkBonusCtrl={attkBonusCtrl}
-          />
+          <CalcListTracker className="mt-1 space-y-1" data={result.WP} main={main} />
         </div>
       ),
     });

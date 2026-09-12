@@ -66,7 +66,7 @@ export function FinalResultLayout({
   const labelByMainKey = {
     WP: "Weapon",
     RXN: "Reaction",
-    XTRA: "Extra",
+    EXTRA: "Extra",
   };
 
   return (
@@ -75,7 +75,7 @@ export function FinalResultLayout({
         switch (tableKey.main) {
           case "WP":
           case "RXN":
-          case "XTRA": {
+          case "EXTRA": {
             const isReactionDmg = tableKey.main === "RXN";
             const sectionLabel = labelByMainKey[tableKey.main];
 

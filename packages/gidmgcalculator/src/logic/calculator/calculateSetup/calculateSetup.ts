@@ -2,8 +2,13 @@ import type { AttackElement } from "@/types";
 import type { CalcSetup } from "../CalcSetup";
 import type { CalcResultNew } from "../types";
 
-import { makeReactionCalc } from "@/calculation/core/makeReactionCalc";
-import { calcAttack, CalcItemFactor, calcOther, makeTalentItemCalc } from "@/logic/calculation";
+import {
+  calcAttack,
+  CalcItemFactor,
+  calcOther,
+  calcTraditionalReaction,
+  makeTalentItemCalc,
+} from "@/logic/calculation";
 
 import {
   ATTACK_PATTERNS,
@@ -37,7 +42,7 @@ export function calculateSetup(setup: CalcSetup, options: CalculateSetupOptions 
     NAs: new Map(),
     ES: new Map(),
     EB: new Map(),
-    XTRA: new Map(),
+    EXTRA: new Map(),
     RXN: new Map(),
     WP: new Map(),
   };
@@ -145,7 +150,7 @@ export function calculateSetup(setup: CalcSetup, options: CalculateSetupOptions 
 
     switch (type) {
       case "attack":
-        resultNew.XTRA.set(calcItem.name, extraCalc.calcAttackItem(calcItem, elmtEvent));
+        resultNew.EXTRA.set(calcItem.name, extraCalc.calcAttackItem(calcItem, elmtEvent));
         break;
       case "healing":
       case "shield":
@@ -159,25 +164,22 @@ export function calculateSetup(setup: CalcSetup, options: CalculateSetupOptions 
 
   // ===== REACTION CALCULATION =====
 
-  const rxnCalculator = makeReactionCalc(main, target);
-
   for (const reaction of STELLAR_REACTIONS) {
-    // const recorder = new ResultRecorder({}, options?.shouldLog);
-    // result.RXN[reaction] = rxnCalculator.calcStellarReaction(
-    //   reaction,
-    //   elmtEvent.vortexLv,
-    //   recorder,
-    // );
+    const reactionResult = calcTraditionalReaction(main, target, reaction, elmtEvent);
+
+    resultNew.RXN.set(reaction, reactionResult);
   }
 
   for (const reaction of LUNAR_REACTIONS) {
-    // const recorder = new ResultRecorder({}, options?.shouldLog);
-    // result.RXN[reaction] = rxnCalculator.calcLunarReaction(reaction, recorder);
+    const reactionResult = calcTraditionalReaction(main, target, reaction, elmtEvent);
+
+    resultNew.RXN.set(reaction, reactionResult);
   }
 
   for (const reaction of TRANSFORMATIVE_REACTIONS) {
-    // const recorder = new ResultRecorder({}, options?.shouldLog);
-    // result.RXN[reaction] = rxnCalculator.calcReaction(reaction, recorder, elmtEvent);
+    const reactionResult = calcTraditionalReaction(main, target, reaction, elmtEvent);
+
+    resultNew.RXN.set(reaction, reactionResult);
   }
 
   // ===== WEAPON CALCULATION =====

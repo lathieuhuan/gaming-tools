@@ -41,12 +41,17 @@ export function FinalResultView({ calcResult, ...props }: FinalResultViewProps) 
             title = parts.join(" / ");
             break;
           }
-          // case "reaction": {
-          //   title = t(`${result.attElmt}_attElmt`);
-          //   break;
-          // }
-          default: {
+          case "reaction": {
+            title = t(`${result.attElmt}_attElmt`);
             break;
+          }
+          case "healing":
+          case "shield":
+          case "other":
+            // No title for healing, shield, and other
+            break;
+          default: {
+            result satisfies undefined;
           }
         }
 

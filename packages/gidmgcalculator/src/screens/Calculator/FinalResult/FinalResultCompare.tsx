@@ -71,7 +71,8 @@ export function FinalResultCompare({ comparedIds, extraKeys }: FinalResultCompar
     }
 
     switch (item.type) {
-      case "attack": {
+      case "attack":
+      case "reaction": {
         const displayParts: number[] = [];
         let total = 0;
 

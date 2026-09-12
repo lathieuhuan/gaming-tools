@@ -1,4 +1,4 @@
-import { CountMap } from "ron-utils";
+import { CountMap, toMult } from "ron-utils";
 
 import type { Team } from "@/logic/calculator";
 import type {
@@ -107,16 +107,25 @@ export class Character implements TeamMember {
   }
 
   amplifyingReactionMult(reaction: AmplifyingReaction, attElmt: AttackElement) {
-    const pctBonus = this.attkBonusCtrl.get("pct_", reaction);
+    let coef: number | undefined = undefined;
 
-    switch (reaction) {
-      case "melt":
-        return (1 + pctBonus / 100) * (attElmt === "pyro" ? 2 : attElmt === "cryo" ? 1.5 : 1);
-      case "vaporize":
-        return (1 + pctBonus / 100) * (attElmt === "pyro" ? 1.5 : attElmt === "hydro" ? 2 : 1);
-      default:
-        return 1;
+    if (reaction === "melt") {
+      if (attElmt === "pyro") {
+        coef = 2;
+      }
+      if (attElmt === "cryo") {
+        coef = 1.5;
+      }
+    } else if (reaction === "vaporize") {
+      if (attElmt === "pyro") {
+        coef = 1.5;
+      }
+      if (attElmt === "hydro") {
+        coef = 2;
+      }
     }
+
+    return coef === undefined ? 1 : toMult(this.attkBonusCtrl.get("pct_", reaction)) * coef;
   }
 
   getAttr(key: AllAttributeStat) {

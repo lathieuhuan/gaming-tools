@@ -27,7 +27,7 @@ type TableWeaponKey = {
 };
 
 type TableExtraItemKey = {
-  main: "XTRA";
+  main: "EXTRA";
   subs: string[];
 };
 
@@ -59,7 +59,7 @@ export function getTableKeys(
 
   if (extraKeys) {
     result.push({
-      main: "XTRA",
+      main: "EXTRA",
       subs: extraKeys,
     });
   }
@@ -103,7 +103,8 @@ export const DEFAULT_RESULT_ITEM: Record<CalcAspect, string | number> = {
 
 export const displayResultItem = (item: CalcResultItem): Record<CalcAspect, string | number> => {
   switch (item.type) {
-    case "attack": {
+    case "attack":
+    case "reaction": {
       const bases: number[] = [];
       const crits: number[] = [];
       const averages: number[] = [];

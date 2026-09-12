@@ -1,58 +1,101 @@
+import type { ReactNode } from "react";
 import { round } from "ron-utils";
 
-import type { CalcResultReactionItem } from "@/calculation/types";
+import type { CalcReactionOutputs } from "@/logic/calculation";
 
 import { useTranslation } from "@/hooks";
 import { resultValue } from "./utils";
 
-import { Parts, PartSpecType } from "./components/ResultParts";
+import { Parts, PartSpec, PartSpecType } from "./components/ResultParts";
 import { Heading, RecordAverage, RecordCrit } from "./components/ResultRecord";
 
 type ReactionItemTrackerProps = {
   title: string;
-  item: CalcResultReactionItem;
+  item: CalcReactionOutputs;
+  exclusiveRecord?: ReactNode;
+  baseDMG: number;
 };
 
-export function ReactionItemTracker({ title, item }: ReactionItemTrackerProps) {
+export function ReactionItemTracker({ title, item, baseDMG }: ReactionItemTrackerProps) {
   const { t } = useTranslation();
 
-  if (!item?.values[0]?.base) {
+  if (!item?.results[0]?.base) {
     return null;
   }
 
-  const data = item.recorder.data;
-  const baseValue = resultValue(item.values, "base");
-  const cDmg = data.cDmg_ ? round(data.cDmg_, 3) : 0;
+  const baseValue = resultValue(item.results, "base");
+  const cDmg = item.cDmg ? round(item.cDmg, 3) : 0;
+  const cRate = round(item.cRate, 2);
 
-  const factor = data.factors[0];
-  const basePartSpecs: PartSpecType[] = [
-    {
-      containers: ["(", ")"],
-      specs: [
+  let basePartSpecs: PartSpecType[] = [];
+
+  switch (item.subType) {
+    case "traditional":
+      basePartSpecs = [
         {
           sign: null,
-          label: t(factor.label),
-          value: factor.value,
-          nullValue: -1,
-          process: Math.round,
+          label: "Coefficient",
+          value: item.coefficient,
         },
         {
           sign: "*",
+          label: "Base DMG",
+          value: baseDMG,
+        },
+      ];
+      break;
+    case "direct":
+      basePartSpecs = item.factors
+        .map<PartSpec[]>((factor, index) => [
+          {
+            sign: index === 0 ? null : "+",
+            label: "Talent Mult.",
+            value: factor.multiplier,
+            process: (value) => `${round(value, 2)}%`,
+          },
+          {
+            sign: "*",
+            label: t(factor.basedOnAttr),
+            value: factor.basedOnValue,
+            nullValue: -1,
+            process: Math.round,
+          },
+        ])
+        .flat();
+
+      basePartSpecs = [
+        {
+          containers: ["[", "]"],
+          specs: basePartSpecs,
+        },
+      ];
+      break;
+    default:
+      item satisfies never;
+  }
+
+  const partSpecs: PartSpecType[] = [
+    {
+      containers: ["(", ")"],
+      specs: [
+        ...basePartSpecs,
+        {
+          sign: "*",
           label: "Base DMG Mult.",
-          value: data.rxnBaseMult,
+          value: item.rxnBaseMult,
           nullValue: 1,
           process: (value) => `${round(value * 100, 2)}%`,
         },
         {
           sign: "*",
           label: "Bonus Mult.",
-          value: data.bonusMult,
+          value: item.bonusMult,
           process: (value) => `${round(value * 100, 2)}%`,
         },
         {
           sign: "+",
           label: "Flat Bonus",
-          value: data.flat,
+          value: item.flat,
           process: Math.round,
         },
       ],
@@ -60,21 +103,21 @@ export function ReactionItemTracker({ title, item }: ReactionItemTrackerProps) {
     {
       sign: "*",
       label: "Elevate Mult.",
-      value: data.elvMult,
+      value: item.elvMult,
       nullValue: 1,
       process: (value) => `${round(value * 100, 2)}%`,
     },
     {
       sign: "*",
       label: "Reaction Mult.",
-      value: data.rxnMult,
+      value: item.rxnMult,
       nullValue: 1,
       process: (value) => round(value, 3),
     },
     {
       sign: "*",
       label: "RES Mult.",
-      value: data.resMult,
+      value: item.resMult,
     },
   ];
 
@@ -85,20 +128,19 @@ export function ReactionItemTracker({ title, item }: ReactionItemTrackerProps) {
 
       <ul className="mt-1 pl-4 text-light-hint text-sm leading-6 list-disc">
         <li>
-          <Heading label="Non-crit">{baseValue}</Heading> = <Parts specs={basePartSpecs} />
-          {data.note}
+          <Heading label="Non-crit">{baseValue}</Heading> = <Parts specs={partSpecs} />
         </li>
 
         {cDmg !== 0 && (
-          <RecordCrit result={resultValue(item.values, "crit")} base={baseValue} cDmg={cDmg} />
+          <RecordCrit result={resultValue(item.results, "crit")} base={baseValue} cDmg={cDmg} />
         )}
 
-        {cDmg !== 0 && data.cRate_ !== undefined && (
+        {cDmg !== 0 && cRate !== 0 && (
           <RecordAverage
-            result={resultValue(item.values, "average")}
+            result={resultValue(item.results, "average")}
             base={baseValue}
             cDmg={cDmg}
-            cRate={data.cRate_}
+            cRate={cRate}
           />
         )}
       </ul>

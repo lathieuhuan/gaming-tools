@@ -121,7 +121,7 @@ export class CalcSetup extends CalcSetupCore {
       NAs: new Map(),
       ES: new Map(),
       EB: new Map(),
-      XTRA: new Map(),
+      EXTRA: new Map(),
       RXN: new Map(),
       WP: new Map(),
     };

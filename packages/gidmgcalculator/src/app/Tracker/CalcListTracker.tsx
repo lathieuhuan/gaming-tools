@@ -1,17 +1,20 @@
 import type { CalcResultItem } from "@/logic/calculator";
-import type { AttackBonusControl } from "@/models/Character";
+import type { Character } from "@/models/Character";
 
 import { AttackItemTracker } from "./AttackItemTracker";
-import { OtherItemTracker } from "./OtherItemTracker";
 import { RecordExclusives } from "./components/ResultRecord";
+import { OtherItemTracker } from "./OtherItemTracker";
+import { ReactionItemTracker } from "./ReactionItemTracker";
 
 type CalcListTrackerProps = {
   className?: string;
   data: Map<string, CalcResultItem>;
-  attkBonusCtrl: AttackBonusControl;
+  main: Character;
 };
 
-export function CalcListTracker({ className, data, attkBonusCtrl }: CalcListTrackerProps) {
+export function CalcListTracker({ className, data, main }: CalcListTrackerProps) {
+  const { attkBonusCtrl } = main;
+
   return (
     <div className={className}>
       {Array.from(data, ([key, item]) => {
@@ -27,6 +30,20 @@ export function CalcListTracker({ className, data, attkBonusCtrl }: CalcListTrac
                     <RecordExclusives id={item.bonusId} attkBonusCtrl={attkBonusCtrl} />
                   )
                 }
+              />
+            );
+          case "reaction":
+            return (
+              <ReactionItemTracker
+                key={key}
+                title={key}
+                item={item}
+                exclusiveRecord={
+                  item.bonusId !== undefined && (
+                    <RecordExclusives id={item.bonusId} attkBonusCtrl={attkBonusCtrl} />
+                  )
+                }
+                baseDMG={Math.round(main.baseReactionDMG)}
               />
             );
           case "other":
