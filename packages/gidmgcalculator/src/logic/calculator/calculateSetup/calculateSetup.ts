@@ -1,13 +1,10 @@
-import type { CalcResultAttackItem } from "@/calculation/types";
 import type { AttackElement } from "@/types";
 import type { CalcSetup } from "../CalcSetup";
-import type { CalcResult } from "../types";
+import type { CalcResultNew } from "../types";
 
-import { makeAttackItemCalc } from "@/calculation/core/makeAttackItemCalc";
-import { makeOtherItemCalc } from "@/calculation/core/makeOtherItemCalc";
 import { makeReactionCalc } from "@/calculation/core/makeReactionCalc";
-import { makeTalentCalc } from "@/calculation/core/makeTalentCalc";
-import { ResultRecorder } from "@/calculation/core/ResultRecorder";
+import { calcAttack, CalcItemFactor, calcOther, makeTalentItemCalc } from "@/logic/calculation";
+
 import {
   ATTACK_PATTERNS,
   LUNAR_REACTIONS,
@@ -34,26 +31,26 @@ export function calculateSetup(setup: CalcSetup, options: CalculateSetupOptions 
   applyBuffs(setup, options);
   applyDebuffs(setup);
 
-  const attackAlters = getAttackAlters(main, setup);
+  const attackAlters = getAttackAlters(setup);
 
-  const result: CalcResult = {
-    NAs: {},
-    ES: {},
-    EB: {},
-    XTRA: {},
-    RXN: {},
-    WP: {},
+  const resultNew: CalcResultNew = {
+    NAs: new Map(),
+    ES: new Map(),
+    EB: new Map(),
+    XTRA: new Map(),
+    RXN: new Map(),
+    WP: new Map(),
   };
 
-  const EMPTY_ATTACK_RESULT: CalcResultAttackItem = {
-    type: "attack",
-    values: [],
-    attElmt: "phys",
-    attPatt: "none",
-    specPatt: null,
-    reaction: null,
-    recorder: new ResultRecorder(),
-  };
+  // const EMPTY_ATTACK_RESULT: CalcResultAttackItem = {
+  //   type: "attack",
+  //   values: [],
+  //   attElmt: "phys",
+  //   attPatt: "none",
+  //   specPatt: null,
+  //   reaction: null,
+  //   recorder: new ResultRecorder(),
+  // };
 
   // ===== TALENT CALCULATION =====
 
@@ -66,78 +63,75 @@ export function calculateSetup(setup: CalcSetup, options: CalculateSetupOptions 
 
   for (const ATT_PATT of ATTACK_PATTERNS) {
     const talentType = ATT_PATT === "ES" || ATT_PATT === "EB" ? ATT_PATT : "NAs";
-    const resultGroup = result[talentType];
     const alterConfig = attackAlters.get(ATT_PATT);
     const defaultValues = getTalentDefaultValues(main.data, ATT_PATT);
 
-    const calculator = makeTalentCalc(main, target, talentType, defaultValues, alterConfig);
+    const talentCalc = makeTalentItemCalc(main, target, talentType, defaultValues, alterConfig);
 
     for (const calcItem of calcList[ATT_PATT]) {
       const { type = "attack", stellar } = calcItem;
-      const recorder = new ResultRecorder(
-        {
-          exclusives: main.attkBonusCtrl.exclusiveGroups(calcItem.id),
-        },
-        options?.shouldLog,
-      );
+      // const recorder = new ResultRecorder(
+      //   {
+      //     exclusives: main.attkBonusCtrl.exclusiveGroups(calcItem.id),
+      //   },
+      //   options?.shouldLog,
+      // );
 
       if (type === "attack") {
-        const itemElmtAlter = calcItem.id ? attackAlters.get(calcItem.id)?.attElmt : undefined;
-
         if (alterConfig?.disabled) {
-          resultGroup[calcItem.name] = EMPTY_ATTACK_RESULT;
           continue;
         }
 
         if (calcItem.lunar) {
-          resultGroup[calcItem.name] = calculator.calcLunarAttackItem(
-            calcItem,
-            calcItem.lunar,
-            recorder,
-          );
+          // resultGroup[calcItem.name] = calculator.calcLunarAttackItem(
+          //   calcItem,
+          //   calcItem.lunar,
+          //   recorder,
+          // );
           continue;
         }
 
         if (stellar) {
-          let coefficient = 1;
+          // let coefficient = 1;
 
-          switch (stellar) {
-            case "stellarConduct":
-              coefficient = stellarConductCoefficient;
-              break;
-            case "stellarSwirl":
-              coefficient = 1;
-              break;
-            default:
-              stellar satisfies never;
-          }
+          // switch (stellar) {
+          //   case "stellarConduct":
+          //     coefficient = stellarConductCoefficient;
+          //     break;
+          //   case "stellarSwirl":
+          //     coefficient = 1;
+          //     break;
+          //   default:
+          //     stellar satisfies never;
+          // }
 
-          resultGroup[calcItem.name] = calculator.calcStellarAttackItem(
-            calcItem,
-            stellar,
-            main.data.vision,
-            coefficient,
-            recorder,
-          );
+          // resultGroup[calcItem.name] = calculator.calcStellarAttackItem(
+          //   calcItem,
+          //   stellar,
+          //   main.data.vision,
+          //   coefficient,
+          //   recorder,
+          // );
           continue;
         }
 
-        resultGroup[calcItem.name] = calculator.calcAttackItem(
-          calcItem,
-          itemElmtAlter,
-          elmtEvent,
-          recorder,
-        );
+        const itemElmtAlter = calcItem.id ? attackAlters.get(calcItem.id)?.attElmt : undefined;
+
+        const attackResult = talentCalc.calcAttackItem(calcItem, elmtEvent, {
+          attElmtAlter: itemElmtAlter,
+        });
+
+        resultNew[talentType].set(calcItem.name, attackResult);
         continue;
       }
 
-      resultGroup[calcItem.name] = calculator.calcOtherItem(type, calcItem, recorder);
+      resultNew[talentType].set(calcItem.name, talentCalc.calcOtherItem(calcItem));
     }
   }
 
   // ===== EXTRA CALCULATION =====
 
-  const extraCalculator = makeTalentCalc(main, target, null, {
+  const extraCalc = makeTalentItemCalc(main, target, null, {
     attPatt: "none",
     basedOn: "atk",
     scale: 0,
@@ -147,11 +141,19 @@ export function calculateSetup(setup: CalcSetup, options: CalculateSetupOptions 
   setup.calcItems = createExtraCalcItems(setup);
 
   for (const calcItem of setup.calcItems) {
-    const { name, type = "attack" } = calcItem;
-    const recorder = new ResultRecorder({}, options?.shouldLog);
+    const { type = "attack" } = calcItem;
 
-    if (type === "attack") {
-      result.XTRA[name] = extraCalculator.calcAttackItem(calcItem, undefined, elmtEvent, recorder);
+    switch (type) {
+      case "attack":
+        resultNew.XTRA.set(calcItem.name, extraCalc.calcAttackItem(calcItem, elmtEvent));
+        break;
+      case "healing":
+      case "shield":
+      case "other":
+        // No extra calculation for healing, shield, and other yet
+        break;
+      default:
+        (type) satisfies never;
     }
   }
 
@@ -160,22 +162,22 @@ export function calculateSetup(setup: CalcSetup, options: CalculateSetupOptions 
   const rxnCalculator = makeReactionCalc(main, target);
 
   for (const reaction of STELLAR_REACTIONS) {
-    const recorder = new ResultRecorder({}, options?.shouldLog);
-    result.RXN[reaction] = rxnCalculator.calcStellarReaction(
-      reaction,
-      elmtEvent.vortexLv,
-      recorder,
-    );
+    // const recorder = new ResultRecorder({}, options?.shouldLog);
+    // result.RXN[reaction] = rxnCalculator.calcStellarReaction(
+    //   reaction,
+    //   elmtEvent.vortexLv,
+    //   recorder,
+    // );
   }
 
   for (const reaction of LUNAR_REACTIONS) {
-    const recorder = new ResultRecorder({}, options?.shouldLog);
-    result.RXN[reaction] = rxnCalculator.calcLunarReaction(reaction, recorder);
+    // const recorder = new ResultRecorder({}, options?.shouldLog);
+    // result.RXN[reaction] = rxnCalculator.calcLunarReaction(reaction, recorder);
   }
 
   for (const reaction of TRANSFORMATIVE_REACTIONS) {
-    const recorder = new ResultRecorder({}, options?.shouldLog);
-    result.RXN[reaction] = rxnCalculator.calcReaction(reaction, recorder, elmtEvent);
+    // const recorder = new ResultRecorder({}, options?.shouldLog);
+    // result.RXN[reaction] = rxnCalculator.calcReaction(reaction, recorder, elmtEvent);
   }
 
   // ===== WEAPON CALCULATION =====
@@ -183,26 +185,47 @@ export function calculateSetup(setup: CalcSetup, options: CalculateSetupOptions 
   const { weapon } = main;
 
   weapon.data.calcItems?.forEach((calcItem) => {
-    const { name, type = "attack", value, incre = value / 3, basedOn = "atk" } = calcItem;
-    const mult = value + incre * weapon.refi;
+    const { type = "attack", value, incre = value / 3, basedOn = "atk" } = calcItem;
+    const multiplier = value + incre * weapon.refi;
     const attribute = main.getAttr(basedOn);
-    const base = (attribute * mult) / 100;
+    const base = (attribute * multiplier) / 100;
 
-    const recorder = new ResultRecorder(
-      {
-        factors: [{ label: basedOn, value: attribute, mult }],
-      },
-      options?.shouldLog,
-    );
+    // const recorder = new ResultRecorder(
+    //   {
+    //     factors: [{ label: basedOn, value: attribute, mult }],
+    //   },
+    //   options?.shouldLog,
+    // );
 
-    if (type === "attack") {
-      result.WP[name] = makeAttackItemCalc(main, target).calculate([base], recorder);
-    } else {
-      result.WP[name] = makeOtherItemCalc(main).calculate(type, base, recorder);
+    const factor: CalcItemFactor = {
+      basedOnValue: value,
+      basedOnAttr: basedOn,
+      multiplier,
+    };
+
+    switch (type) {
+      case "attack": {
+        const weaponResult = Object.assign(calcAttack(main, target, [base]), {
+          factors: [factor],
+        });
+
+        resultNew.WP.set(calcItem.name, weaponResult);
+        break;
+      }
+      case "healing":
+      case "shield":
+      case "other": {
+        const otherResult = Object.assign(calcOther(main, type, base), factor);
+
+        resultNew.WP.set(calcItem.name, otherResult);
+        break;
+      }
+      default:
+        (type) satisfies never;
     }
   });
 
-  setup.result = result;
+  setup.result = resultNew;
 
   return setup.clone();
 }

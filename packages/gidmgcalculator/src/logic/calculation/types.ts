@@ -1,4 +1,11 @@
-import type { CalcItemBasedOn, CalcItemType } from "@/types";
+import type {
+  ActualAttackPattern,
+  AttackElement,
+  CalcItemBasedOn,
+  CalcItemType,
+  SpecialAttackPattern,
+  TalentCalcItemBonusId,
+} from "@/types";
 
 export type CalcAspect = "base" | "crit" | "average";
 
@@ -6,6 +13,7 @@ export type CalcAttackResult = Record<CalcAspect, number>;
 
 export type CalcAttackOutputs = {
   type: "attack";
+  bonusId: TalentCalcItemBonusId | undefined;
   baseMult: number;
   flat: number;
   bonusMult: number;
@@ -16,18 +24,24 @@ export type CalcAttackOutputs = {
   cRate: number;
   cDmg: number;
   results: CalcAttackResult[];
+  attElmt: AttackElement;
+  attPatt: ActualAttackPattern;
+  specPatt: SpecialAttackPattern | undefined; // TODO check
 };
 
 export type CalcOtherOutputs = {
   type: Exclude<CalcItemType, "attack">;
+  bonusId: TalentCalcItemBonusId | undefined;
   baseMult: number;
   flat: number;
   bonusMult: number;
+  inHealMult: number;
   result: number;
 };
 
 export type CalcItemFactor = {
-  attribute: CalcItemBasedOn;
+  basedOnValue: number;
+  basedOnAttr: CalcItemBasedOn;
   multiplier: number;
 };
 

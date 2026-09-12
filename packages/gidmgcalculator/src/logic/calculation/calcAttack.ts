@@ -23,7 +23,7 @@ export function calcAttack(
   performer: Character,
   target: Target,
   bases: number[],
-  inputs: CalcAttackInputs,
+  inputs: CalcAttackInputs = {},
 ): CalcAttackOutputs {
   const { itemId, attElmt = "phys", attPatt = "none", reaction = null } = inputs;
 
@@ -90,6 +90,7 @@ export function calcAttack(
 
   return {
     type: "attack",
+    bonusId: itemId,
     baseMult,
     flat,
     bonusMult,
@@ -100,5 +101,8 @@ export function calcAttack(
     cRate,
     cDmg,
     results,
+    attElmt,
+    attPatt,
+    specPatt: undefined, // TODO
   };
 }

@@ -26,6 +26,10 @@ type JointCalcItemBase = {
   factors: CalcItemFactor[];
 };
 
+type CalcAttackItemInputs = {
+  attElmtAlter?: ElementType;
+};
+
 export function makeTalentItemCalc(
   performer: Character,
   target: Target,
@@ -55,7 +59,8 @@ export function makeTalentItemCalc(
 
       bases.push({
         value: (attribute * multiplier) / 100,
-        attribute: basedOn,
+        basedOnValue: attribute,
+        basedOnAttr: basedOn,
         multiplier,
       });
     }
@@ -81,9 +86,10 @@ export function makeTalentItemCalc(
 
   function calcAttackItem(
     item: TalentCalcItem,
-    attElmtAlter: ElementType | undefined,
     elmtEvent: ElementalEvent,
+    inputs: CalcAttackItemInputs = {},
   ): CalcAttackItemOutputs {
+    const { attElmtAlter } = inputs;
     const { absorption, absorbReaction, infusion, infuseReaction } = elmtEvent;
 
     const attPatt = alter.attPatt || item.attPatt || default_.attPatt;
@@ -149,7 +155,8 @@ export function makeTalentItemCalc(
     if (Array.isArray(itemBases)) {
       bases = itemBases.map((base) => base.value);
       factors = itemBases.map((base) => ({
-        attribute: base.attribute,
+        basedOnValue: base.basedOnValue,
+        basedOnAttr: base.basedOnAttr,
         multiplier: base.multiplier,
       }));
     } else {
@@ -190,7 +197,8 @@ export function makeTalentItemCalc(
     if (Array.isArray(itemBases)) {
       baseValue = itemBases[0].value;
       factor = {
-        attribute: itemBases[0].attribute,
+        basedOnValue: itemBases[0].basedOnValue,
+        basedOnAttr: itemBases[0].basedOnAttr,
         multiplier: itemBases[0].multiplier,
       };
     } else {
@@ -199,6 +207,7 @@ export function makeTalentItemCalc(
     }
 
     if (item.type === undefined || item.type === "attack") {
+      console.error("item type should not be undefined or attack");
       return { ...DEFAULT_CALC_OTHER_OUTPUTS, ...factor };
     }
 

@@ -2,15 +2,11 @@ import { useEffect, useRef, useState } from "react";
 import { FaLongArrowAltUp } from "react-icons/fa";
 import { Select, clsx, useScreenWatcher } from "rond";
 
-import type { CalcAspect, CalcResultItemValue } from "@/calculation/types";
-import type { CalcResult } from "@/logic/calculator";
+import type { CalcAspect } from "@/logic/calculation";
+import type { CalcResultKey } from "@/logic/calculator";
 
-import {
-  FinalResultLayout,
-  displayValues,
-  type FinalResultLayoutProps,
-} from "@/components/FinalResultView";
-import { SLOT_NAME } from "@/constants";
+import { FinalResultLayout, type FinalResultLayoutProps } from "@/components/FinalResultView";
+import { SLOT_NAME } from "@/constants/ui";
 import { updateMain } from "@Store/calculator/actions";
 import { useLayoutProps } from "./hooks/useLayoutProps";
 
@@ -65,14 +61,48 @@ export function FinalResultCompare({ comparedIds, extraKeys }: FinalResultCompar
     }
   }, [isMobile]);
 
-  const getValues = (setupId: number, mainKey: keyof CalcResult, subKey: string) => {
-    // Can be undefined in weapon DMG calc when the standard setup has weapon dealing DMG
-    // and compared setups don't.
-    return setupsById[setupId].result[mainKey]?.[subKey]?.values || [];
-  };
+  const parseResultItem = (setupId: number, mainKey: CalcResultKey, subKey: string) => {
+    const item = setupsById[setupId].result[mainKey].get(subKey);
+    const values: number[] = [];
+    let view = "-";
 
-  const getComparedValue = (values: CalcResultItemValue[]) => {
-    return values.at(0)?.[focusedAspect] || 0;
+    if (item === undefined) {
+      return { values, view };
+    }
+
+    switch (item.type) {
+      case "attack": {
+        const displayParts: number[] = [];
+        let total = 0;
+
+        for (const result of item.results) {
+          const aspectValue = result[focusedAspect];
+
+          total += aspectValue;
+          values.push(aspectValue);
+          displayParts.push(Math.round(aspectValue));
+        }
+
+        if (total > 0) {
+          view = displayParts.join(" + ");
+        }
+        break;
+      }
+      case "healing":
+      case "shield":
+      case "other": {
+        values.push(item.result);
+
+        if (item.result > 0 && focusedAspect !== "crit") {
+          view = Math.round(item.result).toString();
+        }
+        break;
+      }
+      default:
+        item satisfies never;
+    }
+
+    return { values, view };
   };
 
   const handleClickDiffCell = (setupId: number, subKey: string) => {
@@ -113,26 +143,26 @@ export function FinalResultCompare({ comparedIds, extraKeys }: FinalResultCompar
             );
           }}
           getRowConfig={(mainKey, subKey) => {
-            const standardValues = getValues(standardId, mainKey, subKey);
+            const standardRecord = parseResultItem(standardId, mainKey, subKey);
+            const standardValue = standardRecord.values[0];
 
             const cells = setupIds.map<CellConfig>((setupId, index) => {
-              if (!index) {
+              if (index === 0) {
                 return {
-                  value: displayValues(standardValues, focusedAspect),
+                  value: standardRecord.view,
                   className: "text-right",
                 };
               }
 
-              const values = getValues(setupId, mainKey, subKey);
-              const comparedStandardValue = getComparedValue(standardValues);
-              const diff = getComparedValue(values) - comparedStandardValue;
-              const percenttDiff = comparedStandardValue
-                ? Math.round((Math.abs(diff) * 1000) / comparedStandardValue) / 10
+              const record = parseResultItem(setupId, mainKey, subKey);
+              const diff = record.values[0] - standardValue;
+              const percenttDiff = standardValue
+                ? Math.round((Math.abs(diff) * 1000) / standardValue) / 10
                 : 0;
 
               if (percenttDiff < 0.1) {
                 return {
-                  value: displayValues(values, focusedAspect),
+                  value: record.view,
                   className: "text-right",
                 };
               }
@@ -144,12 +174,8 @@ export function FinalResultCompare({ comparedIds, extraKeys }: FinalResultCompar
                 : "hidden group-hover:block";
 
               return {
-                value: displayValues(values, focusedAspect),
-                className: "text-right relative group",
-                style: {
-                  minWidth: "5rem",
-                  paddingRight: "1.25rem",
-                },
+                value: record.view,
+                className: "min-w-20 pr-5 text-right relative group",
                 extra: (
                   <>
                     <FaLongArrowAltUp

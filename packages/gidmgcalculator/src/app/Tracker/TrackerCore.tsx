@@ -36,8 +36,8 @@ export function TrackerCore({ trackerState }: TrackerCoreProps) {
     return null;
   }
 
-  const { result, target } = state;
-  const { attkBonusCtrl, attrCtrl } = state.main;
+  const { main, result, target } = state;
+  const { attkBonusCtrl, attrCtrl } = main;
   const charLv = activeSetup.main.bareLv;
   const defIgnoreAll = attkBonusCtrl.get("defIgn_", ["all"]);
   const totalDefReduct = target.resistReduction("def").value;
@@ -113,7 +113,7 @@ export function TrackerCore({ trackerState }: TrackerCoreProps) {
     },
   ];
 
-  if (Object.keys(result.XTRA).length) {
+  if (result.XTRA.size) {
     collapseItems.push({
       heading: "Extra",
       body: (
@@ -139,7 +139,7 @@ export function TrackerCore({ trackerState }: TrackerCoreProps) {
     body: <CalcListTracker className="space-y-1" data={result.RXN} attkBonusCtrl={attkBonusCtrl} />,
   });
 
-  if (Object.keys(result.WP).length) {
+  if (result.WP.size) {
     collapseItems.push({
       heading: "Weapon",
       body: (

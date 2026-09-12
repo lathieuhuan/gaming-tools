@@ -1,4 +1,6 @@
-import type { CalcAspect, CalcResultAttackItem, CalcResultItemValue } from "@/calculation/types";
+import type { CalcAspect, CalcResultItemValue } from "@/calculation/types";
+import type { CalcAttackItemOutputs } from "@/logic/calculation";
+import type { CalcResultItem } from "@/logic/calculator";
 import type {
   AppCharacter,
   AppWeapon,
@@ -93,7 +95,50 @@ export const displayValues = (values: CalcResultItemValue[], key: CalcAspect) =>
   return undefined;
 };
 
-export function attackCalcItemSubtitleParts(item: CalcResultAttackItem) {
+export const DEFAULT_RESULT_ITEM: Record<CalcAspect, string | number> = {
+  base: 0,
+  crit: 0,
+  average: 0,
+};
+
+export const displayResultItem = (item: CalcResultItem): Record<CalcAspect, string | number> => {
+  switch (item.type) {
+    case "attack": {
+      const bases: number[] = [];
+      const crits: number[] = [];
+      const averages: number[] = [];
+
+      for (const result of item.results) {
+        bases.push(Math.round(result.base));
+        crits.push(Math.round(result.crit));
+        averages.push(Math.round(result.average));
+      }
+
+      return {
+        base: bases.join(" + "),
+        crit: crits.join(" + "),
+        average: averages.join(" + "),
+      };
+    }
+    case "healing":
+    case "shield":
+    case "other": {
+      const base = Math.round(item.result);
+
+      return {
+        base,
+        crit: 0,
+        average: base,
+      };
+    }
+    default:
+      item satisfies never;
+
+      return DEFAULT_RESULT_ITEM;
+  }
+};
+
+export function attackCalcItemSubtitleParts(item: CalcAttackItemOutputs) {
   return [
     `${item.attElmt}_attElmt`,
     item.attPatt && item.attPatt !== "none" && item.attPatt,

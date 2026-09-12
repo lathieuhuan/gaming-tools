@@ -1,36 +1,48 @@
-import type {
-  CalcResultAttackItem,
-  CalcResultOtherItem,
-  CalcResultReactionItem,
-} from "@/calculation/types";
+import type { CalcResultItem } from "@/logic/calculator";
 import type { AttackBonusControl } from "@/models/Character";
 
 import { AttackItemTracker } from "./AttackItemTracker";
 import { OtherItemTracker } from "./OtherItemTracker";
-import { ReactionItemTracker } from "./ReactionItemTracker";
+import { RecordExclusives } from "./components/ResultRecord";
 
 type CalcListTrackerProps = {
   className?: string;
-  data: Record<string, CalcResultAttackItem | CalcResultOtherItem | CalcResultReactionItem>;
+  data: Map<string, CalcResultItem>;
   attkBonusCtrl: AttackBonusControl;
 };
 
 export function CalcListTracker({ className, data, attkBonusCtrl }: CalcListTrackerProps) {
   return (
     <div className={className}>
-      {Object.entries(data).map(([key, item]) => {
+      {Array.from(data, ([key, item]) => {
         switch (item.type) {
           case "attack":
             return (
-              <AttackItemTracker key={key} title={key} item={item} attkBonusCtrl={attkBonusCtrl} />
+              <AttackItemTracker
+                key={key}
+                title={key}
+                item={item}
+                exclusiveRecord={
+                  item.bonusId !== undefined && (
+                    <RecordExclusives id={item.bonusId} attkBonusCtrl={attkBonusCtrl} />
+                  )
+                }
+              />
             );
-          case "reaction":
-            return <ReactionItemTracker key={key} title={key} item={item} />;
           case "other":
           case "healing":
           case "shield":
             return (
-              <OtherItemTracker key={key} title={key} item={item} attkBonusCtrl={attkBonusCtrl} />
+              <OtherItemTracker
+                key={key}
+                title={key}
+                item={item}
+                exclusiveRecord={
+                  item.bonusId !== undefined && (
+                    <RecordExclusives id={item.bonusId} attkBonusCtrl={attkBonusCtrl} />
+                  )
+                }
+              />
             );
           default:
             item satisfies never;

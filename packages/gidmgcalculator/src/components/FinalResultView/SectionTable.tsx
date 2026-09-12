@@ -54,8 +54,7 @@ export function SectionTable({
           <Table.Tr key={subKey} aria-label={label}>
             <Table.Td
               title={config.title}
-              className={clsx("sticky left-0 z-10", config.className)}
-              style={{ background: "inherit" }}
+              className={clsx("sticky left-0 z-10 bg-inherit", config.className)}
               onDoubleClick={config.onDoubleClick}
             >
               {label}

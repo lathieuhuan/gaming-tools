@@ -1,20 +1,16 @@
-import type {
-  CalcResultAttackItem,
-  CalcResultOtherItem,
-  CalcResultReactionItem,
-} from "@/calculation/types";
+import type { CalcAttackItemOutputs, CalcOtherItemOutputs } from "@/logic/calculation";
 import type { LevelableTalentType } from "@/types";
 
-type CalcResultTalentItem = CalcResultAttackItem | CalcResultOtherItem;
+export type CalcResultItem = CalcAttackItemOutputs | CalcOtherItemOutputs;
 
-type CalcResultWeaponItem = CalcResultAttackItem | CalcResultOtherItem;
+export type CalcResultGroup = Map<string, CalcResultItem>;
 
-type CalcResultTalentGroup = Record<string, CalcResultTalentItem>;
-
-export type CalcResult = {
-  [key in LevelableTalentType]: CalcResultTalentGroup;
+export type CalcResultNew = {
+  [key in LevelableTalentType]: CalcResultGroup;
 } & {
-  XTRA: Record<string, CalcResultTalentItem>;
-  RXN: Record<string, CalcResultReactionItem>;
-  WP: Record<string, CalcResultWeaponItem>;
+  XTRA: CalcResultGroup;
+  RXN: CalcResultGroup;
+  WP: CalcResultGroup;
 };
+
+export type CalcResultKey = keyof CalcResultNew;
