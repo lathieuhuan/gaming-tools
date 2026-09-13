@@ -9,14 +9,19 @@ import type {
   ElementType,
   EnhanceType,
   LevelableTalentType,
-  LunarType,
+  LunarReaction,
   Nation,
   NormalAttack,
-  StellarType,
+  StellarReaction,
   TalentCalcItemBonusId,
   WeaponType,
 } from "./common";
-import type { BuffSpec, DebuffSpec, EffectPerformableConditionSpecs, InputCheckSpec } from "./modifier-specs";
+import type {
+  BuffSpec,
+  DebuffSpec,
+  EffectPerformableConditionSpecs,
+  InputCheckSpec,
+} from "./modifier-specs";
 
 export type AppCharacter = {
   code: number;
@@ -111,6 +116,8 @@ export type CalcItemFlatFactor =
       scale?: number;
     };
 
+export type TalentReaction = LunarReaction | StellarReaction;
+
 export type TalentCalcItem = {
   id?: TalentCalcItemBonusId;
   type?: CalcItemType;
@@ -126,8 +133,7 @@ export type TalentCalcItem = {
   attPatt?: ActualAttackPattern;
   attElmt?: ActualAttackElement;
   subAttPatt?: "FCA";
-  lunar?: LunarType;
-  stellar?: StellarType;
+  reaction?: TalentReaction;
 };
 
 // ========== BUFF / BONUS ==========
@@ -146,7 +152,8 @@ export type CharacterBuff = CharacterModifierBase &
     alterConfigs?: AttackAlterSpec | AttackAlterSpec[];
   };
 
-export type CharacterInnateBuff = CharacterModifierBase & Partial<Pick<BuffSpec, "effects" | "affect">>;
+export type CharacterInnateBuff = CharacterModifierBase &
+  Partial<Pick<BuffSpec, "effects" | "affect">>;
 
 // ============ DEBUFF / PENALTY ============
 

@@ -31,7 +31,7 @@ export function Part(props: PartProps) {
 
 type PartGroupSpec = {
   containers: [string, string];
-  specs: PartSpec[];
+  specs: PartSpecType[];
 };
 
 export type PartSpecType = PartSpec | PartGroupSpec;

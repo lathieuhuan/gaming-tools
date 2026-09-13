@@ -36,8 +36,8 @@ export function TrackerCore({ trackerState }: TrackerCoreProps) {
     return null;
   }
 
-  const { result, target } = state;
-  const { attkBonusCtrl, attrCtrl } = state.main;
+  const { main, result, target } = state;
+  const { attkBonusCtrl, attrCtrl } = main;
   const charLv = activeSetup.main.bareLv;
   const defIgnoreAll = attkBonusCtrl.get("defIgn_", ["all"]);
   const totalDefReduct = target.resistReduction("def").value;
@@ -67,11 +67,7 @@ export function TrackerCore({ trackerState }: TrackerCoreProps) {
             targetLv={target.level}
             totalDefReduct={totalDefReduct}
           />
-          <CalcListTracker
-            className="mt-1 space-y-1"
-            data={result.NAs}
-            attkBonusCtrl={attkBonusCtrl}
-          />
+          <CalcListTracker className="mt-1 space-y-1" data={result.NAs} main={main} />
         </div>
       ),
     },
@@ -85,11 +81,7 @@ export function TrackerCore({ trackerState }: TrackerCoreProps) {
             targetLv={target.level}
             totalDefReduct={totalDefReduct}
           />
-          <CalcListTracker
-            className="mt-1 space-y-1"
-            data={result.ES}
-            attkBonusCtrl={attkBonusCtrl}
-          />
+          <CalcListTracker className="mt-1 space-y-1" data={result.ES} main={main} />
         </div>
       ),
     },
@@ -103,17 +95,13 @@ export function TrackerCore({ trackerState }: TrackerCoreProps) {
             targetLv={target.level}
             totalDefReduct={totalDefReduct}
           />
-          <CalcListTracker
-            className="mt-1 space-y-1"
-            data={result.EB}
-            attkBonusCtrl={attkBonusCtrl}
-          />
+          <CalcListTracker className="mt-1 space-y-1" data={result.EB} main={main} />
         </div>
       ),
     },
   ];
 
-  if (Object.keys(result.XTRA).length) {
+  if (result.EXTRA.size) {
     collapseItems.push({
       heading: "Extra",
       body: (
@@ -124,11 +112,7 @@ export function TrackerCore({ trackerState }: TrackerCoreProps) {
             targetLv={target.level}
             totalDefReduct={totalDefReduct}
           />
-          <CalcListTracker
-            className="mt-1 space-y-1"
-            data={result.XTRA}
-            attkBonusCtrl={attkBonusCtrl}
-          />
+          <CalcListTracker className="mt-1 space-y-1" data={result.EXTRA} main={main} />
         </div>
       ),
     });
@@ -136,10 +120,10 @@ export function TrackerCore({ trackerState }: TrackerCoreProps) {
 
   collapseItems.push({
     heading: "Reactions",
-    body: <CalcListTracker className="space-y-1" data={result.RXN} attkBonusCtrl={attkBonusCtrl} />,
+    body: <CalcListTracker className="space-y-1" data={result.RXN} main={main} />,
   });
 
-  if (Object.keys(result.WP).length) {
+  if (result.WP.size) {
     collapseItems.push({
       heading: "Weapon",
       body: (
@@ -150,11 +134,7 @@ export function TrackerCore({ trackerState }: TrackerCoreProps) {
             targetLv={target.level}
             totalDefReduct={totalDefReduct}
           />
-          <CalcListTracker
-            className="mt-1 space-y-1"
-            data={result.WP}
-            attkBonusCtrl={attkBonusCtrl}
-          />
+          <CalcListTracker className="mt-1 space-y-1" data={result.WP} main={main} />
         </div>
       ),
     });

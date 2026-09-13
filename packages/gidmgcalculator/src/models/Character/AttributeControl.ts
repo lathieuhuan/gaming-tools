@@ -1,16 +1,17 @@
 import { CountMap, round } from "ron-utils";
 
-import type {
-  AllAttributes,
-  AttributeBonus,
-  AttributeStat,
-  AutoRsnElmtType,
-  BaseAttributeStat,
-} from "@/types";
+import type { AllAttributes, AttributeStat, AutoRsnElmtType, BaseAttributeStat } from "@/types";
 import type { Character } from "./Character";
 
 import { ATTRIBUTE_STAT_TYPES } from "@/constants";
 import { baseStatToCoreStat, isBaseStat, isCoreStat } from "@/utils/stat.utils";
+
+export type AttributeBonus = {
+  value: number;
+  toStat: AttributeStat | BaseAttributeStat;
+  isDynamic?: boolean;
+  label: string;
+};
 
 export class AttributeControl {
   private constructor(private attrs: InternalAttributes) {}

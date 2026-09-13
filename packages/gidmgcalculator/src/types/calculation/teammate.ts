@@ -10,16 +10,11 @@ import type {
 } from "../modifier-controls";
 import type { EffectPerformableConditionSpecs } from "../modifier-specs";
 
-// ========== TEAM ==========
-
 export type TeamMember = {
   code: number;
   enhanced: boolean;
   data: AppCharacter;
-  // joinTeam(team: Team): void;
   canPerformEffect(condition?: EffectPerformableConditionSpecs, inputs?: number[]): boolean;
-  // performBonus(config: BonusCoreSpec, tools: Partial<BonusPerformTools>): BareBonus;
-  // performPenalty(config: PenaltyCoreSpec, inputs?: number[]): number;
 };
 
 // ========== TEAMMATE ==========

@@ -1,36 +1,65 @@
-import type {
-  CalcResultAttackItem,
-  CalcResultOtherItem,
-  CalcResultReactionItem,
-} from "@/calculation/types";
-import type { AttackBonusControl } from "@/models/Character";
+import type { CalcResultItem } from "@/logic/calculator";
+import type { Character } from "@/models/Character";
 
 import { AttackItemTracker } from "./AttackItemTracker";
+import { RecordExclusives } from "./components/ResultRecord";
 import { OtherItemTracker } from "./OtherItemTracker";
 import { ReactionItemTracker } from "./ReactionItemTracker";
 
 type CalcListTrackerProps = {
   className?: string;
-  data: Record<string, CalcResultAttackItem | CalcResultOtherItem | CalcResultReactionItem>;
-  attkBonusCtrl: AttackBonusControl;
+  data: Map<string, CalcResultItem>;
+  main: Character;
 };
 
-export function CalcListTracker({ className, data, attkBonusCtrl }: CalcListTrackerProps) {
+export function CalcListTracker({ className, data, main }: CalcListTrackerProps) {
+  const { attkBonusCtrl } = main;
+
   return (
     <div className={className}>
-      {Object.entries(data).map(([key, item]) => {
+      {Array.from(data, ([key, item]) => {
         switch (item.type) {
           case "attack":
             return (
-              <AttackItemTracker key={key} title={key} item={item} attkBonusCtrl={attkBonusCtrl} />
+              <AttackItemTracker
+                key={key}
+                title={key}
+                item={item}
+                exclusiveRecord={
+                  item.bonusId !== undefined && (
+                    <RecordExclusives id={item.bonusId} attkBonusCtrl={attkBonusCtrl} />
+                  )
+                }
+              />
             );
           case "reaction":
-            return <ReactionItemTracker key={key} title={key} item={item} />;
+            return (
+              <ReactionItemTracker
+                key={key}
+                title={key}
+                item={item}
+                exclusiveRecord={
+                  item.bonusId !== undefined && (
+                    <RecordExclusives id={item.bonusId} attkBonusCtrl={attkBonusCtrl} />
+                  )
+                }
+                baseDMG={Math.round(main.baseReactionDMG)}
+              />
+            );
           case "other":
           case "healing":
           case "shield":
             return (
-              <OtherItemTracker key={key} title={key} item={item} attkBonusCtrl={attkBonusCtrl} />
+              <OtherItemTracker
+                key={key}
+                title={key}
+                item={item}
+                exclusiveRecord={
+                  item.bonusId !== undefined && (
+                    <RecordExclusives id={item.bonusId} attkBonusCtrl={attkBonusCtrl} />
+                  )
+                }
+              />
             );
           default:
             item satisfies never;

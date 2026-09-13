@@ -1,7 +1,8 @@
 import type { CalcResult } from "@/logic/calculator";
 
 import { useTranslation } from "@/hooks";
-import { attackCalcItemSubtitleParts, displayValues } from "./utils";
+import { attackCalcItemSubtitleParts, reactionCalcItemSubtitleParts } from "@/utils/ui.utils";
+import { DEFAULT_RESULT_ITEM, displayResultItem } from "./utils";
 
 import { FinalResultLayout, type FinalResultLayoutProps } from "./FinalResultLayout";
 
@@ -9,10 +10,10 @@ type FinalResultViewProps = Pick<
   FinalResultLayoutProps,
   "character" | "talentMutable" | "onTalentLevelChange" | "extraKeys"
 > & {
-  finalResult: CalcResult;
+  calcResult: CalcResult;
 };
 
-export function FinalResultView({ finalResult, ...props }: FinalResultViewProps) {
+export function FinalResultView({ calcResult, ...props }: FinalResultViewProps) {
   const { t } = useTranslation();
 
   return (
@@ -32,38 +33,45 @@ export function FinalResultView({ finalResult, ...props }: FinalResultViewProps)
         },
       ]}
       getRowConfig={(mainKey, subKey) => {
-        const result = finalResult[mainKey][subKey];
+        const result = calcResult[mainKey].get(subKey);
         let title: string | undefined;
 
         switch (result?.type) {
-          case "attack": {
-            const parts = attackCalcItemSubtitleParts(result).map((part) => t(part));
-
-            title = parts.join(" / ");
+          case "attack":
+            title = attackCalcItemSubtitleParts(result)
+              .map((part) => t(part))
+              .join(" / ");
             break;
-          }
-          case "reaction": {
-            title = t(`${result.attElmt}_attElmt`);
+          case "reaction":
+            title = reactionCalcItemSubtitleParts(result)
+              .map((part) => t(part))
+              .join(" / ");
             break;
-          }
+          case "healing":
+          case "shield":
+          case "other":
+            // No title for healing, shield, and other
+            break;
           default: {
-            break;
+            result satisfies undefined;
           }
         }
+
+        const values = result ? displayResultItem(result) : DEFAULT_RESULT_ITEM;
 
         return {
           title,
           cells: [
             {
-              value: displayValues(result?.values, "base"),
+              value: values.base,
               className: "text-right",
             },
             {
-              value: displayValues(result?.values, "crit"),
+              value: values.crit,
               className: "text-right",
             },
             {
-              value: displayValues(result?.values, "average"),
+              value: values.average,
               className: "text-right text-primary-1",
             },
           ],

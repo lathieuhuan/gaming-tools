@@ -1,16 +1,15 @@
 import { Array_ } from "ron-utils";
 
 import type {
-  BareBonus,
   BonusAttributeScalingSpec,
   BonusCoreSpec,
-  BonusPerformTools,
   BonusScalingAttribute,
   EffectMaxSpec,
   ExtraBonusSpec,
   TeamMember,
 } from "@/types";
 import type { Team } from "../Team";
+import type { BareBonus, BonusPerformTools } from "../types";
 
 import { AbstractEffectCalc, EffectToGetInitialValue } from "./AbstractEffectCalc";
 

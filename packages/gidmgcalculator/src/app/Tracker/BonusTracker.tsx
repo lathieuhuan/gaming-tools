@@ -1,7 +1,7 @@
 import { round } from "ron-utils";
 import { clsx } from "rond";
 
-import type { AttackBonus, AttackBonusKey, AttackElement } from "@/types";
+import type { AttackBonusKey, AttackElement } from "@/types";
 
 import { ATTACK_ELEMENTS } from "@/constants/global";
 import { useTranslation } from "@/hooks";
@@ -30,7 +30,7 @@ export function BonusTracker({ listClassName, attkBonusCtrl }: BonusTrackerProps
 
           const list: Array<{
             key: AttackBonusKey;
-            records: AttackBonus[];
+            records: typeof records;
           }> = [];
 
           for (const record of records) {

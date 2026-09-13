@@ -22,25 +22,29 @@ type RecordExclusivesProps = {
   id: TalentCalcItemBonusId;
   attkBonusCtrl: AttackBonusControl;
 };
+
 export function RecordExclusives({ id, attkBonusCtrl }: RecordExclusivesProps) {
   const { t } = useTranslation();
 
-  const exclusiveBonuses = attkBonusCtrl.exclusiveGroups(id);
+  const bonusGroups = attkBonusCtrl.exclusiveGroups(id);
 
-  if (exclusiveBonuses.length === 0) {
+  if (bonusGroups.length === 0) {
     return null;
   }
 
   return (
     <li>
       <p className="text-primary-1">Exclusive Bonus</p>
-      {exclusiveBonuses.map((bonus, i) => {
-        const percent = suffixOf(bonus.type);
+      {bonusGroups.map((group, i) => {
+        const percent = suffixOf(group.type);
 
-        return bonus.items.map((bonusItem, j) => (
+        return group.items.map((bonusItem, j) => (
           <p key={i + j}>
-            + {t(bonus.type)}: {bonusItem.label}{" "}
-            <PositiveText>{round(bonusItem.value, percent ? 2 : 0) + percent}</PositiveText>
+            + {t(group.type)}: {bonusItem.label}{" "}
+            <PositiveText>
+              {round(bonusItem.value, percent ? 2 : 0)}
+              {percent}
+            </PositiveText>
           </p>
         ));
       })}

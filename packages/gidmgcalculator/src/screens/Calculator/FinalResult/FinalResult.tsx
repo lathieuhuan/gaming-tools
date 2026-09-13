@@ -32,7 +32,7 @@ export function FinalResultCore() {
         calcResult: setup.result,
         comparedIds: state.comparedIds,
       };
-    }
+    },
   );
 
   const extraKeys = useMemo(() => {
@@ -53,7 +53,7 @@ export function FinalResultCore() {
           talentMutable
           character={main}
           extraKeys={extraKeys}
-          finalResult={calcResult}
+          calcResult={calcResult}
           onTalentLevelChange={(type, level) => updateMain({ [type]: level })}
         />
       </div>

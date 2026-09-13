@@ -1,5 +1,4 @@
-import type { CalcItemDefaultValues } from "@/calculation/types";
-import type { AppCharacter, AttackPattern } from "@/types";
+import type { AppCharacter, AttackPattern, CalcItemDefaultValues } from "@/types";
 
 export function getTalentDefaultValues(
   data: AppCharacter,

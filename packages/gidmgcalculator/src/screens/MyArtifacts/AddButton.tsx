@@ -35,8 +35,7 @@ export function AddButton({ currentArtifactsCount }: AddButtonProps) {
 
   const handleForgeArtifact = (artifact: Artifact) => {
     if (isNewArtifactAddable()) {
-      // TODO check if we can improve this
-      dispatch(addDbArtifact(artifact.serialize()));
+      dispatch(addDbArtifact(artifact));
     }
   };
 

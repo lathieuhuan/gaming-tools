@@ -13,6 +13,8 @@ export class Weapon {
   owner?: number;
   setupIDs?: number[];
 
+  isTravelerSword: boolean;
+
   private constructor(
     public readonly ID: number,
     public readonly code: number,
@@ -30,6 +32,8 @@ export class Weapon {
 
     this.owner = owner;
     this.setupIDs = setupIDs?.length ? [...setupIDs] : undefined;
+
+    this.isTravelerSword = code === 246;
   }
 
   serialize(): RawWeapon {
@@ -67,8 +71,6 @@ export class Weapon {
   }
 
   // ===== STATIC =====
-
-  static readonly TRAVELER_SWORD_CODE = 246;
 
   static readonly DEFAULT_CODE: Record<WeaponType, number> = {
     bow: 11,

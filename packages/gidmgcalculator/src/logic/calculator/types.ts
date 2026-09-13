@@ -1,20 +1,32 @@
 import type {
-  CalcResultAttackItem,
-  CalcResultOtherItem,
-  CalcResultReactionItem,
-} from "@/calculation/types";
+  CalcAttackItemOutputs,
+  CalcOtherItemOutputs,
+  CalcReactionOutputs,
+} from "@/logic/calculation";
 import type { LevelableTalentType } from "@/types";
 
-type CalcResultTalentItem = CalcResultAttackItem | CalcResultOtherItem;
+export type BonusPerformTools = {
+  inputs: number[];
+  refi?: number;
+  basedOnStatic?: boolean;
+};
 
-type CalcResultWeaponItem = CalcResultAttackItem | CalcResultOtherItem;
+export type BareBonus = {
+  // id?: string;
+  value: number;
+  isDynamic: boolean;
+};
 
-type CalcResultTalentGroup = Record<string, CalcResultTalentItem>;
+export type CalcResultItem = CalcAttackItemOutputs | CalcOtherItemOutputs | CalcReactionOutputs;
+
+export type CalcResultGroup = Map<string, CalcResultItem>;
 
 export type CalcResult = {
-  [key in LevelableTalentType]: CalcResultTalentGroup;
+  [key in LevelableTalentType]: CalcResultGroup;
 } & {
-  XTRA: Record<string, CalcResultTalentItem>;
-  RXN: Record<string, CalcResultReactionItem>;
-  WP: Record<string, CalcResultWeaponItem>;
+  EXTRA: CalcResultGroup;
+  RXN: CalcResultGroup;
+  WP: CalcResultGroup;
 };
+
+export type CalcResultKey = keyof CalcResult;

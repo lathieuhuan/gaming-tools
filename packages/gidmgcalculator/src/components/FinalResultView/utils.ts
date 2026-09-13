@@ -1,16 +1,11 @@
-import type { CalcAspect, CalcResultAttackItem, CalcResultItemValue } from "@/calculation/types";
-import type {
-  AppCharacter,
-  AppWeapon,
-  LunarReaction,
-  StellarReaction,
-  TransformativeReaction,
-} from "@/types";
+import type { CalcAspect } from "@/logic/calculation";
+import type { CalcResultItem } from "@/logic/calculator";
+import type { AppCharacter, AppWeapon, NatureReaction } from "@/types";
 
 import {
-  LUNAR_REACTIONS,
+  NATURE_LUNAR_REACTIONS,
+  NATURE_STELLAR_REACTIONS,
   NORMAL_ATTACKS,
-  STELLAR_REACTIONS,
   TRANSFORMATIVE_REACTIONS,
 } from "@/constants/global";
 
@@ -25,13 +20,13 @@ type TableWeaponKey = {
 };
 
 type TableExtraItemKey = {
-  main: "XTRA";
+  main: "EXTRA";
   subs: string[];
 };
 
 type TableReactionKey = {
   main: "RXN";
-  subs: (TransformativeReaction | LunarReaction | StellarReaction)[];
+  subs: NatureReaction[];
 };
 
 export type TableKey = TableCalcItemKey | TableWeaponKey | TableReactionKey | TableExtraItemKey;
@@ -57,14 +52,14 @@ export function getTableKeys(
 
   if (extraKeys) {
     result.push({
-      main: "XTRA",
+      main: "EXTRA",
       subs: extraKeys,
     });
   }
 
   result.push({
     main: "RXN" as const,
-    subs: [...STELLAR_REACTIONS, ...LUNAR_REACTIONS, ...TRANSFORMATIVE_REACTIONS],
+    subs: [...NATURE_STELLAR_REACTIONS, ...NATURE_LUNAR_REACTIONS, ...TRANSFORMATIVE_REACTIONS],
   });
 
   if (weaponCalcItems) {
@@ -77,26 +72,46 @@ export function getTableKeys(
   return result;
 }
 
-export const displayValues = (values: CalcResultItemValue[], key: CalcAspect) => {
-  const firstValue = values?.at(0)?.[key];
-
-  if (firstValue) {
-    let result = `${Math.round(firstValue)}`;
-
-    for (let i = 1; i < values.length; i++) {
-      result += ` + ${Math.round(values[i][key])}`;
-    }
-
-    return result;
-  }
-
-  return undefined;
+export const DEFAULT_RESULT_ITEM: Record<CalcAspect, string | number> = {
+  base: 0,
+  crit: 0,
+  average: 0,
 };
 
-export function attackCalcItemSubtitleParts(item: CalcResultAttackItem) {
-  return [
-    `${item.attElmt}_attElmt`,
-    item.attPatt && item.attPatt !== "none" && item.attPatt,
-    item.specPatt && item.specPatt,
-  ].filter((part) => typeof part === "string");
-}
+export const displayResultItem = (item: CalcResultItem): Record<CalcAspect, string | number> => {
+  switch (item.type) {
+    case "attack":
+    case "reaction": {
+      const bases: number[] = [];
+      const crits: number[] = [];
+      const averages: number[] = [];
+
+      for (const result of item.results) {
+        bases.push(Math.round(result.base));
+        crits.push(Math.round(result.crit));
+        averages.push(Math.round(result.average));
+      }
+
+      return {
+        base: bases[0] === 0 ? "-" : bases.join(" + "),
+        crit: crits[0] === 0 ? "-" : crits.join(" + "),
+        average: averages[0] === 0 ? "-" : averages.join(" + "),
+      };
+    }
+    case "healing":
+    case "shield":
+    case "other": {
+      const base = Math.round(item.result) || "-";
+
+      return {
+        base,
+        crit: "-",
+        average: base,
+      };
+    }
+    default:
+      item satisfies never;
+
+      return DEFAULT_RESULT_ITEM;
+  }
+};

@@ -70,7 +70,7 @@ export function SelectedResult({ setup, dbSetup }: SelectedResultProps) {
       <div className="mt-2 grow hide-scrollbar">
         <FinalResultView
           character={calcSetup.main}
-          finalResult={calcSetup.result}
+          calcResult={calcSetup.result}
           extraKeys={calcSetup.calcItems.map((item) => item.name)}
         />
       </div>

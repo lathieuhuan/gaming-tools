@@ -1,4 +1,5 @@
-import { CustomBuffCtrlCategory, CustomBuffCtrlType } from "@/types";
+import { CalcAttackItemOutputs, CalcReactionOutputs } from "@/logic/calculation/types";
+import type { CustomBuffCtrlCategory, CustomBuffCtrlType } from "@/types";
 
 /**
  * @param count default 0
@@ -24,4 +25,16 @@ export function toCustomBuffLabel(
   t: (origin: string) => string,
 ) {
   return category === "attElmtBonus" ? (type === "phys" ? "physical" : type) : t(type);
+}
+
+export function attackCalcItemSubtitleParts(item: CalcAttackItemOutputs) {
+  return [`${item.attElmt}_attElmt`, item.attPatt !== "none" && item.attPatt].filter(
+    (part) => typeof part === "string",
+  );
+}
+
+export function reactionCalcItemSubtitleParts(item: CalcReactionOutputs) {
+  return [`${item.attElmt}_attElmt`, item.subType === "direct" && item.reaction].filter(
+    (part) => typeof part === "string",
+  );
 }

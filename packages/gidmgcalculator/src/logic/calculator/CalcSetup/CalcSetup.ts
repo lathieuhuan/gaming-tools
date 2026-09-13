@@ -14,6 +14,7 @@ import { useSettingsStore } from "@Store/settings";
 import { Team } from "../Team";
 import { calculateSetup, CalculateSetupOptions } from "../calculateSetup";
 import { createTeamBuffCtrls } from "../createTeamBuffCtrls";
+import { CalcResult } from "../types";
 import { CalcSetupCore } from "./CalcSetupCore";
 
 export type CreateCalcSetupOptions = Partial<
@@ -116,13 +117,13 @@ export class CalcSetup extends CalcSetupCore {
       rsnDebuffCtrls = defaultRsnModCtrls.debuffCtrls,
     } = options;
 
-    const result = {
-      NAs: {},
-      ES: {},
-      EB: {},
-      XTRA: {},
-      RXN: {},
-      WP: {},
+    const result: CalcResult = {
+      NAs: new Map(),
+      ES: new Map(),
+      EB: new Map(),
+      EXTRA: new Map(),
+      RXN: new Map(),
+      WP: new Map(),
     };
 
     const setup = new CalcSetup(
