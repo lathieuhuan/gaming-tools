@@ -1,19 +1,19 @@
 import { Array_ } from "ron-utils";
 
-import { Weapon, type Character, type Teammate } from "@/models";
+import type { Character } from "@/models/Character";
+import type { Teammate } from "@/models/Teammate";
 import type {
   AttackElement,
   AttackPattern,
   AttributeStat,
   AttributeTargetPath,
-  BareBonus,
   BonusCoreSpec,
-  BonusPerformTools,
   BonusSpec,
   BuffSpec,
   ReactionType,
 } from "@/types";
 import type { CalcSetup } from "../CalcSetup";
+import type { BareBonus, BonusPerformTools } from "../types";
 
 import {
   AMPLIFYING_REACTIONS,
@@ -218,7 +218,7 @@ export function applyBuffs(setup: CalcSetup, options: ApplyBuffsOptions = {}) {
   applyAbilityBuffs(false);
   applyWeaponBonuses(false);
 
-  if (main.isTraveler && weapon.code === Weapon.TRAVELER_SWORD_CODE && weapon.refi > 1) {
+  if (main.isTraveler && weapon.isTravelerSword && weapon.refi > 1) {
     applyBonus(
       `${weapon.data.name} bonus`,
       main,

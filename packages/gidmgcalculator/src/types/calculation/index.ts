@@ -1,6 +1,5 @@
 import type { ActualAttackPattern, AttackPattern, CalcItemBasedOn, ElementType } from "../common";
 
-export * from "./bonus";
 export * from "./teammate";
 
 export type CalcItemDefaultValues = {

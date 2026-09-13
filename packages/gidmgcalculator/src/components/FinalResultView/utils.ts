@@ -1,4 +1,4 @@
-import type { CalcAspect } from "@/calculation/types";
+import type { CalcAspect } from "@/logic/calculation";
 import type { CalcResultItem } from "@/logic/calculator";
 import type { AppCharacter, AppWeapon, NatureReaction } from "@/types";
 

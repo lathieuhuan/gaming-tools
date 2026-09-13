@@ -1,6 +1,7 @@
+import { CountMap, Object_ } from "ron-utils";
+
 import type {
   AutoRsnElmtType,
-  BonusPerformTools,
   EffectPerformableConditionSpecs,
   ElementCount,
   ElementType,
@@ -10,7 +11,7 @@ import type {
   TeamMember,
   TeamMilestoneConditionSpec,
 } from "@/types";
-import { CountMap, Object_ } from "ron-utils";
+import type { BonusPerformTools } from "./types";
 
 import { PHEC_ELEMENT_TYPES } from "@/constants";
 import { Character } from "@/models";

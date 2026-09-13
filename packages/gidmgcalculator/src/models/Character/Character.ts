@@ -6,9 +6,7 @@ import type {
   AllAttributeStat,
   AmplifyingReaction,
   AppCharacter,
-  AttackBonus,
   AttackElement,
-  AttributeBonus,
   BonusSpec,
   EffectPerformableConditionSpecs,
   EffectReceiverConditionSpecs,
@@ -24,8 +22,8 @@ import { isPassedComparison, isValidInput } from "@/utils/effect.utils";
 import { splitLevel } from "@/utils/level.utils";
 import { ArtifactGear } from "../ArtifactGear";
 import { Weapon } from "../Weapon";
-import { AttackBonusControl } from "./AttackBonusControl";
-import { AttributeControl } from "./AttributeControl";
+import { AttackBonusControl, type AttackBonus } from "./AttackBonusControl";
+import { AttributeControl, type AttributeBonus } from "./AttributeControl";
 
 export type CharacterCreateOptions = Partial<RawCharacterState> & {
   atfGear?: ArtifactGear;

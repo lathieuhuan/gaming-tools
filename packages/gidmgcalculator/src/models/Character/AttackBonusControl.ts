@@ -1,13 +1,13 @@
-import type {
-  AttackBonus,
-  AttackBonusKey,
-  AttackBonusType,
-  ExclusiveAttackBonus,
-  ExclusiveAttackBonusGroup,
-  TalentCalcItemBonusId,
-} from "@/types";
+import type { AttackBonusKey, AttackBonusType, TalentCalcItemBonusId } from "@/types";
 
 export type GetAttackBonusPaths = Array<AttackBonusType | null | undefined | false>;
+
+export type AttackBonus = {
+  value: number;
+  toType: AttackBonusType;
+  toKey: AttackBonusKey;
+  label: string;
+};
 
 export class AttackBonusControl {
   private constructor(public records: Map<AttackBonusType, AttackBonus[]>) {}
@@ -74,3 +74,13 @@ export class AttackBonusControl {
     return this;
   }
 }
+
+type ExclusiveAttackBonus = {
+  label: string;
+  value: number;
+};
+
+type ExclusiveAttackBonusGroup = {
+  type: AttackBonusKey;
+  items: ExclusiveAttackBonus[];
+};
