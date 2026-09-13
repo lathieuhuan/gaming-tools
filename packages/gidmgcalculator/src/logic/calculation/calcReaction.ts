@@ -67,6 +67,7 @@ export function calcReaction(
     return performer.attkBonusCtrl.get(key, [...getBonusPaths, ...extraPaths]);
   }
 
+  const baseMult = toMult(getBonus("baseMult_"));
   const rxnBaseMult = toMult(getBonus("rxnBaseMult_"));
   const bonusMult = toMult(getBonus("pct_"));
   const flat = getBonus("flat");
@@ -84,8 +85,8 @@ export function calcReaction(
   const averageMult = 1 + cRate * cDmg;
 
   const results = bases.map<CalcReactionResult>((value) => {
-    const base =
-      (coefficient * value * rxnBaseMult * bonusMult + flat) * elvMult * rxnMult * resMult;
+    const core = coefficient * value * baseMult * rxnBaseMult * bonusMult + flat;
+    const base = core * elvMult * rxnMult * resMult;
 
     return {
       base,
@@ -98,6 +99,7 @@ export function calcReaction(
     type: "reaction",
     bonusId,
     coefficient,
+    baseMult,
     rxnBaseMult,
     bonusMult,
     flat,
