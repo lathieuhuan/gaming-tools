@@ -64,12 +64,15 @@ export function ReactionItemTracker({ title, item, baseDMG }: ReactionItemTracke
         ])
         .flat();
 
-      basePartSpecs = [
-        {
-          containers: ["[", "]"],
-          specs: basePartSpecs,
-        },
-      ];
+      if (item.factors.length > 1) {
+        basePartSpecs = [
+          {
+            containers: ["[", "]"],
+            specs: basePartSpecs,
+          },
+        ];
+      }
+
       break;
     default:
       item satisfies never;
