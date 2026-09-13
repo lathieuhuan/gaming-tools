@@ -12,8 +12,8 @@ import {
 
 import {
   ATTACK_PATTERNS,
-  LUNAR_REACTIONS,
-  STELLAR_REACTIONS,
+  NATURE_LUNAR_REACTIONS,
+  NATURE_STELLAR_REACTIONS,
   TRANSFORMATIVE_REACTIONS,
 } from "@/constants/global";
 import { createExtraCalcItems } from "../createExtraCalcItems";
@@ -158,7 +158,11 @@ export function calculateSetup(setup: CalcSetup, options: CalculateSetupOptions 
 
   // ===== REACTION CALCULATION =====
 
-  for (const reaction of [...STELLAR_REACTIONS, ...LUNAR_REACTIONS, ...TRANSFORMATIVE_REACTIONS]) {
+  for (const reaction of [
+    ...NATURE_STELLAR_REACTIONS,
+    ...NATURE_LUNAR_REACTIONS,
+    ...TRANSFORMATIVE_REACTIONS,
+  ]) {
     resultNew.RXN.set(reaction, calcStandaloneReaction(main, target, reaction, elmtEvent));
   }
 

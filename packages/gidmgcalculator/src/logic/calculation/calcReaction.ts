@@ -9,10 +9,8 @@ import type {
   AttackElement,
   AttackReaction,
   ElementType,
-  LunarType,
-  StellarType,
+  StandaloneReaction,
   TalentCalcItemBonusId,
-  TransformativeReaction,
 } from "@/types";
 import type { CalcReactionBaseOutputs, CalcReactionResult } from "./types";
 
@@ -33,7 +31,7 @@ export function calcReaction(
   target: Target,
   bases: number[],
   attElmt: ActualAttackElement,
-  reaction: TransformativeReaction | LunarType | StellarType,
+  reaction: StandaloneReaction,
   inputs: CalcReactionInputs = {},
 ): CalcReactionBaseOutputs {
   const {

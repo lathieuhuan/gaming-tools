@@ -3,8 +3,9 @@ import type { Target } from "@/models/Target";
 import type {
   ActualAttackElement,
   ElementalEvent,
-  LunarReaction,
-  StandaloneReactionType,
+  NatureLunarReaction,
+  NatureReaction,
+  StandaloneReaction,
   TransformativeReaction,
 } from "@/types";
 import type { TraditionalCalcReactionOutputs } from "./types";
@@ -14,7 +15,7 @@ import { calcReaction } from "./calcReaction";
 export function calcStandaloneReaction(
   performer: Character,
   target: Target,
-  reaction: StandaloneReactionType,
+  reaction: NatureReaction,
   elmtEvent: ElementalEvent,
 ): TraditionalCalcReactionOutputs {
   let coefficient = 1;
@@ -51,11 +52,12 @@ export function calcStandaloneReaction(
   }
 
   // Stellar Vortex is actually an elemental event. It deals Stellar Swirl DMG.
-  reaction = reaction === "stellarVortex" ? "stellarSwirl" : reaction;
+  const standaloneReaction: StandaloneReaction =
+    reaction === "stellarVortex" ? "stellarSwirl" : reaction;
 
   const { baseReactionDMG } = performer;
 
-  const outputs = calcReaction(performer, target, [baseReactionDMG], attElmt, reaction, {
+  const outputs = calcReaction(performer, target, [baseReactionDMG], attElmt, standaloneReaction, {
     coefficient,
     absorption: elmtEvent.absorption,
     absorbReaction: elmtEvent.absorbReaction,
@@ -74,7 +76,7 @@ type ReactionSpec = {
   attElmt: ActualAttackElement;
 };
 
-const LUNAR_REACTION_SPECS: Record<LunarReaction, ReactionSpec> = {
+const LUNAR_REACTION_SPECS: Record<NatureLunarReaction, ReactionSpec> = {
   lunarCharged: { coef: 1.8, attElmt: "electro" },
   lunarCryst: { coef: 0.96, attElmt: "geo" },
 };

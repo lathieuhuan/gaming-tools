@@ -3,15 +3,18 @@ import { round } from "ron-utils";
 import { Match, StatsTable, Tabs } from "rond";
 
 import type { AttackBonusControl } from "@/models/Character";
-import type { AllAttributes, LunarType, StellarType } from "@/types";
+import type { AllAttributes, LunarReaction, StellarReaction } from "@/types";
 
-import { ATTACK_ELEMENTS, LUNAR_TYPES, STELLAR_TYPES } from "@/constants/global";
+import { ATTACK_ELEMENTS, LUNAR_REACTIONS, STELLAR_REACTIONS } from "@/constants/global";
 import { useTranslation } from "@/hooks";
 import { getRxnBonusesFromEM } from "@/logic/calculator";
 
 const { Row, Cell } = StatsTable;
 
-const lunarStellarTypes: (LunarType | StellarType)[] = [...LUNAR_TYPES, ...STELLAR_TYPES];
+const lunarStellarTypes: (LunarReaction | StellarReaction)[] = [
+  ...LUNAR_REACTIONS,
+  ...STELLAR_REACTIONS,
+];
 
 type DamageBonusType = "elemental" | "lunar-stellar";
 

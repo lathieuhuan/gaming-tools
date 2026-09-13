@@ -6,8 +6,8 @@ import type {
   AttackBonusKey,
   AttackElement,
   ElementalEvent,
-  LunarReaction,
-  StellarReaction,
+  NatureLunarReaction,
+  NatureStellarReaction,
   TransformativeReaction,
 } from "@/types";
 import type { CalcResultReactionItem } from "../types";
@@ -36,7 +36,7 @@ export function makeReactionCalc(performer: Character, target: Target) {
   const { attkBonusCtrl, baseReactionDMG } = performer;
 
   function calcLunarReaction(
-    reaction: LunarReaction,
+    reaction: NatureLunarReaction,
     recorder: ResultRecorder,
   ): CalcResultReactionItem {
     const getBonus = (key: AttackBonusKey, paths: GetAttackBonusPaths = []) => {
@@ -84,7 +84,7 @@ export function makeReactionCalc(performer: Character, target: Target) {
   }
 
   function calcStellarReaction(
-    reaction: StellarReaction,
+    reaction: NatureStellarReaction,
     vortexLv: number,
     recorder: ResultRecorder,
   ): CalcResultReactionItem {

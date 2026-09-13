@@ -8,8 +8,8 @@ import type {
   ElementType,
   ElementalEvent,
   LevelableTalentType,
-  LunarType,
-  StellarType,
+  LunarReaction,
+  StellarReaction,
   TalentCalcItem,
 } from "@/types";
 import type {
@@ -191,7 +191,7 @@ export function makeTalentItemCalc(
 
   function calcReactionItem(
     item: TalentCalcItem,
-    reaction: LunarType | StellarType,
+    reaction: LunarReaction | StellarReaction,
   ): DirectCalcReactionOutputs {
     // const { reaction } = item;
 

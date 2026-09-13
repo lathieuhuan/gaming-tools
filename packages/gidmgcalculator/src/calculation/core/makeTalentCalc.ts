@@ -8,8 +8,8 @@ import type {
   ElementalEvent,
   ElementType,
   LevelableTalentType,
-  LunarType,
-  StellarType,
+  LunarReaction,
+  StellarReaction,
   TalentCalcItem,
 } from "@/types";
 import type {
@@ -150,7 +150,7 @@ export function makeTalentCalc(
 
   function calcLunarAttackItem(
     item: TalentCalcItem,
-    lunar: LunarType,
+    lunar: LunarReaction,
     recorder: ResultRecorder,
   ): CalcResultAttackItem {
     const attPatt = alterConfig.attPatt || item.attPatt || default_.attPatt;
@@ -223,7 +223,7 @@ export function makeTalentCalc(
 
   function calcStellarAttackItem(
     item: TalentCalcItem,
-    stellar: StellarType,
+    stellar: StellarReaction,
     attElmt: AttackElement,
     coefficient: number,
     recorder: ResultRecorder,

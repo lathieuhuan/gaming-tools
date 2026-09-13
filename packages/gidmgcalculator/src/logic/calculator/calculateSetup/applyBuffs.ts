@@ -18,9 +18,9 @@ import type { CalcSetup } from "../CalcSetup";
 import {
   AMPLIFYING_REACTIONS,
   ELEMENT_TYPES,
-  LUNAR_TYPES,
+  LUNAR_REACTIONS,
   QUICKEN_REACTIONS,
-  STELLAR_TYPES,
+  STELLAR_REACTIONS,
   TRANSFORMATIVE_REACTIONS,
 } from "@/constants/global";
 import { getRxnBonusesFromEM } from "../getRxnBonusesFromEM";
@@ -388,7 +388,7 @@ export function applyBuffs(setup: CalcSetup, options: ApplyBuffsOptions = {}) {
       });
     }
 
-    for (const rxn of LUNAR_TYPES) {
+    for (const rxn of LUNAR_REACTIONS) {
       attkBonusCtrl.add({
         value: rxnBonuses.lunar,
         toType: rxn,
@@ -397,7 +397,7 @@ export function applyBuffs(setup: CalcSetup, options: ApplyBuffsOptions = {}) {
       });
     }
 
-    for (const rxn of STELLAR_TYPES) {
+    for (const rxn of STELLAR_REACTIONS) {
       attkBonusCtrl.add({
         value: rxnBonuses.stellar,
         toType: rxn,

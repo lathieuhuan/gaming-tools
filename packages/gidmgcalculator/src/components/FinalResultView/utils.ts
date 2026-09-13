@@ -1,18 +1,12 @@
 import type { CalcAspect } from "@/calculation/types";
 import type { CalcAttackItemOutputs } from "@/logic/calculation";
 import type { CalcResultItem } from "@/logic/calculator";
-import type {
-  AppCharacter,
-  AppWeapon,
-  LunarReaction,
-  StellarReaction,
-  TransformativeReaction,
-} from "@/types";
+import type { AppCharacter, AppWeapon, NatureReaction } from "@/types";
 
 import {
-  LUNAR_REACTIONS,
+  NATURE_LUNAR_REACTIONS,
+  NATURE_STELLAR_REACTIONS,
   NORMAL_ATTACKS,
-  STELLAR_REACTIONS,
   TRANSFORMATIVE_REACTIONS,
 } from "@/constants/global";
 
@@ -33,7 +27,7 @@ type TableExtraItemKey = {
 
 type TableReactionKey = {
   main: "RXN";
-  subs: (TransformativeReaction | LunarReaction | StellarReaction)[];
+  subs: NatureReaction[];
 };
 
 export type TableKey = TableCalcItemKey | TableWeaponKey | TableReactionKey | TableExtraItemKey;
@@ -66,7 +60,7 @@ export function getTableKeys(
 
   result.push({
     main: "RXN" as const,
-    subs: [...STELLAR_REACTIONS, ...LUNAR_REACTIONS, ...TRANSFORMATIVE_REACTIONS],
+    subs: [...NATURE_STELLAR_REACTIONS, ...NATURE_LUNAR_REACTIONS, ...TRANSFORMATIVE_REACTIONS],
   });
 
   if (weaponCalcItems) {

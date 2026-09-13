@@ -12,11 +12,11 @@ import type {
   LEVELABLE_TALENT_TYPES,
   LEVELS,
   LUNAR_REACTIONS,
-  LUNAR_TYPES,
+  NATURE_LUNAR_REACTIONS,
+  NATURE_STELLAR_REACTIONS,
   NORMAL_ATTACKS,
   QUICKEN_REACTIONS,
   STELLAR_REACTIONS,
-  STELLAR_TYPES,
   TALENT_TYPES,
   TRANSFORMATIVE_REACTIONS,
   WEAPON_TYPES,
@@ -66,11 +66,11 @@ export type AttackPattern = (typeof ATTACK_PATTERNS)[number];
 
 export type ActualAttackPattern = AttackPattern | "none";
 
-export type LunarType = (typeof LUNAR_TYPES)[number];
+export type LunarReaction = (typeof LUNAR_REACTIONS)[number];
 
-export type StellarType = (typeof STELLAR_TYPES)[number];
+export type StellarReaction = (typeof STELLAR_REACTIONS)[number];
 
-export type SpecialAttackPattern = LunarType | StellarType;
+export type SpecialAttackPattern = LunarReaction | StellarReaction;
 
 //
 
@@ -78,12 +78,12 @@ export type TalentCalcItemBonusId = `id.${number}`;
 
 export type AttackBonusType =
   | "all"
-  | LunarType
-  | StellarType
+  | LunarReaction
+  | StellarReaction
   | SwirlVariant
   | AttackPattern
   | AttackElement
-  | `${AttackPattern}.${AttackElement | LunarType | StellarType}`
+  | `${AttackPattern}.${AttackElement | LunarReaction | StellarReaction}`
   | ReactionType
   | TalentCalcItemBonusId;
 
@@ -113,16 +113,18 @@ export type TransformativeReaction = (typeof TRANSFORMATIVE_REACTIONS)[number];
 
 export type QuickenReaction = (typeof QUICKEN_REACTIONS)[number];
 
-export type LunarReaction = (typeof LUNAR_REACTIONS)[number];
+export type NatureLunarReaction = (typeof NATURE_LUNAR_REACTIONS)[number];
 
-export type StellarReaction = (typeof STELLAR_REACTIONS)[number];
+export type NatureStellarReaction = (typeof NATURE_STELLAR_REACTIONS)[number];
 
-export type StandaloneReactionType = TransformativeReaction | LunarType | StellarReaction;
+export type StandaloneReaction = StellarReaction | LunarReaction | TransformativeReaction;
+
+export type NatureReaction = NatureStellarReaction | NatureLunarReaction | TransformativeReaction;
 
 export type ReactionType =
-  | TransformativeReaction
-  | LunarReaction
   | StellarReaction
+  | LunarReaction
+  | TransformativeReaction
   | QuickenReaction
   | AmplifyingReaction;
 
