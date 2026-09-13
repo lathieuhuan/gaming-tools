@@ -2,7 +2,6 @@ import { ComponentProps } from "react";
 import { round } from "ron-utils";
 
 import type { AttackBonusControl } from "@/models/Character";
-import type { TalentCalcItemBonusId } from "@/types";
 
 import { useTranslation } from "@/hooks";
 import { suffixOf } from "@/utils/ui.utils";
@@ -19,14 +18,11 @@ export function Heading({ label, children, ...rest }: ComponentProps<"span"> & {
 }
 
 type RecordExclusivesProps = {
-  id: TalentCalcItemBonusId;
-  attkBonusCtrl: AttackBonusControl;
+  bonusGroups: ReturnType<AttackBonusControl["exclusiveGroups"]>;
 };
 
-export function RecordExclusives({ id, attkBonusCtrl }: RecordExclusivesProps) {
+export function RecordExclusives({ bonusGroups }: RecordExclusivesProps) {
   const { t } = useTranslation();
-
-  const bonusGroups = attkBonusCtrl.exclusiveGroups(id);
 
   if (bonusGroups.length === 0) {
     return null;

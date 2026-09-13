@@ -44,6 +44,7 @@ export type CalcReactionBaseOutputs = {
   type: "reaction";
   bonusId: TalentCalcItemBonusId | undefined;
   coefficient: number;
+  baseMult: number;
   rxnBaseMult: number;
   bonusMult: number;
   flat: number;

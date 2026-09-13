@@ -379,47 +379,47 @@ export function applyBuffs(setup: CalcSetup, options: ApplyBuffsOptions = {}) {
   if (em) {
     const rxnBonuses = getRxnBonusesFromEM(em);
 
-    for (const rxn of TRANSFORMATIVE_REACTIONS) {
+    for (const rxn of STELLAR_REACTIONS) {
       attkBonusCtrl.add({
-        value: rxnBonuses.transformative,
         toType: rxn,
         toKey: "pct_",
+        value: rxnBonuses.stellar,
         label: "From Elemental Mastery",
       });
     }
 
     for (const rxn of LUNAR_REACTIONS) {
       attkBonusCtrl.add({
+        toType: rxn,
+        toKey: "pct_",
         value: rxnBonuses.lunar,
-        toType: rxn,
-        toKey: "pct_",
-        label: "From Elemental Mastery",
-      });
-    }
-
-    for (const rxn of STELLAR_REACTIONS) {
-      attkBonusCtrl.add({
-        value: rxnBonuses.stellar,
-        toType: rxn,
-        toKey: "pct_",
-        label: "From Elemental Mastery",
-      });
-    }
-
-    for (const rxn of AMPLIFYING_REACTIONS) {
-      attkBonusCtrl.add({
-        value: rxnBonuses.amplifying,
-        toType: rxn,
-        toKey: "pct_",
         label: "From Elemental Mastery",
       });
     }
 
     for (const rxn of QUICKEN_REACTIONS) {
       attkBonusCtrl.add({
-        value: rxnBonuses.quicken,
         toType: rxn,
         toKey: "pct_",
+        value: rxnBonuses.quicken,
+        label: "From Elemental Mastery",
+      });
+    }
+
+    for (const rxn of AMPLIFYING_REACTIONS) {
+      attkBonusCtrl.add({
+        toType: rxn,
+        toKey: "pct_",
+        value: rxnBonuses.amplifying,
+        label: "From Elemental Mastery",
+      });
+    }
+
+    for (const rxn of TRANSFORMATIVE_REACTIONS) {
+      attkBonusCtrl.add({
+        toType: rxn,
+        toKey: "pct_",
+        value: rxnBonuses.transformative,
         label: "From Elemental Mastery",
       });
     }

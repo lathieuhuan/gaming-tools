@@ -26,9 +26,7 @@ export function CalcListTracker({ className, data, main }: CalcListTrackerProps)
                 title={key}
                 item={item}
                 exclusiveRecord={
-                  item.bonusId !== undefined && (
-                    <RecordExclusives id={item.bonusId} attkBonusCtrl={attkBonusCtrl} />
-                  )
+                  <RecordExclusives bonusGroups={attkBonusCtrl.exclusiveGroups(item.bonusId)} />
                 }
               />
             );
@@ -39,9 +37,7 @@ export function CalcListTracker({ className, data, main }: CalcListTrackerProps)
                 title={key}
                 item={item}
                 exclusiveRecord={
-                  item.bonusId !== undefined && (
-                    <RecordExclusives id={item.bonusId} attkBonusCtrl={attkBonusCtrl} />
-                  )
+                  <RecordExclusives bonusGroups={attkBonusCtrl.exclusiveGroups(item.bonusId)} />
                 }
                 baseDMG={Math.round(main.baseReactionDMG)}
               />
@@ -55,9 +51,7 @@ export function CalcListTracker({ className, data, main }: CalcListTrackerProps)
                 title={key}
                 item={item}
                 exclusiveRecord={
-                  item.bonusId !== undefined && (
-                    <RecordExclusives id={item.bonusId} attkBonusCtrl={attkBonusCtrl} />
-                  )
+                  <RecordExclusives bonusGroups={attkBonusCtrl.exclusiveGroups(item.bonusId)} />
                 }
               />
             );

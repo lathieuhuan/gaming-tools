@@ -17,7 +17,12 @@ type ReactionItemTrackerProps = {
   baseDMG: number;
 };
 
-export function ReactionItemTracker({ title, item, baseDMG }: ReactionItemTrackerProps) {
+export function ReactionItemTracker({
+  title,
+  item,
+  baseDMG,
+  exclusiveRecord,
+}: ReactionItemTrackerProps) {
   const { t } = useTranslation();
 
   if (!item?.results[0]?.base) {
@@ -28,16 +33,11 @@ export function ReactionItemTracker({ title, item, baseDMG }: ReactionItemTracke
   const cDmg = item.cDmg ? round(item.cDmg, 3) : 0;
   const cRate = round(item.cRate, 2);
 
-  let basePartSpecs: PartSpecType[] = [];
+  let factorPartSpecs: PartSpecType[] = [];
 
   switch (item.subType) {
     case "nature":
-      basePartSpecs = [
-        {
-          sign: null,
-          label: "Coefficient",
-          value: item.coefficient,
-        },
+      factorPartSpecs = [
         {
           sign: "*",
           label: "Base DMG",
@@ -45,11 +45,13 @@ export function ReactionItemTracker({ title, item, baseDMG }: ReactionItemTracke
         },
       ];
       break;
-    case "direct":
-      basePartSpecs = item.factors
+    case "direct": {
+      const isMultiFactor = item.factors.length > 1;
+
+      factorPartSpecs = item.factors
         .map<PartSpec[]>((factor, index) => [
           {
-            sign: index === 0 ? null : "+",
+            sign: index === 0 && !isMultiFactor ? "*" : "+",
             label: "Talent Mult.",
             value: factor.multiplier,
             process: (value) => `${round(value, 2)}%`,
@@ -64,16 +66,17 @@ export function ReactionItemTracker({ title, item, baseDMG }: ReactionItemTracke
         ])
         .flat();
 
-      if (item.factors.length > 1) {
-        basePartSpecs = [
+      if (isMultiFactor) {
+        factorPartSpecs = [
           {
+            sign: "*",
             containers: ["[", "]"],
-            specs: basePartSpecs,
+            specs: factorPartSpecs,
           },
         ];
       }
-
       break;
+    }
     default:
       item satisfies never;
   }
@@ -82,7 +85,19 @@ export function ReactionItemTracker({ title, item, baseDMG }: ReactionItemTracke
     {
       containers: ["(", ")"],
       specs: [
-        ...basePartSpecs,
+        {
+          sign: null,
+          label: "Coefficient",
+          value: item.coefficient,
+        },
+        ...factorPartSpecs,
+        {
+          sign: "*",
+          label: "Base DMG Mult.",
+          value: item.baseMult,
+          nullValue: 1,
+          process: (value) => `${round(value * 100, 2)}%`,
+        },
         {
           sign: "*",
           label: "Base DMG Mult.",
@@ -135,6 +150,8 @@ export function ReactionItemTracker({ title, item, baseDMG }: ReactionItemTracke
       </div>
 
       <ul className="mt-1 pl-4 text-light-hint text-sm leading-6 list-disc">
+        {exclusiveRecord}
+
         <li>
           <Heading label="Non-crit">{baseValue}</Heading> = <Parts specs={partSpecs} />
         </li>

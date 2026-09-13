@@ -30,6 +30,7 @@ export function Part(props: PartProps) {
 }
 
 type PartGroupSpec = {
+  sign?: string;
   containers: [string, string];
   specs: PartSpecType[];
 };
@@ -45,10 +46,11 @@ export function Parts({ specs }: PartsProps) {
     <>
       {specs.map((spec, index) => {
         if ("specs" in spec) {
-          const { containers, specs } = spec;
+          const { containers, specs, sign } = spec;
 
           return (
             <Fragment key={index}>
+              {sign ? <PositiveText> {sign} </PositiveText> : null}
               {containers[0]}
               <Parts specs={specs} />
               {containers[1]}
