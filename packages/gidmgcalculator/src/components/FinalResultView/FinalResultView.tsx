@@ -1,7 +1,8 @@
-import type { CalcResultNew } from "@/logic/calculator";
+import type { CalcResult } from "@/logic/calculator";
 
 import { useTranslation } from "@/hooks";
-import { attackCalcItemSubtitleParts, DEFAULT_RESULT_ITEM, displayResultItem } from "./utils";
+import { attackCalcItemSubtitleParts, reactionCalcItemSubtitleParts } from "@/utils/ui.utils";
+import { DEFAULT_RESULT_ITEM, displayResultItem } from "./utils";
 
 import { FinalResultLayout, type FinalResultLayoutProps } from "./FinalResultLayout";
 
@@ -9,7 +10,7 @@ type FinalResultViewProps = Pick<
   FinalResultLayoutProps,
   "character" | "talentMutable" | "onTalentLevelChange" | "extraKeys"
 > & {
-  calcResult: CalcResultNew;
+  calcResult: CalcResult;
 };
 
 export function FinalResultView({ calcResult, ...props }: FinalResultViewProps) {
@@ -36,15 +37,16 @@ export function FinalResultView({ calcResult, ...props }: FinalResultViewProps) 
         let title: string | undefined;
 
         switch (result?.type) {
-          case "attack": {
-            const parts = attackCalcItemSubtitleParts(result).map((part) => t(part));
-            title = parts.join(" / ");
+          case "attack":
+            title = attackCalcItemSubtitleParts(result)
+              .map((part) => t(part))
+              .join(" / ");
             break;
-          }
-          case "reaction": {
-            title = t(`${result.attElmt}_attElmt`);
+          case "reaction":
+            title = reactionCalcItemSubtitleParts(result)
+              .map((part) => t(part))
+              .join(" / ");
             break;
-          }
           case "healing":
           case "shield":
           case "other":

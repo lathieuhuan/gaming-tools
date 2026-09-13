@@ -70,8 +70,6 @@ export type LunarReaction = (typeof LUNAR_REACTIONS)[number];
 
 export type StellarReaction = (typeof STELLAR_REACTIONS)[number];
 
-export type SpecialAttackPattern = LunarReaction | StellarReaction;
-
 //
 
 export type TalentCalcItemBonusId = `id.${number}`;

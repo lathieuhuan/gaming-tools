@@ -1,12 +1,12 @@
 import type { AttackElement } from "@/types";
 import type { CalcSetup } from "../CalcSetup";
-import type { CalcResultNew } from "../types";
+import type { CalcResult } from "../types";
 
 import {
   calcAttack,
   CalcItemFactor,
+  calcNatureReaction,
   calcOther,
-  calcStandaloneReaction,
   makeTalentItemCalc,
 } from "@/logic/calculation";
 
@@ -38,7 +38,7 @@ export function calculateSetup(setup: CalcSetup, options: CalculateSetupOptions 
 
   const attackAlters = getAttackAlters(setup);
 
-  const resultNew: CalcResultNew = {
+  const result: CalcResult = {
     NAs: new Map(),
     ES: new Map(),
     EB: new Map(),
@@ -47,24 +47,7 @@ export function calculateSetup(setup: CalcSetup, options: CalculateSetupOptions 
     WP: new Map(),
   };
 
-  // const EMPTY_ATTACK_RESULT: CalcResultAttackItem = {
-  //   type: "attack",
-  //   values: [],
-  //   attElmt: "phys",
-  //   attPatt: "none",
-  //   specPatt: null,
-  //   reaction: null,
-  //   recorder: new ResultRecorder(),
-  // };
-
   // ===== TALENT CALCULATION =====
-
-  const { polestarProc, polestarCount } = elmtEvent;
-  let stellarConductCoefficient = 1;
-
-  if (polestarProc && polestarCount) {
-    stellarConductCoefficient += 0.4 + polestarCount * 0.05;
-  }
 
   for (const ATT_PATT of ATTACK_PATTERNS) {
     const talentType = ATT_PATT === "ES" || ATT_PATT === "EB" ? ATT_PATT : "NAs";
@@ -74,57 +57,32 @@ export function calculateSetup(setup: CalcSetup, options: CalculateSetupOptions 
     const talentCalc = makeTalentItemCalc(main, target, talentType, defaultValues, alterConfig);
 
     for (const calcItem of calcList[ATT_PATT]) {
-      const { type = "attack", stellar } = calcItem;
+      const { type = "attack", reaction } = calcItem;
 
       if (type === "attack") {
         if (alterConfig?.disabled) {
           continue;
         }
 
-        if (calcItem.lunar) {
-          // resultGroup[calcItem.name] = calculator.calcLunarAttackItem(
-          //   calcItem,
-          //   calcItem.lunar,
-          //   recorder,
-          // );
+        if (reaction) {
+          result[talentType].set(
+            calcItem.name,
+            talentCalc.calcReactionItem(calcItem, reaction, elmtEvent),
+          );
           continue;
         }
 
-        if (stellar) {
-          // let coefficient = 1;
-
-          // switch (stellar) {
-          //   case "stellarConduct":
-          //     coefficient = stellarConductCoefficient;
-          //     break;
-          //   case "stellarSwirl":
-          //     coefficient = 1;
-          //     break;
-          //   default:
-          //     stellar satisfies never;
-          // }
-
-          // resultGroup[calcItem.name] = calculator.calcStellarAttackItem(
-          //   calcItem,
-          //   stellar,
-          //   main.data.vision,
-          //   coefficient,
-          //   recorder,
-          // );
-          continue;
-        }
-
-        const itemElmtAlter = calcItem.id ? attackAlters.get(calcItem.id)?.attElmt : undefined;
+        const itemElmtAlter = calcItem.id && attackAlters.get(calcItem.id)?.attElmt;
 
         const attackResult = talentCalc.calcAttackItem(calcItem, elmtEvent, {
           attElmtAlter: itemElmtAlter,
         });
 
-        resultNew[talentType].set(calcItem.name, attackResult);
+        result[talentType].set(calcItem.name, attackResult);
         continue;
       }
 
-      resultNew[talentType].set(calcItem.name, talentCalc.calcOtherItem(calcItem));
+      result[talentType].set(calcItem.name, talentCalc.calcOtherItem(calcItem));
     }
   }
 
@@ -144,7 +102,7 @@ export function calculateSetup(setup: CalcSetup, options: CalculateSetupOptions 
 
     switch (type) {
       case "attack":
-        resultNew.EXTRA.set(calcItem.name, extraCalc.calcAttackItem(calcItem, elmtEvent));
+        result.EXTRA.set(calcItem.name, extraCalc.calcAttackItem(calcItem, elmtEvent));
         break;
       case "healing":
       case "shield":
@@ -163,7 +121,7 @@ export function calculateSetup(setup: CalcSetup, options: CalculateSetupOptions 
     ...NATURE_LUNAR_REACTIONS,
     ...TRANSFORMATIVE_REACTIONS,
   ]) {
-    resultNew.RXN.set(reaction, calcStandaloneReaction(main, target, reaction, elmtEvent));
+    result.RXN.set(reaction, calcNatureReaction(main, target, reaction, elmtEvent));
   }
 
   // ===== WEAPON CALCULATION =====
@@ -188,7 +146,7 @@ export function calculateSetup(setup: CalcSetup, options: CalculateSetupOptions 
           factors: [factor],
         });
 
-        resultNew.WP.set(calcItem.name, weaponResult);
+        result.WP.set(calcItem.name, weaponResult);
         break;
       }
       case "healing":
@@ -196,7 +154,7 @@ export function calculateSetup(setup: CalcSetup, options: CalculateSetupOptions 
       case "other": {
         const otherResult = Object.assign(calcOther(main, type, base), factor);
 
-        resultNew.WP.set(calcItem.name, otherResult);
+        result.WP.set(calcItem.name, otherResult);
         break;
       }
       default:
@@ -204,7 +162,7 @@ export function calculateSetup(setup: CalcSetup, options: CalculateSetupOptions 
     }
   });
 
-  setup.result = resultNew;
+  setup.result = result;
 
   return setup.clone();
 }

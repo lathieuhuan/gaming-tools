@@ -7,7 +7,8 @@ import type {
   CalcItemType,
   ElementType,
   ExclusiveAttackBonusGroup,
-  SpecialAttackPattern,
+  LunarReaction,
+  StellarReaction,
   TalentCalcItemBonusId,
 } from "@/types";
 import type { ResultRecorder } from "./core/ResultRecorder";
@@ -61,6 +62,8 @@ export type CalcResultItem = {
   exclusiveBonusId?: TalentCalcItemBonusId;
   values: CalcResultItemValue[];
 };
+
+type SpecialAttackPattern = LunarReaction | StellarReaction;
 
 export type CalcResultAttackItem = CalcResultItem & {
   type: "attack";

@@ -4,6 +4,7 @@ import { round } from "ron-utils";
 import type { CalcReactionOutputs } from "@/logic/calculation";
 
 import { useTranslation } from "@/hooks";
+import { reactionCalcItemSubtitleParts } from "@/utils/ui.utils";
 import { resultValue } from "./utils";
 
 import { Parts, PartSpec, PartSpecType } from "./components/ResultParts";
@@ -30,7 +31,7 @@ export function ReactionItemTracker({ title, item, baseDMG }: ReactionItemTracke
   let basePartSpecs: PartSpecType[] = [];
 
   switch (item.subType) {
-    case "traditional":
+    case "nature":
       basePartSpecs = [
         {
           sign: null,
@@ -124,7 +125,11 @@ export function ReactionItemTracker({ title, item, baseDMG }: ReactionItemTracke
   return (
     <div>
       <p className="font-medium">{t(title)}</p>
-      {/* <div className="text-sm text-secondary-1">{t(`${item.attElmt}_attElmt`)}</div> */}
+      <div className="text-sm text-secondary-1">
+        {reactionCalcItemSubtitleParts(item)
+          .map((part) => t(part))
+          .join(" / ")}
+      </div>
 
       <ul className="mt-1 pl-4 text-light-hint text-sm leading-6 list-disc">
         <li>

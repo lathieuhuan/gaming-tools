@@ -2,15 +2,15 @@ import { Array_ } from "ron-utils";
 
 import type { GetAttackBonusPaths, Target } from "@/models";
 import type {
+  ActualAttackElement,
   AttackAlter,
   AttackElement,
   CalcItemDefaultValues,
   ElementType,
   ElementalEvent,
   LevelableTalentType,
-  LunarReaction,
-  StellarReaction,
   TalentCalcItem,
+  TalentReaction,
 } from "@/types";
 import type {
   CalcAttackItemOutputs,
@@ -23,16 +23,11 @@ import { Character } from "@/models/Character";
 import { calcAttack } from "./calcAttack";
 import { calcOther } from "./calcOther";
 import { calcReaction } from "./calcReaction";
-import { DEFAULT_CALC_OTHER_OUTPUTS } from "./constants";
-
-type SeparateCalcItemBase = CalcItemFactor & {
-  value: number;
-};
-
-type JointCalcItemBase = {
-  value: number;
-  factors: CalcItemFactor[];
-};
+import {
+  DEFAULT_CALC_OTHER_OUTPUTS,
+  DIRECT_LUNAR_REACTION_COEFFICIENTS,
+  LUNAR_REACTION_ELEMENTS,
+} from "./constants";
 
 type CalcAttackItemInputs = {
   attElmtAlter?: ElementType;
@@ -54,7 +49,7 @@ export function makeTalentItemCalc(
   const { vision, weaponType } = performer.data;
   const talentLv = talentType ? performer.finalTalentLv(talentType) : 0;
 
-  function calcBases(item: TalentCalcItem, extraMult: number): Base {
+  function calcBase(item: TalentCalcItem, extraMult: number): Base {
     let values: number[] = [];
     const factors: CalcItemFactor[] = [];
 
@@ -128,7 +123,7 @@ export function makeTalentItemCalc(
           reaction = infuseReaction;
 
           // if external infusion is the same as self infusion or character's element,
-          // infuse_reaction should be null and reaction (default) should be used instead
+          // infuseReaction should be null and reaction (default) should be used instead
           if (infusion === alter.attElmt || infusion === vision) {
             reaction = elmtEvent.reaction;
           }
@@ -146,7 +141,7 @@ export function makeTalentItemCalc(
       attPatt !== "none" ? [attPatt, `${attPatt}.${attElmt}`] : [];
 
     const extraMult = attkBonusCtrl.get("mult_", ["all", item.id, attElmt, ...attPattPaths]);
-    const base = calcBases(item, extraMult);
+    const base = calcBase(item, extraMult);
 
     const result = calcAttack(performer, target, base.values, {
       itemId: item.id,
@@ -173,7 +168,7 @@ export function makeTalentItemCalc(
     }
 
     const extraTalentMult = attkBonusCtrl.get("mult_", [item.id]);
-    const base = calcBases(item, extraTalentMult);
+    const base = calcBase(item, extraTalentMult);
     const factor = base.factors[0];
 
     if (item.type === undefined || item.type === "attack") {
@@ -191,18 +186,55 @@ export function makeTalentItemCalc(
 
   function calcReactionItem(
     item: TalentCalcItem,
-    reaction: LunarReaction | StellarReaction,
+    reaction: TalentReaction,
+    elmtEvent: ElementalEvent,
   ): DirectCalcReactionOutputs {
-    // const { reaction } = item;
+    const { polestarProc, polestarCount } = elmtEvent;
+
+    let coefficient: number = 1;
+    const attPatt = item.attPatt || default_.attPatt;
+    let attElmt: ActualAttackElement;
+
+    switch (reaction) {
+      case "lunarCharged":
+      case "lunarCryst":
+      case "lunarBloom":
+        attElmt = LUNAR_REACTION_ELEMENTS[reaction];
+        coefficient = DIRECT_LUNAR_REACTION_COEFFICIENTS[reaction];
+        break;
+      case "stellarSwirl":
+        attElmt = "anemo";
+        coefficient = 1;
+        break;
+      case "stellarConduct":
+        attElmt = performer.data.vision;
+
+        if (polestarProc && polestarCount) {
+          coefficient += 0.4 + polestarCount * 0.05;
+        }
+        break;
+      default:
+        reaction satisfies never;
+        throw new Error(`Invalid reaction.`);
+    }
 
     const extraMult = attkBonusCtrl.get("mult_", [item.id]);
-    const base = calcBases(item, extraMult);
+    const base = calcBase(item, extraMult);
 
-    const outputs = calcReaction(performer, target, base.values, "anemo", reaction);
+    const extraCRate = performer.getAttr("cRate_") + attkBonusCtrl.get("cRate_", ["all"]);
+    const extraCDmg = performer.getAttr("cDmg_") + attkBonusCtrl.get("cDmg_", ["all"]);
+
+    const outputs = calcReaction(performer, target, base.values, coefficient, reaction, attElmt, {
+      bonusId: item.id,
+      extraBonusPaths: attPatt !== "none" ? [`${attPatt}.${reaction}`] : [],
+      extraCRate,
+      extraCDmg,
+    });
 
     return {
       ...outputs,
       subType: "direct",
+      reaction,
       factors: base.factors,
     };
   }
@@ -210,5 +242,6 @@ export function makeTalentItemCalc(
   return {
     calcAttackItem,
     calcOtherItem,
+    calcReactionItem,
   };
 }

@@ -103,6 +103,5 @@ export function calcAttack(
     results,
     attElmt,
     attPatt,
-    specPatt: undefined, // TODO
   };
 }

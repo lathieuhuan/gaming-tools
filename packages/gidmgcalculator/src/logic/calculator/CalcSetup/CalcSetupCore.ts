@@ -23,7 +23,7 @@ import type {
   TeammateWeapon,
   WeaponBuffCtrl,
 } from "@/types";
-import type { CalcResultNew } from "../types";
+import type { CalcResult } from "../types";
 
 import { createTeammate } from "@/logic/entity.logic";
 import {
@@ -64,7 +64,7 @@ export class CalcSetupCore {
     public customBuffCtrls: CustomBuffCtrl[],
     public customDebuffCtrls: CustomDebuffCtrl[],
 
-    public result: CalcResultNew,
+    public result: CalcResult,
   ) {
     this.calcItems = [];
   }

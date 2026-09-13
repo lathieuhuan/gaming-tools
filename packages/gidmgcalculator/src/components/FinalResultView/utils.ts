@@ -1,5 +1,4 @@
 import type { CalcAspect } from "@/calculation/types";
-import type { CalcAttackItemOutputs } from "@/logic/calculation";
 import type { CalcResultItem } from "@/logic/calculator";
 import type { AppCharacter, AppWeapon, NatureReaction } from "@/types";
 
@@ -116,11 +115,3 @@ export const displayResultItem = (item: CalcResultItem): Record<CalcAspect, stri
       return DEFAULT_RESULT_ITEM;
   }
 };
-
-export function attackCalcItemSubtitleParts(item: CalcAttackItemOutputs) {
-  return [
-    `${item.attElmt}_attElmt`,
-    item.attPatt && item.attPatt !== "none" && item.attPatt,
-    item.specPatt && item.specPatt,
-  ].filter((part) => typeof part === "string");
-}

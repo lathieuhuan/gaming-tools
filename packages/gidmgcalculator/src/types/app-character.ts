@@ -116,6 +116,8 @@ export type CalcItemFlatFactor =
       scale?: number;
     };
 
+export type TalentReaction = LunarReaction | StellarReaction;
+
 export type TalentCalcItem = {
   id?: TalentCalcItemBonusId;
   type?: CalcItemType;
@@ -131,8 +133,7 @@ export type TalentCalcItem = {
   attPatt?: ActualAttackPattern;
   attElmt?: ActualAttackElement;
   subAttPatt?: "FCA";
-  lunar?: LunarReaction;
-  stellar?: StellarReaction;
+  reaction?: TalentReaction;
 };
 
 // ========== BUFF / BONUS ==========

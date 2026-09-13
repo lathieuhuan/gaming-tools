@@ -4,7 +4,6 @@ import type { Character, GetAttackBonusPaths } from "@/models/Character";
 import type { Target } from "@/models/Target";
 import type {
   ActualAttackElement,
-  ActualAttackPattern,
   AttackBonusKey,
   AttackElement,
   AttackReaction,
@@ -18,10 +17,9 @@ import { limitCRate } from "@/utils/stat.utils";
 
 type CalcReactionInputs = {
   bonusId?: TalentCalcItemBonusId;
-  coefficient?: number;
-  attPatt?: ActualAttackPattern;
   absorption?: ElementType | null;
   absorbReaction?: AttackReaction;
+  extraBonusPaths?: GetAttackBonusPaths;
   extraCRate?: number;
   extraCDmg?: number;
 };
@@ -30,20 +28,21 @@ export function calcReaction(
   performer: Character,
   target: Target,
   bases: number[],
-  attElmt: ActualAttackElement,
+  coefficient: number,
   reaction: StandaloneReaction,
+  attElmt: ActualAttackElement,
   inputs: CalcReactionInputs = {},
 ): CalcReactionBaseOutputs {
   const {
     bonusId,
-    coefficient = 1,
     absorption,
     absorbReaction,
+    extraBonusPaths = [],
     extraCRate = 0,
     extraCDmg = 0,
   } = inputs;
 
-  const getBonusPaths: GetAttackBonusPaths = [bonusId, reaction];
+  const getBonusPaths: GetAttackBonusPaths = [bonusId, reaction, ...extraBonusPaths];
 
   let attElmt_: AttackElement;
   let rxnMult = 1;

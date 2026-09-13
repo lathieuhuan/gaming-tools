@@ -9,7 +9,7 @@ export type CalcResultItem = CalcAttackItemOutputs | CalcOtherItemOutputs | Calc
 
 export type CalcResultGroup = Map<string, CalcResultItem>;
 
-export type CalcResultNew = {
+export type CalcResult = {
   [key in LevelableTalentType]: CalcResultGroup;
 } & {
   EXTRA: CalcResultGroup;
@@ -17,4 +17,4 @@ export type CalcResultNew = {
   WP: CalcResultGroup;
 };
 
-export type CalcResultKey = keyof CalcResultNew;
+export type CalcResultKey = keyof CalcResult;

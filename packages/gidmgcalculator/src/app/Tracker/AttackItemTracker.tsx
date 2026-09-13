@@ -3,8 +3,8 @@ import { round } from "ron-utils";
 
 import type { CalcAttackItemOutputs } from "@/logic/calculation";
 
-import { attackCalcItemSubtitleParts } from "@/components/FinalResultView/utils";
 import { useTranslation } from "@/hooks";
+import { attackCalcItemSubtitleParts } from "@/utils/ui.utils";
 import { resultValue } from "./utils";
 
 import { Parts, PartSpec, PartSpecType } from "./components/ResultParts";
@@ -22,10 +22,6 @@ export function AttackItemTracker({ title, item, exclusiveRecord }: AttackItemTr
   const baseValue = resultValue(item.results, "base");
   const cDmg = round(item.cDmg, 3);
   const cRate = round(item.cRate, 2);
-
-  const subtitle = attackCalcItemSubtitleParts(item)
-    .map((part) => t(part))
-    .join(" / ");
 
   const factorParts = item.factors
     .map<PartSpec[]>((factor, index) => [
@@ -101,7 +97,11 @@ export function AttackItemTracker({ title, item, exclusiveRecord }: AttackItemTr
   return (
     <div>
       <p className="font-medium">{title}</p>
-      <div className="text-sm text-secondary-1">{subtitle}</div>
+      <div className="text-sm text-secondary-1">
+        {attackCalcItemSubtitleParts(item)
+          .map((part) => t(part))
+          .join(" / ")}
+      </div>
 
       <ul className="pl-4 text-light-hint text-sm leading-6 list-disc">
         {exclusiveRecord}

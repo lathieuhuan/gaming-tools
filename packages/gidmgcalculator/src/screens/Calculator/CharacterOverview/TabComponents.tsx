@@ -62,7 +62,7 @@ export function ArtifactsTab() {
     <div className="h-full flex flex-col">
       <Tabs
         size="md"
-        variant="primary"
+        variant="secondary"
         items={[
           { value: 0, label: "Details" },
           { value: 1, label: "Set Bonus" },

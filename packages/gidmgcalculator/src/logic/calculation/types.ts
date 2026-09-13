@@ -3,8 +3,8 @@ import type {
   AttackElement,
   CalcItemBasedOn,
   CalcItemType,
-  SpecialAttackPattern,
   TalentCalcItemBonusId,
+  TalentReaction,
 } from "@/types";
 
 export type CalcAspect = "base" | "crit" | "average";
@@ -26,7 +26,6 @@ export type CalcAttackOutputs = {
   results: CalcAttackResult[];
   attElmt: AttackElement;
   attPatt: ActualAttackPattern;
-  specPatt: SpecialAttackPattern | undefined; // TODO check
 };
 
 export type CalcReactionResult = Record<CalcAspect, number>;
@@ -67,15 +66,16 @@ export type CalcAttackItemOutputs = CalcAttackOutputs & {
   factors: CalcItemFactor[];
 };
 
-export type TraditionalCalcReactionOutputs = CalcReactionBaseOutputs & {
-  subType: "traditional";
+export type NatureCalcReactionOutputs = CalcReactionBaseOutputs & {
+  subType: "nature";
 };
 
 export type DirectCalcReactionOutputs = CalcReactionBaseOutputs & {
   subType: "direct";
+  reaction: TalentReaction;
   factors: CalcItemFactor[];
 };
 
-export type CalcReactionOutputs = TraditionalCalcReactionOutputs | DirectCalcReactionOutputs;
+export type CalcReactionOutputs = NatureCalcReactionOutputs | DirectCalcReactionOutputs;
 
 export type CalcOtherItemOutputs = CalcOtherOutputs & CalcItemFactor;
