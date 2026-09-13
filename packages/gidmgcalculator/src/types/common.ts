@@ -117,6 +117,8 @@ export type LunarReaction = (typeof LUNAR_REACTIONS)[number];
 
 export type StellarReaction = (typeof STELLAR_REACTIONS)[number];
 
+export type StandaloneReactionType = TransformativeReaction | LunarType | StellarReaction;
+
 export type ReactionType =
   | TransformativeReaction
   | LunarReaction

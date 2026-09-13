@@ -4,42 +4,46 @@ import type { Character, GetAttackBonusPaths } from "@/models/Character";
 import type { Target } from "@/models/Target";
 import type {
   ActualAttackElement,
+  ActualAttackPattern,
   AttackBonusKey,
   AttackElement,
   AttackReaction,
-  ElementalEvent,
   ElementType,
-  LunarReaction,
-  StellarReaction,
+  LunarType,
+  StellarType,
   TalentCalcItemBonusId,
   TransformativeReaction,
 } from "@/types";
-import type {
-  CalcReactionBaseOutputs,
-  CalcReactionResult,
-  TraditionalCalcReactionOutputs,
-} from "./types";
+import type { CalcReactionBaseOutputs, CalcReactionResult } from "./types";
 
 import { limitCRate } from "@/utils/stat.utils";
 
 type CalcReactionInputs = {
   bonusId?: TalentCalcItemBonusId;
   coefficient?: number;
+  attPatt?: ActualAttackPattern;
   absorption?: ElementType | null;
   absorbReaction?: AttackReaction;
+  extraCRate?: number;
+  extraCDmg?: number;
 };
-
-type TraditionalReaction = TransformativeReaction | LunarReaction | StellarReaction;
 
 export function calcReaction(
   performer: Character,
   target: Target,
   bases: number[],
   attElmt: ActualAttackElement,
-  reaction: TraditionalReaction,
+  reaction: TransformativeReaction | LunarType | StellarType,
   inputs: CalcReactionInputs = {},
 ): CalcReactionBaseOutputs {
-  const { bonusId, coefficient = 1, absorption, absorbReaction } = inputs;
+  const {
+    bonusId,
+    coefficient = 1,
+    absorption,
+    absorbReaction,
+    extraCRate = 0,
+    extraCDmg = 0,
+  } = inputs;
 
   const getBonusPaths: GetAttackBonusPaths = [bonusId, reaction];
 
@@ -62,8 +66,8 @@ export function calcReaction(
     attElmt_ = attElmt;
   }
 
-  function getBonus(key: AttackBonusKey) {
-    return performer.attkBonusCtrl.get(key, getBonusPaths);
+  function getBonus(key: AttackBonusKey, extraPaths: GetAttackBonusPaths = []) {
+    return performer.attkBonusCtrl.get(key, [...getBonusPaths, ...extraPaths]);
   }
 
   const rxnBaseMult = toMult(getBonus("rxnBaseMult_"));
@@ -72,8 +76,12 @@ export function calcReaction(
   const elvMult = toMult(getBonus("elvMult_"));
   const resMult = target.resistMults[attElmt_];
 
-  const cRate = limitCRate(getBonus("cRate_")) / 100;
-  const cDmg = getBonus("cDmg_") / 100;
+  // console.log("reaction", reaction);
+  // console.log("performer.attkBonusCtrl", performer.attkBonusCtrl);
+  // console.log("bonusMult", bonusMult);
+
+  const cRate = (limitCRate(getBonus("cRate_", [attElmt_])) + extraCRate) / 100;
+  const cDmg = (getBonus("cDmg_", [attElmt_]) + extraCDmg) / 100;
 
   const cDmgMult = 1 + cDmg;
   const averageMult = 1 + cRate * cDmg;
@@ -84,7 +92,7 @@ export function calcReaction(
 
     return {
       base,
-      crit: base * cDmgMult,
+      crit: cRate !== 0 ? base * cDmgMult : 0,
       average: base * averageMult,
     };
   });
@@ -105,73 +113,3 @@ export function calcReaction(
     attElmt: attElmt_,
   };
 }
-
-export function calcTraditionalReaction(
-  performer: Character,
-  target: Target,
-  reaction: TraditionalReaction,
-  elmtEvent: ElementalEvent,
-): TraditionalCalcReactionOutputs {
-  let coefficient = 1;
-  let attElmt: ActualAttackElement;
-
-  switch (reaction) {
-    case "lunarCharged":
-    case "lunarCryst": {
-      const spec = LUNAR_REACTION_COEFFICIENT[reaction];
-
-      coefficient = spec.coef;
-      attElmt = spec.attElmt;
-      break;
-    }
-    case "stellarSwirl":
-      coefficient = 0.75;
-      attElmt = "anemo";
-      break;
-    case "stellarVortex":
-      coefficient = elmtEvent.vortexLv === 3 ? 3 : 2;
-      attElmt = "cryo";
-      break;
-    default: {
-      const spec = TRANSFORMATIVE_REACTION_SPEC[reaction];
-
-      coefficient = spec.coef;
-      attElmt = spec.attElmt;
-    }
-  }
-
-  const { baseReactionDMG } = performer;
-
-  const outputs = calcReaction(performer, target, [baseReactionDMG], attElmt, reaction, {
-    coefficient,
-    absorption: elmtEvent.absorption,
-    absorbReaction: elmtEvent.absorbReaction,
-  });
-
-  return {
-    ...outputs,
-    subType: "traditional",
-  };
-}
-
-type ReactionSpec = {
-  coef: number;
-  attElmt: ActualAttackElement;
-};
-
-export const LUNAR_REACTION_COEFFICIENT: Record<LunarReaction, ReactionSpec> = {
-  lunarCharged: { coef: 1.8, attElmt: "electro" },
-  lunarCryst: { coef: 0.96, attElmt: "geo" },
-};
-
-const TRANSFORMATIVE_REACTION_SPEC: Record<TransformativeReaction, ReactionSpec> = {
-  bloom: { coef: 2, attElmt: "dendro" },
-  hyperbloom: { coef: 3, attElmt: "dendro" },
-  burgeon: { coef: 3, attElmt: "dendro" },
-  burning: { coef: 0.25, attElmt: "pyro" },
-  swirl: { coef: 0.6, attElmt: "absorb" },
-  superconduct: { coef: 1.5, attElmt: "cryo" },
-  electroCharged: { coef: 2, attElmt: "electro" },
-  overloaded: { coef: 2.75, attElmt: "pyro" },
-  shattered: { coef: 3, attElmt: "phys" },
-};

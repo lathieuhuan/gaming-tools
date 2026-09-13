@@ -8,13 +8,21 @@ import type {
   ElementType,
   ElementalEvent,
   LevelableTalentType,
+  LunarType,
+  StellarType,
   TalentCalcItem,
 } from "@/types";
-import type { CalcAttackItemOutputs, CalcItemFactor, CalcOtherItemOutputs } from "./types";
+import type {
+  CalcAttackItemOutputs,
+  CalcItemFactor,
+  CalcOtherItemOutputs,
+  DirectCalcReactionOutputs,
+} from "./types";
 
-import { Character } from "@/models";
+import { Character } from "@/models/Character";
 import { calcAttack } from "./calcAttack";
 import { calcOther } from "./calcOther";
+import { calcReaction } from "./calcReaction";
 import { DEFAULT_CALC_OTHER_OUTPUTS } from "./constants";
 
 type SeparateCalcItemBase = CalcItemFactor & {
@@ -30,6 +38,11 @@ type CalcAttackItemInputs = {
   attElmtAlter?: ElementType;
 };
 
+type Base = {
+  values: number[];
+  factors: CalcItemFactor[];
+};
+
 export function makeTalentItemCalc(
   performer: Character,
   target: Target,
@@ -41,11 +54,9 @@ export function makeTalentItemCalc(
   const { vision, weaponType } = performer.data;
   const talentLv = talentType ? performer.finalTalentLv(talentType) : 0;
 
-  function calcBases(
-    item: TalentCalcItem,
-    extraMult: number,
-  ): SeparateCalcItemBase[] | JointCalcItemBase {
-    const bases: SeparateCalcItemBase[] = [];
+  function calcBases(item: TalentCalcItem, extraMult: number): Base {
+    let values: number[] = [];
+    const factors: CalcItemFactor[] = [];
 
     for (const factor of Array_.toArray(item.factor)) {
       const {
@@ -57,8 +68,9 @@ export function makeTalentItemCalc(
       const attribute = performer.getAttr(basedOn);
       const multiplier = root * Character.getTalentMult(scale, talentLv) + extraMult;
 
-      bases.push({
-        value: (attribute * multiplier) / 100,
+      values.push((attribute * multiplier) / 100);
+
+      factors.push({
         basedOnValue: attribute,
         basedOnAttr: basedOn,
         multiplier,
@@ -66,22 +78,10 @@ export function makeTalentItemCalc(
     }
 
     if (item.jointFactors) {
-      const jointBase: JointCalcItemBase = {
-        value: 0,
-        factors: [],
-      };
-
-      for (const base of bases) {
-        const { value, ...factor } = base;
-
-        jointBase.value += value;
-        jointBase.factors.push(factor);
-      }
-
-      return jointBase;
+      values = [values.reduce((sum, value) => sum + value, 0)];
     }
 
-    return bases;
+    return { values, factors };
   }
 
   function calcAttackItem(
@@ -146,32 +146,16 @@ export function makeTalentItemCalc(
       attPatt !== "none" ? [attPatt, `${attPatt}.${attElmt}`] : [];
 
     const extraMult = attkBonusCtrl.get("mult_", ["all", item.id, attElmt, ...attPattPaths]);
+    const base = calcBases(item, extraMult);
 
-    let bases: number[] = [];
-    let factors: CalcItemFactor[] = [];
-
-    const itemBases = calcBases(item, extraMult);
-
-    if (Array.isArray(itemBases)) {
-      bases = itemBases.map((base) => base.value);
-      factors = itemBases.map((base) => ({
-        basedOnValue: base.basedOnValue,
-        basedOnAttr: base.basedOnAttr,
-        multiplier: base.multiplier,
-      }));
-    } else {
-      bases = [itemBases.value];
-      factors = itemBases.factors;
-    }
-
-    const result = calcAttack(performer, target, bases, {
+    const result = calcAttack(performer, target, base.values, {
       itemId: item.id,
       attElmt,
       attPatt,
       reaction,
     });
 
-    return Object.assign(result, { factors });
+    return Object.assign(result, { factors: base.factors });
   }
 
   function calcOtherItem(item: TalentCalcItem): CalcOtherItemOutputs {
@@ -189,34 +173,38 @@ export function makeTalentItemCalc(
     }
 
     const extraTalentMult = attkBonusCtrl.get("mult_", [item.id]);
-    const itemBases = calcBases(item, extraTalentMult);
-
-    let baseValue = 0;
-    let factor: CalcItemFactor;
-
-    if (Array.isArray(itemBases)) {
-      baseValue = itemBases[0].value;
-      factor = {
-        basedOnValue: itemBases[0].basedOnValue,
-        basedOnAttr: itemBases[0].basedOnAttr,
-        multiplier: itemBases[0].multiplier,
-      };
-    } else {
-      baseValue = itemBases.value;
-      factor = itemBases.factors[0];
-    }
+    const base = calcBases(item, extraTalentMult);
+    const factor = base.factors[0];
 
     if (item.type === undefined || item.type === "attack") {
       console.error("item type should not be undefined or attack");
       return { ...DEFAULT_CALC_OTHER_OUTPUTS, ...factor };
     }
 
-    const result = calcOther(performer, item.type, baseValue, {
+    const result = calcOther(performer, item.type, base.values[0], {
       itemId: item.id,
       flatBonus: flat,
     });
 
     return Object.assign(result, factor);
+  }
+
+  function calcReactionItem(
+    item: TalentCalcItem,
+    reaction: LunarType | StellarType,
+  ): DirectCalcReactionOutputs {
+    // const { reaction } = item;
+
+    const extraMult = attkBonusCtrl.get("mult_", [item.id]);
+    const base = calcBases(item, extraMult);
+
+    const outputs = calcReaction(performer, target, base.values, "anemo", reaction);
+
+    return {
+      ...outputs,
+      subType: "direct",
+      factors: base.factors,
+    };
   }
 
   return {

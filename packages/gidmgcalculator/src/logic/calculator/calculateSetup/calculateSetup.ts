@@ -6,7 +6,7 @@ import {
   calcAttack,
   CalcItemFactor,
   calcOther,
-  calcTraditionalReaction,
+  calcStandaloneReaction,
   makeTalentItemCalc,
 } from "@/logic/calculation";
 
@@ -75,12 +75,6 @@ export function calculateSetup(setup: CalcSetup, options: CalculateSetupOptions 
 
     for (const calcItem of calcList[ATT_PATT]) {
       const { type = "attack", stellar } = calcItem;
-      // const recorder = new ResultRecorder(
-      //   {
-      //     exclusives: main.attkBonusCtrl.exclusiveGroups(calcItem.id),
-      //   },
-      //   options?.shouldLog,
-      // );
 
       if (type === "attack") {
         if (alterConfig?.disabled) {
@@ -164,22 +158,8 @@ export function calculateSetup(setup: CalcSetup, options: CalculateSetupOptions 
 
   // ===== REACTION CALCULATION =====
 
-  for (const reaction of STELLAR_REACTIONS) {
-    const reactionResult = calcTraditionalReaction(main, target, reaction, elmtEvent);
-
-    resultNew.RXN.set(reaction, reactionResult);
-  }
-
-  for (const reaction of LUNAR_REACTIONS) {
-    const reactionResult = calcTraditionalReaction(main, target, reaction, elmtEvent);
-
-    resultNew.RXN.set(reaction, reactionResult);
-  }
-
-  for (const reaction of TRANSFORMATIVE_REACTIONS) {
-    const reactionResult = calcTraditionalReaction(main, target, reaction, elmtEvent);
-
-    resultNew.RXN.set(reaction, reactionResult);
+  for (const reaction of [...STELLAR_REACTIONS, ...LUNAR_REACTIONS, ...TRANSFORMATIVE_REACTIONS]) {
+    resultNew.RXN.set(reaction, calcStandaloneReaction(main, target, reaction, elmtEvent));
   }
 
   // ===== WEAPON CALCULATION =====
@@ -191,13 +171,6 @@ export function calculateSetup(setup: CalcSetup, options: CalculateSetupOptions 
     const multiplier = value + incre * weapon.refi;
     const attribute = main.getAttr(basedOn);
     const base = (attribute * multiplier) / 100;
-
-    // const recorder = new ResultRecorder(
-    //   {
-    //     factors: [{ label: basedOn, value: attribute, mult }],
-    //   },
-    //   options?.shouldLog,
-    // );
 
     const factor: CalcItemFactor = {
       basedOnValue: value,

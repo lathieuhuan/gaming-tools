@@ -1,4 +1,4 @@
-import type { CalcAspect, CalcResultItemValue } from "@/calculation/types";
+import type { CalcAspect } from "@/calculation/types";
 import type { CalcAttackItemOutputs } from "@/logic/calculation";
 import type { CalcResultItem } from "@/logic/calculator";
 import type {
@@ -79,22 +79,6 @@ export function getTableKeys(
   return result;
 }
 
-export const displayValues = (values: CalcResultItemValue[], key: CalcAspect) => {
-  const firstValue = values?.at(0)?.[key];
-
-  if (firstValue) {
-    let result = `${Math.round(firstValue)}`;
-
-    for (let i = 1; i < values.length; i++) {
-      result += ` + ${Math.round(values[i][key])}`;
-    }
-
-    return result;
-  }
-
-  return undefined;
-};
-
 export const DEFAULT_RESULT_ITEM: Record<CalcAspect, string | number> = {
   base: 0,
   crit: 0,
@@ -116,19 +100,19 @@ export const displayResultItem = (item: CalcResultItem): Record<CalcAspect, stri
       }
 
       return {
-        base: bases.join(" + "),
-        crit: crits.join(" + "),
-        average: averages.join(" + "),
+        base: bases[0] === 0 ? "-" : bases.join(" + "),
+        crit: crits[0] === 0 ? "-" : crits.join(" + "),
+        average: averages[0] === 0 ? "-" : averages.join(" + "),
       };
     }
     case "healing":
     case "shield":
     case "other": {
-      const base = Math.round(item.result);
+      const base = Math.round(item.result) || "-";
 
       return {
         base,
-        crit: 0,
+        crit: "-",
         average: base,
       };
     }
