@@ -15,8 +15,6 @@ const CLASS_BY_SIZE = {
 
 type ComplexSelectProps<TValue extends string | number> = {
   className?: string;
-  /** Default 'medium' */
-  // size?: "medium" | "small";
   selectId: string;
   value?: TValue;
   options?: Array<{
@@ -30,7 +28,6 @@ type ComplexSelectProps<TValue extends string | number> = {
 
 export function ComplexSelect<TValue extends string | number>({
   className,
-  // size = "medium",
   selectId,
   value,
   options = [],
@@ -70,7 +67,7 @@ export function ComplexSelect<TValue extends string | number>({
   };
 
   const { label } = options.find((option) => option.value === value) || {};
-  // const nonActionOptionHeight = size === "medium" ? 33.6 : 28;
+
   const nonActionOptionHeight = 33.6;
   const dropHeight = options.reduce(
     (accumulator, option) => accumulator + (option.renderActions ? 69.6 : nonActionOptionHeight),

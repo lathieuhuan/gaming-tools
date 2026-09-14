@@ -1,6 +1,6 @@
 import type { RootState } from "@Store/store";
 
-import { makeCharacterCalcFromDb } from "@/logic/userdb.logic";
+import { createCharacterFromDb } from "@/logic/userdb.logic";
 import { useSelector } from "@Store/hooks";
 import { ActionProvider } from "./ActionProvider";
 import { ActiveCharContext } from "./context";
@@ -17,7 +17,7 @@ const parseUserdb = (state: RootState) => {
     };
   }
 
-  const character = makeCharacterCalcFromDb(activeCharacter, userWps, userArts)
+  const character = createCharacterFromDb(activeCharacter, userWps, userArts)
     .initCalculation()
     .finalizeCalculation();
 
