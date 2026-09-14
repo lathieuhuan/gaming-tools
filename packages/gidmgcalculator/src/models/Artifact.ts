@@ -81,11 +81,11 @@ export class Artifact {
 
     let { level = this.level, mainStatType = this.mainStatType } = options;
 
-    if (level !== this.level) {
+    if (level !== this.level || rarity !== this.rarity) {
       level = correctLevel(level, rarity);
     }
 
-    if (mainStatType !== this.mainStatType) {
+    if (mainStatType !== this.mainStatType || type !== this.type) {
       mainStatType = correctMainStatType(mainStatType, type);
     }
 

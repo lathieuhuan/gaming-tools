@@ -6,7 +6,7 @@ import type { Artifact } from "@/models";
 import type { AppArtifact, ArtifactType, RawArtifactState } from "@/types";
 
 import { createArtifact } from "@/logic/entity.logic";
-import { getAppArtifact, getAppArtifacts } from "@/services/app-data";
+import { getAppArtifacts } from "@/services/app-data";
 
 // Component
 import {
@@ -168,8 +168,8 @@ const ArtifactSmith = ({
     selectBody: HTMLDivElement | null,
   ) => {
     if (!batchForging || !artifactConfig) return;
-    const artifactSet = getAppArtifact(artifactConfig.code);
-    if (!artifactSet) return;
+
+    const artifactSet = artifactConfig.data;
 
     const onStopBatchForging = () => {
       const newArtifactType = artifactTypes[0] ?? "flower";
