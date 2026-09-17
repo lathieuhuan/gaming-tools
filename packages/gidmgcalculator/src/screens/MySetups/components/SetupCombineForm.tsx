@@ -1,27 +1,34 @@
-import { FormEvent, KeyboardEventHandler, useState } from "react";
+import { ComponentProps, FormEvent, useState } from "react";
 import { Array_ } from "ron-utils";
-import { Input } from "rond";
+import { clsx, ExactOmit, Input } from "rond";
 
 import { useStoreSnapshot } from "@/lib/dynamic-store";
 import { isDbSetup } from "@/logic/setup.logic";
 import { useDispatch } from "@Store/hooks";
 import { combineSetups, selectDbSetups } from "@Store/userdbSlice";
-import { useCombineManager } from "./hooks/useCombineManager";
 
-export default function FirstCombine(props: { onClose: () => void }) {
+import { SetupCombineMenu } from "./SetupCombineMenu";
+
+type SetupCombineFormProps = ExactOmit<ComponentProps<"form">, "onSubmit"> & {
+  onFinish?: () => void;
+};
+
+export function SetupCombineForm({ className, onFinish, ...props }: SetupCombineFormProps) {
   const dispatch = useDispatch();
   const dbSetups = useStoreSnapshot(selectDbSetups);
 
+  const [pickedIDs, setPickedIDs] = useState<number[]>([]);
   const [input, setInput] = useState("Team Setup");
+  const [isError, setIsError] = useState(false);
 
   const setupOptions = dbSetups.filter(isDbSetup).filter((setup) => {
     return setup.type === "original" && setup.teammates.length === 3;
   });
 
-  const { isError, pickedIDs, combineMenu, setIsError } = useCombineManager({
-    options: setupOptions,
-    limit: 4,
-  });
+  const handleChangePickedIDs = (ids: number[]) => {
+    setPickedIDs(ids);
+    setIsError(false);
+  };
 
   const tryCombine = () => {
     if (pickedIDs.length < 2) {
@@ -35,23 +42,23 @@ export default function FirstCombine(props: { onClose: () => void }) {
     const mains: number[] = [];
     const all: number[] = [];
 
-    for (const ID of pickedIDs) {
-      const { main, teammates } = Array_.findById(setupOptions, ID)!;
+    for (const id of pickedIDs) {
+      const { main, teammates } = Array_.findById(setupOptions, id)!;
 
       if (mains.includes(main.code)) {
         setIsError(true);
         return;
-      } else {
-        mains.push(main.code);
       }
+
+      mains.push(main.code);
 
       if (!all.includes(main.code)) {
         if (all.length === 4) {
           setIsError(true);
           return;
-        } else {
-          all.push(main.code);
         }
+
+        all.push(main.code);
       }
 
       for (const teammate of teammates) {
@@ -59,21 +66,15 @@ export default function FirstCombine(props: { onClose: () => void }) {
           if (all.length === 4) {
             setIsError(true);
             return;
-          } else {
-            all.push(teammate.code);
           }
+
+          all.push(teammate.code);
         }
       }
     }
 
     dispatch(combineSetups({ pickedIDs, name: input }));
-    props.onClose();
-  };
-
-  const onKeydownInput: KeyboardEventHandler<HTMLInputElement> = (e) => {
-    if (e.key === "Enter") {
-      tryCombine();
-    }
+    onFinish?.();
   };
 
   const onSubmit = (e: FormEvent<HTMLFormElement>) => {
@@ -82,14 +83,26 @@ export default function FirstCombine(props: { onClose: () => void }) {
   };
 
   return (
-    <form id="setup-combine" className="h-full flex flex-col break-words" onSubmit={onSubmit}>
-      <p className={"px-2 " + (isError ? "text-danger-2" : "text-light-hint")}>
-        {isError
-          ? "You cannot combine these setups."
-          : "Choose at least 2 setups with the same party members."}
-      </p>
+    <form
+      className={clsx("h-full flex flex-col break-words", className)}
+      onSubmit={onSubmit}
+      {...props}
+    >
+      <div className="px-2">
+        {isError ? (
+          <p className="text-danger-2">You cannot combine these setups.</p>
+        ) : (
+          <p className="text-light-hint">Choose at least 2 setups with the same party members.</p>
+        )}
+      </div>
 
-      <div className="mt-2 px-2 grow custom-scrollbar">{combineMenu}</div>
+      <SetupCombineMenu
+        className="mt-2 px-2 grow custom-scrollbar"
+        setups={setupOptions}
+        pickedIds={pickedIDs}
+        limit={4}
+        onChange={handleChangePickedIDs}
+      />
 
       <div className="mt-4">
         <Input
@@ -97,7 +110,11 @@ export default function FirstCombine(props: { onClose: () => void }) {
           size="medium"
           value={input}
           maxLength={32}
-          onKeyDown={onKeydownInput}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              tryCombine();
+            }
+          }}
           onChange={setInput}
         />
       </div>

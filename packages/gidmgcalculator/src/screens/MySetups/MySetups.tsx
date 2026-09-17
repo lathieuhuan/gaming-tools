@@ -1,7 +1,7 @@
-import { useEffect, useMemo } from "react";
+import { useEffect, useId, useMemo } from "react";
 import { FaInfo } from "react-icons/fa";
 import { Array_ } from "ron-utils";
-import { Button, WarehouseLayout, clsx, useScreenWatcher } from "rond";
+import { Button, EmptyFallback, WarehouseLayout, clsx, useScreenWatcher } from "rond";
 
 import type { SetupOverviewInfo } from "./types";
 
@@ -9,29 +9,70 @@ import { useSetupImporter } from "@/lib/setup-importer";
 import { isDbSetup, restoreCalcSetup } from "@/logic/setup.logic";
 import { parseDbArtifacts, parseDbWeapon } from "@/logic/userdb.logic";
 import { useDispatch, useSelector } from "@Store/hooks";
-import { MySetupsModalType, updateUI } from "@Store/ui";
 import { selectActiveSetupId, viewDbSetup } from "@Store/userdbSlice";
 import { createSetupForTeammate } from "./logic/createSetupForTeammate";
+import { overviewToCalcSetup } from "./logic/overviewToCalcSetup";
 import { setupToOverviewInfo } from "./logic/setupToOverviewInfo";
 
 // Component
+import { FinalResultView } from "@/components/FinalResultView";
+import { ModalAction } from "@/components/ModalAction";
 import { WarehouseWrapper } from "../components/WarehouseWrapper";
-import { MySetupsModals } from "./MySetupsModals";
-import { SelectedResult } from "./SelectedResult";
-import { SetupView } from "./SetupView";
+import { ActiveSetupModalProvider } from "./ActiveSetupModalProvider";
+import { SetupCombineForm } from "./components/SetupCombineForm";
+import { SetupView } from "./components/SetupView";
+import { Tips } from "./components/Tips";
 
 function MySetups() {
   const dispatch = useDispatch();
+  const combineFormId = useId();
+
   const screenWatcher = useScreenWatcher();
   const setupImporter = useSetupImporter();
+
   const userdb = useSelector((state) => state.userdb);
   const selectedSetupId = useSelector(selectActiveSetupId);
 
   const { userWps: userWeapons, userArts: userArtifacts, userSetups } = userdb;
 
   useEffect(() => {
-    document.getElementById(`setup-${selectedSetupId}`)?.scrollIntoView();
+    document.getElementById(`setup-${selectedSetupId}`)?.scrollIntoView({ block: "center" });
   }, [selectedSetupId]);
+
+  const overviewInfos = useMemo(() => {
+    //
+    return Array_.mapFilter(
+      userSetups,
+      (setup) => setupToOverviewInfo(setup, userdb),
+      (info) => info !== null,
+    );
+  }, [userSetups, userWeapons, userArtifacts]);
+
+  const { calcSetup, selectedInfo } = useMemo(() => {
+    const selectedSetup = Array_.findById(userSetups, selectedSetupId);
+
+    if (selectedSetup === undefined) {
+      return {
+        calcSetup: undefined,
+        selectedInfo: undefined,
+      };
+    }
+
+    const selectedDbSetupId = isDbSetup(selectedSetup) ? selectedSetup.ID : selectedSetup.shownID;
+    const selectedInfo = overviewInfos.find((info) => info.setup.ID === selectedDbSetupId);
+
+    if (selectedInfo === undefined) {
+      return {
+        calcSetup: undefined,
+        selectedInfo: undefined,
+      };
+    }
+
+    return {
+      calcSetup: overviewToCalcSetup(selectedInfo),
+      selectedInfo,
+    };
+  }, [userSetups, overviewInfos, selectedSetupId]);
 
   const handleEditSetup = (info: SetupOverviewInfo) => {
     const { dbSetup } = info;
@@ -49,11 +90,7 @@ function MySetups() {
     });
   };
 
-  const openModal = (type: MySetupsModalType) => () => {
-    updateUI({ mySetupsModalType: type });
-  };
-
-  const handleCalculateTeammateSetup = (info: SetupOverviewInfo, teammateIndex: number) => {
+  const handleCalcTeammateSetup = (info: SetupOverviewInfo, teammateIndex: number) => {
     const setup = createSetupForTeammate(info, teammateIndex, userdb);
 
     setupImporter.import({
@@ -64,20 +101,6 @@ function MySetups() {
     });
   };
 
-  const overviewInfos = useMemo(() => {
-    //
-    return Array_.truthify(userSetups.map((setup) => setupToOverviewInfo(setup, userdb)));
-    //
-  }, [userSetups, userWeapons, userArtifacts]);
-
-  const selectedSetup = Array_.findById(userSetups, selectedSetupId);
-  const selectedDbSetupId = selectedSetup
-    ? isDbSetup(selectedSetup)
-      ? selectedSetup.ID
-      : selectedSetup.shownID
-    : undefined;
-  const selectedInfo = overviewInfos.find((info) => info.setup.ID === selectedDbSetupId);
-
   return (
     <WarehouseLayout
       className="h-full"
@@ -86,61 +109,83 @@ function MySetups() {
       }}
       actions={
         <div className="flex items-center space-x-4">
-          <Button size="small" icon={<FaInfo />} onClick={openModal("TIPS")} />
-          <Button onClick={openModal("FIRST_COMBINE")}>Combine</Button>
+          <ModalAction
+            title="Tips"
+            preset="large"
+            bodyCls="grow custom-scrollbar"
+            content={<Tips />}
+          >
+            <Button size="small" icon={<FaInfo />} />
+          </ModalAction>
+
+          <ModalAction
+            title="Combine setups"
+            className="min-w-75 h-[90vh] max-h-256 bg-dark-2"
+            bodyCls="grow hide-scrollbar"
+            withActions
+            formId={combineFormId}
+            content={(_, setOpen) => (
+              <SetupCombineForm id={combineFormId} onFinish={() => setOpen(false)} />
+            )}
+          >
+            <Button>Combine</Button>
+          </ModalAction>
         </div>
       }
     >
-      <div
-        className={clsx(
-          userSetups.length && "p-1 xm:pr-3",
-          "shrink-0 custom-scrollbar scroll-smooth",
-        )}
-        style={{
-          minWidth: screenWatcher.isFromSize("lg") ? "541px" : "19.5rem",
-        }}
-      >
-        <div className="flex flex-col items-start space-y-3 peer">
+      <ActiveSetupModalProvider setupName={selectedInfo?.setup.name} calcSetup={calcSetup}>
+        <EmptyFallback
+          containerCls={clsx(
+            "shrink-0 custom-scrollbar scroll-smooth",
+            userSetups.length && "p-1 xm:pr-3",
+            screenWatcher.isFromSize("lg") ? "min-w-135" : "min-w-78",
+          )}
+          className="flex flex-col items-start space-y-3 peer"
+          messageCls="text-lg"
+          message="No setups found"
+        >
           {overviewInfos.map((info) => {
             const { setup, complexSetup } = info;
             const setupId = complexSetup?.ID || setup.ID;
 
             return (
-              <div key={setupId} id={`setup-${setupId}`} className="w-full p-1">
-                <div
-                  className={clsx(
-                    "px-2 pt-3 pb-2 rounded-lg bg-dark-3",
-                    setupId === selectedSetupId
-                      ? "shadow-hightlight-1 shadow-active"
-                      : "shadow-common",
-                  )}
-                  onClick={() => dispatch(viewDbSetup(setupId))}
-                >
-                  <SetupView
-                    {...info}
-                    onEditSetup={() => handleEditSetup(info)}
-                    onCalcTeammateSetup={(teammateIndex) =>
-                      handleCalculateTeammateSetup(info, teammateIndex)
-                    }
-                  />
-                </div>
+              <div
+                id={`setup-${setupId}`}
+                key={setupId}
+                className={clsx(
+                  "px-2 pt-3 pb-2 rounded-lg bg-dark-3",
+                  setupId === selectedSetupId
+                    ? "shadow-hightlight-1 shadow-active"
+                    : "shadow-common",
+                )}
+                onClick={() => dispatch(viewDbSetup(setupId))}
+              >
+                <SetupView
+                  {...info}
+                  onEditSetup={() => handleEditSetup(info)}
+                  onCalcTeammateSetup={(teammateIndex) =>
+                    handleCalcTeammateSetup(info, teammateIndex)
+                  }
+                />
               </div>
             );
           })}
+        </EmptyFallback>
+      </ActiveSetupModalProvider>
+
+      <div className="w-87 h-full px-4 pt-2 pb-4 rounded-lg bg-dark-3 flex flex-col shrink-0">
+        <p className="text-sm text-right truncate shrink-0">{selectedInfo?.setup.name}</p>
+
+        <div className="mt-2 grow hide-scrollbar">
+          {calcSetup && (
+            <FinalResultView
+              character={calcSetup.main}
+              calcResult={calcSetup.result}
+              extraKeys={calcSetup.calcItems.map((item) => item.name)}
+            />
+          )}
         </div>
-
-        <p className="py-4 text-light-hint text-lg text-center hidden peer-empty:block">
-          No setups found
-        </p>
       </div>
-
-      <div className="shrink-0 px-4 pt-2 pb-4 rounded-lg bg-dark-3" style={{ width: "21.75rem" }}>
-        {selectedInfo && (
-          <SelectedResult setup={selectedInfo.setup} dbSetup={selectedInfo.dbSetup} />
-        )}
-      </div>
-
-      <MySetupsModals />
     </WarehouseLayout>
   );
 }

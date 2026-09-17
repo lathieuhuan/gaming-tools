@@ -14,17 +14,7 @@ export type AppModalType =
   | "CHAR_ENHANCE_NOTICE"
   | "";
 
-export type MySetupsModalType =
-  | "TIPS"
-  | "FIRST_COMBINE"
-  | "COMBINE_MORE"
-  | "SHARE_SETUP"
-  | "REMOVE_SETUP"
-  | "STATS"
-  | "MODIFIERS"
-  | "WEAPON"
-  | "ARTIFACTS"
-  | "";
+export type MySetupsModalType = "FIRST_COMBINE" | "COMBINE_MORE" | "";
 
 export type TrackerState = "open" | "close" | "hidden";
 

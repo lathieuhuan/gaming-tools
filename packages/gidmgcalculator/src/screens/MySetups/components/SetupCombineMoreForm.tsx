@@ -1,4 +1,6 @@
+import { ComponentProps, useState } from "react";
 import { Array_ } from "ron-utils";
+import { clsx, ExactOmit } from "rond";
 
 import type { DbComplexSetup, DbSetup } from "@/types";
 
@@ -6,7 +8,8 @@ import { useStoreSnapshot } from "@/lib/dynamic-store";
 import { isDbSetup } from "@/logic/setup.logic";
 import { useDispatch, useSelector } from "@Store/hooks";
 import { addSetupToComplex, selectActiveSetupId, selectDbSetups } from "@Store/userdbSlice";
-import { useCombineManager } from "./hooks/useCombineManager";
+
+import { SetupCombineMenu } from "./SetupCombineMenu";
 
 type CombineMoreProcessedResult = {
   dbSetups: (DbSetup | DbComplexSetup)[];
@@ -53,43 +56,49 @@ function useCombineMoreProcessor(setupID: number) {
   return result;
 }
 
-type CombineMoreProps = {
-  onClose: () => void;
+type SetupCombineMoreFormProps = ExactOmit<ComponentProps<"form">, "onSubmit"> & {
+  onFinish?: () => void;
 };
 
-export default function CombineMore({ onClose }: CombineMoreProps) {
+export function SetupCombineMoreForm({ className, onFinish, ...props }: SetupCombineMoreFormProps) {
   const dispatch = useDispatch();
   const setupID = useSelector(selectActiveSetupId);
 
+  const [pickedIDs, setPickedIDs] = useState<number[]>([]);
+  const [isError, setIsError] = useState(false);
+
   const { dbSetups, targetSetup, setupOptions, remainCharacters } =
     useCombineMoreProcessor(setupID);
-  const { isError, pickedIDs, combineMenu, setIsError } = useCombineManager({
-    options: setupOptions,
-    limit: remainCharacters.length,
-  });
+
+  const handleChangePickedIDs = (ids: number[]) => {
+    setPickedIDs(ids);
+    setIsError(false);
+  };
 
   const tryCombine = () => {
-    if (pickedIDs.length) {
-      const existedCodes: number[] = [];
-
-      for (const pickedID of pickedIDs) {
-        const setup = Array_.findById(dbSetups, pickedID);
-
-        if (setup && isDbSetup(setup)) {
-          const { code } = setup.main;
-
-          if (existedCodes.includes(code)) {
-            setIsError(true);
-            return;
-          } else {
-            existedCodes.push(code);
-          }
-        }
-      }
-
-      dispatch(addSetupToComplex({ complexID: setupID, pickedIDs }));
-      onClose();
+    if (pickedIDs.length === 0) {
+      return;
     }
+
+    const existedCodes: number[] = [];
+
+    for (const pickedID of pickedIDs) {
+      const setup = Array_.findById(dbSetups, pickedID);
+
+      if (setup && isDbSetup(setup)) {
+        const { code } = setup.main;
+
+        if (existedCodes.includes(code)) {
+          setIsError(true);
+          return;
+        }
+
+        existedCodes.push(code);
+      }
+    }
+
+    dispatch(addSetupToComplex({ complexID: setupID, pickedIDs }));
+    onFinish?.();
   };
 
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -98,18 +107,28 @@ export default function CombineMore({ onClose }: CombineMoreProps) {
   };
 
   return (
-    <form id="setup-combine-more" className="h-full flex flex-col break-words" onSubmit={onSubmit}>
-      <p className={"px-2 " + (isError ? "text-danger-2" : "text-light-hint")}>
+    <form
+      className={clsx("h-full flex flex-col break-words", className)}
+      onSubmit={onSubmit}
+      {...props}
+    >
+      <div className="px-2">
         {isError ? (
-          "These 2 Setups feature the same Character."
+          <p className="text-danger-2">These 2 Setups feature the same Character.</p>
         ) : (
-          <>
+          <p className="text-light-hint">
             Choose setups to be combined into "<b>{targetSetup?.name}</b>".
-          </>
+          </p>
         )}
-      </p>
+      </div>
 
-      <div className="mt-2 px-2 grow custom-scrollbar">{combineMenu}</div>
+      <SetupCombineMenu
+        className="mt-2 px-2 grow custom-scrollbar"
+        setups={setupOptions}
+        pickedIds={pickedIDs}
+        limit={remainCharacters.length}
+        onChange={handleChangePickedIDs}
+      />
     </form>
   );
 }

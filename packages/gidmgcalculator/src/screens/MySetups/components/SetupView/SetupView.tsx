@@ -1,20 +1,22 @@
-import { memo, useState } from "react";
+import { memo, useId, useState } from "react";
 import isEqual from "react-fast-compare";
 import { FaPlus, FaShareAlt, FaUnlink, FaWrench } from "react-icons/fa";
 import { Button, ButtonGroup, CloseButton, Modal, TrashCanSvg } from "rond";
 
 import type { Teammate } from "@/models";
-import type { SetupOverviewInfo } from "../types";
+import type { SetupOverviewInfo } from "../../types";
 
 import { Artifact } from "@/models";
 import { useDispatch } from "@Store/hooks";
-import { MySetupsModalType, updateUI } from "@Store/ui";
 import { switchShownSetupInComplex, uncombineSetups, viewDbSetup } from "@Store/userdbSlice";
+import { useOpenSetupModal } from "../../contexts/SetupModal";
 
 // Component
 import { CharacterPortrait } from "@/components/CharacterPortrait";
 import { EnhanceTag } from "@/components/EnhanceTag";
 import { GenshinImage } from "@/components/GenshinImage";
+import { ModalAction } from "@/components/ModalAction";
+import { SetupCombineMoreForm } from "../SetupCombineMoreForm";
 import { GearIcon } from "./GearIcon";
 import { TeammateDetail } from "./TeammateDetail";
 
@@ -25,9 +27,13 @@ type SetupViewProps = SetupOverviewInfo & {
 
 function SetupViewCore({ setup, complexSetup, onEditSetup, onCalcTeammateSetup }: SetupViewProps) {
   const dispatch = useDispatch();
+  const combineFormId = useId();
+
   const { main, teammates } = setup;
   const { allIDs } = complexSetup || {};
   const { data: mainData, weapon, atfGear } = main;
+
+  const openSetupModal = useOpenSetupModal();
 
   const [teammateDetail, setTeammateDetail] = useState({
     open: false,
@@ -38,10 +44,6 @@ function SetupViewCore({ setup, complexSetup, onEditSetup, onCalcTeammateSetup }
   const mainColorText = `font-medium text-${mainData.vision}`;
   const selectedTeammate = teammates[teammateDetail.index];
   const isOriginalSetup = setup.type === "original";
-
-  const openModal = (type: MySetupsModalType) => () => {
-    updateUI({ mySetupsModalType: type });
-  };
 
   const closeTeammateDetail = () => {
     setTeammateDetail({
@@ -99,16 +101,23 @@ function SetupViewCore({ setup, complexSetup, onEditSetup, onCalcTeammateSetup }
         <div className="mt-2 lg:mt-0 pb-2 flex space-x-3 justify-end">
           <Button icon={<FaWrench />} onClick={onEditSetup} />
 
-          <Button icon={<FaShareAlt />} onClick={openModal("SHARE_SETUP")} />
+          <Button icon={<FaShareAlt />} onClick={() => openSetupModal("SHARE")} />
 
           {isOriginalSetup ? (
-            <Button icon={<TrashCanSvg />} onClick={openModal("REMOVE_SETUP")} />
+            <Button icon={<TrashCanSvg />} onClick={() => openSetupModal("REMOVE")} />
           ) : (
-            <Button
-              icon={<FaPlus />}
-              disabled={!allIDs || Object.keys(allIDs).length >= 4}
-              onClick={openModal("COMBINE_MORE")}
-            />
+            <ModalAction
+              title="Add setups to the complex"
+              className="min-w-75 h-[90vh] max-h-256 bg-dark-2"
+              bodyCls="grow hide-scrollbar"
+              withActions
+              formId={combineFormId}
+              content={(_, setOpen) => (
+                <SetupCombineMoreForm id={combineFormId} onFinish={() => setOpen(false)} />
+              )}
+            >
+              <Button icon={<FaPlus />} disabled={!allIDs || Object.keys(allIDs).length >= 4} />
+            </ModalAction>
           )}
         </div>
       </div>
@@ -178,20 +187,20 @@ function SetupViewCore({ setup, complexSetup, onEditSetup, onCalcTeammateSetup }
                 children: "Stats",
                 variant: "custom",
                 className: "bg-dark-3",
-                onClick: openModal("STATS"),
+                onClick: () => openSetupModal("STATS"),
               },
               {
                 children: "Modifiers",
                 variant: "custom",
                 className: "bg-dark-3",
-                onClick: openModal("MODIFIERS"),
+                onClick: () => openSetupModal("MODIFIERS"),
               },
             ]}
           />
 
           <div className="flex justify-center">
             <div className="grid grid-cols-3 gap-2">
-              <GearIcon item={weapon.data} onClick={openModal("WEAPON")} />
+              <GearIcon item={weapon.data} onClick={() => openSetupModal("WEAPON")} />
 
               {atfGear.slots((slot) => {
                 if (!slot.isFilled) {
@@ -207,7 +216,7 @@ function SetupViewCore({ setup, complexSetup, onEditSetup, onCalcTeammateSetup }
                       beta: piece.data.beta,
                       rarity: piece.rarity || 5,
                     }}
-                    onClick={openModal("ARTIFACTS")}
+                    onClick={() => openSetupModal("ARTIFACTS")}
                   />
                 );
               })}

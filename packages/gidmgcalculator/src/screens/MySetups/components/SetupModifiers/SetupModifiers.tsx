@@ -1,5 +1,5 @@
 import { Object_ } from "ron-utils";
-import { CollapseList } from "rond";
+import { clsx, CollapseList } from "rond";
 
 import type { CalcSetup } from "@/logic/calculator";
 
@@ -26,20 +26,20 @@ type SectionLayoutProps = {
   children: JSX.Element;
 };
 
-const SectionLayout = ({ className = "", title, children }: SectionLayoutProps) => {
+const SectionLayout = ({ className, title, children }: SectionLayoutProps) => {
   return (
-    <div className={"shrink-0 " + className}>
+    <div className={clsx("shrink-0", className)}>
       <p className="mb-2 text-lg text-center font-semibold">{title}</p>
       <div className="custom-scrollbar">{children}</div>
     </div>
   );
 };
 
-type ModifiersProps = {
+type SetupModifiersProps = {
   setup: CalcSetup;
 };
 
-export function Modifiers({ setup }: ModifiersProps) {
+export function SetupModifiers({ setup }: SetupModifiersProps) {
   const { t } = useTranslation();
 
   const { main, target } = setup;
@@ -164,17 +164,17 @@ export function Modifiers({ setup }: ModifiersProps) {
 
           {variant && <p className="capitalize">{variant}</p>}
 
-          {statuses.length ? (
+          {statuses.length > 0 && (
             <ul className="my-2 pl-4 list-disc">
               {statuses.map((status, i) => {
                 return <li key={i}>{status}</li>;
               })}
             </ul>
-          ) : null}
+          )}
 
           {Object_.entries(target.resistances).map(([key, value], i) => (
             <p key={i} className="mt-1">
-              <span className={"mr-2 capitalize"}>{t(key, { ns: "resistance" })}:</span>
+              <span className="mr-2 capitalize">{t(key, { ns: "resistance" })}:</span>
               <span className={`font-medium text-${key}`}>{value}%</span>
             </p>
           ))}

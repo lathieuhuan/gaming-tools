@@ -1,3 +1,5 @@
+import { clsx } from "rond";
+
 import { GenshinImage } from "@/components/GenshinImage";
 
 type GearIconProps = {
@@ -9,14 +11,14 @@ type GearIconProps = {
 export function GearIcon({ item, disabled, onClick }: GearIconProps) {
   return (
     <button
-      className={
-        `w-16 h-16 p-1 rounded flex bg-gradient-${item.rarity} ` +
-        (onClick && !disabled ? "glow-on-hover" : "cursor-default opacity-50")
-      }
+      className={clsx(
+        `w-16 h-16 p-1 rounded flex bg-gradient-${item.rarity}`,
+        onClick && !disabled ? "glow-on-hover" : "cursor-default opacity-50",
+      )}
       disabled={disabled}
       onClick={onClick}
     >
-      <GenshinImage className="w-full h-full" src={item.icon} fallbackCls="p-3" />
+      <GenshinImage className="size-full" src={item.icon} fallbackCls="p-3" />
     </button>
   );
 }
