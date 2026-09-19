@@ -3,6 +3,7 @@ import { FaChevronDown } from "react-icons/fa";
 import { BottomSheet } from "rond";
 
 import { MobileBottomNav, MobileBottomNavProps } from "@/components/MobileBottomNav";
+import { SetupDraftKit } from "../../SetupDraftKit";
 import { SetupManagerSmall } from "./SetupManagerSmall";
 
 export type BottomNavSmallProps<T extends string> = Pick<
@@ -34,7 +35,9 @@ export function BottomNavSmall<T extends string>(props: BottomNavSmallProps<T>) 
       />
 
       <BottomSheet active={managerActive} title="Setups Manager" onClose={closeManager}>
-        <SetupManagerSmall onClose={closeManager} />
+        <SetupDraftKit>
+          <SetupManagerSmall onClose={closeManager} />
+        </SetupDraftKit>
       </BottomSheet>
     </>
   );
