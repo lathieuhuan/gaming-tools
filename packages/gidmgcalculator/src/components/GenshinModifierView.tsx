@@ -4,24 +4,10 @@ import type { ModInputSpec } from "@/types";
 import type { ModifierViewInputConfig, ModifierViewProps } from "rond";
 
 import { genSequentialOptions } from "@/utils/ui.utils";
-import {
-  OPTION_ANEMO,
-  OPTION_CRYO,
-  OPTION_DENDRO,
-  OPTION_ELECTRO,
-  OPTION_GEO,
-  OPTION_HYDRO,
-  OPTION_PYRO,
-} from "./_constants";
 
 const genOptions = (config: ModInputSpec) => {
-  let count: number | undefined = undefined;
-
-  if (config.max) {
-    count = config.init === 0 ? config.max + 1 : config.max;
-  }
-
-  return genSequentialOptions(count, config.init === 0 ? 0 : 1);
+  const { max = 0, init } = config;
+  return genSequentialOptions(init === 0 ? max + 1 : max, init);
 };
 
 export type GenshinModifierViewProps = Omit<ModifierViewProps, "inputConfigs"> & {
@@ -106,6 +92,8 @@ export function GenshinModifierView({
         };
       }
       default:
+        config.type satisfies never;
+
         return {
           label: "[unmatched type]",
           type: "text",
@@ -115,3 +103,16 @@ export function GenshinModifierView({
 
   return <ModifierView {...viewProps} inputConfigs={viewInputConfigs} />;
 }
+
+type SelectOption = {
+  label: string;
+  value: number;
+};
+
+const OPTION_PYRO: SelectOption = { label: "Pyro", value: 0 };
+const OPTION_HYDRO: SelectOption = { label: "Hydro", value: 1 };
+const OPTION_ELECTRO: SelectOption = { label: "Electro", value: 2 };
+const OPTION_CRYO: SelectOption = { label: "Cryo", value: 3 };
+const OPTION_GEO: SelectOption = { label: "Geo", value: 4 };
+const OPTION_ANEMO: SelectOption = { label: "Anemo", value: 5 };
+const OPTION_DENDRO: SelectOption = { label: "Dendro", value: 6 };
