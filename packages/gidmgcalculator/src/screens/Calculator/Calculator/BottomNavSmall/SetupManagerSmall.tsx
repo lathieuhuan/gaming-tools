@@ -1,20 +1,12 @@
-import {
-  FaArrowUp,
-  FaBalanceScaleLeft,
-  FaCheck,
-  FaCopy,
-  FaPlus,
-  FaSave,
-  FaShareAlt,
-} from "react-icons/fa";
+import { FaCheck } from "react-icons/fa";
 import { MdDownload } from "react-icons/md";
-import { SiTarget } from "react-icons/si";
-import { Button, ButtonGroup, FancyBackSvg, Input, TrashCanSvg, type ButtonProps } from "rond";
+import { Button, FancyBackSvg } from "rond";
 
 import { useCalcStore } from "@Store/calculator";
-import { MultiSetupChange, updateCalculator } from "@Store/calculator/actions";
+import { updateCalculator, updateMultiSetups } from "@Store/calculator/actions";
 import { useCalcModalCtrl } from "../../ContextProvider";
-import { useSetupDirectorKit } from "../../SetupDirector";
+import { AddButton, useSetupMultiUpdateKit } from "../../SetupMultiUpdateKit";
+import { SetupControl } from "./SetupControl";
 
 type SetupManagerSmallProps = {
   onClose: () => void;
@@ -23,139 +15,58 @@ type SetupManagerSmallProps = {
 export function SetupManagerSmall({ onClose }: SetupManagerSmallProps) {
   const activeId = useCalcStore((state) => state.activeId);
   const calcModalCtrl = useCalcModalCtrl();
-  const { displayedSetups, comparedSetups, canAddMoreSetup, tempStandardId, control } =
-    useSetupDirectorKit();
 
-  const onSelectSetup = (id: number) => {
+  const { setups, standardId, canAddMoreSetup } = useSetupMultiUpdateKit();
+
+  const handleSelectSetup = (id: number) => {
     if (id !== activeId) {
       updateCalculator({ activeId: id });
     }
     onClose();
   };
 
-  const getActionsConfig = (setup: MultiSetupChange, i: number): ButtonProps[] => [
-    {
-      children: <TrashCanSvg />,
-      disabled: displayedSetups.length <= 1,
-      onClick: control.removeSetup(i),
-    },
-    {
-      children: <FaShareAlt className="text-lg" />,
-      disabled: setup.status !== "OLD",
-      onClick: () => {
-        calcModalCtrl.requestShareSetup(setup.ID);
-      },
-    },
-    {
-      children: <FaSave className="text-lg" />,
-      disabled: setup.status !== "OLD",
-      onClick: () => {
-        calcModalCtrl.requestSaveSetup(setup.ID);
-        onClose();
-      },
-    },
-    {
-      children: <FaCopy className="text-lg" />,
-      disabled: !canAddMoreSetup,
-      onClick: control.copySetup(i),
-    },
-    {
-      children: <SiTarget className="text-xlp" />,
-      className: setup.ID === tempStandardId ? "text-bonus" : "text-light-1",
-      disabled: !setup.isCompared || comparedSetups.length <= 1,
-      onClick: control.selectStandardSetup(i),
-    },
-    {
-      children: <FaBalanceScaleLeft className="text-xlp" />,
-      className: comparedSetups.some((comparedSetup) => comparedSetup.ID === setup.ID)
-        ? "text-bonus"
-        : "text-light-1",
-      onClick: control.toggleSetupCompared(i),
-    },
-  ];
+  const handleApply = () => {
+    if (setups.length === 0) {
+      return;
+    }
+
+    updateMultiSetups(setups, standardId);
+    onClose();
+  };
 
   return (
-    <div>
-      <div className="px-4 pt-4 flex flex-col" style={{ height: "28rem" }}>
-        <div className="space-y-4">
-          {displayedSetups.map((setup, setupIndex) => {
-            return (
-              <div key={setup.ID} className="border-b border-dark-line">
-                <div className="flex gap-4">
-                  <Input
-                    placeholder="Enter Setup's name"
-                    className="w-full"
-                    value={setup.name}
-                    maxLength={20}
-                    onChange={control.changeSetupName(setupIndex)}
-                  />
-
-                  <div className="w-8 h-8 shrink-0">
-                    {setup.status === "OLD" ? (
-                      <Button
-                        shape="square"
-                        variant={setup.ID === activeId ? "active" : "default"}
-                        icon={<FaArrowUp />}
-                        onClick={() => onSelectSetup(setup.ID)}
-                      />
-                    ) : null}
-                  </div>
-                </div>
-
-                <div className="mt-3 flex">
-                  {getActionsConfig(setup, setupIndex).map(({ className, ...rest }, i) => (
-                    <Button
-                      key={i}
-                      variant="custom"
-                      shape="square"
-                      withShadow={false}
-                      className={["w-10 h-10 flex-center", className]}
-                      {...rest}
-                    />
-                  ))}
-                </div>
-              </div>
-            );
-          })}
-        </div>
-
-        {canAddMoreSetup && (
-          <div className="mt-auto py-4 flex gap-4">
-            <Button
-              className="w-full text-black"
-              icon={<MdDownload className="text-xl" />}
-              onClick={calcModalCtrl.requestImportSetup}
-            >
-              Import
-            </Button>
-            <Button
-              variant="custom"
-              className="w-full bg-secondary-1 text-black"
-              icon={<FaPlus />}
-              onClick={control.addNewSetup}
-            >
-              Add
-            </Button>
-          </div>
-        )}
+    <div className="flex flex-col">
+      <div className="h-102 px-4 pt-4 space-y-4 custom-scrollbar">
+        {setups.map((setup) => (
+          <SetupControl
+            key={setup.ID}
+            className="border-b border-dark-line"
+            setup={setup}
+            active={setup.ID === activeId}
+            onSelect={() => handleSelectSetup(setup.ID)}
+          />
+        ))}
       </div>
 
-      <ButtonGroup
-        className="p-4 bg-dark-3"
-        justify="end"
-        buttons={[
-          {
-            icon: <FancyBackSvg />,
-            onClick: onClose,
-          },
-          {
-            children: "Apply",
-            icon: <FaCheck />,
-            variant: "primary",
-            onClick: () => control.tryApplyNewSettings(onClose),
-          },
-        ]}
-      />
+      <div className="mt-auto p-4 flex gap-4">
+        <Button
+          className="w-full text-black"
+          icon={<MdDownload className="text-xl" />}
+          disabled={!canAddMoreSetup}
+          onClick={calcModalCtrl.requestImportSetup}
+        >
+          Import
+        </Button>
+
+        <AddButton variant="custom" className="w-full" />
+      </div>
+
+      <div className="p-4 button-group justify-end bg-dark-3">
+        <Button icon={<FancyBackSvg />} onClick={onClose} />
+        <Button variant="primary" icon={<FaCheck />} onClick={handleApply}>
+          Apply
+        </Button>
+      </div>
     </div>
   );
 }
