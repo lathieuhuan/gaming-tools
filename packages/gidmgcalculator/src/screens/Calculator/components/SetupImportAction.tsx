@@ -1,12 +1,11 @@
+import type { CalcSetup } from "@/logic/calculator";
 import type { SetupImportMeta } from "@Store/ui/types";
 import type { ExactOmit } from "rond";
 
 import { sendToImportCenter } from "@Store/ui";
 
-import type { CalcSetup } from "@/logic/calculator";
-
 import { ModalAction, type ModalActionProps } from "@/components/ModalAction";
-import { SetupImporter } from "@/components/SetupPorters";
+import { SETUP_PORTER_MODAL_PROPS, SetupImporter } from "@/components/SetupPorters";
 
 type SetupImportActionProps = ExactOmit<ModalActionProps, "content" | "preset" | "className"> & {
   meta?: Partial<Omit<SetupImportMeta, "source">>;
@@ -26,8 +25,7 @@ export function SetupImportAction({ meta = {}, onImportStart, ...rest }: SetupIm
   return (
     <ModalAction
       title="Import Setup"
-      preset="small"
-      className="bg-dark-1"
+      {...SETUP_PORTER_MODAL_PROPS}
       {...rest}
       content={(_, setOpen) => (
         <SetupImporter

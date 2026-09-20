@@ -23,5 +23,5 @@ export function CalcSetupExporter({
     );
   }
 
-  return <SetupExporter calcSetup={calcSetup} onCancel={onCancel} />;
+  return <SetupExporter setup={calcSetup} onCancel={onCancel} />;
 }

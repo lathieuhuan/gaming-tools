@@ -2,11 +2,11 @@ import type { ComponentProps } from "react";
 import { FaArrowUp, FaSave, FaShareAlt } from "react-icons/fa";
 import { Button, type ButtonProps } from "rond";
 
+import { SETUP_PORTER_MODAL_PROPS } from "@/components/SetupPorters";
 import { MultiSetupChange } from "@Store/calculator/actions";
 import { useCalcModalCtrl } from "../../ContextProvider";
 
 import { ModalAction } from "@/components/ModalAction";
-import { SETUP_EXPORT_MODAL_PROPS } from "@/components/SetupPorters";
 import { CalcSetupExporter } from "../../components/CalcSetupExporter";
 import {
   DuplicateButton,
@@ -47,7 +47,7 @@ export function SetupControl({ setup, active, onSelect, ...props }: SetupControl
 
         <ModalAction
           title={`Share "${setup.name}"`}
-          {...SETUP_EXPORT_MODAL_PROPS}
+          {...SETUP_PORTER_MODAL_PROPS}
           content={(_, setOpen) => (
             <CalcSetupExporter setupId={setup.ID} onCancel={() => setOpen(false)} />
           )}

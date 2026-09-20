@@ -6,14 +6,14 @@ import { encodeSetup } from "@/logic/setupCodec";
 import { SetupPorter, type SetupPorterProps } from "./SetupPorter";
 
 type SetupExporterProps = {
-  calcSetup: CalcSetup;
+  setup: CalcSetup;
   onCancel?: () => void;
 };
 
-export function SetupExporter({ calcSetup, onCancel }: SetupExporterProps) {
+export function SetupExporter({ setup, onCancel }: SetupExporterProps) {
   const [status, setStatus] = useState<"SUCCESS" | "NOT_SUPPORT" | "IDLE">("IDLE");
 
-  const encodedData = useMemo(() => encodeSetup(calcSetup), []);
+  const encodedData = useMemo(() => encodeSetup(setup), []);
 
   const handleCopyURL = () => {
     navigator.clipboard.writeText(`${window.location.origin}?importCode=${encodedData}`).then(

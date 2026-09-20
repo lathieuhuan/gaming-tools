@@ -8,7 +8,7 @@ import { removeDbSetup } from "@Store/userdbSlice";
 import { SetupModalContext, SetupModalType } from "./contexts/SetupModal";
 
 import { ArtifactCard } from "@/components/ArtifactCard";
-import { SETUP_EXPORT_MODAL_PROPS, SetupExporter } from "@/components/SetupPorters";
+import { SETUP_PORTER_MODAL_PROPS, SetupExporter } from "@/components/SetupPorters";
 import { WeaponCard } from "@/components/WeaponCard";
 import { CharacterStats } from "./components/CharacterStats";
 import { SetupModifiers } from "./components/SetupModifiers";
@@ -70,10 +70,10 @@ export function ActiveSetupModalProvider({
       <Modal
         title={`Share "${setupName}"`}
         active={modalType === "SHARE"}
-        {...SETUP_EXPORT_MODAL_PROPS}
+        {...SETUP_PORTER_MODAL_PROPS}
         onClose={closeModal}
       >
-        <SetupExporter calcSetup={calcSetup} onCancel={closeModal} />
+        <SetupExporter setup={calcSetup} onCancel={closeModal} />
       </Modal>
 
       <Modal

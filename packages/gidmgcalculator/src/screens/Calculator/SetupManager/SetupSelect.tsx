@@ -4,6 +4,7 @@ import { SiTarget } from "react-icons/si";
 import { Array_, Object_ } from "ron-utils";
 import { ClassValue, clsx, ConfirmModal, TrashCanSvg } from "rond";
 
+import { SETUP_PORTER_MODAL_PROPS } from "@/components/SetupPorters";
 import { MAX_CALC_SETUPS } from "@/constants/config";
 import { useShallowCalcStore } from "@Store/calculator";
 import { duplicateSetup, removeSetup, updateCalculator } from "@Store/calculator/actions";
@@ -12,7 +13,6 @@ import { useCalcModalCtrl } from "../ContextProvider";
 // Component
 import { ComplexSelect, ComplexSelectOption } from "@/components/ComplexSelect";
 import { ModalAction } from "@/components/ModalAction";
-import { SETUP_EXPORT_MODAL_PROPS } from "@/components/SetupPorters";
 import { CalcSetupExporter } from "../components/CalcSetupExporter";
 
 type ModalState = {
@@ -89,7 +89,7 @@ export function SetupSelect() {
 
           <ModalAction
             title={`Share "${setup.name}"`}
-            {...SETUP_EXPORT_MODAL_PROPS}
+            {...SETUP_PORTER_MODAL_PROPS}
             content={(_, setOpen) => (
               <CalcSetupExporter setupId={setup.ID} onCancel={() => setOpen(false)} />
             )}
