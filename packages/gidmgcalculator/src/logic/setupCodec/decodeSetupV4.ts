@@ -14,7 +14,6 @@ import type {
   ModifierCtrlState,
   RawTeammate,
   ResonanceModCtrl,
-  SetupImportData,
   TeamBuffCtrl,
 } from "@/types";
 import type { DecodeResult } from "./types";
@@ -463,27 +462,24 @@ export function decodeSetupV4(code: string): DecodeResult {
     target = createTarget(0);
   }
 
-  const importInfo: SetupImportData = {
-    name: "Imported setup",
-    params: CalcSetup.create(idStore.gen(), main, {
-      selfBuffCtrls: enhanceCtrls(splitModCtrls(selfBcStrs, 1), mainData.buffs),
-      selfDebuffCtrls: enhanceCtrls(splitModCtrls(selfDcStrs, 1), mainData.debuffs),
-      wpBuffCtrls: enhanceCtrls(splitModCtrls(wpBcStrs, 1), weapon.data.buffs),
-      artBuffCtrls,
-      artDebuffCtrls,
-      teammates,
-      rsnBuffCtrls: decodeResonance(rsnBcStrs),
-      rsnDebuffCtrls: decodeResonance(rsnDcStrs),
-      teamBuffCtrls,
-      elmtEvent,
-      customBuffCtrls,
-      customDebuffCtrls,
-      target,
-    }),
-  };
+  const setup = CalcSetup.create(idStore.gen(), main, {
+    selfBuffCtrls: enhanceCtrls(splitModCtrls(selfBcStrs, 1), mainData.buffs),
+    selfDebuffCtrls: enhanceCtrls(splitModCtrls(selfDcStrs, 1), mainData.debuffs),
+    wpBuffCtrls: enhanceCtrls(splitModCtrls(wpBcStrs, 1), weapon.data.buffs),
+    artBuffCtrls,
+    artDebuffCtrls,
+    teammates,
+    rsnBuffCtrls: decodeResonance(rsnBcStrs),
+    rsnDebuffCtrls: decodeResonance(rsnDcStrs),
+    teamBuffCtrls,
+    elmtEvent,
+    customBuffCtrls,
+    customDebuffCtrls,
+    target,
+  });
 
   return {
     isOk: true,
-    importInfo,
+    setup,
   };
 }

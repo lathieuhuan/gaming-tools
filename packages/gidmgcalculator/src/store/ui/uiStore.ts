@@ -14,6 +14,9 @@ const initialState: UIState = {
   },
   setupDirectorActive: false,
   trackerState: "close",
+  setupImportInfo: null,
+  tourType: undefined,
+  enkaParams: undefined,
 };
 
 export const useUIStore = create<UIState>()(immer(() => initialState));

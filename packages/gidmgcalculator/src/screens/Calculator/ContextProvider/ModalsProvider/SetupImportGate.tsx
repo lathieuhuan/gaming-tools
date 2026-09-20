@@ -1,13 +1,12 @@
 import { useState } from "react";
 
-import { useSetupImporter } from "@/lib/setup-importer";
 import { decodeSetup } from "@/logic/setupCodec/decodeSetup";
 
 import { PorterLayout } from "@/components/SetupExporter";
 import { EXPORTED_SETUP_VERSIONS } from "@/constants/config";
+import { importSetup } from "@Store/ui";
 
 export function SetupImportGate(props: { onClose: () => void }) {
-  const setupImporter = useSetupImporter();
   const [code, setCode] = useState("");
   const [error, setError] = useState("");
 
@@ -20,17 +19,26 @@ export function SetupImportGate(props: { onClose: () => void }) {
   const handleImport = () => {
     const actualCode = code.trim();
 
-    if (actualCode.length) {
-      const result = decodeSetup(actualCode);
-
-      if (result.isOk) {
-        setupImporter.import(result.importInfo);
-        props.onClose();
-        return;
-      }
-
-      setError(result.error);
+    if (!actualCode.length) {
+      return;
     }
+    const result = decodeSetup(actualCode);
+
+    if (result.isOk) {
+      importSetup({
+        meta: {
+          id: Date.now(),
+          name: "New setup",
+          type: "original",
+          source: "URL", // TODO check
+        },
+        params: result.setup,
+      });
+      props.onClose();
+      return;
+    }
+
+    setError(result.error);
   };
 
   return (

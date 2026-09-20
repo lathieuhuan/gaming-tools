@@ -1,12 +1,7 @@
 import { Array_ } from "ron-utils";
 
-import type {
-  AppCharacter,
-  BasicSetupType,
-  DbCharacter,
-  SetupImportParams,
-  SetupManager,
-} from "@/types";
+import type { AppCharacter, BasicSetupType, DbCharacter } from "@/types";
+import type { SetupImportInfo, SetupImportParams } from "@Store/ui/types";
 import type { UserdbState } from "@Store/userdbSlice";
 import type { CalculatorState } from "../types";
 
@@ -81,12 +76,11 @@ type ImportSetupOptions = {
 
 export const importSetup = (
   params: SetupImportParams,
-  /** ID in manageInfo is prioritized over params.ID */
-  manageInfo: Partial<SetupManager> = {},
+  meta: SetupImportInfo["meta"],
   options: ImportSetupOptions = {},
 ) => {
   const { overwriteChar = false, overwriteTarget = false } = options;
-  const { type = "original", name = "New setup" } = manageInfo;
+  const { type = "original", name = "New setup" } = meta;
 
   useCalcStore.setState((state) => {
     const { setupsById } = state;
@@ -113,7 +107,7 @@ export const importSetup = (
       }
     }
 
-    const setupId = manageInfo.ID ?? params.ID ?? Date.now();
+    const setupId = meta.id ?? Date.now();
     const newSetup = CalcSetup.create(setupId, params.main, params);
 
     state.setupManagers.push({ ID: setupId, name, type });

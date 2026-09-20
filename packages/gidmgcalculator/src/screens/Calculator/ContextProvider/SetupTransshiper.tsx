@@ -1,10 +1,9 @@
 import { useEffect } from "react";
 import { message } from "rond";
 
-import { decodeSetup } from "@/logic/setupCodec";
 import { useSearchParams } from "@/lib/router";
-import { useSetupImporter } from "@/lib/setup-importer";
-import { selectAppReady, useUIStore } from "@Store/ui";
+import { decodeSetup } from "@/logic/setupCodec";
+import { importSetup, selectAppReady, useUIStore } from "@Store/ui";
 
 type SearchParams = {
   importCode?: string;
@@ -13,23 +12,29 @@ type SearchParams = {
 export function SetupTransshiper() {
   const appReady = useUIStore(selectAppReady);
   const [searchParams, setSearchParams] = useSearchParams<SearchParams>();
-  const setupImporter = useSetupImporter();
 
   useEffect(() => {
     const importCode = searchParams.importCode;
 
-    if (appReady && importCode) {
-      const result = decodeSetup(importCode);
+    if (!appReady || !importCode) {
+      return;
+    }
 
-      if (result.isOk) {
-        setupImporter.import({
-          ...result.importInfo,
+    const result = decodeSetup(importCode);
+
+    if (result.isOk) {
+      importSetup({
+        meta: {
+          id: Date.now(),
+          name: "New setup",
+          type: "original",
           source: "URL",
-        });
-        setSearchParams(null);
-      } else {
-        message.error(result.error);
-      }
+        },
+        params: result.setup,
+      });
+      setSearchParams(null);
+    } else {
+      message.error(result.error);
     }
   }, [appReady]);
 

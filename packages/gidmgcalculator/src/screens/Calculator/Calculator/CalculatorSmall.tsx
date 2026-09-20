@@ -7,6 +7,7 @@ import { updateUI } from "@Store/ui";
 
 // Components
 import { ContextProvider } from "../ContextProvider";
+import { SetupImportCenter } from "../SetupImportCenter";
 import { BottomNavSmall, BottomNavSmallProps } from "./BottomNavSmall";
 import { ModifiersCard, OverviewCard, ResultsCard, SetupCard } from "./CardComponents";
 
@@ -46,6 +47,8 @@ export function CalculatorSmall() {
 
   return (
     <ContextProvider>
+      <SetupImportCenter />
+
       {isModernUI ? (
         <div className="h-full flex flex-col border-t border-dark-line">
           <div className="grow overflow-hidden relative">

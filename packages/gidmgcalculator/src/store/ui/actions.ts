@@ -1,5 +1,5 @@
 import { SearchParams } from "@/lib/router";
-import { TourType, UIState } from "./types";
+import type { SetupImportInfo, TourType, UIState } from "./types";
 import { useUIStore } from "./uiStore";
 
 export const updateUI = (state: Partial<UIState>) => {
@@ -12,4 +12,8 @@ export const updateEnkaParams = (params: SearchParams) => {
 
 export const setTourType = (tourType: TourType | undefined) => {
   useUIStore.setState({ tourType });
+};
+
+export const importSetup = (importInfo: SetupImportInfo) => {
+  useUIStore.setState({ setupImportInfo: importInfo });
 };

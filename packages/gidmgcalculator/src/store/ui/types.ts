@@ -1,5 +1,7 @@
 import type { SearchParams } from "@/lib/router";
-import type { TourKey } from "@/types";
+import type { CreateCalcSetupOptions } from "@/logic/calculator";
+import type { Character } from "@/models/Character";
+import type { BasicSetupType, TourKey } from "@/types";
 
 export type AppModalType =
   | "INTRO"
@@ -18,6 +20,20 @@ export type MySetupsModalType = "FIRST_COMBINE" | "COMBINE_MORE" | "";
 
 export type TrackerState = "open" | "close" | "hidden";
 
+export type SetupImportParams = CreateCalcSetupOptions & {
+  main: Character;
+};
+
+export type SetupImportInfo = {
+  meta: {
+    id: number;
+    name: string;
+    type?: BasicSetupType;
+    source: "URL" | "MY_SETUPS" | "ENKA";
+  };
+  params: SetupImportParams;
+};
+
 export type TourType = TourKey | "MAIN_ENHANCE" | "TEAMMATE_ENHANCE";
 
 export type UIState = {
@@ -30,6 +46,7 @@ export type UIState = {
   };
   setupDirectorActive: boolean;
   trackerState: TrackerState;
+  setupImportInfo: SetupImportInfo | null;
   tourType?: TourType;
   enkaParams?: SearchParams;
 };

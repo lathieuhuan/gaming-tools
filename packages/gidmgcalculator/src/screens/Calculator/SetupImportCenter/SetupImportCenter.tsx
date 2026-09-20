@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import isEqual from "react-fast-compare";
-import { ConfirmModal, LoadingSpin, Modal, type PartiallyRequired, notification } from "rond";
+import { ConfirmModal, LoadingSpin, Modal, notification } from "rond";
 
-import type { SetupImportData } from "@/types";
+import type { SetupImportInfo } from "@Store/ui/types";
 
 import { MAX_CALC_SETUPS, SCREEN_PATH } from "@/constants/config";
 import { useRouter } from "@/lib/router";
@@ -10,24 +10,28 @@ import { CalcSetup } from "@/logic/calculator";
 import { useShallowCalcStore } from "@Store/calculator";
 import { importSetup, initSession } from "@Store/calculator/actions";
 import { isTourFinished } from "@Store/tours";
-import { updateUI } from "@Store/ui";
+import { updateUI, useUIStore } from "@Store/ui";
 
-// Component
-import { OverwriteOptions, type OverwriteOptionsProps } from "./OverwriteOptions";
+import { OverwriteOptions, OverwriteOptionsProps } from "./OverwriteOptions";
+
+export function SetupImportCenter() {
+  const importInfo = useUIStore((state) => state.setupImportInfo);
+
+  if (!importInfo) {
+    return null;
+  }
+
+  return <ImportCenter {...importInfo} />;
+}
 
 type PendingCode = "INIT" | "DIFFERENT_CHAR" | "EXISTED" | "MAX_SETUPS" | "DIFFERENT_INFO/TARGET";
 
-type ImportCenterProps = PartiallyRequired<SetupImportData, "params"> & {
-  onFinish: () => void;
-};
-
-export function ImportCenter({ params, onFinish, ...manageInfo }: ImportCenterProps) {
+function ImportCenter({ meta, params }: SetupImportInfo) {
   const router = useRouter();
-  const { main, target, setupManagers } = useShallowCalcStore((state) => {
-    const { activeId = "", setupsById } = state;
 
+  const { main, target, setupManagers } = useShallowCalcStore((state) => {
     return {
-      main: setupsById[activeId]?.main,
+      main: state.setupsById[state.activeId]?.main,
       target: state.target,
       setupManagers: state.setupManagers,
     };
@@ -53,6 +57,10 @@ export function ImportCenter({ params, onFinish, ...manageInfo }: ImportCenterPr
     askForTarget: true,
   });
 
+  const handleCancel = () => {
+    updateUI({ setupImportInfo: null });
+  };
+
   useEffect(() => {
     const delay = (fn: () => void) => setTimeout(fn, 0);
 
@@ -68,7 +76,7 @@ export function ImportCenter({ params, onFinish, ...manageInfo }: ImportCenterPr
     }
 
     // The imported is from My Setups and already imported
-    if (manageInfo.ID && setupManagers.some((manager) => manager.ID === manageInfo.ID)) {
+    if (meta.id && setupManagers.some((manager) => manager.ID === meta.id)) {
       delay(() => setPendingCode("EXISTED"));
       return;
     }
@@ -109,21 +117,24 @@ export function ImportCenter({ params, onFinish, ...manageInfo }: ImportCenterPr
   }, []);
 
   const addImportedSetup: OverwriteOptionsProps["onDone"] = (config) => {
-    importSetup(params, manageInfo, config);
-    updateUI({ setupDirectorActive: false });
-    onFinish();
+    importSetup(params, meta, config);
+
+    // TODO check
+    updateUI({
+      setupDirectorActive: false,
+      setupImportInfo: null,
+    });
   };
 
   const startNewSession = () => {
-    const id = manageInfo.ID ?? Date.now();
-    const calcSetup = CalcSetup.create(id, params.main, params);
+    const calcSetup = CalcSetup.create(meta.id, params.main, params);
 
     const { teammates } = calcSetup;
     const { enhanceType } = calcSetup.main.data;
 
     initSession({
-      name: manageInfo.name,
-      type: manageInfo.type,
+      name: meta.name,
+      type: meta.type,
       calcSetup,
     });
 
@@ -133,13 +144,12 @@ export function ImportCenter({ params, onFinish, ...manageInfo }: ImportCenterPr
     updateUI({
       setupDirectorActive: false,
       appModalType: shouldShowEnhanceNotice ? "CHAR_ENHANCE_NOTICE" : "",
+      setupImportInfo: null,
     });
-
-    onFinish();
 
     router.navigate({ to: SCREEN_PATH.CALCULATOR });
 
-    if (manageInfo.source === "URL" || manageInfo.source === "ENKA") {
+    if (meta.source === "URL" || meta.source === "ENKA") {
       notification.success({
         content: "Successfully import the setup!",
         duration: 0,
@@ -168,7 +178,7 @@ export function ImportCenter({ params, onFinish, ...manageInfo }: ImportCenterPr
           message="We're calculating another Character. Start a new session?"
           focusConfirm
           onConfirm={startNewSession}
-          onClose={onFinish}
+          onClose={handleCancel}
         />
       );
     case "EXISTED":
@@ -178,7 +188,7 @@ export function ImportCenter({ params, onFinish, ...manageInfo }: ImportCenterPr
           message="This setup is already in the Calculator. Do you want to reset it to this version?"
           focusConfirm
           onConfirm={resetExistingSetup}
-          onClose={onFinish}
+          onClose={handleCancel}
         />
       );
     case "MAX_SETUPS":
@@ -188,7 +198,7 @@ export function ImportCenter({ params, onFinish, ...manageInfo }: ImportCenterPr
           message={`The number of Setups on Calculator has reach the limit of ${MAX_CALC_SETUPS}. Start a new session?`}
           focusConfirm
           onConfirm={startNewSession}
-          onClose={onFinish}
+          onClose={handleCancel}
         />
       );
     case "DIFFERENT_INFO/TARGET":
@@ -200,7 +210,7 @@ export function ImportCenter({ params, onFinish, ...manageInfo }: ImportCenterPr
           title="Overwrite Configuration"
           withActions
           formId="overwrite-configuration"
-          onClose={onFinish}
+          onClose={handleCancel}
         >
           <OverwriteOptions {...overwriteProps.current} onDone={addImportedSetup} />
         </Modal>

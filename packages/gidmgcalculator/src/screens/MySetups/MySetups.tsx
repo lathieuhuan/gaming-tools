@@ -5,7 +5,6 @@ import { Button, EmptyFallback, WarehouseLayout, clsx, useScreenWatcher } from "
 
 import type { SetupOverviewInfo } from "./types";
 
-import { useSetupImporter } from "@/lib/setup-importer";
 import { isDbSetup, restoreCalcSetup } from "@/logic/setup.logic";
 import { parseDbArtifacts, parseDbWeapon } from "@/logic/userdb.logic";
 import { useDispatch, useSelector } from "@Store/hooks";
@@ -17,6 +16,7 @@ import { setupToOverviewInfo } from "./logic/setupToOverviewInfo";
 // Component
 import { FinalResultView } from "@/components/FinalResultView";
 import { ModalAction } from "@/components/ModalAction";
+import { importSetup } from "@Store/ui";
 import { WarehouseWrapper } from "../components/WarehouseWrapper";
 import { ActiveSetupModalProvider } from "./ActiveSetupModalProvider";
 import { SetupCombineForm } from "./components/SetupCombineForm";
@@ -26,9 +26,7 @@ import { Tips } from "./components/Tips";
 function MySetups() {
   const dispatch = useDispatch();
   const combineFormId = useId();
-
   const screenWatcher = useScreenWatcher();
-  const setupImporter = useSetupImporter();
 
   const userdb = useSelector((state) => state.userdb);
   const selectedSetupId = useSelector(selectActiveSetupId);
@@ -76,28 +74,33 @@ function MySetups() {
 
   const handleEditSetup = (info: SetupOverviewInfo) => {
     const { dbSetup } = info;
-    const { ID, name, type, main } = dbSetup;
+    const { main } = dbSetup;
     const mainData = info.setup.main.data;
     const weapon = parseDbWeapon(main.weaponID, userWeapons, mainData.weaponType);
     const atfGear = parseDbArtifacts(main.artifactIDs, userArtifacts);
 
-    setupImporter.import({
-      ID,
-      name,
-      type,
+    importSetup({
+      meta: {
+        id: dbSetup.ID,
+        name: dbSetup.name,
+        type: dbSetup.type,
+        source: "MY_SETUPS",
+      },
       params: restoreCalcSetup(dbSetup, weapon, atfGear),
-      source: "MY_SETUPS",
     });
   };
 
   const handleCalcTeammateSetup = (info: SetupOverviewInfo, teammateIndex: number) => {
     const setup = createSetupForTeammate(info, teammateIndex, userdb);
 
-    setupImporter.import({
-      type: "original",
-      name: "New setup",
+    importSetup({
+      meta: {
+        id: Date.now(),
+        name: "New setup",
+        type: "original",
+        source: "MY_SETUPS",
+      },
       params: setup,
-      source: "MY_SETUPS",
     });
   };
 
