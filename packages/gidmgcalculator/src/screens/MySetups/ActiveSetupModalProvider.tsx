@@ -8,7 +8,7 @@ import { removeDbSetup } from "@Store/userdbSlice";
 import { SetupModalContext, SetupModalType } from "./contexts/SetupModal";
 
 import { ArtifactCard } from "@/components/ArtifactCard";
-import { SetupExporter } from "@/components/SetupExporter";
+import { SETUP_EXPORT_MODAL_PROPS, SetupExporter } from "@/components/SetupPorters";
 import { WeaponCard } from "@/components/WeaponCard";
 import { CharacterStats } from "./components/CharacterStats";
 import { SetupModifiers } from "./components/SetupModifiers";
@@ -67,9 +67,14 @@ export function ActiveSetupModalProvider({
         <p>This action cannot be undone.</p>
       </Modal>
 
-      <Modal.Core active={modalType === "SHARE"} preset="small" onClose={closeModal}>
-        <SetupExporter setupName={setupName} calcSetup={calcSetup} onClose={closeModal} />
-      </Modal.Core>
+      <Modal
+        title={`Share "${setupName}"`}
+        active={modalType === "SHARE"}
+        {...SETUP_EXPORT_MODAL_PROPS}
+        onClose={closeModal}
+      >
+        <SetupExporter calcSetup={calcSetup} onCancel={closeModal} />
+      </Modal>
 
       <Modal
         title="Weapon"

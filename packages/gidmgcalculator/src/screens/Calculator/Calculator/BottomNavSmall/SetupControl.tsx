@@ -4,6 +4,10 @@ import { Button, type ButtonProps } from "rond";
 
 import { MultiSetupChange } from "@Store/calculator/actions";
 import { useCalcModalCtrl } from "../../ContextProvider";
+
+import { ModalAction } from "@/components/ModalAction";
+import { SETUP_EXPORT_MODAL_PROPS } from "@/components/SetupPorters";
+import { CalcSetupExporter } from "../../components/CalcSetupExporter";
 import {
   DuplicateButton,
   NameInput,
@@ -41,13 +45,20 @@ export function SetupControl({ setup, active, onSelect, ...props }: SetupControl
       <div className="mt-3 flex">
         <RemoveButton {...ACTION_PROPS} setupId={setup.ID} />
 
-        <Button
-          {...ACTION_PROPS}
-          className={[ACTION_PROPS.className, "text-lg"]}
-          icon={<FaShareAlt />}
-          disabled={setup.status !== "OLD"}
-          onClick={() => calcModalCtrl.requestShareSetup(setup.ID)}
-        />
+        <ModalAction
+          title={`Share "${setup.name}"`}
+          {...SETUP_EXPORT_MODAL_PROPS}
+          content={(_, setOpen) => (
+            <CalcSetupExporter setupId={setup.ID} onCancel={() => setOpen(false)} />
+          )}
+        >
+          <Button
+            {...ACTION_PROPS}
+            className={[ACTION_PROPS.className, "text-lg"]}
+            icon={<FaShareAlt />}
+            disabled={setup.status !== "OLD"}
+          />
+        </ModalAction>
 
         <Button
           {...ACTION_PROPS}

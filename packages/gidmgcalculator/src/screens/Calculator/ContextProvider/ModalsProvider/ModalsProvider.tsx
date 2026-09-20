@@ -8,11 +8,10 @@ import { CalculatorModalsContext, CalculatorModalsControl } from "./context";
 // Component
 import { Tavern } from "@/components/Tavern";
 import { SaveSetup } from "./SaveSetup";
-import { SetupExportGate } from "./SetupExportGate";
 import { SetupImportGate } from "./SetupImportGate";
 import { TargetConfig } from "./TargetConfig";
 
-type ModalType = "SWITCH_CHARACTER" | "SAVE_SETUP" | "IMPORT_SETUP" | "SHARE_SETUP" | "";
+type ModalType = "SWITCH_CHARACTER" | "SAVE_SETUP" | "IMPORT_SETUP" | "";
 
 export function ModalsProvider(props: { children: React.ReactNode }) {
   const store = useStore();
@@ -33,10 +32,6 @@ export function ModalsProvider(props: { children: React.ReactNode }) {
       },
       requestImportSetup: () => {
         setModalType("IMPORT_SETUP");
-      },
-      requestShareSetup: (setupId) => {
-        setModalType("SHARE_SETUP");
-        setSetupId(setupId);
       },
     };
   }, []);
@@ -59,10 +54,6 @@ export function ModalsProvider(props: { children: React.ReactNode }) {
 
       <Modal.Core active={modalType === "IMPORT_SETUP"} preset="small" onClose={closeModal}>
         <SetupImportGate onClose={closeModal} />
-      </Modal.Core>
-
-      <Modal.Core active={modalType === "SHARE_SETUP"} preset="small" onClose={closeModal}>
-        <SetupExportGate setupId={setupId} onClose={closeModal} />
       </Modal.Core>
 
       <Tavern

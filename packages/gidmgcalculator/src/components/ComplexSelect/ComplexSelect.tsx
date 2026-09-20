@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { ReactNode, useState } from "react";
 import { FaChevronDown } from "react-icons/fa";
 import { clsx, useClickOutside } from "rond";
 
@@ -13,15 +13,17 @@ const CLASS_BY_SIZE = {
   },
 } satisfies Record<string, { option: string; icon?: string }>;
 
+export type ComplexSelectOption<TValue extends string | number> = {
+  label: ReactNode;
+  value: TValue;
+  renderActions?: (args: { closeSelect: () => void }) => JSX.Element;
+};
+
 type ComplexSelectProps<TValue extends string | number> = {
   className?: string;
   selectId: string;
   value?: TValue;
-  options?: Array<{
-    label: React.ReactNode;
-    value: TValue;
-    renderActions?: (args: { closeSelect: () => void }) => JSX.Element;
-  }>;
+  options?: ComplexSelectOption<TValue>[];
   onChange?: (value: TValue) => void;
   onToggleDropdown?: (shouldDrop: boolean) => void;
 };
