@@ -7,6 +7,7 @@ import { useCalcStore } from "@Store/calculator";
 // Components
 import { Card } from "../components/Card";
 import { ContextProvider } from "../ContextProvider";
+import { TargetConfig } from "../TargetConfig";
 import { ModifiersCard, OverviewCard, ResultsCard, SetupCard } from "./CardComponents";
 
 const FlexibleCard: typeof Card = ({ className, style, ...restProps }) => {
@@ -48,6 +49,8 @@ function LargeCalculator() {
           </div>
         </div>
       </div>
+
+      <TargetConfig />
     </ContextProvider>
   );
 }

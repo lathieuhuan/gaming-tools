@@ -7,6 +7,7 @@ import { updateUI } from "@Store/ui";
 
 // Components
 import { ContextProvider } from "../ContextProvider";
+import { TargetConfig } from "../TargetConfig";
 import { BottomNavSmall, BottomNavSmallProps } from "./BottomNavSmall";
 import { ModifiersCard, OverviewCard, ResultsCard, SetupCard } from "./CardComponents";
 
@@ -79,6 +80,8 @@ export function CalculatorSmall() {
           <ResultsCard touched={touched} />
         </div>
       )}
+
+      <TargetConfig />
     </ContextProvider>
   );
 }

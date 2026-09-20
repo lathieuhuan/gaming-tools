@@ -23,7 +23,6 @@ export function LeftSide({ appReady }: LeftSideProps) {
   const [drawerActive, setDrawerActive] = useState(false);
 
   const isMobile = !screenWatcher.isFromSize("md");
-  const showOnMobileTab = isMobile && isTabLayout;
 
   const handleSelectScreen = (option: ScreenConfig) => {
     router.navigate({ to: option.path });
@@ -52,7 +51,7 @@ export function LeftSide({ appReady }: LeftSideProps) {
 
       {router.isRouteActive(SCREEN_PATH.CALCULATOR) && (
         <>
-          {showOnMobileTab && <TargetButton />}
+          {isMobile && isTabLayout && <TargetButton />}
           <TrackerButton />
         </>
       )}
@@ -60,11 +59,8 @@ export function LeftSide({ appReady }: LeftSideProps) {
       <Drawer
         active={drawerActive}
         destroyOnClose
-        style={{
-          boxShadow: "0 0 1.5px #b8b8b8",
-        }}
         width={240}
-        className="p-4 bg-dark-2"
+        className="p-4 bg-dark-2 shadow-popup"
         position="left"
         onClose={closeDrawer}
       >

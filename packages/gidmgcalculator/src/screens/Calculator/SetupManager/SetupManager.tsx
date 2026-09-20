@@ -1,6 +1,6 @@
 import { FaSkull } from "react-icons/fa";
 import { IoDocumentText } from "react-icons/io5";
-import { Button, useScreenWatcher } from "rond";
+import { Button, clsx, useScreenWatcher } from "rond";
 
 import { useSettingsStore } from "@Store/settings";
 import { updateUI, useUIStore } from "@Store/ui";
@@ -15,32 +15,38 @@ import { SetupSelect } from "./SetupSelect";
 export function SetupManager() {
   const screenWatcher = useScreenWatcher();
   const targetConfig = useUIStore((state) => state.targetConfig);
-  const isModernUI = useSettingsStore((state) => state.isTabLayout);
+  const isTabLayout = useSettingsStore((state) => state.isTabLayout);
 
-  const updateTargetConfig = (active: boolean, overviewed: boolean) => {
-    updateUI({ targetConfig: { active, overviewed } });
+  const updateTargetConfig = (newState: { active: boolean; overviewed: boolean }) => {
+    updateUI({ targetConfig: newState });
   };
 
-  const onClickTargetConfigButton = () => {
-    updateTargetConfig(true, false);
-  };
-
-  const renderMainContent = (cls = "") => (
-    <div className={`hide-scrollbar space-y-2 scroll-smooth ${cls}`}>
+  const renderMainContent = (className?: string) => (
+    <div className={clsx("hide-scrollbar space-y-2 scroll-smooth", className)}>
       <SectionTeammates />
       <SectionWeapon />
       <SectionArtifacts />
 
-      {targetConfig.overviewed ? (
+      {targetConfig.overviewed && (
         <SectionTarget
-          onMinimize={() => updateTargetConfig(false, false)}
-          onEdit={() => updateTargetConfig(true, true)}
+          onMinimize={() => {
+            updateTargetConfig({
+              active: false,
+              overviewed: false,
+            });
+          }}
+          onEdit={() => {
+            updateTargetConfig({
+              active: true,
+              overviewed: true,
+            });
+          }}
         />
-      ) : null}
+      )}
     </div>
   );
 
-  if (!screenWatcher.isFromSize("sm") && isModernUI) {
+  if (!screenWatcher.isFromSize("sm") && isTabLayout) {
     return renderMainContent("h-full");
   }
 
@@ -65,14 +71,19 @@ export function SetupManager() {
         </div>
 
         <div className="flex justify-end gap-3">
-          {!targetConfig.overviewed ? (
+          {!targetConfig.overviewed && (
             <Button
               title="Target"
               boneOnly
               icon={<FaSkull className="text-lg" />}
-              onClick={onClickTargetConfigButton}
+              onClick={() => {
+                updateTargetConfig({
+                  active: true,
+                  overviewed: false,
+                });
+              }}
             />
-          ) : null}
+          )}
         </div>
       </div>
     </div>

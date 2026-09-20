@@ -47,6 +47,7 @@ export function InputControl({ config, input, onChange }: InputControlProps) {
       }
       return null;
     default:
+      configType satisfies never;
       return null;
   }
 }
