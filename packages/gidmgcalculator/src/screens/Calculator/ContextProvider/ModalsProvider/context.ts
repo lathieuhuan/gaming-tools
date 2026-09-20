@@ -1,15 +1,7 @@
-import { createContext, useContext } from "react";
+import { createContext } from "react";
 
 export type CalculatorModalsControl = {
   requestSwitchCharacter: () => void;
 };
 
 export const CalculatorModalsContext = createContext<CalculatorModalsControl | null>(null);
-
-export function useCalcModalCtrl() {
-  const context = useContext(CalculatorModalsContext);
-  if (!context) {
-    throw new Error("useCalcModalCtrl must be used inside Calculator/ContextProvider");
-  }
-  return context;
-}

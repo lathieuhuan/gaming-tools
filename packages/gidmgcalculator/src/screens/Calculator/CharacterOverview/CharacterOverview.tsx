@@ -3,14 +3,15 @@ import { Button, Match, type MatchCase } from "rond";
 
 import { ENHANCE_TOUR_SITE_ID } from "@/constants/ui";
 import { useCalcStore } from "@Store/calculator";
-import { updateMain } from "@Store/calculator/actions";
+import { initSessionWithCharacter, updateMain } from "@Store/calculator/actions";
 import { selectActiveMain } from "@Store/calculator/selectors";
 import { selectAppReady, useUIStore } from "@Store/ui";
-import { useCalcModalCtrl } from "../ContextProvider";
 
 // Component
 import { CharacterIntro } from "@/components/CharacterIntro";
 import { ComplexSelect } from "@/components/ComplexSelect";
+import { Tavern } from "@/components/Tavern";
+import { useStore } from "@/lib/dynamic-store";
 import { SetupImportAction } from "../components/SetupImportAction";
 import {
   ArtifactsTab,
@@ -30,7 +31,7 @@ const TABS = [
   { value: "Talents", render: <TalentsTab /> },
 ] satisfies MatchCase<TabType>[];
 
-function CharacterOverviewCore(props: { onClickSwitchCharacter: () => void }) {
+function CharacterOverviewCore(props: { onSwitchCharacter: () => void }) {
   const id = useId();
   const main = useCalcStore(selectActiveMain);
 
@@ -42,7 +43,7 @@ function CharacterOverviewCore(props: { onClickSwitchCharacter: () => void }) {
         character={main}
         mutable
         switchable
-        onSwitch={props.onClickSwitchCharacter}
+        onSwitch={props.onSwitchCharacter}
         onChangeLevel={(level) => updateMain({ level })}
         onChangeCons={(cons) => updateMain({ cons })}
         onEnhanceToggle={(enhanced) => updateMain({ enhanced })}
@@ -71,15 +72,21 @@ type CharacterOverviewProps = {
 
 export function CharacterOverview({ touched }: CharacterOverviewProps) {
   const appReady = useUIStore(selectAppReady);
-  const modalCtrl = useCalcModalCtrl();
+  const store = useStore();
+
+  const [tarvernActive, setTarvernActive] = useState(false);
+
+  const handleSwitchCharacter = () => {
+    setTarvernActive(true);
+  };
 
   return (
     <>
       {touched ? (
-        <CharacterOverviewCore onClickSwitchCharacter={modalCtrl.requestSwitchCharacter} />
+        <CharacterOverviewCore onSwitchCharacter={handleSwitchCharacter} />
       ) : (
         <div className="w-full flex flex-col items-center space-y-2">
-          <Button variant="primary" disabled={!appReady} onClick={modalCtrl.requestSwitchCharacter}>
+          <Button variant="primary" disabled={!appReady} onClick={handleSwitchCharacter}>
             Select a character
           </Button>
 
@@ -90,6 +97,19 @@ export function CharacterOverview({ touched }: CharacterOverviewProps) {
           </SetupImportAction>
         </div>
       )}
+
+      <Tavern
+        active={tarvernActive}
+        sourceType="mixed"
+        onSelectCharacter={(character) => {
+          initSessionWithCharacter({
+            character: character.userData,
+            data: character.data,
+            userDb: store.select((state) => state.userdb),
+          });
+        }}
+        onClose={() => setTarvernActive(false)}
+      />
     </>
   );
 }
