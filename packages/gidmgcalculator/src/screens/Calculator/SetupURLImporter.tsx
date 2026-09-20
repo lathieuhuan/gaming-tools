@@ -9,7 +9,7 @@ type SearchParams = {
   importCode?: string;
 };
 
-export function SetupTransshiper() {
+export function SetupURLImporter() {
   const appReady = useUIStore(selectAppReady);
   const [searchParams, setSearchParams] = useSearchParams<SearchParams>();
 
