@@ -8,10 +8,9 @@ import { CalculatorModalsContext, CalculatorModalsControl } from "./context";
 // Component
 import { Tavern } from "@/components/Tavern";
 import { SaveSetup } from "./SaveSetup";
-import { SetupImportGate } from "./SetupImportGate";
 import { TargetConfig } from "./TargetConfig";
 
-type ModalType = "SWITCH_CHARACTER" | "SAVE_SETUP" | "IMPORT_SETUP" | "";
+type ModalType = "SWITCH_CHARACTER" | "SAVE_SETUP" | "";
 
 export function ModalsProvider(props: { children: React.ReactNode }) {
   const store = useStore();
@@ -29,9 +28,6 @@ export function ModalsProvider(props: { children: React.ReactNode }) {
       requestSaveSetup: (setupId) => {
         setModalType("SAVE_SETUP");
         setSetupId(setupId);
-      },
-      requestImportSetup: () => {
-        setModalType("IMPORT_SETUP");
       },
     };
   }, []);
@@ -51,10 +47,6 @@ export function ModalsProvider(props: { children: React.ReactNode }) {
       >
         <SaveSetup setupId={setupId} onClose={closeModal} />
       </Modal>
-
-      <Modal.Core active={modalType === "IMPORT_SETUP"} preset="small" onClose={closeModal}>
-        <SetupImportGate onClose={closeModal} />
-      </Modal.Core>
 
       <Tavern
         active={modalType === "SWITCH_CHARACTER"}

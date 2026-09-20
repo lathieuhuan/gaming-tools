@@ -6,6 +6,7 @@ import { Greeter } from "./Greeter";
 import { Main } from "./Main";
 import { Modals } from "./Modals";
 import { Navbar } from "./Navbar";
+import { SetupImportCenter } from "./SetupImportCenter";
 import { TourOperator } from "./TourOperator";
 import { Tracker } from "./Tracker";
 
@@ -34,9 +35,10 @@ export function App() {
       <Navbar />
       <Main />
       <Modals />
-      <Tracker />
-      <TourOperator />
       <Greeter />
+      <Tracker />
+      <SetupImportCenter />
+      <TourOperator />
     </div>
   );
 }

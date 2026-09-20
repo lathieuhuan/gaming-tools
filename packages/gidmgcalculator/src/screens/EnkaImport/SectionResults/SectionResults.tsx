@@ -3,11 +3,11 @@ import { ClassValue, clsx } from "rond";
 import { createCharacter } from "@/logic/entity.logic";
 import { GenshinUserBuild } from "@/services/enka";
 import { IdStore } from "@/utils/IdStore";
+import { sendToImportCenter } from "@Store/ui";
 import { useDataImportState } from "../DataImporter";
 import { useRequestSaveBuild } from "../DataSaver/BuildSaver";
 import { useLayoutState } from "../Layout";
 
-import { importSetup } from "@Store/ui";
 import { TabHeader } from "../components/TabHeader";
 import { BuildOverviews } from "./BuildOverviews";
 
@@ -30,17 +30,17 @@ export function SectionResults({ className }: SectionResultsProps) {
       atfGear: build.atfGear,
     });
 
-    importSetup({
-      meta: {
+    sendToImportCenter(
+      {
+        main: character,
+      },
+      {
         id: idStore.gen(),
-        name: build.name || "New setup",
+        name: build.name,
         type: "original",
         source: "ENKA",
       },
-      params: {
-        main: character,
-      },
-    });
+    );
   };
 
   return (

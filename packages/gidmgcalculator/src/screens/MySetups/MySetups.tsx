@@ -16,7 +16,7 @@ import { setupToOverviewInfo } from "./logic/setupToOverviewInfo";
 // Component
 import { FinalResultView } from "@/components/FinalResultView";
 import { ModalAction } from "@/components/ModalAction";
-import { importSetup } from "@Store/ui";
+import { sendToImportCenter } from "@Store/ui";
 import { WarehouseWrapper } from "../components/WarehouseWrapper";
 import { ActiveSetupModalProvider } from "./ActiveSetupModalProvider";
 import { SetupCombineForm } from "./components/SetupCombineForm";
@@ -79,28 +79,21 @@ function MySetups() {
     const weapon = parseDbWeapon(main.weaponID, userWeapons, mainData.weaponType);
     const atfGear = parseDbArtifacts(main.artifactIDs, userArtifacts);
 
-    importSetup({
-      meta: {
-        id: dbSetup.ID,
-        name: dbSetup.name,
-        type: dbSetup.type,
-        source: "MY_SETUPS",
-      },
-      params: restoreCalcSetup(dbSetup, weapon, atfGear),
+    const setup = restoreCalcSetup(dbSetup, weapon, atfGear);
+
+    sendToImportCenter(setup, {
+      id: dbSetup.ID,
+      name: dbSetup.name,
+      type: dbSetup.type,
+      source: "MY_SETUPS",
     });
   };
 
   const handleCalcTeammateSetup = (info: SetupOverviewInfo, teammateIndex: number) => {
     const setup = createSetupForTeammate(info, teammateIndex, userdb);
 
-    importSetup({
-      meta: {
-        id: Date.now(),
-        name: "New setup",
-        type: "original",
-        source: "MY_SETUPS",
-      },
-      params: setup,
+    sendToImportCenter(setup, {
+      source: "MY_SETUPS",
     });
   };
 

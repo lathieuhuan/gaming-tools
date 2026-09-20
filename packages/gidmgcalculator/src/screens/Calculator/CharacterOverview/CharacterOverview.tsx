@@ -11,6 +11,7 @@ import { useCalcModalCtrl } from "../ContextProvider";
 // Component
 import { CharacterIntro } from "@/components/CharacterIntro";
 import { ComplexSelect } from "@/components/ComplexSelect";
+import { SetupImportAction } from "../components/SetupImportAction";
 import {
   ArtifactsTab,
   AttributesTab,
@@ -81,10 +82,12 @@ export function CharacterOverview({ touched }: CharacterOverviewProps) {
           <Button variant="primary" disabled={!appReady} onClick={modalCtrl.requestSwitchCharacter}>
             Select a character
           </Button>
+
           <p>or</p>
-          <Button disabled={!appReady} onClick={modalCtrl.requestImportSetup}>
-            Import a setup
-          </Button>
+
+          <SetupImportAction>
+            <Button disabled={!appReady}>Import a setup</Button>
+          </SetupImportAction>
         </div>
       )}
     </>

@@ -4,7 +4,8 @@ import { Button, FancyBackSvg } from "rond";
 
 import { useCalcStore } from "@Store/calculator";
 import { updateCalculator } from "@Store/calculator/actions";
-import { useCalcModalCtrl } from "../../ContextProvider";
+
+import { SetupImportAction } from "../../components/SetupImportAction";
 import { AddButton, useMultiSetupUpdateKit } from "../../SetupDraftKit";
 import { SetupControl } from "./SetupControl";
 
@@ -14,7 +15,6 @@ type SetupManagerSmallProps = {
 
 export function SetupManagerSmall({ onClose }: SetupManagerSmallProps) {
   const activeId = useCalcStore((state) => state.activeId);
-  const calcModalCtrl = useCalcModalCtrl();
 
   const { setups, canAddMoreSetup, apply } = useMultiSetupUpdateKit();
 
@@ -46,14 +46,15 @@ export function SetupManagerSmall({ onClose }: SetupManagerSmallProps) {
       </div>
 
       <div className="mt-auto p-4 flex gap-4">
-        <Button
-          className="w-full text-black"
-          icon={<MdDownload className="text-xl" />}
-          disabled={!canAddMoreSetup}
-          onClick={calcModalCtrl.requestImportSetup}
-        >
-          Import
-        </Button>
+        <SetupImportAction onImportStart={onClose}>
+          <Button
+            className="w-full text-black"
+            icon={<MdDownload className="text-xl" />}
+            disabled={!canAddMoreSetup}
+          >
+            Import
+          </Button>
+        </SetupImportAction>
 
         <AddButton variant="custom" className="w-full" />
       </div>

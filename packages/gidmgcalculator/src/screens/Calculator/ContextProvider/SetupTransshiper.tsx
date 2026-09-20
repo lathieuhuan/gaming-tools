@@ -3,7 +3,7 @@ import { message } from "rond";
 
 import { useSearchParams } from "@/lib/router";
 import { decodeSetup } from "@/logic/setupCodec";
-import { importSetup, selectAppReady, useUIStore } from "@Store/ui";
+import { selectAppReady, sendToImportCenter, useUIStore } from "@Store/ui";
 
 type SearchParams = {
   importCode?: string;
@@ -22,20 +22,16 @@ export function SetupTransshiper() {
 
     const result = decodeSetup(importCode);
 
-    if (result.isOk) {
-      importSetup({
-        meta: {
-          id: Date.now(),
-          name: "New setup",
-          type: "original",
-          source: "URL",
-        },
-        params: result.setup,
-      });
-      setSearchParams(null);
-    } else {
+    if (!result.isOk) {
       message.error(result.error);
+      return;
     }
+
+    sendToImportCenter(result.setup, {
+      source: "URL",
+    });
+
+    setSearchParams(null);
   }, [appReady]);
 
   return null;

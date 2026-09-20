@@ -119,7 +119,6 @@ function ImportCenter({ meta, params }: SetupImportInfo) {
   const addImportedSetup: OverwriteOptionsProps["onDone"] = (config) => {
     importSetup(params, meta, config);
 
-    // TODO check
     updateUI({
       setupDirectorActive: false,
       setupImportInfo: null,
@@ -143,8 +142,8 @@ function ImportCenter({ meta, params }: SetupImportInfo) {
 
     updateUI({
       setupDirectorActive: false,
-      appModalType: shouldShowEnhanceNotice ? "CHAR_ENHANCE_NOTICE" : "",
       setupImportInfo: null,
+      appModalType: shouldShowEnhanceNotice ? "CHAR_ENHANCE_NOTICE" : "",
     });
 
     router.navigate({ to: SCREEN_PATH.CALCULATOR });

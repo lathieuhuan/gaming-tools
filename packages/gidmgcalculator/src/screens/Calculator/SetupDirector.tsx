@@ -1,11 +1,11 @@
-import { BiImport } from "react-icons/bi";
 import { Button, CloseButton, CollapseSpace, Modal } from "rond";
 
 import { updateUI, useUIStore } from "@Store/ui";
-import { useCalcModalCtrl } from "./ContextProvider";
 
 // Component
+import { MdDownload } from "react-icons/md";
 import { Card } from "./components/Card";
+import { SetupImportAction } from "./components/SetupImportAction";
 import {
   AddButton,
   DuplicateButton,
@@ -18,8 +18,6 @@ import {
 } from "./SetupDraftKit";
 
 function SetupDirectorCore() {
-  const calcModalCtrl = useCalcModalCtrl();
-
   const { setups, canAddMoreSetup, apply } = useMultiSetupUpdateKit();
 
   const handleApply = () => {
@@ -28,19 +26,24 @@ function SetupDirectorCore() {
     }
   };
 
+  const handleImportStart = () => {
+    updateUI({ setupDirectorActive: false });
+  };
+
   return (
     <Card className="h-full flex flex-col">
       <p className="mb-2 text-xlp text-center text-heading font-bold">Setups Management</p>
 
       <div className="mb-4 button-group justify-end">
-        <Button
-          className="text-black"
-          icon={<BiImport className="text-xl" />}
-          disabled={!canAddMoreSetup}
-          onClick={calcModalCtrl.requestImportSetup}
-        >
-          Import
-        </Button>
+        <SetupImportAction onImportStart={handleImportStart}>
+          <Button
+            className="text-black"
+            icon={<MdDownload className="text-xl" />}
+            disabled={!canAddMoreSetup}
+          >
+            Import
+          </Button>
+        </SetupImportAction>
 
         <AddButton />
       </div>

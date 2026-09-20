@@ -1,7 +1,7 @@
 import { Array_ } from "ron-utils";
 
 import type { AppCharacter, BasicSetupType, DbCharacter } from "@/types";
-import type { SetupImportInfo, SetupImportParams } from "@Store/ui/types";
+import type { SetupImportMeta, SetupImportParams } from "@Store/ui/types";
 import type { UserdbState } from "@Store/userdbSlice";
 import type { CalculatorState } from "../types";
 
@@ -76,7 +76,7 @@ type ImportSetupOptions = {
 
 export const importSetup = (
   params: SetupImportParams,
-  meta: SetupImportInfo["meta"],
+  meta: SetupImportMeta,
   options: ImportSetupOptions = {},
 ) => {
   const { overwriteChar = false, overwriteTarget = false } = options;
