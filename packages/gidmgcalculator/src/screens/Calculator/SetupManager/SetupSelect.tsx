@@ -8,12 +8,12 @@ import { SETUP_PORTER_MODAL_PROPS } from "@/components/SetupPorters";
 import { MAX_CALC_SETUPS } from "@/constants/config";
 import { useShallowCalcStore } from "@Store/calculator";
 import { duplicateSetup, removeSetup, updateCalculator } from "@Store/calculator/actions";
-import { useCalcModalCtrl } from "../ContextProvider";
 
 // Component
 import { ComplexSelect, ComplexSelectOption } from "@/components/ComplexSelect";
 import { ModalAction } from "@/components/ModalAction";
 import { CalcSetupExporter } from "../components/CalcSetupExporter";
+import { SetupSaveAction } from "../components/SetupSaveAction";
 
 type ModalState = {
   type: "REMOVE_SETUP" | "";
@@ -22,7 +22,6 @@ type ModalState = {
 
 export function SetupSelect() {
   const id = useId();
-  const calcModalCtrl = useCalcModalCtrl();
 
   const { activeId, setupManagers, standardId, comparedIds } = useShallowCalcStore((state) =>
     Object_.extract(state, ["activeId", "setupManagers", "standardId", "comparedIds"]),
@@ -99,14 +98,11 @@ export function SetupSelect() {
             </Action>
           </ModalAction>
 
-          <Action
-            onClick={() => {
-              calcModalCtrl.requestSaveSetup(setup.ID);
-              closeSelect();
-            }}
-          >
-            <FaSave />
-          </Action>
+          <SetupSaveAction setupId={setup.ID}>
+            <Action onClick={closeSelect}>
+              <FaSave />
+            </Action>
+          </SetupSaveAction>
 
           <Action disabled={isAtMax} onClick={() => duplicateSetup(setup.ID)}>
             <FaCopy />

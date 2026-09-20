@@ -4,10 +4,10 @@ import { Button, type ButtonProps } from "rond";
 
 import { SETUP_PORTER_MODAL_PROPS } from "@/components/SetupPorters";
 import { MultiSetupChange } from "@Store/calculator/actions";
-import { useCalcModalCtrl } from "../../ContextProvider";
 
 import { ModalAction } from "@/components/ModalAction";
 import { CalcSetupExporter } from "../../components/CalcSetupExporter";
+import { SetupSaveAction } from "../../components/SetupSaveAction";
 import {
   DuplicateButton,
   NameInput,
@@ -23,8 +23,6 @@ type SetupControlProps = Omit<ComponentProps<"div">, "children"> & {
 };
 
 export function SetupControl({ setup, active, onSelect, ...props }: SetupControlProps) {
-  const calcModalCtrl = useCalcModalCtrl();
-
   return (
     <div {...props}>
       <div className="flex gap-4">
@@ -60,13 +58,14 @@ export function SetupControl({ setup, active, onSelect, ...props }: SetupControl
           />
         </ModalAction>
 
-        <Button
-          {...ACTION_PROPS}
-          className={[ACTION_PROPS.className, "text-lg"]}
-          icon={<FaSave />}
-          disabled={setup.status !== "OLD"}
-          onClick={() => calcModalCtrl.requestSaveSetup(setup.ID)}
-        />
+        <SetupSaveAction setupId={setup.ID}>
+          <Button
+            {...ACTION_PROPS}
+            className={[ACTION_PROPS.className, "text-lg"]}
+            icon={<FaSave />}
+            disabled={setup.status !== "OLD"}
+          />
+        </SetupSaveAction>
 
         <DuplicateButton
           {...ACTION_PROPS}
