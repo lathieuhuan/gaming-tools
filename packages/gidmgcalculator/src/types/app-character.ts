@@ -144,12 +144,13 @@ export type AttackAlterSpec = {
   forPatt?: "ALL" | NormalAttack | NormalAttack[] | TalentCalcItemBonusId[];
   attPatt?: AttackPattern;
   attElmt?: ElementType | "phec";
+  reaction?: TalentReaction;
   disabled?: boolean;
 };
 
 export type CharacterBuff = CharacterModifierBase &
   BuffSpec & {
-    alterConfigs?: AttackAlterSpec | AttackAlterSpec[];
+    alterSpecs?: AttackAlterSpec | AttackAlterSpec[];
   };
 
 export type CharacterInnateBuff = CharacterModifierBase &

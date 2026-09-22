@@ -1,9 +1,4 @@
-import type {
-  ConditionComparison,
-  EffectInputConditionSpec,
-  InputCheckSpec,
-  MultipleInputCheckSpec,
-} from "@/types";
+import type { ConditionComparison, InputCheckSpec } from "@/types";
 
 export function isPassedComparison(
   value: number,
@@ -22,42 +17,18 @@ export function isPassedComparison(
   }
 }
 
-function isMultipleChecks(
-  inputCheck: EffectInputConditionSpec,
-): inputCheck is MultipleInputCheckSpec {
-  return typeof inputCheck === "object" && "relation" in inputCheck;
-}
-
-function isInvalidInput(inputs: number[], inputCheck: number | InputCheckSpec) {
-  const {
-    value,
-    inpIndex = 0,
-    comparison = "EQUAL",
-  } = typeof inputCheck === "number" ? { value: inputCheck } : inputCheck;
-  const input = inputs[inpIndex];
-
-  return input === undefined || !isPassedComparison(input, value, comparison);
-}
-
-export function isValidInput(condition: EffectInputConditionSpec | undefined, inputs: number[]) {
-  if (condition !== undefined) {
-    if (isMultipleChecks(condition)) {
-      switch (condition.relation) {
-        case "AND":
-          if (condition.checks.some((check) => isInvalidInput(inputs, check))) {
-            return false;
-          }
-          break;
-        case "OR":
-          if (condition.checks.every((check) => isInvalidInput(inputs, check))) {
-            return false;
-          }
-          break;
-      }
-    } else if (isInvalidInput(inputs, condition)) {
-      return false;
-    }
+export function isInvalidInput(inputs: number[], inputCheck?: number | InputCheckSpec) {
+  //
+  if (inputCheck === undefined) {
+    return false;
   }
 
-  return true;
+  const {
+    value,
+    index = 0,
+    comparison = "EQUAL",
+  } = typeof inputCheck === "number" ? { value: inputCheck } : inputCheck;
+  const input = inputs[index];
+
+  return input === undefined || !isPassedComparison(input, value, comparison);
 }

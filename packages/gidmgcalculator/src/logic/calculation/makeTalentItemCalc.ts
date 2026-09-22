@@ -87,7 +87,7 @@ export function makeTalentItemCalc(
     const { attElmtAlter } = inputs;
     const { absorption, absorbReaction, infusion, infuseReaction } = elmtEvent;
 
-    const attPatt = alter.attPatt || item.attPatt || default_.attPatt;
+    const attPatt = item.attPatt || alter.attPatt || default_.attPatt;
     let attElmt: AttackElement;
     let reaction = elmtEvent.reaction;
 

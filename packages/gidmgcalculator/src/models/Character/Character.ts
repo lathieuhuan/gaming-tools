@@ -18,7 +18,7 @@ import type {
   TeamMember,
 } from "@/types";
 
-import { isPassedComparison, isValidInput } from "@/utils/effect.utils";
+import { isInvalidInput, isPassedComparison } from "@/utils/effect.utils";
 import { splitLevel } from "@/utils/level.utils";
 import { ArtifactGear } from "../ArtifactGear";
 import { Weapon } from "../Weapon";
@@ -197,7 +197,17 @@ export class Character implements TeamMember {
       }
     }
 
-    if (!isValidInput(condition.checkInput, inputs)) {
+    if (condition.checkAll) {
+      const allInvalid = condition.checkAll.every(
+        (condition) => !this.canPerformEffect(condition, inputs),
+      );
+
+      if (allInvalid) {
+        return false;
+      }
+    }
+
+    if (isInvalidInput(inputs, condition.checkInput)) {
       return false;
     }
 

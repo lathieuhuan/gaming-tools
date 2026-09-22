@@ -8,7 +8,7 @@
     "build": "npm run type-check && vite build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives",
     "preview": "vite preview",
-    "type-check": "tsc -p tsconfig.type-check.json --noEmit",
+    "typecheck": "tsc -p tsconfig.type-check.json --noEmit",
     "e2e-test": "npx playwright test",
     "unit-test": "jest"
   },

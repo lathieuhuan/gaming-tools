@@ -71,17 +71,12 @@ export type EffectPerformerConditionSpecs = {
 export type InputCheckSpec = {
   value: number;
   /** The index of input to check. Default 0. */
-  inpIndex?: number;
+  index?: number;
   /** Default 'EQUAL' */
   comparison?: ConditionComparison;
 };
 
-export type MultipleInputCheckSpec = {
-  relation: "AND" | "OR";
-  checks: (number | InputCheckSpec)[];
-};
-
-export type EffectInputConditionSpec = number | InputCheckSpec | MultipleInputCheckSpec;
+export type EffectInputConditionSpec = number | InputCheckSpec;
 
 export type EffectInputConditionSpecs = {
   /** If number, the input at 0 must equal to the number */
@@ -94,6 +89,7 @@ export type EffectPerformableConditionSpecs = TeamConditionSpecs &
   EffectPerformerConditionSpecs &
   EffectInputConditionSpecs & {
     checkAny?: EffectPerformableConditionSpecs[];
+    checkAll?: EffectPerformableConditionSpecs[];
   };
 
 // ===== Receiver Condition =====

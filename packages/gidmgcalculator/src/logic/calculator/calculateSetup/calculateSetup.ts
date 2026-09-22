@@ -51,16 +51,18 @@ export function calculateSetup(setup: CalcSetup, options: CalculateSetupOptions 
 
   for (const ATT_PATT of ATTACK_PATTERNS) {
     const talentType = ATT_PATT === "ES" || ATT_PATT === "EB" ? ATT_PATT : "NAs";
-    const alterConfig = attackAlters.get(ATT_PATT);
+    const talentAlter = attackAlters.get(ATT_PATT);
     const defaultValues = getTalentDefaultValues(main.data, ATT_PATT);
 
-    const talentCalc = makeTalentItemCalc(main, target, talentType, defaultValues, alterConfig);
+    const talentCalc = makeTalentItemCalc(main, target, talentType, defaultValues, talentAlter);
 
     for (const calcItem of calcList[ATT_PATT]) {
-      const { type = "attack", reaction } = calcItem;
+      const { type = "attack" } = calcItem;
+      const itemAlter = calcItem.id && attackAlters.get(calcItem.id);
+      const reaction = itemAlter?.reaction || talentAlter?.reaction || calcItem.reaction;
 
       if (type === "attack") {
-        if (alterConfig?.disabled) {
+        if (talentAlter?.disabled) {
           continue;
         }
 
@@ -72,10 +74,8 @@ export function calculateSetup(setup: CalcSetup, options: CalculateSetupOptions 
           continue;
         }
 
-        const itemElmtAlter = calcItem.id && attackAlters.get(calcItem.id)?.attElmt;
-
         const attackResult = talentCalc.calcAttackItem(calcItem, elmtEvent, {
-          attElmtAlter: itemElmtAlter,
+          attElmtAlter: itemAlter?.attElmt,
         });
 
         result[talentType].set(calcItem.name, attackResult);

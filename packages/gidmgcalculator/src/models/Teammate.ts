@@ -13,7 +13,7 @@ import type {
 } from "@/types";
 
 import { createAbilityBuffCtrls, createAbilityDebuffCtrls } from "@/logic/modifier.logic";
-import { isPassedComparison, isValidInput } from "@/utils/effect.utils";
+import { isInvalidInput, isPassedComparison } from "@/utils/effect.utils";
 
 export type TeammateConstructOptions = {
   enhanced?: boolean;
@@ -93,7 +93,7 @@ export class Teammate implements TeammateData, TeamMember {
       return false;
     }
 
-    if (!isValidInput(condition.checkInput, inputs)) {
+    if (isInvalidInput(inputs, condition.checkInput)) {
       return false;
     }
 

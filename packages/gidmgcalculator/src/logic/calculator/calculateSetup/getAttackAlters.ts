@@ -13,16 +13,16 @@ export function getAttackAlters(setup: CalcSetup) {
       continue;
     }
 
-    const { alterConfigs = [] } = ctrl.data;
+    const { alterSpecs = [] } = ctrl.data;
 
     const mainOps = setup.team.member(setup.main);
 
-    for (const config of Array_.toArray(alterConfigs)) {
-      if (!mainOps.canPerformEffect(config, ctrl.inputs)) {
+    for (const spec of Array_.toArray(alterSpecs)) {
+      if (!mainOps.canPerformEffect(spec, ctrl.inputs)) {
         continue;
       }
 
-      const { checkInput, forPatt = "ALL", attElmt, ...rest } = config;
+      const { checkInput, forPatt = "ALL", attElmt, ...rest } = spec;
 
       const alter: AttackAlter = {
         attElmt: attElmt === "phec" ? setup.team.getPhecElmt() : attElmt,

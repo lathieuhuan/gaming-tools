@@ -1,3 +1,4 @@
+import type { TalentReaction } from "../app-character";
 import type { ActualAttackPattern, AttackPattern, CalcItemBasedOn, ElementType } from "../common";
 
 export * from "./teammate";
@@ -12,5 +13,6 @@ export type CalcItemDefaultValues = {
 export type AttackAlter = {
   attPatt?: AttackPattern;
   attElmt?: ElementType;
+  reaction?: TalentReaction;
   disabled?: boolean;
 };
