@@ -4,13 +4,12 @@ import type { SetupOverviewInfo } from "../types";
 
 import { createTeammate } from "@/logic/entity.logic";
 import { isDbSetup } from "@/logic/setup.logic";
-import { makeCharacterCalcFromDb } from "@/logic/userdb.logic";
+import { createCharacterFromDb } from "@/logic/userdb.logic";
 
 function toSetupOverview(setup: DbSetup, userDb: UserdbState): SetupOverviewInfo["setup"] {
   const { userWps, userArts } = userDb;
 
-  const main = makeCharacterCalcFromDb(setup.main, userWps, userArts);
-
+  const main = createCharacterFromDb(setup.main, userWps, userArts);
   const teammates = setup.teammates.map((teammate) => createTeammate(teammate));
 
   return {

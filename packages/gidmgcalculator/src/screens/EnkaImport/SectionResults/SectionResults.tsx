@@ -1,9 +1,9 @@
 import { ClassValue, clsx } from "rond";
 
-import { useSetupImporter } from "@/lib/setup-importer";
 import { createCharacter } from "@/logic/entity.logic";
 import { GenshinUserBuild } from "@/services/enka";
 import { IdStore } from "@/utils/IdStore";
+import { sendToImportCenter } from "@Store/ui";
 import { useDataImportState } from "../DataImporter";
 import { useRequestSaveBuild } from "../DataSaver/BuildSaver";
 import { useLayoutState } from "../Layout";
@@ -16,7 +16,6 @@ type SectionResultsProps = {
 };
 
 export function SectionResults({ className }: SectionResultsProps) {
-  const setupImporter = useSetupImporter();
   const requestSave = useRequestSaveBuild();
   const { isMobile } = useLayoutState();
   const { data: genshinUser, isLoading } = useDataImportState();
@@ -31,15 +30,17 @@ export function SectionResults({ className }: SectionResultsProps) {
       atfGear: build.atfGear,
     });
 
-    setupImporter.import({
-      name: build.name,
-      type: "original",
-      ID: idStore.gen(),
-      params: {
+    sendToImportCenter(
+      {
         main: character,
       },
-      source: "ENKA",
-    });
+      {
+        id: idStore.gen(),
+        name: build.name,
+        type: "original",
+        source: "ENKA",
+      },
+    );
   };
 
   return (

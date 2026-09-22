@@ -74,10 +74,6 @@ export function calcReaction(
   const elvMult = toMult(getBonus("elvMult_"));
   const resMult = target.resistMults[attElmt_];
 
-  // console.log("reaction", reaction);
-  // console.log("performer.attkBonusCtrl", performer.attkBonusCtrl);
-  // console.log("bonusMult", bonusMult);
-
   const cRate = (limitCRate(getBonus("cRate_", [attElmt_])) + extraCRate) / 100;
   const cDmg = (getBonus("cDmg_", [attElmt_]) + extraCDmg) / 100;
 

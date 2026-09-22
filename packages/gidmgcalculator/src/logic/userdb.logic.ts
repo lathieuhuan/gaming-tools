@@ -31,7 +31,7 @@ export function parseDbArtifacts(artifactIDs: number[] = [], dbArtifacts: RawArt
   return ArtifactGear.create(artifacts);
 }
 
-export function makeCharacterCalcFromDb(
+export function createCharacterFromDb(
   character: DbCharacter,
   dbWeapons: RawWeapon[],
   dbArtifacts: RawArtifact[],

@@ -1,11 +1,5 @@
 import { useRef, useState } from "react";
-import {
-  EntitySelectTemplate,
-  type EntitySelectTemplateProps,
-  FancyBackSvg,
-  Modal,
-  useElementSize,
-} from "rond";
+import { EntitySelectTemplate, type EntitySelectTemplateProps, FancyBackSvg, Modal } from "rond";
 
 import type { Artifact, ArtifactGear } from "@/models";
 import type { ArtifactType, RawArtifact } from "@/types";
@@ -15,10 +9,9 @@ import { createArtifact } from "@/logic/entity.logic";
 import { selectDbArtifacts } from "@Store/userdbSlice";
 
 // Conponent
-import { ArtifactCard } from "../ArtifactCard";
 import { ArtifactFilter, ArtifactFilterProps, useArtifactFilter } from "../ArtifactFilter";
 import { InventoryRack, InventoryRackProps } from "../InventoryRack";
-import { OwnerLabel } from "../OwnerLabel";
+import { SelectArtifactView } from "./SelectArtifactView";
 
 export type ArtifactInventoryProps = Pick<ArtifactFilterProps<Artifact>, "forcedType"> &
   Pick<EntitySelectTemplateProps, "hasMultipleMode"> & {
@@ -41,10 +34,8 @@ const ArtifactInventoryCore = ({
   onClickButton,
   onClose,
 }: ArtifactInventoryProps) => {
-  const [ref, { height }] = useElementSize<HTMLDivElement>();
   const bodyRef = useRef<HTMLDivElement>(null);
 
-  const [showingCurrent, setShowingCurrent] = useState(false);
   const [selectedArtifact, setSelectedArtifact] = useState<Artifact>();
 
   const artifacts = useStoreSnapshot((state) => {
@@ -58,10 +49,6 @@ const ArtifactInventoryCore = ({
   const { filteredArtifacts, filter, setFilter } = useArtifactFilter(artifacts, {
     types: [forcedType || initialType],
   });
-
-  const currentPiece = selectedArtifact?.type
-    ? currentAtfGear?.pieces[selectedArtifact.type]
-    : undefined;
 
   const onChangeItem: InventoryRackProps<RawArtifact>["onChangeItem"] = (item) => {
     if (!item) {
@@ -110,61 +97,35 @@ const ArtifactInventoryCore = ({
               onChangeItem={onChangeItem}
             />
 
-            <div className="h-full flex flex-col relative">
-              <div ref={ref} className="grow">
-                <ArtifactCard
-                  wrapperCls="w-72 h-full"
-                  artifact={selectedArtifact}
-                  withActions={!!selectedArtifact}
-                  actions={[
-                    {
-                      icon: <FancyBackSvg />,
-                      className: "sm:hidden",
-                      onClick: () => {
-                        if (bodyRef.current) bodyRef.current.scrollLeft = 0;
-                      },
-                    },
-                    {
-                      children: "Compare",
-                      variant: showingCurrent ? "active" : "default",
-                      className: isCurrentSelected && "hidden",
-                      disabled: !currentAtfGear,
-                      onClick: () => setShowingCurrent(!showingCurrent),
-                    },
-                    {
-                      children: buttonText,
-                      variant: "primary",
-                      className: isCurrentSelected && "hidden",
-                      onClick: (_, artifact) => {
-                        onClickButton(artifact, isMultiSelect);
-                        if (!isMultiSelect) onClose();
-                      },
-                    },
-                  ]}
-                />
-              </div>
-
-              {currentAtfGear ? (
-                <div
-                  className={
-                    "absolute top-0 z-10 h-full hide-scrollbar transition-size duration-200 " +
-                    (showingCurrent ? "w-60" : "w-0")
-                  }
-                  style={{
-                    height,
-                    right: "calc(100% - 1rem)",
-                  }}
-                >
-                  <div className="w-64 pr-2 pb-2 h-full flex flex-col bg-dark-1 rounded-l-lg">
-                    <ArtifactCard mutable={false} artifact={currentPiece} />
-
-                    <p className="mt-4 text-center text-heading">Current equipment</p>
-                  </div>
-                </div>
-              ) : null}
-
-              <OwnerLabel className="mt-3" item={selectedArtifact} />
-            </div>
+            <SelectArtifactView
+              artifact={selectedArtifact}
+              currentAtfGear={currentAtfGear}
+              actions={(showingCurrent, setShowingCurrent) => [
+                {
+                  icon: <FancyBackSvg />,
+                  className: "sm:hidden",
+                  onClick: () => {
+                    if (bodyRef.current) bodyRef.current.scrollLeft = 0;
+                  },
+                },
+                {
+                  children: "Compare",
+                  variant: showingCurrent ? "active" : "default",
+                  className: isCurrentSelected && "hidden",
+                  disabled: !currentAtfGear,
+                  onClick: () => setShowingCurrent(!showingCurrent),
+                },
+                {
+                  children: buttonText,
+                  variant: "primary",
+                  className: isCurrentSelected && "hidden",
+                  onClick: (_, artifact) => {
+                    onClickButton(artifact, isMultiSelect);
+                    if (!isMultiSelect) onClose();
+                  },
+                },
+              ]}
+            />
           </div>
         );
       }}

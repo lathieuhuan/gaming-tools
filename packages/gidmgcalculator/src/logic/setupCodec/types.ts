@@ -1,8 +1,8 @@
-import type { SetupImportData } from "@/types";
+import type { CalcSetup } from "../calculator";
 
 type DecodeSuccessResult = {
   isOk: true;
-  importInfo: SetupImportData;
+  setup: CalcSetup;
 };
 
 type DecodeFailResult = {

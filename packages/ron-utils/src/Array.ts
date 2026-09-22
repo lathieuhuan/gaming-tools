@@ -65,16 +65,48 @@ export class Array_ {
     return resultList;
   }
 
+  static mapFilter<T, K, U extends K>(
+    list: T[],
+    map: (value: T, index: number) => K,
+    filter: (value: K) => value is U,
+  ): U[];
+
+  static mapFilter<T, K>(
+    list: T[],
+    map: (value: T, index: number) => K,
+    filter: (value: K) => boolean,
+  ): K[];
+
+  static mapFilter<T, K>(
+    list: T[],
+    map: (value: T, index: number) => K,
+    filter: (value: K) => boolean,
+  ): K[] {
+    const resultList: K[] = [];
+
+    for (const [index, value] of list.entries()) {
+      const result = map(value, index);
+
+      if (filter(result)) {
+        resultList.push(result);
+      }
+    }
+
+    return resultList;
+  }
+
   static filterForEach<T, K extends T>(
     list: T[],
     filter: (item: T) => item is K,
     forEach: (item: K) => void,
   ): void;
+
   static filterForEach<T>(
     list: T[],
     filter: (item: T) => boolean,
     forEach: (item: T) => void,
   ): void;
+
   static filterForEach<T>(
     list: T[],
     filter: (item: T) => boolean,

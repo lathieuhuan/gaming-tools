@@ -6,7 +6,8 @@ import { useCalcStore } from "@Store/calculator";
 
 // Components
 import { Card } from "../components/Card";
-import { ContextProvider } from "../ContextProvider";
+import { SetupURLImporter } from "../SetupURLImporter";
+import { TargetConfig } from "../TargetConfig";
 import { ModifiersCard, OverviewCard, ResultsCard, SetupCard } from "./CardComponents";
 
 const FlexibleCard: typeof Card = ({ className, style, ...restProps }) => {
@@ -37,7 +38,7 @@ function LargeCalculator() {
   const touched = useCalcStore((state) => state.setupManagers.length !== 0);
 
   return (
-    <ContextProvider>
+    <>
       <div className="flex flex-col relative max-w-98/100 2xl:max-w-none h-full sm:h-[calc(100vh_-_3rem)]">
         <div id={TOUR_STEP_ID.scrollCalculator} className="grow flex items-center overflow-auto">
           <div className="w-full flex h-98/100 gap-2">
@@ -48,7 +49,10 @@ function LargeCalculator() {
           </div>
         </div>
       </div>
-    </ContextProvider>
+
+      <TargetConfig />
+      <SetupURLImporter />
+    </>
   );
 }
 

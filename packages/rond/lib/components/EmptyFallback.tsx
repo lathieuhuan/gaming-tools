@@ -1,36 +1,30 @@
 import { cn } from "@lib/utils";
 import type { ClassValue } from "clsx";
-import type { ComponentProps } from "react";
+import type { ComponentProps, ReactNode } from "react";
 
 type EmptyFallbackProps = ComponentProps<"div"> & {
   className?: ClassValue;
-  containerProps?: Omit<ComponentProps<"div">, "children">;
-  messageProps?: Omit<ComponentProps<"p">, "children">;
-  message: string;
+  containerCls?: string;
+  messageCls?: ClassValue;
+  message: ReactNode;
 };
 
 export function EmptyFallback({
   className,
   message,
   children,
-  containerProps,
-  messageProps,
+  containerCls,
+  messageCls,
   ...restProps
 }: EmptyFallbackProps) {
   return (
-    <div {...containerProps}>
+    <div className={containerCls}>
       <div className={cn("peer", className)} {...restProps}>
         {children}
       </div>
-      <p
-        {...messageProps}
-        className={cn(
-          "py-4 text-center text-light-hint hidden peer-empty:block",
-          messageProps?.className,
-        )}
-      >
+      <div className={cn("py-4 text-center text-light-hint hidden peer-empty:block", messageCls)}>
         {message}
-      </p>
+      </div>
     </div>
   );
 }

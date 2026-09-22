@@ -1,5 +1,7 @@
 import type { SearchParams } from "@/lib/router";
-import type { TourKey } from "@/types";
+import type { CreateCalcSetupOptions } from "@/logic/calculator";
+import type { Character } from "@/models/Character";
+import type { BasicSetupType, TourKey } from "@/types";
 
 export type AppModalType =
   | "INTRO"
@@ -14,19 +16,25 @@ export type AppModalType =
   | "CHAR_ENHANCE_NOTICE"
   | "";
 
-export type MySetupsModalType =
-  | "TIPS"
-  | "FIRST_COMBINE"
-  | "COMBINE_MORE"
-  | "SHARE_SETUP"
-  | "REMOVE_SETUP"
-  | "STATS"
-  | "MODIFIERS"
-  | "WEAPON"
-  | "ARTIFACTS"
-  | "";
+export type MySetupsModalType = "FIRST_COMBINE" | "COMBINE_MORE" | "";
 
 export type TrackerState = "open" | "close" | "hidden";
+
+export type SetupImportMeta = {
+  id: number;
+  name: string;
+  type?: BasicSetupType;
+  source: "CALCULATOR" | "URL" | "MY_SETUPS" | "ENKA";
+};
+
+export type SetupImportParams = CreateCalcSetupOptions & {
+  main: Character;
+};
+
+export type SetupImportInfo = {
+  meta: SetupImportMeta;
+  params: SetupImportParams;
+};
 
 export type TourType = TourKey | "MAIN_ENHANCE" | "TEAMMATE_ENHANCE";
 
@@ -40,6 +48,7 @@ export type UIState = {
   };
   setupDirectorActive: boolean;
   trackerState: TrackerState;
+  setupImportInfo: SetupImportInfo | null;
   tourType?: TourType;
   enkaParams?: SearchParams;
 };
