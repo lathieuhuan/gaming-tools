@@ -7,7 +7,7 @@ export const MAX_CALC_SETUPS = 4;
 export const DOWNLOAD_DATA_VERSION = 7;
 export const PERSISTED_DATA_VERSION = 8;
 export const EXPORTED_SETUP_VERSIONS = ["3", "4", "5"];
-export const MINIMUM_SYSTEM_VERSION = "3.61.0";
+export const MINIMUM_SYSTEM_VERSION = "3.62.0";
 
 export const IS_DEV_ENV = import.meta.env.DEV;
 
