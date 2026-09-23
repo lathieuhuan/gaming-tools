@@ -1,8 +1,7 @@
-import { Array_ } from "ron-utils";
 import { EmptyFallback } from "rond";
 
 import type { ArtifactGearSet } from "@/types";
-import { parseArtifactDesc } from "@/utils/descriptionParsers";
+import { parseArtifactDesc } from "@/utils/description.utils";
 
 type SetBonusesViewProps = {
   sets: ArtifactGearSet[];
@@ -23,13 +22,7 @@ export function SetBonusesView({ sets, hideTitle }: SetBonusesViewProps) {
 
           for (let i = 0; i <= set.bonusLv; i++) {
             const { description = i } = setBonuses?.[i] || {};
-            const parsedDescription = Array_.toArray(description).reduce((acc, index) => {
-              if (descriptions[index]) {
-                const parsedText = parseArtifactDesc(descriptions[index]);
-                return `${acc} ${parsedText}`;
-              }
-              return acc;
-            }, "");
+            const parsedDescription = parseArtifactDesc(descriptions, description);
 
             content.push(
               <li key={i}>

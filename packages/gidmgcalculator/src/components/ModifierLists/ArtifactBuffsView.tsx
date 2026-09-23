@@ -2,7 +2,7 @@ import type { Teammate } from "@/models";
 import type { ArtifactBuffCtrl, TeammateArtifactBuffCtrl } from "@/types";
 import type { ModifierHanlders } from "./types";
 
-import { getArtifactDesc } from "@/utils/descriptionParsers";
+import { parseArtifactDesc } from "@/utils/description.utils";
 import { GenshinModifierView } from "../GenshinModifierView";
 import { ModifierContainer } from "./ModifierContainer";
 
@@ -32,7 +32,7 @@ export function ArtifactBuffsView({
             mutable={mutable}
             checked={ctrl.activated}
             heading={`${setData.name} / self`}
-            description={getArtifactDesc(setData, data)}
+            description={parseArtifactDesc(setData.descriptions, data.description)}
             inputs={ctrl.inputs}
             inputConfigs={data.inputConfigs}
             isTeamMod={!!data.teamBuffId}
@@ -55,7 +55,7 @@ export function ArtifactBuffsView({
                 mutable={mutable}
                 checked={ctrl.activated}
                 heading={`${artifact.data.name} / ${teammate.data.name}`}
-                description={getArtifactDesc(artifact.data, data)}
+                description={parseArtifactDesc(artifact.data.descriptions, data.description)}
                 inputs={ctrl.inputs}
                 inputConfigs={data.inputConfigs}
                 isTeamMod={!!data.teamBuffId}

@@ -1,4 +1,4 @@
-import { CalcAttackItemOutputs, CalcReactionOutputs } from "@/logic/calculation/types";
+import type { CalcAttackItemOutputs, CalcReactionOutputs } from "@/logic/calculation";
 import type { CustomBuffCtrlCategory, CustomBuffCtrlType } from "@/types";
 
 /**

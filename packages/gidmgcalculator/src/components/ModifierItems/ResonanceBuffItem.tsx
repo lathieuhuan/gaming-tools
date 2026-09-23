@@ -2,7 +2,7 @@ import { Array_ } from "ron-utils";
 
 import type { ElementType, ModInputSpec } from "@/types";
 
-import { parseDescription } from "@/utils/descriptionParsers";
+import { parseDescription } from "@/utils/description.utils";
 import { GenshinModifierView, type GenshinModifierViewProps } from "../GenshinModifierView";
 
 type RenderInfo = {

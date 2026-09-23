@@ -2,7 +2,7 @@ import type { Teammate, Weapon } from "@/models";
 import type { TeammateWeapon, WeaponBuffCtrl } from "@/types";
 import type { ModifierHanlders } from "./types";
 
-import { getWeaponBuffDesc } from "@/utils/descriptionParsers";
+import { parseWeaponModDesc } from "@/utils/description.utils";
 import { GenshinModifierView } from "../GenshinModifierView";
 import { ModifierContainer } from "./ModifierContainer";
 
@@ -39,7 +39,7 @@ function renderWeaponModifiers({
         mutable={mutable}
         checked={ctrl.activated}
         heading={`${data.name} R${weapon.refi} / ${headingSuffix}`}
-        description={getWeaponBuffDesc(data.descriptions, buff, weapon.refi)}
+        description={parseWeaponModDesc(data.descriptions, buff.description, weapon.refi)}
         inputs={ctrl.inputs}
         inputConfigs={inputConfigs}
         {...getHanlders?.(ctrl, ctrls)}

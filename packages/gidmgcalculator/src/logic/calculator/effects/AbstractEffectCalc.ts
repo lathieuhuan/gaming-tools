@@ -1,4 +1,3 @@
-import domPurify from "dompurify";
 import { Array_, round, toMult } from "ron-utils";
 
 import type {
@@ -20,7 +19,7 @@ import type {
 import type { Team } from "../Team";
 
 import { Character } from "@/models";
-import { wrapText } from "@/utils/descriptionParsers/utils";
+import { parseDescription } from "@/utils/description.utils";
 
 type AbilityBuff = CharacterBuff | CharacterDebuff;
 
@@ -291,11 +290,7 @@ export abstract class AbstractEffectCalc<TPerformer extends TeamMember = TeamMem
   abstract getInitialValue(effect: EffectToGetInitialValue): number;
 
   parseAbilityDesc({ description, effects }: EffectToParseDesc) {
-    return domPurify.sanitize(description).replace(/\{.+?\}#\[\w*\]/g, (match) => {
-      let [body, type = ""] = match.split("#");
-      body = body.slice(1, -1);
-      type = type.slice(1, -1);
-
+    return parseDescription(description, (body) => {
       if (body[0] === "@") {
         const effect = Array_.toArray(effects)[+body[1]];
 
@@ -307,12 +302,13 @@ export abstract class AbstractEffectCalc<TPerformer extends TeamMember = TeamMem
           if (typeof max === "number" && result > max) result = max;
 
           const decimal = +body[3];
+
           if (!isNaN(decimal)) {
             if (body[2] === "'") result *= 100;
             result = round(result, decimal);
           }
 
-          switch (body[body.length - 1]) {
+          switch (body.at(-1)) {
             case "%":
               body = result + "%";
               break;
@@ -324,9 +320,8 @@ export abstract class AbstractEffectCalc<TPerformer extends TeamMember = TeamMem
           }
         }
       }
-      if (body[0] === "@") body = "?";
 
-      return wrapText(body, type);
+      return body[0] === "@" ? "?" : body;
     });
   }
 }

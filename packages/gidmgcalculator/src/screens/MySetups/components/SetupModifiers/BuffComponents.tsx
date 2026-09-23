@@ -6,7 +6,7 @@ import type { Character } from "@/models/Character";
 import type { AttackReaction, CustomBuffCtrl, ElementalEvent, ElementType } from "@/types";
 
 import { useTranslation } from "@/hooks";
-import { parseDescription } from "@/utils/descriptionParsers";
+import { parseDescription } from "@/utils/description.utils";
 import { suffixOf, toCustomBuffLabel } from "@/utils/ui.utils";
 
 // Component

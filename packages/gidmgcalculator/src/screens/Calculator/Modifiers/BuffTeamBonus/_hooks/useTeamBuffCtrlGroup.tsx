@@ -2,7 +2,7 @@ import type { TeamBuffCtrl } from "@/types";
 import type { ControlGroup } from "../types";
 
 import { MS_ASCENDANT_BUFF_ID } from "@/services/app-data";
-import { parseDescription } from "@/utils/descriptionParsers";
+import { parseDescription } from "@/utils/description.utils";
 import { useCalcStore } from "@Store/calculator";
 import { updateSetup } from "@Store/calculator/actions";
 import { selectSetup } from "@Store/calculator/selectors";

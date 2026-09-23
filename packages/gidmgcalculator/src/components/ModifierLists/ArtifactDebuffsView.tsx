@@ -2,7 +2,7 @@ import type { Teammate } from "@/models";
 import type { ArtifactDebuffCtrl, TeammateArtifactDebuffCtrl } from "@/types";
 import type { ModifierHanlders } from "./types";
 
-import { getArtifactDesc } from "@/utils/descriptionParsers";
+import { parseArtifactDesc } from "@/utils/description.utils";
 import { GenshinModifierView } from "../GenshinModifierView";
 import { ModifierContainer } from "./ModifierContainer";
 
@@ -29,7 +29,7 @@ export function ArtifactDebuffsView({
             key={`${ctrl.code}-${ctrl.id}`}
             mutable={mutable}
             heading={`${ctrl.setData.name} / Self`}
-            description={getArtifactDesc(ctrl.setData, ctrl.data)}
+            description={parseArtifactDesc(ctrl.setData.descriptions, ctrl.data.description)}
             checked={ctrl.activated}
             inputs={ctrl.inputs}
             inputConfigs={ctrl.data.inputConfigs}
@@ -52,7 +52,7 @@ export function ArtifactDebuffsView({
                 mutable={mutable}
                 checked={ctrl.activated}
                 heading={`${artifact.data.name} / ${teammate.data.name}`}
-                description={getArtifactDesc(artifact.data, data)}
+                description={parseArtifactDesc(artifact.data.descriptions, data.description)}
                 inputs={ctrl.inputs}
                 inputConfigs={data.inputConfigs}
                 isTeamMod={!!data.teamBuffId}

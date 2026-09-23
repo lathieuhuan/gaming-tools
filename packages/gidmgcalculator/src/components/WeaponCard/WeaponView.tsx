@@ -5,8 +5,7 @@ import type { Weapon } from "@/models";
 import type { Level } from "@/types";
 
 import { useTranslation } from "@/hooks";
-import { parseWeaponDesc } from "@/utils/descriptionParsers";
-import { wrapText } from "@/utils/descriptionParsers/utils";
+import { coloredText, parseWeaponDesc } from "@/utils/description.utils";
 import { genSequentialOptions, suffixOf } from "@/utils/ui.utils";
 
 // Component
@@ -18,8 +17,8 @@ const groupCls = "bg-dark-2 px-3";
 const travelerSword = {
   code: 246,
   extraDescription:
-    `When the Traveler equips this, increases ${wrapText("CRIT DMG", "k")} by ` +
-    `${wrapText("6%", "v")} for every Element they have resonated with.<br>`,
+    `When the Traveler equips this, increases ${coloredText("CRIT DMG", "k")} by ` +
+    `${coloredText("6%", "v")} for every Element they have resonated with.`,
 };
 
 export type WeaponViewProps<T extends Weapon> = {
@@ -46,13 +45,11 @@ export function WeaponView<T extends Weapon>({
       return "";
     }
 
-    const parsedDescription = descriptions
-      .map((content) => parseWeaponDesc(content, weapon.refi))
-      .join(" ");
+    const parsedDesc = descriptions.map((desc) => parseWeaponDesc(desc, weapon.refi)).join(" ");
 
     return code === travelerSword.code && weapon.refi > 1
-      ? `${travelerSword.extraDescription}${parsedDescription}`
-      : parsedDescription;
+      ? `${travelerSword.extraDescription}<br>${parsedDesc}`
+      : parsedDesc;
   }, [weapon?.code, weapon?.refi]);
 
   if (!weapon) return null;

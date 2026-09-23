@@ -1,6 +1,6 @@
 import type { AutoRsnElmtType } from "@/types";
 
-import { parseDescription } from "@/utils/descriptionParsers";
+import { parseDescription } from "@/utils/description.utils";
 import { GenshinModifierView } from "../GenshinModifierView";
 
 const AUTO_RESONANCE_DESCS: Record<AutoRsnElmtType, string> = {

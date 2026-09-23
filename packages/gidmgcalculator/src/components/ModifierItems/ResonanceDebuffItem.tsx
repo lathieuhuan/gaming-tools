@@ -2,7 +2,7 @@ import { Array_ } from "ron-utils";
 
 import type { ElementType, ModInputSpec } from "@/types";
 
-import { parseDescription } from "@/utils/descriptionParsers";
+import { parseDescription } from "@/utils/description.utils";
 import { GenshinModifierView, type GenshinModifierViewProps } from "../GenshinModifierView";
 
 type RenderInfo = {
@@ -11,7 +11,7 @@ type RenderInfo = {
   inputConfigs?: ModInputSpec[];
 };
 
-export const RESONANCE_DEBUFFS: Record<string, RenderInfo> = {
+const RESONANCE_DEBUFFS: Record<string, RenderInfo> = {
   geo: {
     heading: "Geo Resonance",
     desc: "DMG from shielded characters, or characters nearby Moondrifts, decreases {Geo RES}#[k] by {20%}#[v] for 15s.",
