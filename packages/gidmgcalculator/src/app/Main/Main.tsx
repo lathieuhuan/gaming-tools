@@ -6,7 +6,6 @@ import { genAccountTravelerKey } from "@/logic/genAccountTravelerKey";
 import { Artifact, Character, Target, Teammate, Weapon } from "@/models";
 
 import { CalculatorLarge, CalculatorSmall } from "@/screens/Calculator";
-import { changeTraveler } from "@/services/app-data";
 import { AppSettingsState, useSettingsStore } from "@Store/settings";
 
 export function Main() {
@@ -43,8 +42,7 @@ export function Main() {
   };
 
   useLayoutEffect(() => {
-    changeTraveler(traveler);
-
+    //
     updateEntityConfigs(useSettingsStore.getState());
 
     return useSettingsStore.subscribe(updateEntityConfigs);

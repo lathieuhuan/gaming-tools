@@ -1,12 +1,12 @@
 import { isFunction } from "./pure.utils";
-import type { WritableKeys, NonFunctionKeys } from "./types";
+import type { NonFunctionKeys, WritableKeys } from "./types";
 
-// 4. Filter for keys that ARE functions
+// Filter for keys that ARE functions
 type FunctionKeys<T> = {
   [K in keyof T]: T[K] extends (...args: any[]) => infer V ? (V extends void ? K : never) : never;
 }[keyof T];
 
-// 5. Map functions to return the parent $El instance instead of their original return type
+// Map functions to return the parent $El instance instead of their original return type
 type Act<T, Parent> = {
   [K in FunctionKeys<T>]: T[K] extends (...args: infer Args) => infer V
     ? V extends void
@@ -48,7 +48,7 @@ export class Fluent<T> {
 
   set(key: keyof T, value: any): this {
     if (this.e) {
-      const newValue = typeof value === "function" ? value(this.e) : value;
+      const newValue = isFunction(value) ? value(this.e) : value;
 
       Object.assign(this.e, { [key]: newValue });
     }
@@ -59,13 +59,5 @@ export class Fluent<T> {
   get<K extends NonFunctionKeys<T>>(key: K): Fluent<Exclude<T[K], null>> {
     const value = this.e?.[key] ?? undefined;
     return new Fluent(value as Exclude<T[K], null> | undefined);
-  }
-
-  do(callback: (e: T) => void) {
-    if (this.e) {
-      callback(this.e);
-    }
-
-    return this;
   }
 }

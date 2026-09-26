@@ -74,7 +74,7 @@ export function calcReaction(
   const elvMult = toMult(getBonus("elvMult_"));
   const resMult = target.resistMults[attElmt_];
 
-  const cRate = (limitCRate(getBonus("cRate_", [attElmt_])) + extraCRate) / 100;
+  const cRate = limitCRate(getBonus("cRate_", [attElmt_]) + extraCRate) / 100;
   const cDmg = (getBonus("cDmg_", [attElmt_]) + extraCDmg) / 100;
 
   const cDmgMult = 1 + cDmg;

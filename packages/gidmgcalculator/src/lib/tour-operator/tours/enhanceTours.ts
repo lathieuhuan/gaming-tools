@@ -15,7 +15,7 @@ function genTeammateStep(teammateCode: number): TourStep {
     id: ENHANCE_TOUR_SITE_ID.subEnhance(teammateCode),
     dialogs: [`Tap to toggle the enhanced state of this teammate. ${CONDITION_TEXT}`],
     siteGutter: [8, 12],
-    go: async () => {
+    sitePrep: async () => {
       // Move to setup panel on Tab layout
       $(TOUR_STEP_ID.setupPanel).act.click();
 
@@ -52,7 +52,7 @@ export function getEnhanceTourSteps(): TourStep[] {
         `Tap this tag to toggle the enhanced state of the main character. ${CONDITION_TEXT}`,
       ],
       siteGutter: [8, 12],
-      go: () => {
+      sitePrep: () => {
         // Move to overview panel on Tab layout
         $(TOUR_STEP_ID.overviewPanel).act.click();
 
@@ -66,85 +66,99 @@ export function getEnhanceTourSteps(): TourStep[] {
   ];
 
   const { main, teammates } = selectSetup(useCalcStore.getState());
-  const teammateCalc = teammates.find((t) => t.data.enhanceType === main.data.enhanceType);
+  const { enhanceType } = main.data;
 
-  if (!teammateCalc && teammates.length === 3) {
+  if (enhanceType !== "HEXEREI") {
+    // Only for HEXEREI has more steps
+    return TOUR_STEPS;
+  }
+
+  const teammate = teammates.find((t) => t.data.enhanceType === enhanceType);
+
+  if (!teammate && teammates.length === 3) {
     // No teammate with the same enhance type, and slots are full
     return TOUR_STEPS;
   }
 
-  let teammate = teammateCalc?.data;
+  let teammateData = teammate?.data;
   let addSlot: number | undefined = undefined;
 
-  if (!teammate) {
+  if (!teammateData) {
     // No teammate with the same enhance type => add a new one
-    teammate = getAppCharacters().find(
+    teammateData = getAppCharacters().find(
       (c) =>
-        c.enhanceType === main.data.enhanceType &&
+        c.enhanceType === enhanceType &&
         c.code !== main.code &&
         teammates.every((t) => t.data.code !== c.code),
     );
 
     addSlot = teammates.length;
+
+    if (!teammateData) {
+      // This should not happen as no enhance type only applied for 1 character
+      return TOUR_STEPS;
+    }
   }
 
-  if (teammate) {
-    const activateTeammateStep = genTeammateStep(teammate.code);
+  const activateTeammateStep = genTeammateStep(teammateData.code);
 
-    TOUR_STEPS.push(
-      {
-        ...activateTeammateStep,
-        sitePrep: () => {
-          if (addSlot !== undefined) {
-            updateSetup((setup) => {
-              setup.setTeammate(teammate, addSlot);
-            });
-          }
-        },
-      },
-      {
-        // TODO: when there're more enhance types, we need to switch this id
-        id: ENHANCE_TOUR_SITE_ID.secretRiteBuff,
-        dialogs: [CONDITION_TEXT],
-        siteGutter: [4, 8],
-        go: async () => {
-          // Move to modifiers panel on Tab layout
-          $(TOUR_STEP_ID.modifiersPanel).act.click();
-
-          const triggerEl = $(TOUR_STEP_ID.teamBonus).get("firstElementChild").this;
-          if (!triggerEl) return;
-
-          // Move to modifiers panel on scrollable layout
-          $(TOUR_STEP_ID.scrollCalculator).set("scrollLeft", (calc) => {
-            const rectChild = triggerEl.getBoundingClientRect();
-            const rectParent = calc.getBoundingClientRect();
-
-            return calc.scrollLeft + rectChild.left - rectParent.left;
+  TOUR_STEPS.push(
+    {
+      ...activateTeammateStep,
+      sitePrep: async () => {
+        if (addSlot !== undefined) {
+          updateSetup((setup) => {
+            setup.setTeammate(teammateData, addSlot);
           });
+
           await nextFrame();
+        }
 
-          const buffTab = document
-            .getElementById(TOUR_STEP_ID.modifiersTab)
-            ?.querySelector(`[data-value="${ECalculatorModifierTab.BUFFS}"]`);
-
-          if (buffTab instanceof HTMLElement) {
-            buffTab.click();
-            await nextFrame();
-          }
-
-          if (
-            triggerEl instanceof HTMLElement &&
-            triggerEl.getAttribute("aria-expanded") !== "true"
-          ) {
-            triggerEl.click();
-            await nextFrame();
-          }
-
-          triggerEl.scrollIntoView();
-        },
+        await activateTeammateStep.sitePrep?.();
       },
-    );
-  }
+    },
+    {
+      // TODO: when there're more enhance types, we need to switch this id
+      id: ENHANCE_TOUR_SITE_ID.secretRiteBuff,
+      dialogs: [CONDITION_TEXT],
+      siteGutter: [4, 8],
+      sitePrep: async () => {
+        // Move to modifiers panel on Tab layout
+        $(TOUR_STEP_ID.modifiersPanel).act.click();
+
+        const triggerEl = $(TOUR_STEP_ID.teamBonus).get("firstElementChild").this;
+        if (!triggerEl) return;
+
+        // Move to modifiers panel on scrollable layout
+        $(TOUR_STEP_ID.scrollCalculator).set("scrollLeft", (calc) => {
+          const rectChild = triggerEl.getBoundingClientRect();
+          const rectParent = calc.getBoundingClientRect();
+
+          return calc.scrollLeft + rectChild.left - rectParent.left;
+        });
+        await nextFrame();
+
+        const buffTab = document
+          .getElementById(TOUR_STEP_ID.modifiersTab)
+          ?.querySelector(`[data-value="${ECalculatorModifierTab.BUFFS}"]`);
+
+        if (buffTab instanceof HTMLElement) {
+          buffTab.click();
+          await nextFrame();
+        }
+
+        if (
+          triggerEl instanceof HTMLElement &&
+          triggerEl.getAttribute("aria-expanded") !== "true"
+        ) {
+          triggerEl.click();
+          await nextFrame();
+        }
+
+        triggerEl.scrollIntoView();
+      },
+    },
+  );
 
   return TOUR_STEPS;
 }

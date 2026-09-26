@@ -3,7 +3,8 @@ import { useLayoutEffect } from "react";
 import { FaDiscord } from "react-icons/fa";
 import { Button, Modal, Skeleton } from "rond";
 
-import { appDataQueryOptions } from "@/services/app-data";
+import { appDataQueryOptions, changeTraveler } from "@/services/app-data";
+import { useSettingsStore } from "@Store/settings";
 import { updateUI, useUIStore } from "@Store/ui";
 
 // Components
@@ -12,11 +13,14 @@ import { Introduction } from "./Introduction";
 
 export const Greeter = () => {
   const appModalType = useUIStore((state) => state.appModalType);
+  const traveler = useSettingsStore((state) => state.traveler);
+
   const { data, isLoading, isSuccess, isError, error, refetch } = useQuery(appDataQueryOptions);
 
   useLayoutEffect(() => {
     if (isSuccess) {
       updateUI({ appReady: true });
+      changeTraveler(traveler);
     }
   }, [isSuccess]);
 
@@ -44,7 +48,7 @@ export const Greeter = () => {
             isLoading={isLoading}
             isError={isError}
             error={error?.message}
-            cooldown={error?.data.cooldown}
+            cooldown={error?.data?.cooldown}
             onRefetch={() => void refetch()}
           />
 

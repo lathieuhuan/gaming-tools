@@ -221,9 +221,19 @@ export function makeTalentItemCalc(
     const extraCRate = performer.getAttr("cRate_") + attkBonusCtrl.get("cRate_", ["all"]);
     const extraCDmg = performer.getAttr("cDmg_") + attkBonusCtrl.get("cDmg_", ["all"]);
 
+    const extraBonusPaths: GetAttackBonusPaths = [];
+
+    if (attPatt !== "none") {
+      extraBonusPaths.push(`${attPatt}.${reaction}`);
+
+      if (attElmt !== "absorb") {
+        extraBonusPaths.push(`${attPatt}.${reaction}.${attElmt}`);
+      }
+    }
+
     const outputs = calcReaction(performer, target, base.values, coefficient, reaction, attElmt, {
       bonusId: item.id,
-      extraBonusPaths: attPatt !== "none" ? [`${attPatt}.${reaction}`] : [],
+      extraBonusPaths,
       extraCRate,
       extraCDmg,
     });

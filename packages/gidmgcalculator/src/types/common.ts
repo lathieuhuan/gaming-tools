@@ -81,7 +81,9 @@ export type AttackBonusType =
   | SwirlVariant
   | AttackPattern
   | AttackElement
-  | `${AttackPattern}.${AttackElement | LunarReaction | StellarReaction}`
+  | `${AttackPattern}.${AttackElement}`
+  | `${AttackPattern}.${LunarReaction | StellarReaction}`
+  | `${AttackPattern}.${LunarReaction | StellarReaction}.${AttackElement}`
   | ReactionType
   | TalentCalcItemBonusId;
 

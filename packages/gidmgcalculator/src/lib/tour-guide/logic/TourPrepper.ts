@@ -1,11 +1,5 @@
 import { nextFrame } from "@/utils/window.utils";
-import type {
-  TourSite,
-  TourSiteIntro,
-  TourSiteLocation,
-  TourStep,
-  TourStepErrorCode,
-} from "../types";
+import type { TourSite, TourSiteLocation, TourStep, TourStepErrorCode } from "../types";
 
 export type TourPrepperOptions = {
   onError?: (code: TourStepErrorCode) => void;
@@ -55,7 +49,7 @@ export class TourPrepper implements TourPrepperOptions {
     }
 
     const siteRightToWindowRight = Math.ceil(
-      window.innerWidth - (location.left + location.width / 2)
+      window.innerWidth - (location.left + location.width / 2),
     );
 
     if (siteRightToWindowRight < halfWidth) {
@@ -78,13 +72,9 @@ export class TourPrepper implements TourPrepperOptions {
         await step.sitePrep();
         await nextFrame();
       }
-
-      await step.go?.();
     } catch (error) {
       console.error(error);
     }
-
-    await nextFrame();
 
     const element = document.getElementById(step.id);
 
