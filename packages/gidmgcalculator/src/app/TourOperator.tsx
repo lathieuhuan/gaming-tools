@@ -1,6 +1,6 @@
+import { TourOperator as Operator } from "@/lib/tour-operator";
 import { Suspense } from "react";
 import { LoadingPlate } from "rond";
-import { TourOperator as Operator } from "@/lib/tour-operator";
 
 import { useUIStore } from "@Store/ui";
 

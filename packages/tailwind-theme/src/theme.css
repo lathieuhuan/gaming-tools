@@ -154,4 +154,10 @@
 @utility button-group {
   display: flex;
   gap: 0.75rem;
+
+  & button:focus {
+    box-shadow:
+      0 0 3px 2px var(--tw-shadow-color, black),
+      0 0 2px 3px var(--tw-shadow-color, white);
+  }
 }

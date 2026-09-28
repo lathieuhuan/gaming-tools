@@ -9,23 +9,28 @@ import { TourGuide } from "@/lib/tour-guide";
 import { setTourFinished } from "@Store/tours/actions";
 import { setTourType } from "@Store/ui";
 import { router } from "../router/logic/router";
-import { getEnhanceTourSteps, getSubEnhanceTourSteps } from "./tours/enhanceTours";
+import { getEnhanceTourSteps, getSubEnhanceTourSteps } from "./tours/characterEnhance";
+import { travelerSettingsTourSteps } from "./tours/travelerSettings";
+
+const TOUR_FORCE_END_MESSAGE = "The tour has ended prematurely.";
 
 type TourOperatorProps = {
   tourType: TourType;
 };
 
 export function TourOperator({ tourType }: TourOperatorProps) {
-  const TOUR_FORCE_END_MESSAGE = "The tour has ended prematurely.";
   let steps: TourStep[] = [];
 
   switch (tourType) {
-    case "CHAR_ENHANCE":
+    case "CHARACTER_ENHANCE":
     case "MAIN_ENHANCE":
       steps = getEnhanceTourSteps();
       break;
     case "TEAMMATE_ENHANCE":
       steps = getSubEnhanceTourSteps();
+      break;
+    case "TRAVELER_SETTINGS":
+      steps = travelerSettingsTourSteps;
       break;
     default:
       tourType satisfies never;
@@ -48,11 +53,21 @@ export function TourOperator({ tourType }: TourOperatorProps) {
     });
   }, []);
 
+  const handleCancel = () => {
+    notification.info({
+      content: "The tour has been cancelled.",
+      duration: 3,
+    });
+
+    endTour();
+  };
+
   const handleFinish = () => {
     let finishedTour: TourKey | undefined = undefined;
 
     switch (tourType) {
-      case "CHAR_ENHANCE":
+      case "CHARACTER_ENHANCE":
+      case "TRAVELER_SETTINGS":
         finishedTour = tourType;
         break;
       case "MAIN_ENHANCE":
@@ -95,6 +110,11 @@ export function TourOperator({ tourType }: TourOperatorProps) {
   };
 
   return (
-    <TourGuide steps={steps} onError={handleError} onFinish={handleFinish} onCancel={endTour} />
+    <TourGuide
+      steps={steps}
+      onError={handleError}
+      onFinish={handleFinish}
+      onCancel={handleCancel}
+    />
   );
 }

@@ -3,7 +3,7 @@ import { useState } from "react";
 import type { Artifact, Teammate } from "@/models";
 import type { AppCharacter } from "@/types";
 
-import { ENHANCE_TOUR_SITE_ID } from "@/constants";
+import { CHARACTER_ENHANCE_TOUR_SITE_IDS } from "@/constants";
 import { updateSetup } from "@Store/calculator/actions";
 
 import { ArtifactForge } from "@/components/ArtifactForge";
@@ -55,7 +55,7 @@ export function TeammateDetail({ teammate, info }: TeammateDetailProps) {
             <div hidden={!data.enhanceType} className="mx-2 w-px h-4 bg-dark-line" />
 
             <EnhanceTag
-              id={ENHANCE_TOUR_SITE_ID.subEnhance(teammate.code)}
+              id={CHARACTER_ENHANCE_TOUR_SITE_IDS.subEnhance(teammate.code)}
               mutable={true}
               character={teammate}
               onToggle={handleToggleEnhance}

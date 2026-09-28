@@ -1,5 +1,6 @@
 import { useLayoutEffect, useRef, useState } from "react";
 import ReactDOM from "react-dom";
+import { LoadingPlate } from "rond";
 
 import type { TourStep, TourStepErrorCode } from "./types";
 
@@ -7,7 +8,6 @@ import { useTourPrepper } from "./hooks/useTourPrepper";
 
 import { Tour } from "./Tour";
 import { TourFrame } from "./TourFrame";
-import { TourLoading } from "./TourLoading";
 
 // TODO: move to rond
 function useOverlayElement(id: string) {
@@ -63,8 +63,10 @@ export function TourGuide({ steps, onError, onFinish, onCancel }: TourGuideProps
         <Tour site={site} totalSites={steps.length} onNext={handleNext} onCancel={onCancel} />
       </TourFrame>
     ) : (
-      <TourLoading />
+      <div className="absolute inset-0 bg-black/40 flex-center">
+        <LoadingPlate />
+      </div>
     ),
-    overlayElement
+    overlayElement,
   );
 }

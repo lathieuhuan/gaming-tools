@@ -138,12 +138,13 @@ function ImportCenter({ meta, params }: SetupImportInfo) {
     });
 
     const shouldShowEnhanceNotice =
-      !isTourFinished("CHAR_ENHANCE") && (enhanceType || teammates.some((t) => t.data.enhanceType));
+      !isTourFinished("CHARACTER_ENHANCE") &&
+      (enhanceType || teammates.some((t) => t.data.enhanceType));
 
     updateUI({
       setupDirectorActive: false,
       setupImportInfo: null,
-      appModalType: shouldShowEnhanceNotice ? "CHAR_ENHANCE_NOTICE" : "",
+      appModalType: shouldShowEnhanceNotice ? "CHARACTER_ENHANCEABLE_NOTICE" : "",
     });
 
     router.navigate({ to: SCREEN_PATH.CALCULATOR });

@@ -1,12 +1,12 @@
 import { Modal } from "rond";
 
-import { updateUI, useUIStore } from "@Store/ui";
+import { setTourType, updateUI, useUIStore } from "@Store/ui";
 
 // Component
 import { DataRepair } from "./DataRepair";
 import { Donate } from "./Donate";
 import { Download } from "./Download";
-import { EnhanceNoticeModal } from "./EnhanceNotice";
+import { EnhanceNotice } from "./EnhanceNotice";
 import { Guides } from "./Guides";
 import { SettingsModal } from "./Settings";
 import { TravelAgencyModals } from "./TravelAgency";
@@ -17,6 +17,11 @@ export function Modals() {
   const appModalType = useUIStore((state) => state.appModalType);
 
   const closeModal = () => updateUI({ appModalType: "" });
+
+  const handleStartTravelerSettingsTour = () => {
+    setTourType("TRAVELER_SETTINGS");
+    closeModal();
+  };
 
   return (
     <>
@@ -88,7 +93,35 @@ export function Modals() {
 
       <TravelAgencyModals active={appModalType === "TRAVEL_AGENCY"} onClose={closeModal} />
 
-      <EnhanceNoticeModal active={appModalType === "CHAR_ENHANCE_NOTICE"} onClose={closeModal} />
+      <Modal
+        title="Traveler Settings"
+        active={appModalType === "TRAVELER_SETTINGS_NOTICE"}
+        preset="small"
+        className="bg-dark-1"
+        withFooterDivider={false}
+        withCloseButton={false}
+        closeOnMaskClick={false}
+        withActions
+        focusConfirm
+        confirmText="Show me"
+        onConfirm={handleStartTravelerSettingsTour}
+        onClose={closeModal}
+      >
+        <p>You can select the Traveler and activate their power-ups in the Settings.</p>
+      </Modal>
+
+      <Modal
+        title="Enhanceable"
+        active={appModalType === "CHARACTER_ENHANCEABLE_NOTICE"}
+        preset="small"
+        className="bg-dark-1"
+        withFooterDivider={false}
+        withCloseButton={false}
+        closeOnMaskClick={false}
+        onClose={closeModal}
+      >
+        <EnhanceNotice onCancel={closeModal} onStartTour={closeModal} />
+      </Modal>
     </>
   );
 }

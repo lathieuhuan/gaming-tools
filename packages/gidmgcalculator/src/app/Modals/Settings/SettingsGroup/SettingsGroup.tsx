@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import type { ComponentProps, ReactNode } from "react";
 import { clsx } from "rond";
 
 import { SettingControl } from "./SettingControl";
@@ -9,7 +9,9 @@ type SettingGroupCardProps = {
   className?: string;
 };
 export function SettingsGroupCard(props: SettingGroupCardProps) {
-  return <div className={clsx("px-4 py-2 bg-dark-1 rounded", props.className)}>{props.children}</div>;
+  return (
+    <div className={clsx("px-4 py-2 bg-dark-1 rounded", props.className)}>{props.children}</div>
+  );
 }
 
 export function SettingsGroupTitle({ children }: { children: ReactNode }) {
@@ -21,13 +23,13 @@ export type SettingsGroupItem = SettingControlProps & {
   hidden?: boolean;
 };
 
-type SettingsGroupItemsProps = {
+type SettingsGroupItemsProps = ComponentProps<"div"> & {
   className?: string;
   items: SettingsGroupItem[];
 };
-export function SettingsGroupItems({ className, items }: SettingsGroupItemsProps) {
+export function SettingsGroupItems({ className, items, ...props }: SettingsGroupItemsProps) {
   return (
-    <div className={clsx("space-y-3", className)}>
+    <div className={clsx("space-y-3", className)} {...props}>
       {items.map((item) => (item.hidden ? null : <SettingControl {...item} key={item.key} />))}
     </div>
   );

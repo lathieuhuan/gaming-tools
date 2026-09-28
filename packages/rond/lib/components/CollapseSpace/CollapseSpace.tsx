@@ -1,28 +1,28 @@
+import type { ComponentProps } from "react";
 import { useEffect, useState } from "react";
 import { useElementSize } from "../../hooks";
 
-export type CollapseSpaceProps = {
+export type CollapseSpaceProps = ComponentProps<"div"> & {
   active: boolean;
   activeHeight?: string | number;
   /** Default 250 */
   moveDuration?: number;
   /** Default false */
   destroyOnClose?: boolean;
-  className?: string;
-  style?: React.CSSProperties;
-  children: React.ReactNode;
+  contentClassName?: string;
   afterClose?: () => void;
 };
 
 export const CollapseSpace = ({
   active,
-  className,
   activeHeight,
   moveDuration = 250,
   destroyOnClose = false,
   style,
   children,
+  contentClassName,
   afterClose,
+  ...props
 }: CollapseSpaceProps) => {
   const [ready, setReady] = useState(!active);
   const [state, setState] = useState({
@@ -53,14 +53,13 @@ export const CollapseSpace = ({
 
   return (
     <div
-      className={className}
       style={{
         ...style,
         height: ready ? (mergedActive ? mergedHeight : 0) : "auto",
         transition: `height ${moveDuration}ms ease-in-out`,
         overflow: "hidden",
       }}
-      onTransitionEnd={() => {
+      onTransitionEnd={(e) => {
         if (!mergedActive) {
           afterClose?.();
 
@@ -71,9 +70,18 @@ export const CollapseSpace = ({
             }));
           }
         }
+
+        props.onTransitionEnd?.(e);
       }}
+      {...props}
     >
-      <div ref={ref} style={{ height: activeHeight ? "100%" : "auto" }}>
+      <div
+        className={contentClassName}
+        ref={ref}
+        style={{
+          height: activeHeight ? "100%" : "auto",
+        }}
+      >
         {mergedMounted && children}
       </div>
     </div>

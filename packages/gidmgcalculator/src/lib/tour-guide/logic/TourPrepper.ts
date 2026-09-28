@@ -1,5 +1,7 @@
-import { nextFrame } from "@/utils/window.utils";
 import type { TourSite, TourSiteLocation, TourStep, TourStepErrorCode } from "../types";
+
+import { nextFrame } from "@/utils/window.utils";
+import { waitForElementById } from "../utils/waitForElementById";
 
 export type TourPrepperOptions = {
   onError?: (code: TourStepErrorCode) => void;
@@ -40,25 +42,6 @@ export class TourPrepper implements TourPrepperOptions {
     return this.prep(++this.currentIndex);
   }
 
-  private getIntroOffsetX(location: TourSiteLocation, introWidth: number): number {
-    const halfWidth = introWidth / 2;
-    const siteLeftToWindowLeft = Math.ceil(location.left + location.width / 2);
-
-    if (siteLeftToWindowLeft < halfWidth) {
-      return halfWidth - siteLeftToWindowLeft;
-    }
-
-    const siteRightToWindowRight = Math.ceil(
-      window.innerWidth - (location.left + location.width / 2),
-    );
-
-    if (siteRightToWindowRight < halfWidth) {
-      return siteRightToWindowRight - halfWidth;
-    }
-
-    return 0;
-  }
-
   private async prep(index: number): Promise<TourSite | undefined> {
     const step = this.steps[index];
 
@@ -76,15 +59,15 @@ export class TourPrepper implements TourPrepperOptions {
       console.error(error);
     }
 
-    const element = document.getElementById(step.id);
+    const element = await waitForElementById(step.id);
 
     if (!element) {
       this.onError?.("NOT_FOUND");
       return;
     }
 
-    const { siteGutter = 0 } = step;
-    const [gutterY, gutterX] = Array.isArray(siteGutter) ? siteGutter : [siteGutter, siteGutter];
+    const { siteGutter = [0], placement = "bottom" } = step;
+    const [gutterY, gutterX = gutterY] = siteGutter;
     const { top, left, width, height } = element.getBoundingClientRect();
 
     const location: TourSiteLocation = {
@@ -100,11 +83,31 @@ export class TourPrepper implements TourPrepperOptions {
       id: step.id,
       stepNo: index + 1,
       location,
+      placement,
       intro: {
         dialogs: step.dialogs,
         width: introWidth,
-        offsetX: this.getIntroOffsetX(location, introWidth),
+        offsetX: getIntroOffsetX(location, introWidth),
       },
     };
   }
+}
+
+function getIntroOffsetX(location: TourSiteLocation, introWidth: number): number {
+  const halfWidth = introWidth / 2;
+  const siteLeftToWindowLeft = Math.ceil(location.left + location.width / 2);
+
+  if (siteLeftToWindowLeft < halfWidth) {
+    return halfWidth - siteLeftToWindowLeft;
+  }
+
+  const siteRightToWindowRight = Math.ceil(
+    window.innerWidth - (location.left + location.width / 2),
+  );
+
+  if (siteRightToWindowRight < halfWidth) {
+    return siteRightToWindowRight - halfWidth;
+  }
+
+  return 0;
 }

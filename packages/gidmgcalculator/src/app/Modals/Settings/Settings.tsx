@@ -1,9 +1,10 @@
 import { useRef } from "react";
 import { Object_ } from "ron-utils";
-import { Modal } from "rond";
+import { Modal, ModalControl } from "rond";
 
 import type { ElementType, TravelerConfig, TravelerKey } from "@/types";
 
+import { TOUR_STEP_ID } from "@/constants/ui";
 import { genAccountTravelerKey } from "@/logic/genAccountTravelerKey";
 import { changeTraveler } from "@/services/app-data";
 import { applySettingsToCalculator } from "@Store/calculator/actions";
@@ -25,7 +26,7 @@ const useNewAppSettings = () => {
 };
 
 type SettingsProps = {
-  onClose: () => void;
+  onClose?: () => void;
 };
 
 const Settings = ({ onClose }: SettingsProps) => {
@@ -50,7 +51,7 @@ const Settings = ({ onClose }: SettingsProps) => {
       travelerChanged,
     );
 
-    onClose();
+    onClose?.();
   };
 
   const handleAppSettingChange = <TKey extends keyof AppSettingsState>(
@@ -101,15 +102,34 @@ const Settings = ({ onClose }: SettingsProps) => {
   );
 };
 
-export const SettingsModal = Modal.wrap(Settings, {
-  title: "Settings",
-  className: ["bg-dark-2", Modal.LARGE_HEIGHT_CLS],
-  style: {
-    width: 412,
-  },
-  bodyCls: "py-0",
-  withHeaderDivider: false,
-  withFooterDivider: false,
-  withActions: true,
-  formId: "app-settings-form",
-});
+// export const SettingsModal = Modal.wrap(Settings, {
+//   id: TOUR_STEP_ID.settingsModal,
+//   title: "Settings",
+//   className: ["w-103 bg-dark-2", Modal.LARGE_HEIGHT_CLS],
+//   bodyCls: "py-0",
+//   withHeaderDivider: false,
+//   withFooterDivider: false,
+//   withActions: true,
+//   formId: "app-settings-form",
+// });
+
+export const SettingsModal = (props: ModalControl) => {
+  return (
+    <Modal
+      id={TOUR_STEP_ID.settingsModal}
+      title="Settings"
+      className={["w-103 bg-dark-2", Modal.LARGE_HEIGHT_CLS]}
+      bodyCls="py-0"
+      withHeaderDivider={false}
+      withFooterDivider={false}
+      withActions={true}
+      formId="app-settings-form"
+      confirmButtonProps={{
+        id: TOUR_STEP_ID.saveSettings,
+      }}
+      {...props}
+    >
+      <Settings onClose={props.onClose} />
+    </Modal>
+  );
+};

@@ -1,6 +1,6 @@
 import { Fragment } from "react";
 
-import { ENHANCE_TOUR_SITE_ID } from "@/constants/ui";
+import { CHARACTER_ENHANCE_TOUR_SITE_IDS } from "@/constants/ui";
 import { useCalcStore } from "@Store/calculator";
 import { selectSetup } from "@Store/calculator/selectors";
 import { useResonanceCtrlGroup } from "./_hooks/useResonanceCtrlGroup";
@@ -22,7 +22,7 @@ export function BuffTeamBonus() {
           render: () => (
             <GenshinModifierView
               mutable={false}
-              id={ENHANCE_TOUR_SITE_ID.secretRiteBuff}
+              id={CHARACTER_ENHANCE_TOUR_SITE_IDS.secretRiteBuff}
               {...SECRET_RITE_BUFF_CONFIG}
             />
           ),

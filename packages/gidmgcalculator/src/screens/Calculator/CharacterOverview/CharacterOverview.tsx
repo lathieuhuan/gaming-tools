@@ -1,7 +1,7 @@
 import { useId, useState } from "react";
 import { Button, Match, type MatchCase } from "rond";
 
-import { ENHANCE_TOUR_SITE_ID } from "@/constants/ui";
+import { CHARACTER_ENHANCE_TOUR_SITE_IDS } from "@/constants/ui";
 import { useCalcStore } from "@Store/calculator";
 import { initSessionWithCharacter, updateMain } from "@Store/calculator/actions";
 import { selectActiveMain } from "@Store/calculator/selectors";
@@ -48,7 +48,7 @@ function CharacterOverviewCore(props: { onSwitchCharacter: () => void }) {
         onChangeCons={(cons) => updateMain({ cons })}
         onEnhanceToggle={(enhanced) => updateMain({ enhanced })}
         ids={{
-          enhanceTag: ENHANCE_TOUR_SITE_ID.mainEnhance,
+          enhanceTag: CHARACTER_ENHANCE_TOUR_SITE_IDS.mainEnhance,
         }}
       />
 

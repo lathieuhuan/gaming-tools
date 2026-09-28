@@ -4,9 +4,11 @@ import { FaCaretRight } from "react-icons/fa";
 import { Object_ } from "ron-utils";
 import { Checkbox, clsx, CollapseSpace } from "rond";
 
+import type { ElementType, PowerupKey, TravelerConfig, TravelerKey } from "@/types";
+
 import { TRAVELER_RESONATED_ELEMENTS } from "@/constants/settings";
+import { TRAVELER_SETTINGS_TOUR_SITE_IDS } from "@/constants/ui";
 import { getTravelerProps } from "@/services/app-data";
-import { ElementType, PowerupKey, TravelerConfig, TravelerKey } from "@/types";
 
 import { CharacterPortrait } from "@/components/CharacterPortrait";
 import {
@@ -15,6 +17,9 @@ import {
   SettingsGroupItems,
   SettingsGroupTitle,
 } from "./SettingsGroup";
+
+const TRAVELERS: TravelerKey[] = ["AETHER", "LUMINE"];
+const POWERUPS: PowerupKey[] = ["cannedKnowledge", "skirksTraining"];
 
 const extractSelectedPowerups = (powerups: TravelerConfig["powerups"]) => {
   return Object_.entries(powerups).reduce<Set<PowerupKey>>((acc, [key, value]) => {
@@ -37,9 +42,7 @@ export function TravelerSettings({
   onChangePowerups,
   onChangeResonatedElmts,
 }: TravelerSettingsProps) {
-  const TRAVELERS: TravelerKey[] = ["AETHER", "LUMINE"];
-  const POWERUPS: PowerupKey[] = ["cannedKnowledge", "skirksTraining"];
-
+  //
   const [selectedTraveler, setSelectedTraveler] = useState(initialConfig.selection);
   const [selectedPowerups, setSelectedPowerups] = useState(() =>
     extractSelectedPowerups(initialConfig.powerups),
@@ -140,7 +143,7 @@ export function TravelerSettings({
       <div className="flex justify-between">
         <SettingsGroupTitle>Traveler</SettingsGroupTitle>
 
-        <div className="py-2 flex gap-3">
+        <div id={TRAVELER_SETTINGS_TOUR_SITE_IDS.travelerSelection} className="my-2 flex gap-3">
           {TRAVELERS.map((traveler) => {
             const info = getTravelerProps({ selection: traveler });
             const selected = traveler === selectedTraveler;
@@ -160,8 +163,10 @@ export function TravelerSettings({
       </div>
 
       <button
+        id={TRAVELER_SETTINGS_TOUR_SITE_IDS.powerupsExpandTrigger}
         type="button"
         className="text-sm font-semibold flex items-center gap-1 glow-on-hover"
+        aria-expanded={powerupsExpanded}
         onClick={() => setPowerupsExpanded(!powerupsExpanded)}
       >
         <FaCaretRight
@@ -174,24 +179,27 @@ export function TravelerSettings({
           (spoilers)
         </span>
       </button>
-      <CollapseSpace active={powerupsExpanded}>
-        <SettingsGroupItems className="pt-4" items={items} />
 
-        <div className="mt-3">
-          <p>
-            Resonated Elements{" "}
-            <span className="text-light-hint text-sm">(Archon Quest: True Moon)</span>
-          </p>
-          <div className="mt-2 grid grid-cols-4 gap-3">
-            {TRAVELER_RESONATED_ELEMENTS.map((elmt) => (
-              <Checkbox
-                key={elmt}
-                checked={resonatedElmts.has(elmt)}
-                onChange={(value: boolean) => handleResonatedElmtToggle(elmt, value)}
-              >
-                <span className="text-sm capitalize">{elmt}</span>
-              </Checkbox>
-            ))}
+      <CollapseSpace active={powerupsExpanded}>
+        <div className="pt-4">
+          <SettingsGroupItems id={TRAVELER_SETTINGS_TOUR_SITE_IDS.powerupsList} items={items} />
+
+          <div className="mt-3">
+            <p>
+              Resonated Elements{" "}
+              <span className="text-light-hint text-sm">(Archon Quest: True Moon)</span>
+            </p>
+            <div className="mt-2 grid grid-cols-4 gap-3">
+              {TRAVELER_RESONATED_ELEMENTS.map((elmt) => (
+                <Checkbox
+                  key={elmt}
+                  checked={resonatedElmts.has(elmt)}
+                  onChange={(value: boolean) => handleResonatedElmtToggle(elmt, value)}
+                >
+                  <span className="text-sm capitalize">{elmt}</span>
+                </Checkbox>
+              ))}
+            </div>
           </div>
         </div>
       </CollapseSpace>

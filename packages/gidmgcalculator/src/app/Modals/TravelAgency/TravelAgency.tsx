@@ -9,9 +9,9 @@ import { nextFrame } from "@/utils/window.utils";
 import { useCalcStore } from "@Store/calculator";
 import { selectSetup } from "@Store/calculator/selectors";
 import { setTourType } from "@Store/ui";
-import { prepTour } from "./actions/prepTour";
 
 import { TourCatalogue } from "./TourCatalogue";
+import { prepEnhanceTour } from "./actions/prepEnhanceTour";
 
 type ModalType = "TOUR_CATALOGUE" | "CONFIRM_START_ENHANCE_TOUR" | "";
 
@@ -24,7 +24,7 @@ function TravelAgency({ onClose }: ModalControl) {
 
   const isTourAvailable = (key: TourKey) => {
     switch (key) {
-      case "CHAR_ENHANCE": {
+      case "CHARACTER_ENHANCE": {
         const activeSetup = selectSetup(useCalcStore.getState());
 
         if (!activeSetup) return true;
@@ -42,6 +42,8 @@ function TravelAgency({ onClose }: ModalControl) {
         setModalType("CONFIRM_START_ENHANCE_TOUR");
         return false;
       }
+      case "TRAVELER_SETTINGS":
+        return true;
       default:
         key satisfies never;
         return false;
@@ -49,7 +51,16 @@ function TravelAgency({ onClose }: ModalControl) {
   };
 
   const startTour = async (key: TourKey) => {
-    prepTour(key);
+    switch (key) {
+      case "CHARACTER_ENHANCE":
+        prepEnhanceTour();
+        break;
+      case "TRAVELER_SETTINGS":
+        // No prep needed; the tour's sitePrep opens the Settings modal
+        break;
+      default:
+        key satisfies never;
+    }
 
     await nextFrame();
 
@@ -95,7 +106,7 @@ function TravelAgency({ onClose }: ModalControl) {
           children: "No",
           icon: <FaTimes className="text-base" />,
         }}
-        onConfirm={() => void startTour("CHAR_ENHANCE")}
+        onConfirm={() => void startTour("CHARACTER_ENHANCE")}
         onClose={() => setModalType("TOUR_CATALOGUE")}
       />
     </>

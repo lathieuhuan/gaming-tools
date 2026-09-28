@@ -1,1 +1,1 @@
-export * from "./TourOperator";
+export { TourOperator } from "./TourOperator";

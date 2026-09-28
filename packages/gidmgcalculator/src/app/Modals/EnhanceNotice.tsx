@@ -1,14 +1,19 @@
 import { FaBars, FaMapMarkedAlt } from "react-icons/fa";
-import { Modal, ModalControl } from "rond";
+import { Modal } from "rond";
 
 import type { TourType } from "@Store/ui/types";
 
-import { CHAR_ENHANCE_TOUR } from "@/lib/tour-operator/catalogue";
+import { CHARACTER_ENHANCE_TOUR } from "@/lib/tour-operator/catalogue";
 import { useCalcStore } from "@Store/calculator";
 import { selectSetup } from "@Store/calculator/selectors";
 import { setTourType } from "@Store/ui";
 
-function EnhanceNotice({ onClose }: ModalControl) {
+type EnhanceNoticeProps = {
+  onCancel?: () => void;
+  onStartTour?: () => void;
+};
+
+export function EnhanceNotice({ onCancel, onStartTour }: EnhanceNoticeProps) {
   const activeSetup = useCalcStore(selectSetup);
   const { teammates } = activeSetup;
   const { enhanceType } = activeSetup.main.data;
@@ -20,7 +25,7 @@ function EnhanceNotice({ onClose }: ModalControl) {
     tourType = "MAIN_ENHANCE";
 
     if (!teammates.length || teammates.some((t) => t.data.enhanceType === enhanceType)) {
-      tourType = "CHAR_ENHANCE";
+      tourType = "CHARACTER_ENHANCE";
       isQuickTour = false;
     }
   } else if (teammates.some((t) => t.data.enhanceType)) {
@@ -32,7 +37,7 @@ function EnhanceNotice({ onClose }: ModalControl) {
       setTourType(tourType);
     }
 
-    onClose?.();
+    onStartTour?.();
   };
 
   return (
@@ -44,7 +49,7 @@ function EnhanceNotice({ onClose }: ModalControl) {
 
       {isQuickTour && (
         <div className="mt-4 text-sm text-light-hint contains-inline-svg">
-          Finish the App Tour: <b>{CHAR_ENHANCE_TOUR.title}</b> in{" "}
+          Finish the App Tour: <b>{CHARACTER_ENHANCE_TOUR.title}</b> in{" "}
           <span className="whitespace-nowrap">
             <FaBars /> Menu
           </span>{" "}
@@ -60,25 +65,8 @@ function EnhanceNotice({ onClose }: ModalControl) {
         focusConfirm
         confirmText="Show me"
         onConfirm={handleStartTour}
-        onCancel={onClose}
+        onCancel={onCancel}
       />
     </div>
-  );
-}
-
-export function EnhanceNoticeModal({ active, onClose }: ModalControl) {
-  return (
-    <Modal
-      title="Enhanceable"
-      active={active}
-      preset="small"
-      className="bg-dark-1"
-      withFooterDivider={false}
-      withCloseButton={false}
-      closeOnMaskClick={false}
-      onClose={onClose}
-    >
-      <EnhanceNotice onClose={onClose} />
-    </Modal>
   );
 }

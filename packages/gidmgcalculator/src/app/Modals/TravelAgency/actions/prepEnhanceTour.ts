@@ -1,6 +1,6 @@
 import type { AppCharacter } from "@/types";
 
-import { SCREEN_PATH } from "@/constants";
+import { SCREEN_PATH } from "@/constants/config";
 import { router } from "@/lib/router";
 import { CalcSetup } from "@/logic/calculator";
 import { createCharacter, createTeammate } from "@/logic/entity.logic";

@@ -92,8 +92,8 @@ export function SectionTeammates() {
 
     setSelectedIndex(recruitIndex);
 
-    if (!isTourFinished("CHAR_ENHANCE") && data.enhanceType) {
-      updateUI({ appModalType: "CHAR_ENHANCE_NOTICE" });
+    if (!isTourFinished("CHARACTER_ENHANCE") && data.enhanceType) {
+      updateUI({ appModalType: "CHARACTER_ENHANCEABLE_NOTICE" });
     }
   };
 

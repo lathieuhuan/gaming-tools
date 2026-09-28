@@ -149,7 +149,13 @@ export function initSessionWithCharacter({
     calcSetup,
   });
 
-  if (!isTourFinished("CHAR_ENHANCE") && main.data.enhanceType) {
-    updateUI({ appModalType: "CHAR_ENHANCE_NOTICE" });
+  if (!isTourFinished("CHARACTER_ENHANCE") && main.isTraveler) {
+    updateUI({ appModalType: "TRAVELER_SETTINGS_NOTICE" });
+    return;
+  }
+
+  if (!isTourFinished("CHARACTER_ENHANCE") && main.data.enhanceType) {
+    updateUI({ appModalType: "CHARACTER_ENHANCEABLE_NOTICE" });
+    return;
   }
 }

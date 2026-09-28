@@ -14,6 +14,7 @@
   },
   "dependencies": {
     "@fastify/deepmerge": "3.2.0",
+    "@floating-ui/react-dom": "2.1.9",
     "@rc-component/dropdown": "1.0.2",
     "@reduxjs/toolkit": "1.8.3",
     "@tanstack/react-query": "5.67.1",

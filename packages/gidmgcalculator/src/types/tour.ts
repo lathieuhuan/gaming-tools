@@ -1,1 +1,1 @@
-export type TourKey = "CHAR_ENHANCE";
+export type TourKey = "CHARACTER_ENHANCE" | "TRAVELER_SETTINGS";

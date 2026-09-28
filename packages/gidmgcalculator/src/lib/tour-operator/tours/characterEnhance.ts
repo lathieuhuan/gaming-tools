@@ -1,6 +1,10 @@
 import type { TourStep } from "@/lib/tour-guide";
 
-import { ECalculatorModifierTab, ENHANCE_TOUR_SITE_ID, TOUR_STEP_ID } from "@/constants";
+import {
+  CHARACTER_ENHANCE_TOUR_SITE_IDS,
+  ECalculatorModifierTab,
+  TOUR_STEP_ID,
+} from "@/constants/ui";
 import { getAppCharacters } from "@/services/app-data";
 import { nextFrame } from "@/utils/window.utils";
 import { useCalcStore } from "@Store/calculator";
@@ -12,7 +16,7 @@ const CONDITION_TEXT = "This is a condition for some buffs & debuffs.";
 
 function genTeammateStep(teammateCode: number): TourStep {
   return {
-    id: ENHANCE_TOUR_SITE_ID.subEnhance(teammateCode),
+    id: CHARACTER_ENHANCE_TOUR_SITE_IDS.subEnhance(teammateCode),
     dialogs: [`Tap to toggle the enhanced state of this teammate. ${CONDITION_TEXT}`],
     siteGutter: [8, 12],
     sitePrep: async () => {
@@ -47,7 +51,7 @@ function genTeammateStep(teammateCode: number): TourStep {
 export function getEnhanceTourSteps(): TourStep[] {
   const TOUR_STEPS: TourStep[] = [
     {
-      id: ENHANCE_TOUR_SITE_ID.mainEnhance,
+      id: CHARACTER_ENHANCE_TOUR_SITE_IDS.mainEnhance,
       dialogs: [
         `Tap this tag to toggle the enhanced state of the main character. ${CONDITION_TEXT}`,
       ],
@@ -118,8 +122,8 @@ export function getEnhanceTourSteps(): TourStep[] {
       },
     },
     {
-      // TODO: when there're more enhance types, we need to switch this id
-      id: ENHANCE_TOUR_SITE_ID.secretRiteBuff,
+      // When there're more enhance types, switch this id
+      id: CHARACTER_ENHANCE_TOUR_SITE_IDS.secretRiteBuff,
       dialogs: [CONDITION_TEXT],
       siteGutter: [4, 8],
       sitePrep: async () => {
