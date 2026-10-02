@@ -119,7 +119,7 @@ export class Team<TMember extends TeamMember = TeamMember> {
     this.extraTalentLv = extraTalentLv;
   }
 
-  getMember(name: string) {
+  private getMember(name: string) {
     return this.members.find((member) => member.data.name === name);
   }
 

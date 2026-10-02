@@ -32,7 +32,7 @@ function getNicoleEBFactor(level: number): number | undefined {
 export function createExtraCalcItems(setup: CalcSetup): TalentCalcItem[] {
   const calcItems: TalentCalcItem[] = [];
 
-  const nicole = setup.team.getMember("Nicole");
+  const nicole = setup.teammates.find((teammate) => teammate.data.name === "Nicole");
 
   if (!nicole) {
     return [];

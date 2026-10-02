@@ -66,6 +66,7 @@ export class CalcSetup extends CalcSetupCore {
       this.elmtEvent,
       this.customBuffCtrls,
       this.customDebuffCtrls,
+      this.calcItems,
       this.result,
     );
   }
@@ -92,6 +93,7 @@ export class CalcSetup extends CalcSetupCore {
       this.elmtEvent,
       this.customBuffCtrls,
       this.customDebuffCtrls,
+      [...this.calcItems],
       this.result,
     );
   }
@@ -143,6 +145,7 @@ export class CalcSetup extends CalcSetupCore {
       elmtEvent,
       customBuffCtrls,
       customDebuffCtrls,
+      [],
       result,
     );
 

@@ -40,8 +40,7 @@ type TeammateUpdateData = Partial<
 >;
 
 export class CalcSetupCore {
-  calcItems: TalentCalcItem[];
-
+  //
   protected constructor(
     public ID: number,
 
@@ -64,10 +63,9 @@ export class CalcSetupCore {
     public customBuffCtrls: CustomBuffCtrl[],
     public customDebuffCtrls: CustomDebuffCtrl[],
 
+    public calcItems: TalentCalcItem[],
     public result: CalcResult,
-  ) {
-    this.calcItems = [];
-  }
+  ) {}
 
   updateMainState(data: Partial<RawCharacterState>) {
     this.main = this.main.clone(data);
