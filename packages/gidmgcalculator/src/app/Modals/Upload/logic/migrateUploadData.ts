@@ -1,8 +1,6 @@
 import type { CurrentDatabaseData } from "@/migration/types/current";
 
 import { DOWNLOAD_DATA_VERSION } from "@/constants/config";
-import { convertToV3_1 } from "@/migration/convertToV3_1";
-import { convertToV4 } from "@/migration/convertToV4";
 import { convertToV5 } from "@/migration/convertToV5";
 import { convertToV6 } from "@/migration/convertToV6";
 import { convertToV7 } from "@/migration/convertToV7";
@@ -13,8 +11,6 @@ type Migration = {
 };
 
 const MIGRATIONS: Migration[] = [
-  { version: 3, fn: convertToV3_1 },
-  { version: 3.1, fn: convertToV4 },
   { version: 4, fn: convertToV5 },
   { version: 5, fn: convertToV6 },
   { version: 6, fn: convertToV7 },
@@ -39,13 +35,6 @@ type MigrateResult =
     };
 
 export function migrateUploadData(data: OldData): MigrateResult {
-  if (data.version < 3) {
-    return {
-      status: "FAILED",
-      error: "Your data are too old and cannot be converted to the current version.",
-    };
-  }
-
   if (data.version === DOWNLOAD_DATA_VERSION) {
     return {
       status: "SUCCESS",

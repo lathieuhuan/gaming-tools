@@ -1,7 +1,6 @@
 import type { DecodeResult } from "./types";
 
 import { DECODE_ERROR_MSG, DIVIDER } from "./config";
-import { decodeSetupV3 } from "./decodeSetupV3";
 import { decodeSetupV4 } from "./decodeSetupV4";
 import { decodeSetupV5 } from "./decodeSetupV5";
 
@@ -11,7 +10,6 @@ type Decoder = {
 };
 
 const DECODERS: Decoder[] = [
-  { version: "3", fn: decodeSetupV3 },
   { version: "4", fn: decodeSetupV4 },
   { version: "5", fn: decodeSetupV5 },
 ];

@@ -22,10 +22,6 @@ export function VersionsView({ className }: { className?: string }) {
           label="Exported/shared setup data"
           versions={[
             {
-              value: 3,
-              eosDate: "Oct 1, 2026",
-            },
-            {
               value: 4,
               releaseDate: "May 2026",
               eosDate: "Dec 1, 2026",
@@ -40,10 +36,6 @@ export function VersionsView({ className }: { className?: string }) {
         <FeatureVersionsView
           label="Download/Upload user data file"
           versions={[
-            {
-              value: "3.1",
-              eosDate: "Oct 1, 2026",
-            },
             {
               value: "4",
               releaseDate: "Dec 2025",
@@ -68,10 +60,6 @@ export function VersionsView({ className }: { className?: string }) {
         <FeatureVersionsView
           label="Auto-saved user data"
           versions={[
-            {
-              value: "0",
-              eosDate: "Oct 1, 2026",
-            },
             {
               value: "4",
               releaseDate: "Dec 2025",
