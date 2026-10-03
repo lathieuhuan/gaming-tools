@@ -1,20 +1,20 @@
-import { Modal } from "rond";
+import { Button, Modal } from "rond";
 
 import { setTourType, updateUI, useUIStore } from "@Store/ui";
 
 // Component
+import { TOUR_STEP_ID } from "@/constants";
 import { DataRepair } from "./DataRepair";
-import { Donate } from "./Donate";
-import { Download } from "./Download";
+import { DownloadView } from "./DownloadView";
 import { EnhanceNotice } from "./EnhanceNotice";
 import { Guides } from "./Guides";
-import { SettingsModal } from "./Settings";
-import { TravelAgencyModals } from "./TravelAgency";
-import { UploadModals } from "./Upload";
+import { Settings } from "./Settings";
+import { TravelAgency } from "./TravelAgency";
+import { UploadModals } from "./UploadModals";
 import { VersionsView } from "./VersionsView";
 
 export function Modals() {
-  const appModalType = useUIStore((state) => state.appModalType);
+  const modalType = useUIStore((state) => state.appModalType);
 
   const closeModal = () => updateUI({ appModalType: "" });
 
@@ -26,7 +26,7 @@ export function Modals() {
   return (
     <>
       <Modal
-        active={appModalType === "GUIDES"}
+        active={modalType === "GUIDES"}
         title="Guides"
         preset="large"
         withHeaderDivider={false}
@@ -37,52 +37,56 @@ export function Modals() {
       </Modal>
 
       <Modal.Core
-        active={appModalType === "VERSIONS"}
+        active={modalType === "VERSIONS"}
         preset="small"
         className="max-h-[90vh] p-4 bg-dark-2 flex flex-col gap-2"
         onClose={closeModal}
       >
         <VersionsView className="grow overflow-y-auto" />
-        <Modal.Actions
-          justify="center"
-          confirmButtonProps={{
-            hidden: true,
-          }}
-          cancelButtonProps={{
-            size: "small",
-            children: "Close",
-          }}
-          onCancel={closeModal}
-        />
+
+        <div className="mt-4 flex justify-end">
+          <Button onClick={closeModal}>Close</Button>
+        </div>
       </Modal.Core>
 
-      <SettingsModal active={appModalType === "SETTINGS"} onClose={closeModal} />
+      <TravelAgency
+        open={modalType === "TRAVEL_AGENCY"}
+        onOpen={() => updateUI({ appModalType: "TRAVEL_AGENCY" })}
+        onClose={closeModal}
+      />
 
       <Modal
-        active={appModalType === "DOWNLOAD"}
+        active={modalType === "SETTINGS"}
+        id={TOUR_STEP_ID.settingsModal}
+        title="Settings"
+        className={["w-103 bg-dark-2", Modal.LARGE_HEIGHT_CLS]}
+        bodyCls="py-0"
+        withHeaderDivider={false}
+        withFooterDivider={false}
+        withActions={true}
+        formId="app-settings-form"
+        confirmButtonProps={{
+          id: TOUR_STEP_ID.saveSettings,
+        }}
+        onClose={closeModal}
+      >
+        <Settings id="app-settings-form" onClose={closeModal} />
+      </Modal>
+
+      <Modal
+        active={modalType === "DOWNLOAD"}
         title="Download"
         preset="small"
         className="bg-dark-1"
         onClose={closeModal}
       >
-        <Download />
+        <DownloadView />
       </Modal>
 
-      <UploadModals active={appModalType === "UPLOAD"} onClose={closeModal} />
+      <UploadModals active={modalType === "UPLOAD"} onClose={closeModal} />
 
       <Modal
-        active={appModalType === "DONATE"}
-        title={<p className="text-center">Donate</p>}
-        preset="small"
-        withHeaderDivider={false}
-        className="bg-dark-1"
-        onClose={closeModal}
-      >
-        <Donate />
-      </Modal>
-
-      <Modal
-        active={appModalType === "DATA_REPAIR"}
+        active={modalType === "DATA_REPAIR"}
         title="Fix my data"
         preset="small"
         className="bg-dark-1"
@@ -91,11 +95,9 @@ export function Modals() {
         <DataRepair />
       </Modal>
 
-      <TravelAgencyModals active={appModalType === "TRAVEL_AGENCY"} onClose={closeModal} />
-
       <Modal
         title="Traveler Settings"
-        active={appModalType === "TRAVELER_SETTINGS_NOTICE"}
+        active={modalType === "TRAVELER_SETTINGS_NOTICE"}
         preset="small"
         className="bg-dark-1"
         withFooterDivider={false}
@@ -112,7 +114,7 @@ export function Modals() {
 
       <Modal
         title="Enhanceable"
-        active={appModalType === "CHARACTER_ENHANCEABLE_NOTICE"}
+        active={modalType === "CHARACTER_ENHANCEABLE_NOTICE"}
         preset="small"
         className="bg-dark-1"
         withFooterDivider={false}

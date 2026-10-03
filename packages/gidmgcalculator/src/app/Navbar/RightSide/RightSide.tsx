@@ -2,27 +2,19 @@ import { useQuery } from "@tanstack/react-query";
 import { FaBars, FaDonate } from "react-icons/fa";
 import { Button, LoadingSpin } from "rond";
 
-import type { AppModalType } from "@/store/ui/types";
+import type { MenuOptionValue } from "./config";
 
 import { IS_DEV_ENV, SCREEN_PATH } from "@/constants/config";
 import { useRouter } from "@/lib/router";
 import { appDataQueryOptions } from "@/services/app-data";
 import { clearCache } from "@/services/app-data/cache";
-import { updateUI, type UIState } from "@Store/ui";
-import { MODAL_OPTIONS } from "./config";
+import { updateUI } from "@Store/ui";
 
-import { EnkaLogo } from "@/assets/icons";
+import { ModalAction } from "@/components/ModalAction";
 import { PopoverAction } from "@/components/PopoverAction";
-import { Menu, MenuOption } from "./Menu";
+import { DonateView } from "./DonateView";
+import { Menu } from "./Menu";
 // import { updateCache } from "@/services/enka";
-
-const ALWAYS_ENABLED_MODAL_TYPES: AppModalType[] = [
-  "INTRO",
-  "GUIDES",
-  "VERSIONS",
-  "UPLOAD",
-  "DOWNLOAD",
-];
 
 type RightSideProps = {
   appReady?: boolean;
@@ -34,10 +26,6 @@ export function RightSide({ appReady }: RightSideProps) {
     ...appDataQueryOptions,
     enabled: false,
   });
-
-  const openModal = (type: UIState["appModalType"]) => () => {
-    updateUI({ appModalType: type });
-  };
 
   const handleSelectEnkaImport = () => {
     router.navigate({ to: SCREEN_PATH.ENKA });
@@ -64,6 +52,26 @@ export function RightSide({ appReady }: RightSideProps) {
   //   });
   // };
 
+  const handleSelectOption = (value: MenuOptionValue) => {
+    switch (value) {
+      case "INTRO":
+      case "SETTINGS":
+      case "GUIDES":
+      case "VERSIONS":
+      case "TRAVEL_AGENCY":
+      case "DOWNLOAD":
+      case "UPLOAD":
+      case "DATA_REPAIR":
+        updateUI({ appModalType: value });
+        break;
+      case "ENKA_IMPORT":
+        handleSelectEnkaImport();
+        break;
+      default:
+        value satisfies never;
+    }
+  };
+
   return (
     <div className="flex">
       {IS_DEV_ENV && (
@@ -80,43 +88,29 @@ export function RightSide({ appReady }: RightSideProps) {
         Update Cache
       </Button> */}
 
-      <Button variant="primary" shape="square" icon={<FaDonate />} onClick={openModal("DONATE")}>
-        Donate
-      </Button>
+      <ModalAction
+        title={<p className="text-center">Donate</p>}
+        preset="small"
+        withHeaderDivider={false}
+        className="bg-dark-1"
+        content={<DonateView />}
+      >
+        <Button variant="primary" shape="square" icon={<FaDonate />}>
+          Donate
+        </Button>
+      </ModalAction>
 
       <PopoverAction
         className="z-50 right-0 pt-2 pr-2"
         origin="top right"
         content={({ handleClose }) => (
-          <Menu>
-            {MODAL_OPTIONS.map((option) => {
-              const { modalType } = option;
-              const disabled = !appReady && !ALWAYS_ENABLED_MODAL_TYPES.includes(modalType);
-
-              return (
-                <MenuOption
-                  key={modalType}
-                  label={option.label}
-                  icon={option.icon}
-                  disabled={disabled}
-                  onSelect={() => {
-                    updateUI({ appModalType: modalType });
-                    handleClose();
-                  }}
-                />
-              );
-            })}
-
-            <MenuOption
-              label="Enka Import"
-              icon={<EnkaLogo className="-mx-0.5 mb-1 text-xl shrink-0" />}
-              disabled={!appReady}
-              onSelect={() => {
-                handleSelectEnkaImport();
-                handleClose();
-              }}
-            />
-          </Menu>
+          <Menu
+            appReady={appReady}
+            onSelect={(value) => {
+              handleSelectOption(value);
+              handleClose();
+            }}
+          />
         )}
       >
         {(props) => (

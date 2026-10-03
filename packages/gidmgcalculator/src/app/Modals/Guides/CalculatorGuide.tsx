@@ -15,30 +15,28 @@ import { TrashCanSvg } from "rond";
 
 import { HighlightText, PositiveText } from "@/components/Text";
 
-const LIST_DECIMAL_CLS = "mt-1 pl-4 list-decimal space-y-1";
-const LIST_ALPHABET_CLS = "mt-1 pl-4 list-[upper-alpha] space-y-1";
 const LIST_DISC_CLS = "mt-1 list-disc list-inside space-y-1";
 
-export function CalculatorGuide() {
-  const quickActions = [
-    { Icon: TrashCanSvg, desc: "Remove the setup" },
-    { Icon: FaShareAlt, desc: "Encode the setup to share it with others" },
-    { Icon: FaSave, desc: "Save the setup to My Setups" },
-    { Icon: FaCopy, desc: "Duplicate the setup" },
-    { Icon: FaBalanceScaleLeft, desc: "Toggle the setup for comparison" },
-    {
-      Icon: SiTarget,
-      desc: "Select the standard setup, all other setups will be compared to this one.",
-    },
-  ];
+const quickActions = [
+  { Icon: TrashCanSvg, desc: "Remove the setup" },
+  { Icon: FaShareAlt, desc: "Encode the setup to share it with others" },
+  { Icon: FaSave, desc: "Save the setup to My Setups" },
+  { Icon: FaCopy, desc: "Duplicate the setup" },
+  { Icon: FaBalanceScaleLeft, desc: "Toggle the setup for comparison" },
+  {
+    Icon: SiTarget,
+    desc: "Select the standard setup, all other setups will be compared to this one.",
+  },
+];
 
+export function CalculatorGuide() {
   return (
     <div className="-ml-1 -mr-2 contains-inline-svg">
       <p>The Calculator contains 4 columns, from left to right they are:</p>
-      <ul className={LIST_DECIMAL_CLS}>
+      <ul className="mt-1 pl-4 list-decimal space-y-1">
         <li>
           <PositiveText>Character Overview</PositiveText>
-          <ul className={LIST_ALPHABET_CLS}>
+          <ul className="mt-1 pl-4 list-[upper-alpha] space-y-1">
             <li>
               <PositiveText>General information</PositiveText>:
               <ul className={LIST_DISC_CLS}>

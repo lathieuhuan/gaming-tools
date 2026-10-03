@@ -1,103 +1,96 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { FaTimes } from "react-icons/fa";
 import { VscDebugContinue } from "react-icons/vsc";
-import { ConfirmModal, Modal, ModalControl } from "rond";
+import { Modal } from "rond";
 
-import type { TourKey } from "@/types";
-
+import { TourKey } from "@/types";
 import { nextFrame } from "@/utils/window.utils";
 import { useCalcStore } from "@Store/calculator";
 import { selectSetup } from "@Store/calculator/selectors";
 import { setTourType } from "@Store/ui";
-
-import { TourCatalogue } from "./TourCatalogue";
 import { prepEnhanceTour } from "./actions/prepEnhanceTour";
 
-type ModalType = "TOUR_CATALOGUE" | "CONFIRM_START_ENHANCE_TOUR" | "";
+import { TourCatalogue } from "./TourCatalogue";
 
-function TravelAgency({ onClose }: ModalControl) {
-  const [modalType, setModalType] = useState<ModalType>("TOUR_CATALOGUE");
+type TravelAgencyProps = {
+  open?: boolean;
+  onOpen: () => void;
+  onClose: () => void;
+};
 
-  const handleClose = () => {
-    onClose && setTimeout(onClose, 150);
-  };
+export function TravelAgency({ open, onOpen, onClose }: TravelAgencyProps) {
+  //
+  const [confirmOpen, setConfirmOpen] = useState(false);
 
-  const isTourAvailable = (key: TourKey) => {
-    switch (key) {
-      case "CHARACTER_ENHANCE": {
-        const activeSetup = selectSetup(useCalcStore.getState());
-
-        if (!activeSetup) return true;
-
-        const { teammates } = activeSetup;
-        const { enhanceType } = activeSetup.main.data;
-
-        if (
-          enhanceType &&
-          (!teammates.length || teammates.some((t) => t.data.enhanceType === enhanceType))
-        ) {
-          return true;
-        }
-
-        setModalType("CONFIRM_START_ENHANCE_TOUR");
-        return false;
-      }
-      case "TRAVELER_SETTINGS":
-        return true;
-      default:
-        key satisfies never;
-        return false;
-    }
-  };
+  const confirmedRef = useRef(false);
 
   const startTour = async (key: TourKey) => {
     switch (key) {
       case "CHARACTER_ENHANCE":
         prepEnhanceTour();
-        break;
-      case "TRAVELER_SETTINGS":
-        // No prep needed; the tour's sitePrep opens the Settings modal
+        await nextFrame();
         break;
       default:
-        key satisfies never;
+        // No prep needed
+        key satisfies "TRAVELER_SETTINGS";
     }
-
-    await nextFrame();
 
     setTourType(key);
     onClose?.();
   };
 
+  const isEnhanceTourAvailable = () => {
+    const activeSetup = selectSetup(useCalcStore.getState());
+    if (!activeSetup) return true;
+
+    const { teammates } = activeSetup;
+    const { enhanceType } = activeSetup.main.data;
+
+    return (
+      enhanceType &&
+      (!teammates.length || teammates.some((t) => t.data.enhanceType === enhanceType))
+    );
+  };
+
   const handleStartTour = (key: TourKey) => {
-    if (isTourAvailable(key)) {
-      void startTour(key);
+    switch (key) {
+      case "CHARACTER_ENHANCE": {
+        if (!isEnhanceTourAvailable()) {
+          setConfirmOpen(true);
+          onClose();
+          return;
+        }
+
+        break;
+      }
+      default:
+        key satisfies "TRAVELER_SETTINGS";
+    }
+
+    void startTour(key);
+  };
+
+  const handleCloseConfirm = () => {
+    setConfirmOpen(false);
+
+    if (!confirmedRef.current) {
+      onOpen();
     }
   };
 
   return (
     <>
-      <Modal
-        active={modalType === "TOUR_CATALOGUE"}
-        title="App Tours"
-        preset="small"
-        className="bg-dark-2"
-        onClose={() => {
-          setModalType("");
-          handleClose();
-        }}
-      >
+      <Modal active={open} title="App Tours" preset="small" className="bg-dark-2" onClose={onClose}>
         <TourCatalogue onStartTour={handleStartTour} />
       </Modal>
 
-      <ConfirmModal
-        active={modalType === "CONFIRM_START_ENHANCE_TOUR"}
-        message={
-          <span className="text-base">
-            We will start a new calculating session for this tour. The existing session (if any)
-            will be <span className="text-danger-2 font-bold">REMOVED</span>. Do you want to
-            continue?
-          </span>
-        }
+      <Modal
+        active={confirmOpen}
+        title="Caution"
+        preset="small"
+        className="bg-dark-2"
+        withActions
+        withFooterDivider={false}
         confirmButtonProps={{
           children: "Yes",
           icon: <VscDebugContinue className="text-lg" />,
@@ -106,13 +99,23 @@ function TravelAgency({ onClose }: ModalControl) {
           children: "No",
           icon: <FaTimes className="text-base" />,
         }}
-        onConfirm={() => void startTour("CHARACTER_ENHANCE")}
-        onClose={() => setModalType("TOUR_CATALOGUE")}
-      />
+        onTransitionEnd={(open) => {
+          if (open) {
+            confirmedRef.current = false;
+          }
+        }}
+        onConfirm={() => {
+          void startTour("CHARACTER_ENHANCE");
+          setConfirmOpen(false);
+          confirmedRef.current = true;
+        }}
+        onClose={handleCloseConfirm}
+      >
+        <span className="text-base">
+          We will start a new calculating session for this tour. The existing session (if any) will
+          be <span className="text-danger-2 font-bold">REMOVED</span>. Do you want to continue?
+        </span>
+      </Modal>
     </>
   );
-}
-
-export function TravelAgencyModals(props: ModalControl) {
-  return props.active ? <TravelAgency {...props} /> : null;
 }

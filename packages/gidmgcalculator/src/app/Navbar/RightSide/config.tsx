@@ -1,6 +1,7 @@
-import type { AppModalType } from "@/store/ui/types";
+import type { AppModalType } from "@Store/ui/types";
 import type { ReactNode } from "react";
 
+import { EnkaLogo } from "@/assets/icons";
 import {
   FaCog,
   FaDownload,
@@ -12,51 +13,70 @@ import {
 } from "react-icons/fa";
 import { TbVersionsFilled } from "react-icons/tb";
 
-export type ModalOption = {
+export type MenuOptionValue =
+  | Extract<
+      AppModalType,
+      | "INTRO"
+      | "GUIDES"
+      | "VERSIONS"
+      | "TRAVEL_AGENCY"
+      | "SETTINGS"
+      | "DOWNLOAD"
+      | "UPLOAD"
+      | "DATA_REPAIR"
+    >
+  | "ENKA_IMPORT";
+
+export type MenuOption = {
   label: string;
   icon: ReactNode;
-  modalType: AppModalType;
+  value: MenuOptionValue;
 };
 
-export const MODAL_OPTIONS: ModalOption[] = [
+export const MENU_OPTIONS: MenuOption[] = [
   {
     label: "Introduction",
     icon: <FaInfoCircle size="1.125rem" />,
-    modalType: "INTRO",
+    value: "INTRO",
   },
   {
     label: "Guides",
     icon: <FaQuestionCircle />,
-    modalType: "GUIDES",
+    value: "GUIDES",
   },
   {
     label: "Versions",
     icon: <TbVersionsFilled className="-mx-0.5 text-xl" />,
-    modalType: "VERSIONS",
+    value: "VERSIONS",
   },
   {
     label: "App Tours",
     icon: <FaMapMarkedAlt />,
-    modalType: "TRAVEL_AGENCY",
+    value: "TRAVEL_AGENCY",
   },
   {
     label: "Settings",
     icon: <FaCog />,
-    modalType: "SETTINGS",
+    value: "SETTINGS",
   },
   {
     label: "Download",
     icon: <FaDownload />,
-    modalType: "DOWNLOAD",
+    value: "DOWNLOAD",
   },
   {
     label: "Upload",
     icon: <FaUpload />,
-    modalType: "UPLOAD",
+    value: "UPLOAD",
   },
   {
     label: "Fix my data",
     icon: <FaWrench />,
-    modalType: "DATA_REPAIR",
+    value: "DATA_REPAIR",
+  },
+  {
+    label: "Enka Import",
+    icon: <EnkaLogo className="-mx-0.5 mb-1 text-xl shrink-0" />,
+    value: "ENKA_IMPORT",
   },
 ];

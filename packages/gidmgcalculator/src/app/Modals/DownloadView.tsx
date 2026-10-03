@@ -4,7 +4,7 @@ import { Button } from "rond";
 import { DOWNLOAD_DATA_VERSION } from "@/constants/config";
 import { useStore } from "@/lib/dynamic-store";
 
-export function Download() {
+export function DownloadView() {
   const store = useStore();
 
   const onClickDownload = () => {

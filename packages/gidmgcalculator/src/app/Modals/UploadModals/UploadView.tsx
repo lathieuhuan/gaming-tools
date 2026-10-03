@@ -33,11 +33,11 @@ const getFile = (input: HTMLInputElement | null): GetFileResult => {
   return { status: "SUCCESS", file, isJson };
 };
 
-type FileUploadProps = {
+type UploadViewProps = {
   onSuccessUploadFile: (data: CurrentDatabaseData) => void;
 };
 
-export function FileUpload({ onSuccessUploadFile }: FileUploadProps) {
+export function UploadView({ onSuccessUploadFile }: UploadViewProps) {
   const inputRef = useRef<HTMLInputElement>(null);
 
   const handleFileUpload = () => {

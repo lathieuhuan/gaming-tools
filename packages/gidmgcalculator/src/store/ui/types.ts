@@ -10,7 +10,6 @@ export type AppModalType =
   | "SETTINGS"
   | "UPLOAD"
   | "DOWNLOAD"
-  | "DONATE"
   | "DATA_REPAIR"
   | "TRAVEL_AGENCY"
   | "CHARACTER_ENHANCEABLE_NOTICE"

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { FaCoffee, FaPaypal } from "react-icons/fa";
 import { Button, InputNumber } from "rond";
 
-export function Donate() {
+export function DonateView() {
   const [usd, setUsd] = useState(1);
 
   return (

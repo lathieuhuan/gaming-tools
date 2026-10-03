@@ -10,7 +10,7 @@ import { addUserDatabase } from "@Store/userdbSlice";
 
 // Component
 import { ItemMultiSelect, ItemMultiSelectIds } from "@/components/ItemMultiSelect";
-import { FileUpload } from "./FileUpload";
+import { UploadView } from "./UploadView";
 
 // const MAX_USER_WEAPONS = 3;
 // const MAX_USER_ARTIFACTS = 3;
@@ -39,7 +39,7 @@ function Upload({ onClose }: ModalControl) {
   }
   if (selectingArtifacts) {
     filteredArtifacts = artifacts.filter(
-      (artifact) => !artifact.owner && !artifact.setupIDs?.length
+      (artifact) => !artifact.owner && !artifact.setupIDs?.length,
     );
   }
 
@@ -100,7 +100,7 @@ function Upload({ onClose }: ModalControl) {
         ...uploadedData.current,
         weapons: dbWeapons,
         artifacts: dbArtifacts,
-      })
+      }),
     );
 
     handleClose(currentStep)();
@@ -115,7 +115,7 @@ function Upload({ onClose }: ModalControl) {
         active={currentStep === "SELECT_OPTION"}
         onClose={handleClose("SELECT_OPTION")}
       >
-        <FileUpload
+        <UploadView
           onSuccessUploadFile={(data) => {
             uploadedData.current = data;
 
