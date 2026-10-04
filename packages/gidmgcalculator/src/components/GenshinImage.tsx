@@ -15,7 +15,7 @@ export function GenshinImage({
 }: GenshinImageProps) {
   return (
     <Image
-      src={getImgSrc(src)}
+      src={src ? getImgSrc(src) : undefined}
       showFallbackOnError
       defaultFallbackProps={{ type: imgType, className: fallbackCls }}
       {...rest}

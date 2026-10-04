@@ -2,7 +2,7 @@ import { IconSelect, IconSelectProps } from "rond";
 
 import { Weapon } from "@/models";
 import type { WeaponType } from "@/types";
-import { GenshinImage } from "../GenshinImage";
+import { GenshinImage } from "./GenshinImage";
 
 const OPTIONS: IconSelectProps<WeaponType>["options"] = Weapon.allIcons((icon) => {
   return {

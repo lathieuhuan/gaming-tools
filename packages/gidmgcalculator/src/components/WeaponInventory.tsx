@@ -9,8 +9,8 @@ import { Weapon } from "@/models";
 import { selectDbWeapons } from "@Store/userdbSlice";
 
 // Component
-import { InventoryRack, ItemOption } from "../InventoryRack";
-import { WeaponCard } from "../WeaponCard";
+import { InventoryRack, ItemOption } from "./InventoryRack";
+import { WeaponCard } from "./WeaponCard";
 
 type WeaponInventoryProps = {
   weaponType: WeaponType;
@@ -28,7 +28,7 @@ const WeaponInventoryCore = ({
   onClose,
 }: WeaponInventoryProps) => {
   const items = useStoreSnapshot((state) =>
-    selectDbWeapons(state).filter((weapon) => weapon.type === weaponType)
+    selectDbWeapons(state).filter((weapon) => weapon.type === weaponType),
   );
 
   const bodyRef = useRef<HTMLDivElement>(null);

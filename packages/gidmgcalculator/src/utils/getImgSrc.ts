@@ -1,9 +1,14 @@
 import { IS_DEV_ENV } from "@/constants/config";
 
-export function getImgSrc(src?: string) {
+export function getImgSrc(src: string) {
   // const IS_DEV_ENV = false;
-  if (IS_DEV_ENV || !src) return "";
+  if (IS_DEV_ENV) return "";
 
-  const isFromWiki = src.split("/")[0].length === 1;
-  return isFromWiki ? `https://static.wikia.nocookie.net/gensin-impact/images/${src}.png` : src;
+  if (src.startsWith("https")) {
+    return src;
+  }
+
+  const end = src.includes("?") ? src : `${src}.png`;
+
+  return `https://static.wikia.nocookie.net/gensin-impact/images/${end}`;
 }

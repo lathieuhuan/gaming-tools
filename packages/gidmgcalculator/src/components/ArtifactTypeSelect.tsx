@@ -2,7 +2,7 @@ import { IconSelect, IconSelectProps } from "rond";
 
 import { Artifact } from "@/models";
 import type { ArtifactType } from "@/types";
-import { GenshinImage } from "../GenshinImage";
+import { GenshinImage } from "./GenshinImage";
 
 const OPTIONS: IconSelectProps<ArtifactType>["options"] = Artifact.allIcons((icon) => {
   return {

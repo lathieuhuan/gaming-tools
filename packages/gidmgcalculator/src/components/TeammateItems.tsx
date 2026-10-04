@@ -3,7 +3,7 @@ import { CloseButton, clsx, cn, VersatileSelect } from "rond";
 import type { Teammate } from "@/models";
 import { genSequentialOptions } from "@/utils/ui.utils";
 
-import { GenshinImage } from "../GenshinImage";
+import { GenshinImage } from "./GenshinImage";
 
 type TeammateItemsProps = {
   className?: string;

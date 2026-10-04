@@ -14,9 +14,9 @@ import { createArtifact, createWeapon, isWeapon } from "@/logic/entity.logic";
 import { Artifact, Weapon } from "@/models";
 
 // Component
-import { ArtifactCard } from "../ArtifactCard";
-import { InventoryRack, ItemOption } from "../InventoryRack";
-import { WeaponCard } from "../WeaponCard";
+import { ArtifactCard } from "./ArtifactCard";
+import { InventoryRack, ItemOption } from "./InventoryRack";
+import { WeaponCard } from "./WeaponCard";
 
 export type ItemMultiSelectIds = Set<number>;
 

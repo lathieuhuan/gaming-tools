@@ -1,11 +1,11 @@
 import { FaSyncAlt, FaUserSlash } from "react-icons/fa";
 import { Badge, Button, clsx, Rarity, VersatileSelect } from "rond";
 
-import type { AppCharacter, RawCharacter, Level } from "@/types";
+import type { AppCharacter, Level, RawCharacter } from "@/types";
 
-import { EnhanceTag } from "../EnhanceTag";
-import { GenshinImage } from "../GenshinImage";
-import { CharacterLevelControl } from "../LevelControl";
+import { EnhanceTag } from "./EnhanceTag";
+import { GenshinImage } from "./GenshinImage";
+import { CharacterLevelControl } from "./LevelControl";
 
 type CharacterIntroProps = {
   className?: string;
@@ -58,7 +58,7 @@ export function CharacterIntro(props: CharacterIntroProps) {
             className={clsx(
               `text-2xl leading-7 truncate font-black`,
               elmtText,
-              props.removable && "pr-9"
+              props.removable && "pr-9",
             )}
             onDoubleClick={() => console.info(character)}
           >

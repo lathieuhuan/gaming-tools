@@ -3,7 +3,7 @@ import { clsx } from "rond";
 import { getAppCharacter } from "@/services/app-data";
 import type { Level } from "@/types";
 
-import { GenshinImage } from "../GenshinImage";
+import { GenshinImage } from "./GenshinImage";
 
 export type ItemThumbProps = {
   className?: string;

@@ -5,8 +5,8 @@ import type { ArtifactType } from "@/types";
 import { Artifact, ArtifactGear, Weapon } from "@/models";
 
 // Component
-import { GenshinImage } from "../GenshinImage";
-import { ItemThumbnail, type ItemThumbProps } from "../ItemThumbnail";
+import { GenshinImage } from "./GenshinImage";
+import { ItemThumbnail, type ItemThumbProps } from "./ItemThumbnail";
 
 export type EquipmentType = "weapon" | ArtifactType;
 
