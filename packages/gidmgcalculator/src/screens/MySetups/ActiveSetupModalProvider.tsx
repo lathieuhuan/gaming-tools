@@ -62,13 +62,17 @@ export function ActiveSetupModalProvider({
         onClose={closeModal}
       >
         <p>
-          Are you sure you want to remove "<b>{setupName}</b>"?
+          Are you sure you want to remove "<b translate="no">{setupName}</b>"?
         </p>
         <p>This action cannot be undone.</p>
       </Modal>
 
       <Modal
-        title={`Share "${setupName}"`}
+        title={
+          <>
+            Share "<span translate="no">{setupName}</span>"
+          </>
+        }
         active={modalType === "SHARE"}
         {...SETUP_PORTER_MODAL_PROPS}
         onClose={closeModal}

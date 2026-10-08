@@ -175,7 +175,9 @@ export function TalentDetail({
                 return (
                   <StatsTable.Row key={i} className="pb-1 text-sm">
                     <p className="pr-6">{stat.name}</p>
-                    <p className="font-semibold text-right">{stat.value}</p>
+                    <p className="font-semibold text-right" translate="no">
+                      {stat.value}
+                    </p>
                   </StatsTable.Row>
                 );
               })}

@@ -170,7 +170,9 @@ function MySetups() {
       </ActiveSetupModalProvider>
 
       <div className="w-87 h-full px-4 pt-2 pb-4 rounded-lg bg-dark-3 flex flex-col shrink-0">
-        <p className="text-sm text-right truncate shrink-0">{selectedInfo?.setup.name}</p>
+        <p className="text-sm text-right truncate shrink-0" translate="no">
+          {selectedInfo?.setup.name}
+        </p>
 
         <div className="mt-2 grow hide-scrollbar">
           {calcSetup && (

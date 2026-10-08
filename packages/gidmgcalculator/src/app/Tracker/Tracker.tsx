@@ -32,7 +32,9 @@ export function Tracker() {
 
       <Modal.Header className="flex items-center">
         Tracking Results
-        <span className="ml-2 font-normal text-base text-light-hint">({activeSetupName})</span>
+        <span className="ml-2 font-normal text-base text-light-hint" translate="no">
+          ({activeSetupName})
+        </span>
       </Modal.Header>
 
       <div className="grow px-4 pb-4 overflow-auto">

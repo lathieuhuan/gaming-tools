@@ -50,7 +50,11 @@ export function OwnerLabel({ className, item, ...restProps }: OwnerLabelProps) {
               <p className="text-heading font-medium">This item is used on these setups:</p>
               <ul className="mt-1 pl-4 list-disc font-semibold overflow-auto custom-scrollbar">
                 {containingSetups.map((setup, i) => {
-                  return <li key={i}>{setup.name}</li>;
+                  return (
+                    <li key={i} translate="no">
+                      {setup.name}
+                    </li>
+                  );
                 })}
               </ul>
             </div>

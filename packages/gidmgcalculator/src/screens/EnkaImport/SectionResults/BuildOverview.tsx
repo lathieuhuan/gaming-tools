@@ -24,7 +24,9 @@ export function BuildOverview({ build, onSave, onCalculate }: BuildOverviewProps
         <BuildCharacter build={build} />
 
         <div className="ml-3 text-sm">
-          <p className={`text-lg font-bold text-${data.vision}`}>{buildName}</p>
+          <p className={`text-lg font-bold text-${data.vision}`} translate="no">
+            {buildName}
+          </p>
           <p>
             {basic.level} <span className="text-light-hint opacity-50">|</span> C{basic.cons}{" "}
             <span className="text-light-hint opacity-50">|</span> {basic.NAs} - {basic.ES} -{" "}
@@ -58,7 +60,9 @@ export function BuildOverviewMobile({ build, onSave, onCalculate }: BuildOvervie
           <BuildCharacter build={build} />
 
           <div className="ml-3 text-sm">
-            <p className={`text-lg font-bold text-${data.vision}`}>{buildName}</p>
+            <p className={`text-lg font-bold text-${data.vision}`} translate="no">
+              {buildName}
+            </p>
             <p>
               {basic.level} <span className="text-light-hint opacity-50">|</span> C{basic.cons}
             </p>

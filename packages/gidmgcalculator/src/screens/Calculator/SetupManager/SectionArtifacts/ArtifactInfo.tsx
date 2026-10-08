@@ -84,7 +84,7 @@ export function ArtifactInfo({ artifact, onRemove, onRequestChange }: ArtifactIn
               onChange={(mainStatType) => updateArtifactPiece(artifact.type, { mainStatType })}
             />
           )}
-          <p className={`pl-6 text-xlp leading-7 text-rarity-${rarity} font-bold`}>
+          <p className={`pl-6 text-xlp leading-7 text-rarity-${rarity} font-bold`} translate="no">
             {artifact.mainStatValue}
             {suffixOf(mainStatType)}
           </p>

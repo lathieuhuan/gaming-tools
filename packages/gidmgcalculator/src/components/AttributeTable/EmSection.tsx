@@ -33,28 +33,32 @@ export function EmSection({ value = 0 }: EmSectionProps) {
             )}
           />
         </Cell>
-        <Cell className="mr-2">{round(value, 1)}</Cell>
+        <Cell className="mr-2" translate="no">
+          {round(value, 1)}
+        </Cell>
       </Row>
       <CollapseSpace active={dropped}>
         <ul className="px-2 py-1 text-sm flex flex-col space-y-1">
           <li>
-            • Vaporize, Melt DMG +<PositiveText>{rxnBonusesFromEM.amplifying}%</PositiveText>.
+            • Vaporize, Melt DMG +
+            <PositiveText translate="no">{rxnBonusesFromEM.amplifying}%</PositiveText>.
           </li>
           <li>
             • Overloaded, Superconduct, Electro-Charged, Burning, Shattered, Swirl, Bloom,
-            Hyperbloom, Burgeon DMG +<PositiveText>{rxnBonusesFromEM.transformative}%</PositiveText>
-            .
+            Hyperbloom, Burgeon DMG +
+            <PositiveText translate="no">{rxnBonusesFromEM.transformative}%</PositiveText>.
           </li>
           <li>
-            • Aggravate, Spread DMG +<PositiveText>{rxnBonusesFromEM.quicken}%</PositiveText>.
+            • Aggravate, Spread DMG +
+            <PositiveText translate="no">{rxnBonusesFromEM.quicken}%</PositiveText>.
           </li>
           <li>
             • Lunar-Charged, Solar-Bloom, Lunar-Crystallize, Stellar-Conduct, Stellar-Swirl DMG +
-            <PositiveText>{rxnBonusesFromEM.lunar}%</PositiveText>.
+            <PositiveText translate="no">{rxnBonusesFromEM.lunar}%</PositiveText>.
           </li>
           <li>
             • Crystallize shield DMG absorption +
-            <PositiveText>{rxnBonusesFromEM.shield}%</PositiveText>
+            <PositiveText translate="no">{rxnBonusesFromEM.shield}%</PositiveText>
           </li>
         </ul>
       </CollapseSpace>

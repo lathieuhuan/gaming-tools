@@ -35,7 +35,7 @@ export function SectionTable({
       aria-label={label}
     >
       <Table.Tr>
-        <Table.Th className="sticky left-0 z-10" style={{ background: "inherit" }} />
+        <Table.Th className="sticky left-0 z-10 bg-inherit" />
 
         {headerConfigs.map(({ content, ...attrs }, i) => {
           return (
@@ -62,7 +62,7 @@ export function SectionTable({
 
             {config.cells.map(({ value, extra, ...rest }, cellIndex) => {
               return (
-                <Table.Td key={cellIndex} {...rest}>
+                <Table.Td key={cellIndex} translate="no" {...rest}>
                   {value || EMPTY_VALUE}
                   {extra}
                 </Table.Td>

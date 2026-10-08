@@ -78,7 +78,7 @@ export function ArtifactView<T extends Artifact>({
       </div>
 
       <div className="mt-1 ml-6 flex flex-col">
-        {["flower", "plume"].includes(artifact.type) || !mutable ? (
+        {!mutable || artifact.type === "flower" || artifact.type === "plume" ? (
           <p className={"py-1 text-lg " + (mutable ? "pl-6" : "pl-2")}>{t(mainStatType)}</p>
         ) : (
           <VersatileSelect
@@ -96,6 +96,7 @@ export function ArtifactView<T extends Artifact>({
             `text-rarity-${rarity} text-2xl leading-7 font-bold`,
             mutable ? "pl-6" : "pl-2",
           )}
+          translate="no"
         >
           {artifact.mainStatValue}
           {suffixOf(mainStatType)}

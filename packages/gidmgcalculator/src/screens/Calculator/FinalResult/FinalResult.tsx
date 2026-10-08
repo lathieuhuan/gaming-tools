@@ -42,7 +42,9 @@ export function FinalResultCore() {
   return (
     <div className="h-full flex flex-col">
       <div className="px-6 mb-2 shrink-0">
-        <p className="font-bold text-center truncate">{activeSetupName}</p>
+        <p className="font-bold text-center truncate" translate="no">
+          {activeSetupName}
+        </p>
       </div>
       <div className="grow hide-scrollbar" onDoubleClick={() => console.info(calcResult)}>
         <FinalResultView

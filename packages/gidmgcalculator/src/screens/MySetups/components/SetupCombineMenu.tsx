@@ -55,7 +55,9 @@ export function SetupCombineMenu({
             onClick={() => onClickOption(ID, picked)}
           >
             <div className="md:w-40 md:mr-4">
-              <p className="text-lg font-semibold text-secondary-1 cursor-default">{setup.name}</p>
+              <p className="text-lg font-semibold text-secondary-1 cursor-default" translate="no">
+                {setup.name}
+              </p>
             </div>
 
             <div className="mt-2 md:mt-0 flex gap-4">

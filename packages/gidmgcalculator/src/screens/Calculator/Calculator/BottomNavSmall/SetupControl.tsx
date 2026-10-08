@@ -44,7 +44,11 @@ export function SetupControl({ setup, active, onSelect, ...props }: SetupControl
         <RemoveButton {...ACTION_PROPS} setupId={setup.ID} />
 
         <ModalAction
-          title={`Share "${setup.name}"`}
+          title={
+            <>
+              Share "<span translate="no">{setup.name}</span>"
+            </>
+          }
           {...SETUP_PORTER_MODAL_PROPS}
           content={(_, setOpen) => (
             <CalcSetupExporter setupId={setup.ID} onCancel={() => setOpen(false)} />

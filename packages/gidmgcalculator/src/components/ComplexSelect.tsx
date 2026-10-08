@@ -2,6 +2,8 @@ import { ReactNode, useState } from "react";
 import { FaChevronDown } from "react-icons/fa";
 import { clsx, useClickOutside } from "rond";
 
+import type { HTMLTranslate } from "@/types";
+
 const CLASS_BY_SIZE = {
   small: {
     option: "text-base",
@@ -24,6 +26,7 @@ type ComplexSelectProps<TValue extends string | number> = {
   selectId: string;
   value?: TValue;
   options?: ComplexSelectOption<TValue>[];
+  translate?: HTMLTranslate;
   onChange?: (value: TValue) => void;
   onToggleDropdown?: (shouldDrop: boolean) => void;
 };
@@ -33,6 +36,7 @@ export function ComplexSelect<TValue extends string | number>({
   selectId,
   value,
   options = [],
+  translate,
   onChange,
   onToggleDropdown,
 }: ComplexSelectProps<TValue>) {
@@ -89,6 +93,7 @@ export function ComplexSelect<TValue extends string | number>({
       >
         <div
           className={clsx("w-full truncate font-bold text-center relative z-10", classes.option)}
+          translate={translate}
         >
           {label}
         </div>
@@ -115,6 +120,7 @@ export function ComplexSelect<TValue extends string | number>({
                     "px-2 py-0.5 w-full border-t border-b border-white text-left font-semibold truncate cursor-default hover:bg-dark-1",
                     classes.option,
                   )}
+                  translate={translate}
                   onClick={onClickOption(option.value)}
                 >
                   {option.label}

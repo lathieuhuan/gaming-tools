@@ -93,7 +93,7 @@ function SetupViewCore({ setup, complexSetup, onEditSetup, onCalcTeammateSetup }
               onClick={uncombine}
             />
           )}
-          <p className="px-1 text-xl text-heading font-semibold truncate">
+          <p className="px-1 text-xl text-heading font-semibold truncate" translate="no">
             {complexSetup?.name || setup.name}
           </p>
         </div>

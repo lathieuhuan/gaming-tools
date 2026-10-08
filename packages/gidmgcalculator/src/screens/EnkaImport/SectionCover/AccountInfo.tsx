@@ -47,7 +47,9 @@ export function AccountInfo({ className }: AccountInfoProps) {
     return (
       <div className={clsx(cls, "space-y-2")}>
         <p>
-          <span className="text-2xl font-bold">{genshinUser.name}</span>
+          <span className="text-2xl font-bold" translate="no">
+            {genshinUser.name}
+          </span>
           <span className="text-xl text-light-4"> | AR {genshinUser.level}</span>
         </p>
         <p className="text-light-hint">{genshinUser.signature}</p>

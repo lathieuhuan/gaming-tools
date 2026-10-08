@@ -87,7 +87,11 @@ export function SetupSelect() {
           </Action>
 
           <ModalAction
-            title={`Share "${setup.name}"`}
+            title={
+              <>
+                Share "<span translate="no">{setup.name}</span>"
+              </>
+            }
             {...SETUP_PORTER_MODAL_PROPS}
             content={(_, setOpen) => (
               <CalcSetupExporter setupId={setup.ID} onCancel={() => setOpen(false)} />
@@ -136,6 +140,7 @@ export function SetupSelect() {
         selectId={id}
         value={Array_.findById(setupManagers, activeId)?.ID}
         options={options}
+        translate="no"
         onChange={handleClickSetupName}
       />
 

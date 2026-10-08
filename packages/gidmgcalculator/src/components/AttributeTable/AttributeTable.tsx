@@ -39,13 +39,16 @@ export function AttributeTable({ className, attributes, attkBonusCtrl }: Attribu
           <Row key={type} aria-label={label} className="group" tabIndex={isMobile ? 0 : undefined}>
             <Cell>{label}</Cell>
             <Cell className="relative mr-2">
-              <p className="group-hover:hidden group-focus-within:hidden">{total}</p>
+              <p className="group-hover:hidden group-focus-within:hidden" translate="no">
+                {total}
+              </p>
 
               <p
                 className={
                   "hidden whitespace-nowrap absolute top-0 right-0 " +
                   "group-hover:block group-focus-within:block"
                 }
+                translate="no"
               >
                 {base} + <PositiveText>{total - base}</PositiveText>
               </p>
@@ -61,7 +64,9 @@ export function AttributeTable({ className, attributes, attkBonusCtrl }: Attribu
         return (
           <Row key={type} aria-label={label}>
             <Cell>{label}</Cell>
-            <Cell className="mr-2">{round(attributes.get(type), 1)}%</Cell>
+            <Cell className="mr-2" translate="no">
+              {round(attributes.get(type), 1)}%
+            </Cell>
           </Row>
         );
       })}
@@ -73,7 +78,9 @@ export function AttributeTable({ className, attributes, attkBonusCtrl }: Attribu
         return (
           <Row key={type} aria-label={label}>
             <Cell>{label}</Cell>
-            <Cell className="mr-2">{round(attributes.get(type), 1)}%</Cell>
+            <Cell className="mr-2" translate="no">
+              {round(attributes.get(type), 1)}%
+            </Cell>
           </Row>
         );
       })}

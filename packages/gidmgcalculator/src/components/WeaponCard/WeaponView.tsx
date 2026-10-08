@@ -78,7 +78,7 @@ export function WeaponView<T extends Weapon>({
             )}
           </div>
 
-          {subStat ? (
+          {subStat !== undefined && (
             <div className={"grow pt-1 flex flex-col justify-center " + groupCls}>
               <p
                 className={
@@ -88,16 +88,19 @@ export function WeaponView<T extends Weapon>({
               >
                 {t(subStat.type)}
               </p>
-              <p className={`text-rarity-${rarity} text-xlp leading-7 font-bold`}>
+              <p className={`text-rarity-${rarity} text-xlp leading-7 font-bold`} translate="no">
                 {weapon.subStatValue}
                 {suffixOf(subStat.type)}
               </p>
             </div>
-          ) : null}
+          )}
 
           <div className={"grow pt-1 flex flex-col justify-center " + groupCls}>
             <p className="font-semibold">Base ATK</p>
-            <p className={`text-rarity-${rarity} text-[1.75rem] leading-[1.2] font-bold`}>
+            <p
+              className={`text-rarity-${rarity} text-[1.75rem] leading-[1.2] font-bold`}
+              translate="no"
+            >
               {weapon.mainStatValue}
             </p>
           </div>
@@ -106,7 +109,13 @@ export function WeaponView<T extends Weapon>({
         {/* right */}
         <div className="ml-2">
           <div className={`rounded-lg bg-gradient-${rarity} relative`}>
-            <GenshinImage src={data.icon} imgType="weapon" width={112} height={112} />
+            <GenshinImage
+              className="mx-auto"
+              src={data.icon}
+              imgType="weapon"
+              width={112}
+              height={112}
+            />
             <Badge active={data.beta} className="absolute bottom-0 right-0">
               BETA
             </Badge>
